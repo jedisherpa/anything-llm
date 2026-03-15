@@ -1,0 +1,1068 @@
+{
+  "items": [
+    {
+      "id": "decagon-1-the-category-creation-council",
+      "title": "Category Creation Engine",
+      "displayTitle": "Category Creation Engine",
+      "handle": "@constellation-decagon-1-the-category-creation-council",
+      "type": "Decagon",
+      "purpose": "To not just enter a market, but to fundamentally redefine it and create a new category of product or service.",
+      "projectManagerTitle": "The Complexity Navigator",
+      "projectManagerHandle": "@mc-project-managers-board-10-complexity-navigator-lens",
+      "members": [
+        {
+          "role": "The Category Designer",
+          "displayRole": "The Category Designer",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/org-builder-board/09_Cloud_Pioneering_And_Stakeholder_Capitalism_Lens.md"
+        },
+        {
+          "role": "The Contrarian",
+          "displayRole": "The Contrarian Builder",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/millennial-founders-board/03_Contrarian_Infrastructure_Builder_Lens.md"
+        },
+        {
+          "role": "The Brand Theorist",
+          "displayRole": "The Brand Theorist",
+          "lensTitle": "The Brand Theorist",
+          "lensHandle": "@mc-marketing-branding-board-06-brand-gap-and-zag-lens",
+          "relativePath": "councils/marketing-branding-board/06_Brand_Gap_And_Zag_Lens.md"
+        },
+        {
+          "role": "The Perception Shaper",
+          "displayRole": "The Perception Shaper",
+          "lensTitle": "The Perception Shaper",
+          "lensHandle": "@mc-pauls-board-09-perception-signaling-and-narrative-lens",
+          "relativePath": "councils/pauls-board/09_Perception_Signaling_And_Narrative_Lens.md"
+        },
+        {
+          "role": "The World Builder",
+          "displayRole": "The World Builder",
+          "lensTitle": "The World Builder",
+          "lensHandle": "@mc-visual-branding-board-06-the-world-builder-lens",
+          "relativePath": "councils/visual-branding-board/06_The_World_Builder_Lens.md"
+        },
+        {
+          "role": "The First-Principles Engineer",
+          "displayRole": "The First-Principles Engineer",
+          "lensTitle": "The First-Principles Engineer",
+          "lensHandle": "@mc-pauls-board-01-first-principles-engineer-lens",
+          "relativePath": "councils/pauls-board/01_First_Principles_Engineer_Lens.md"
+        },
+        {
+          "role": "The Interaction Designer",
+          "displayRole": "The Interaction Designer",
+          "lensTitle": "The Interaction Designer",
+          "lensHandle": "@mc-pauls-board-08-human-comprehension-and-interaction-lens",
+          "relativePath": "councils/pauls-board/08_Human_Comprehension_And_Interaction_Lens.md"
+        },
+        {
+          "role": "The Hardcore Persuader",
+          "displayRole": "The Hardcore Persuader",
+          "lensTitle": "The Hardcore Persuader",
+          "lensHandle": "@mc-direct-response-board-03-hardcore-direct-response-and-accountability-lens",
+          "relativePath": "councils/direct-response-board/03_Hardcore_Direct_Response_And_Accountability_Lens.md"
+        },
+        {
+          "role": "The Ethical Boundary",
+          "displayRole": "The Ethical Boundary",
+          "lensTitle": "The Ethical Boundary",
+          "lensHandle": "@mc-pauls-board-06-human-dignity-and-ethical-boundary-lens",
+          "relativePath": "councils/pauls-board/06_Human_Dignity_And_Ethical_Boundary_Lens.md"
+        }
+      ],
+      "relativePath": "constellations/decagon-1-category-creation.json",
+      "detailPath": "constellations/decagon-1-the-category-creation-council.json"
+    },
+    {
+      "id": "decagon-2-the-sovereign-brand-council",
+      "title": "Sovereign Brand Forge",
+      "displayTitle": "Sovereign Brand Forge",
+      "handle": "@constellation-decagon-2-the-sovereign-brand-council",
+      "type": "Decagon",
+      "purpose": "To develop the complete strategic and creative architecture for a brand that intends to define and own a cultural category.",
+      "projectManagerTitle": "The Radical Transparency Operator",
+      "projectManagerHandle": "@mc-project-managers-board-09-radical-transparency-operator-lens",
+      "members": [
+        {
+          "role": "The Why-Finder",
+          "displayRole": "The Why-Finder",
+          "lensTitle": "The Why-Finder",
+          "lensHandle": "@mc-marketing-branding-board-01-start-with-why-and-golden-circle-lens",
+          "relativePath": "councils/marketing-branding-board/01_Start_With_Why_And_Golden_Circle_Lens.md"
+        },
+        {
+          "role": "The Underdog Champion",
+          "displayRole": "The Underdog Champion",
+          "lensTitle": "The Underdog Champion",
+          "lensHandle": "@mc-pauls-board-03-underdog-brand-and-culture-lens",
+          "relativePath": "councils/pauls-board/03_Underdog_Brand_And_Culture_Lens.md"
+        },
+        {
+          "role": "The Permission Marketer",
+          "displayRole": "The Permission Marketer",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/marketing-branding-board/03_Permission_Marketing_And_Tribes_Lens.md"
+        },
+        {
+          "role": "The Cultural Synesthete",
+          "displayRole": "The Cultural Synesthete",
+          "lensTitle": "The Cultural Synesthete",
+          "lensHandle": "@mc-visual-branding-board-03-the-cultural-synesthete-lens",
+          "relativePath": "councils/visual-branding-board/03_The_Cultural_Synesthete_Lens.md"
+        },
+        {
+          "role": "The Cultural Remixer",
+          "displayRole": "The Cultural Remixer",
+          "lensTitle": "The Cultural Remixer",
+          "lensHandle": "@mc-visual-branding-board-04-the-cultural-remixer-lens",
+          "relativePath": "councils/visual-branding-board/04_The_Cultural_Remixer_Lens.md"
+        },
+        {
+          "role": "The Cinematic Immersionist",
+          "displayRole": "The Cinematic Immersionist",
+          "lensTitle": "The Cinematic Immersionist",
+          "lensHandle": "@mc-visual-branding-board-07-the-cinematic-immersionist-lens",
+          "relativePath": "councils/visual-branding-board/07_The_Cinematic_Immersionist_Lens.md"
+        },
+        {
+          "role": "The Multimedia Storyteller",
+          "displayRole": "The Multimedia Storyteller",
+          "lensTitle": "The Multimedia Storyteller",
+          "lensHandle": "@mc-visual-branding-board-09-the-multimedia-storyteller-lens",
+          "relativePath": "councils/visual-branding-board/09_The_Multimedia_Storyteller_Lens.md"
+        },
+        {
+          "role": "The Grand Slam Offer Architect",
+          "displayRole": "The Grand Slam Offer Architect",
+          "lensTitle": "The Grand Slam Offer Architect",
+          "lensHandle": "@mc-visual-branding-board-05-the-grand-slam-offer-architect-lens",
+          "relativePath": "councils/visual-branding-board/05_The_Grand_Slam_Offer_Architect_Lens.md"
+        },
+        {
+          "role": "The Pastoral Authority",
+          "displayRole": "The Clarity Shepherd",
+          "lensTitle": "The Clarity Shepherd",
+          "lensHandle": "@mc-direct-response-board-01-pastoral-authority-and-logical-dominance-lens",
+          "relativePath": "councils/direct-response-board/01_Pastoral_Authority_And_Logical_Dominance_Lens.md"
+        }
+      ],
+      "relativePath": "constellations/decagon-2-sovereign-brand.json",
+      "detailPath": "constellations/decagon-2-the-sovereign-brand-council.json"
+    },
+    {
+      "id": "dodecahedron-1-the-sovereign-strategy-council",
+      "title": "Sovereign Strategy Forum",
+      "displayTitle": "Sovereign Strategy Forum",
+      "handle": "@constellation-dodecahedron-1-the-sovereign-strategy-council",
+      "type": "Dodecahedron",
+      "purpose": "To deliberate on the long-term direction, ethical framework, and systemic impact of a major strategic initiative or organization. This is the constitutional council — the one that asks not just \"what should we do?\" but \"who should we be, and why does it matter?\"",
+      "projectManagerTitle": "The Radical Transparency Operator",
+      "projectManagerHandle": "@mc-project-managers-board-09-radical-transparency-operator-lens",
+      "members": [
+        {
+          "role": "The Systems Architect",
+          "displayRole": "The Systems Architect",
+          "lensTitle": "The Systems Architect",
+          "lensHandle": "@mc-project-managers-board-01-profound-knowledge-systems-lens",
+          "relativePath": "councils/project-managers-board/01_Profound_Knowledge_Systems_Lens.md"
+        },
+        {
+          "role": "The Scenario Planner",
+          "displayRole": "The Scenario Planner",
+          "lensTitle": "The Scenario Planner",
+          "lensHandle": "@mc-project-managers-board-08-scenario-planning-strategist-lens",
+          "relativePath": "councils/project-managers-board/08_Scenario_Planning_Strategist_Lens.md"
+        },
+        {
+          "role": "The First-Principles Engineer",
+          "displayRole": "The First-Principles Engineer",
+          "lensTitle": "The First-Principles Engineer",
+          "lensHandle": "@mc-pauls-board-01-first-principles-engineer-lens",
+          "relativePath": "councils/pauls-board/01_First_Principles_Engineer_Lens.md"
+        },
+        {
+          "role": "The Founder Realist",
+          "displayRole": "The Founder Realist",
+          "lensTitle": "The Founder Realist",
+          "lensHandle": "@mc-pauls-board-07-founder-reality-and-taste-lens",
+          "relativePath": "councils/pauls-board/07_Founder_Reality_And_Taste_Lens.md"
+        },
+        {
+          "role": "The Ethical Boundary",
+          "displayRole": "The Ethical Boundary",
+          "lensTitle": "The Ethical Boundary",
+          "lensHandle": "@mc-pauls-board-06-human-dignity-and-ethical-boundary-lens",
+          "relativePath": "councils/pauls-board/06_Human_Dignity_And_Ethical_Boundary_Lens.md"
+        },
+        {
+          "role": "The Long-Term Thinker",
+          "displayRole": "The Long-Term Thinker",
+          "lensTitle": "The Long-Term Thinker",
+          "lensHandle": "@mc-pauls-board-10-leverage-incentives-and-long-term-thinking-lens",
+          "relativePath": "councils/pauls-board/10_Leverage_Incentives_And_Long_Term_Thinking_Lens.md"
+        },
+        {
+          "role": "The Community Builder",
+          "displayRole": "The Community Builder",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/millennial-founders-board/05_Community_First_System_Builder_Lens.md"
+        },
+        {
+          "role": "The Culture Architect",
+          "displayRole": "The Culture Architect",
+          "lensTitle": "The Culture Architect",
+          "lensHandle": "@mc-org-builder-board-04-customer-service-and-company-culture-lens",
+          "relativePath": "councils/org-builder-board/04_Customer_Service_And_Company_Culture_Lens.md"
+        },
+        {
+          "role": "The Why-Finder",
+          "displayRole": "The Why-Finder",
+          "lensTitle": "The Why-Finder",
+          "lensHandle": "@mc-marketing-branding-board-01-start-with-why-and-golden-circle-lens",
+          "relativePath": "councils/marketing-branding-board/01_Start_With_Why_And_Golden_Circle_Lens.md"
+        },
+        {
+          "role": "The World Builder",
+          "displayRole": "The World Builder",
+          "lensTitle": "The World Builder",
+          "lensHandle": "@mc-visual-branding-board-06-the-world-builder-lens",
+          "relativePath": "councils/visual-branding-board/06_The_World_Builder_Lens.md"
+        },
+        {
+          "role": "The Complexity Navigator",
+          "displayRole": "The Complexity Navigator",
+          "lensTitle": "The Complexity Navigator",
+          "lensHandle": "@mc-project-managers-board-10-complexity-navigator-lens",
+          "relativePath": "councils/project-managers-board/10_Complexity_Navigator_Lens.md"
+        }
+      ],
+      "relativePath": "constellations/dodecahedron-1-sovereign-strategy.json",
+      "detailPath": "constellations/dodecahedron-1-the-sovereign-strategy-council.json"
+    },
+    {
+      "id": "octahedron-1-the-brand-soul-council",
+      "title": "Brand Soul Atelier",
+      "displayTitle": "Brand Soul Atelier",
+      "handle": "@constellation-octahedron-1-the-brand-soul-council",
+      "type": "Octahedron",
+      "purpose": "To define the deep, authentic, and resonant soul of a new brand — from its core purpose to its visual expression.",
+      "projectManagerTitle": "The Servant Leader",
+      "projectManagerHandle": "@mc-project-managers-board-07-servant-leadership-facilitator-lens",
+      "members": [
+        {
+          "role": "The Why-Finder",
+          "displayRole": "The Why-Finder",
+          "lensTitle": "The Why-Finder",
+          "lensHandle": "@mc-marketing-branding-board-01-start-with-why-and-golden-circle-lens",
+          "relativePath": "councils/marketing-branding-board/01_Start_With_Why_And_Golden_Circle_Lens.md"
+        },
+        {
+          "role": "The Storyteller",
+          "displayRole": "The Storyteller",
+          "lensTitle": "The Storyteller",
+          "lensHandle": "@mc-marketing-branding-board-08-resonate-and-storytelling-lens",
+          "relativePath": "councils/marketing-branding-board/08_Resonate_And_Storytelling_Lens.md"
+        },
+        {
+          "role": "The Cultural Synesthete",
+          "displayRole": "The Cultural Synesthete",
+          "lensTitle": "The Cultural Synesthete",
+          "lensHandle": "@mc-visual-branding-board-03-the-cultural-synesthete-lens",
+          "relativePath": "councils/visual-branding-board/03_The_Cultural_Synesthete_Lens.md"
+        },
+        {
+          "role": "The Underdog Champion",
+          "displayRole": "The Underdog Champion",
+          "lensTitle": "The Underdog Champion",
+          "lensHandle": "@mc-pauls-board-03-underdog-brand-and-culture-lens",
+          "relativePath": "councils/pauls-board/03_Underdog_Brand_And_Culture_Lens.md"
+        },
+        {
+          "role": "The Community Builder",
+          "displayRole": "The Community Builder",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/millennial-founders-board/05_Community_First_System_Builder_Lens.md"
+        }
+      ],
+      "relativePath": "constellations/octahedron-1-brand-soul.json",
+      "detailPath": "constellations/octahedron-1-the-brand-soul-council.json"
+    },
+    {
+      "id": "octahedron-2-the-scale-architecture-council",
+      "title": "Scale Architecture Engine",
+      "displayTitle": "Scale Architecture Engine",
+      "handle": "@constellation-octahedron-2-the-scale-architecture-council",
+      "type": "Octahedron",
+      "purpose": "To design the systems, structures, and strategies required to scale a proven product and organization.",
+      "projectManagerTitle": "The Agile Orchestrator",
+      "projectManagerHandle": "@mc-project-managers-board-04-agile-adaptive-delivery-lens",
+      "members": [
+        {
+          "role": "The Blitzscaling Strategist",
+          "displayRole": "The Blitzscaling Strategist",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/org-builder-board/03_Blitzscaling_And_Network_Effects_Lens.md"
+        },
+        {
+          "role": "The Systems Thinker",
+          "displayRole": "The Systems Entrepreneur",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/millennial-founders-board/02_Pragmatic_Systems_Entrepreneur_Lens.md"
+        },
+        {
+          "role": "The High-Output Manager",
+          "displayRole": "The High-Output Manager",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/org-builder-board/01_High_Output_Management_And_OKRs_Lens.md"
+        },
+        {
+          "role": "The Financial Analyst",
+          "displayRole": "The Long-Term Thinker",
+          "lensTitle": "The Long-Term Thinker",
+          "lensHandle": "@mc-pauls-board-10-leverage-incentives-and-long-term-thinking-lens",
+          "relativePath": "councils/pauls-board/10_Leverage_Incentives_And_Long_Term_Thinking_Lens.md"
+        },
+        {
+          "role": "The Market Positioner",
+          "displayRole": "The Market Positioner",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/marketing-branding-board/04_Obviously_Awesome_Positioning_Lens.md"
+        }
+      ],
+      "relativePath": "constellations/octahedron-2-scale-architecture.json",
+      "detailPath": "constellations/octahedron-2-the-scale-architecture-council.json"
+    },
+    {
+      "id": "octahedron-3-the-creative-world-council",
+      "title": "Creative World Forge",
+      "displayTitle": "Creative World Forge",
+      "handle": "@constellation-octahedron-3-the-creative-world-council",
+      "type": "Octahedron",
+      "purpose": "To build a complete, internally consistent creative world for a brand, product, or cultural project.",
+      "projectManagerTitle": "The Flow Optimizer",
+      "projectManagerHandle": "@mc-project-managers-board-05-lean-flow-optimizer-lens",
+      "members": [
+        {
+          "role": "The World Builder",
+          "displayRole": "The World Builder",
+          "lensTitle": "The World Builder",
+          "lensHandle": "@mc-visual-branding-board-06-the-world-builder-lens",
+          "relativePath": "councils/visual-branding-board/06_The_World_Builder_Lens.md"
+        },
+        {
+          "role": "The Cinematic Immersionist",
+          "displayRole": "The Cinematic Immersionist",
+          "lensTitle": "The Cinematic Immersionist",
+          "lensHandle": "@mc-visual-branding-board-07-the-cinematic-immersionist-lens",
+          "relativePath": "councils/visual-branding-board/07_The_Cinematic_Immersionist_Lens.md"
+        },
+        {
+          "role": "The Multimedia Storyteller",
+          "displayRole": "The Multimedia Storyteller",
+          "lensTitle": "The Multimedia Storyteller",
+          "lensHandle": "@mc-visual-branding-board-09-the-multimedia-storyteller-lens",
+          "relativePath": "councils/visual-branding-board/09_The_Multimedia_Storyteller_Lens.md"
+        },
+        {
+          "role": "The Interactive Experience Pioneer",
+          "displayRole": "The Interactive Experience Pioneer",
+          "lensTitle": "The Interactive Experience Pioneer",
+          "lensHandle": "@mc-visual-branding-board-10-the-interactive-experience-pioneers-lens",
+          "relativePath": "councils/visual-branding-board/10_The_Interactive_Experience_Pioneers_Lens.md"
+        }
+      ],
+      "relativePath": "constellations/octahedron-3-creative-world.json",
+      "detailPath": "constellations/octahedron-3-the-creative-world-council.json"
+    },
+    {
+      "id": "octahedron-4-the-market-entry-council",
+      "title": "Market Entry Engine",
+      "displayTitle": "Market Entry Engine",
+      "handle": "@constellation-octahedron-4-the-market-entry-council",
+      "type": "Octahedron",
+      "purpose": "To design a precise, differentiated, and defensible market entry strategy for a new product or service.",
+      "projectManagerTitle": "The Constraint Navigator",
+      "projectManagerHandle": "@mc-project-managers-board-02-critical-chain-constraint-lens",
+      "members": [
+        {
+          "role": "The Positioning Expert",
+          "displayRole": "The Market Positioner",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/marketing-branding-board/05_Positioning_And_Battle_For_Your_Mind_Lens.md"
+        },
+        {
+          "role": "The Customer Champion",
+          "displayRole": "The Customer Champion",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/org-builder-board/05_Customer_Development_And_Lean_Startup_Lens.md"
+        },
+        {
+          "role": "The Contrarian",
+          "displayRole": "The Contrarian Builder",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/millennial-founders-board/03_Contrarian_Infrastructure_Builder_Lens.md"
+        },
+        {
+          "role": "The Evangelist",
+          "displayRole": "The Evangelist",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/org-builder-board/08_Evangelism_Marketing_And_Enchantment_Lens.md"
+        },
+        {
+          "role": "The Playful Provocateur",
+          "displayRole": "The Playful Provocateur",
+          "lensTitle": "The Playful Provocateur",
+          "lensHandle": "@mc-direct-response-board-02-playful-provocateur-and-reality-bender-lens",
+          "relativePath": "councils/direct-response-board/02_Playful_Provocateur_And_Reality_Bender_Lens.md"
+        }
+      ],
+      "relativePath": "constellations/octahedron-4-market-entry.json",
+      "detailPath": "constellations/octahedron-4-the-market-entry-council.json"
+    },
+    {
+      "id": "octahedron-5-the-ethical-architecture-council",
+      "title": "Ethical Architecture Forum",
+      "displayTitle": "Ethical Architecture Forum",
+      "handle": "@constellation-octahedron-5-the-ethical-architecture-council",
+      "type": "Octahedron",
+      "purpose": "To design the ethical framework, governance structures, and human-centered principles for an AI system or technology product.",
+      "projectManagerTitle": "The Systems Architect",
+      "projectManagerHandle": "@mc-project-managers-board-01-profound-knowledge-systems-lens",
+      "members": [
+        {
+          "role": "The Ethical Boundary",
+          "displayRole": "The Ethical Boundary",
+          "lensTitle": "The Ethical Boundary",
+          "lensHandle": "@mc-pauls-board-06-human-dignity-and-ethical-boundary-lens",
+          "relativePath": "councils/pauls-board/06_Human_Dignity_And_Ethical_Boundary_Lens.md"
+        },
+        {
+          "role": "The Cognitive Analyst",
+          "displayRole": "The Cognitive Analyst",
+          "lensTitle": "The Cognitive Analyst",
+          "lensHandle": "@mc-pauls-board-05-cognitive-bias-and-judgment-lens",
+          "relativePath": "councils/pauls-board/05_Cognitive_Bias_And_Judgment_Lens.md"
+        },
+        {
+          "role": "The Interaction Designer",
+          "displayRole": "The Interaction Designer",
+          "lensTitle": "The Interaction Designer",
+          "lensHandle": "@mc-pauls-board-08-human-comprehension-and-interaction-lens",
+          "relativePath": "councils/pauls-board/08_Human_Comprehension_And_Interaction_Lens.md"
+        },
+        {
+          "role": "The Complexity Navigator",
+          "displayRole": "The Complexity Navigator",
+          "lensTitle": "The Complexity Navigator",
+          "lensHandle": "@mc-project-managers-board-10-complexity-navigator-lens",
+          "relativePath": "councils/project-managers-board/10_Complexity_Navigator_Lens.md"
+        },
+        {
+          "role": "The Long-Term Thinker",
+          "displayRole": "The Long-Term Thinker",
+          "lensTitle": "The Long-Term Thinker",
+          "lensHandle": "@mc-pauls-board-10-leverage-incentives-and-long-term-thinking-lens",
+          "relativePath": "councils/pauls-board/10_Leverage_Incentives_And_Long_Term_Thinking_Lens.md"
+        }
+      ],
+      "relativePath": "constellations/octahedron-5-ethical-architecture.json",
+      "detailPath": "constellations/octahedron-5-the-ethical-architecture-council.json"
+    },
+    {
+      "id": "octahedron-6-the-founder-s-compass-council",
+      "title": "Founder's Compass",
+      "displayTitle": "Founder's Compass",
+      "handle": "@constellation-octahedron-6-the-founder-s-compass-council",
+      "type": "Octahedron",
+      "purpose": "To provide a founder with a rigorous, multi-perspectival assessment of their current strategic position and the most important next move.",
+      "projectManagerTitle": "The Radical Transparency Operator",
+      "projectManagerHandle": "@mc-project-managers-board-09-radical-transparency-operator-lens",
+      "members": [
+        {
+          "role": "The Founder Realist",
+          "displayRole": "The Founder Realist",
+          "lensTitle": "The Founder Realist",
+          "lensHandle": "@mc-pauls-board-07-founder-reality-and-taste-lens",
+          "relativePath": "councils/pauls-board/07_Founder_Reality_And_Taste_Lens.md"
+        },
+        {
+          "role": "The First-Principles Engineer",
+          "displayRole": "The First-Principles Engineer",
+          "lensTitle": "The First-Principles Engineer",
+          "lensHandle": "@mc-pauls-board-01-first-principles-engineer-lens",
+          "relativePath": "councils/pauls-board/01_First_Principles_Engineer_Lens.md"
+        },
+        {
+          "role": "The Mission-Driven Builder",
+          "displayRole": "The Mission-Driven Builder",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/millennial-founders-board/04_Mission_Driven_Underdog_Builder_Lens.md"
+        },
+        {
+          "role": "The Recursive Founder",
+          "displayRole": "The Recursive Founder",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/millennial-founders-board/01_Recursive_Relationship_Centered_Founder_Lens.md"
+        },
+        {
+          "role": "The Keystone Problem Solver",
+          "displayRole": "The Keystone Problem Solver",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/millennial-founders-board/06_Keystone_Problem_AI_Builders_Lens.md"
+        }
+      ],
+      "relativePath": "constellations/octahedron-6-founders-compass.json",
+      "detailPath": "constellations/octahedron-6-the-founder-s-compass-council.json"
+    },
+    {
+      "id": "star-tetrahedron-1-the-go-to-market-engine",
+      "title": "Go-to-Market Engine",
+      "displayTitle": "Go-to-Market Engine",
+      "handle": "@constellation-star-tetrahedron-1-the-go-to-market-engine",
+      "type": "Star Tetrahedron",
+      "purpose": "To design a complete, end-to-end go-to-market strategy that is both strategically sound and operationally executable.",
+      "projectManagerTitle": "The Ownership Operator",
+      "projectManagerHandle": "@mc-project-managers-board-06-extreme-ownership-operator-lens",
+      "members": [
+        {
+          "role": "The Positioning Expert",
+          "displayRole": "The Market Positioner",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/marketing-branding-board/05_Positioning_And_Battle_For_Your_Mind_Lens.md"
+        },
+        {
+          "role": "The Offer Architect",
+          "displayRole": "The Offer Architect",
+          "lensTitle": "The Offer Architect",
+          "lensHandle": "@mc-pauls-board-04-direct-response-and-offer-creation-lens",
+          "relativePath": "councils/pauls-board/04_Direct_Response_And_Offer_Creation_Lens.md"
+        },
+        {
+          "role": "The Evangelist",
+          "displayRole": "The Evangelist",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/org-builder-board/08_Evangelism_Marketing_And_Enchantment_Lens.md"
+        },
+        {
+          "role": "The Blitzscaling Strategist",
+          "displayRole": "The Blitzscaling Strategist",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/org-builder-board/03_Blitzscaling_And_Network_Effects_Lens.md"
+        },
+        {
+          "role": "The Customer Champion",
+          "displayRole": "The Customer Champion",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/org-builder-board/05_Customer_Development_And_Lean_Startup_Lens.md"
+        },
+        {
+          "role": "The Financial Analyst",
+          "displayRole": "The Long-Term Thinker",
+          "lensTitle": "The Long-Term Thinker",
+          "lensHandle": "@mc-pauls-board-10-leverage-incentives-and-long-term-thinking-lens",
+          "relativePath": "councils/pauls-board/10_Leverage_Incentives_And_Long_Term_Thinking_Lens.md"
+        },
+        {
+          "role": "The Calm Operator",
+          "displayRole": "The Calm Operator",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/org-builder-board/07_Calm_Company_And_Remote_Work_Lens.md"
+        }
+      ],
+      "relativePath": "constellations/star-tetrahedron-1-go-to-market.json",
+      "detailPath": "constellations/star-tetrahedron-1-the-go-to-market-engine.json"
+    },
+    {
+      "id": "star-tetrahedron-2-the-full-spectrum-brand",
+      "title": "Full-Spectrum Brand Forge",
+      "displayTitle": "Full-Spectrum Brand Forge",
+      "handle": "@constellation-star-tetrahedron-2-the-full-spectrum-brand",
+      "type": "Star Tetrahedron",
+      "purpose": "To develop a complete brand system — from strategic positioning to visual identity to customer experience.",
+      "projectManagerTitle": "The Clearhead Operator",
+      "projectManagerHandle": "@mc-project-managers-board-03-clearhead-execution-lens",
+      "members": [
+        {
+          "role": "The Brand Theorist",
+          "displayRole": "The Brand Theorist",
+          "lensTitle": "The Brand Theorist",
+          "lensHandle": "@mc-marketing-branding-board-06-brand-gap-and-zag-lens",
+          "relativePath": "councils/marketing-branding-board/06_Brand_Gap_And_Zag_Lens.md"
+        },
+        {
+          "role": "The Why-Finder",
+          "displayRole": "The Why-Finder",
+          "lensTitle": "The Why-Finder",
+          "lensHandle": "@mc-marketing-branding-board-01-start-with-why-and-golden-circle-lens",
+          "relativePath": "councils/marketing-branding-board/01_Start_With_Why_And_Golden_Circle_Lens.md"
+        },
+        {
+          "role": "The Brand Equity Builder",
+          "displayRole": "The Brand Equity Builder",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/marketing-branding-board/07_Brand_Equity_And_Relevance_Lens.md"
+        },
+        {
+          "role": "The Visual Identity Lead",
+          "displayRole": "The Visual Identity Lead",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/marketing-branding-board/10_Brand_Identity_And_Graphic_Design_Lens.md"
+        },
+        {
+          "role": "The Essentialist",
+          "displayRole": "The Essentialist",
+          "lensTitle": "The Essentialist",
+          "lensHandle": "@mc-visual-branding-board-01-the-essentialist-tuner-lens",
+          "relativePath": "councils/visual-branding-board/01_The_Essentialist_Tuner_Lens.md"
+        },
+        {
+          "role": "The World Builder",
+          "displayRole": "The World Builder",
+          "lensTitle": "The World Builder",
+          "lensHandle": "@mc-visual-branding-board-06-the-world-builder-lens",
+          "relativePath": "councils/visual-branding-board/06_The_World_Builder_Lens.md"
+        },
+        {
+          "role": "The Perception Shaper",
+          "displayRole": "The Perception Shaper",
+          "lensTitle": "The Perception Shaper",
+          "lensHandle": "@mc-pauls-board-09-perception-signaling-and-narrative-lens",
+          "relativePath": "councils/pauls-board/09_Perception_Signaling_And_Narrative_Lens.md"
+        }
+      ],
+      "relativePath": "constellations/star-tetrahedron-2-full-spectrum-brand.json",
+      "detailPath": "constellations/star-tetrahedron-2-the-full-spectrum-brand.json"
+    },
+    {
+      "id": "star-tetrahedron-3-the-organizational-transformation",
+      "title": "Organizational Transformation Engine",
+      "displayTitle": "Organizational Transformation Engine",
+      "handle": "@constellation-star-tetrahedron-3-the-organizational-transformation",
+      "type": "Star Tetrahedron",
+      "purpose": "To design and execute a significant organizational transformation — a restructuring, cultural shift, or strategic pivot.",
+      "projectManagerTitle": "The Scenario Planner",
+      "projectManagerHandle": "@mc-project-managers-board-08-scenario-planning-strategist-lens",
+      "members": [
+        {
+          "role": "The Wartime CEO",
+          "displayRole": "The Wartime CEO",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/org-builder-board/02_Hard_Things_And_Wartime_CEO_Lens.md"
+        },
+        {
+          "role": "The Culture Architect",
+          "displayRole": "The Culture Architect",
+          "lensTitle": "The Culture Architect",
+          "lensHandle": "@mc-org-builder-board-04-customer-service-and-company-culture-lens",
+          "relativePath": "councils/org-builder-board/04_Customer_Service_And_Company_Culture_Lens.md"
+        },
+        {
+          "role": "The High-Output Manager",
+          "displayRole": "The High-Output Manager",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/org-builder-board/01_High_Output_Management_And_OKRs_Lens.md"
+        },
+        {
+          "role": "The Lean Experimenter",
+          "displayRole": "The Lean Experimenter",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/org-builder-board/06_Lean_Startup_And_Validated_Learning_Lens.md"
+        },
+        {
+          "role": "The Servant Leader",
+          "displayRole": "The Servant Leader",
+          "lensTitle": "The Servant Leader",
+          "lensHandle": "@mc-project-managers-board-07-servant-leadership-facilitator-lens",
+          "relativePath": "councils/project-managers-board/07_Servant_Leadership_Facilitator_Lens.md"
+        },
+        {
+          "role": "The Ethical Boundary",
+          "displayRole": "The Ethical Boundary",
+          "lensTitle": "The Ethical Boundary",
+          "lensHandle": "@mc-pauls-board-06-human-dignity-and-ethical-boundary-lens",
+          "relativePath": "councils/pauls-board/06_Human_Dignity_And_Ethical_Boundary_Lens.md"
+        },
+        {
+          "role": "The Long-Term Thinker",
+          "displayRole": "The Long-Term Thinker",
+          "lensTitle": "The Long-Term Thinker",
+          "lensHandle": "@mc-pauls-board-10-leverage-incentives-and-long-term-thinking-lens",
+          "relativePath": "councils/pauls-board/10_Leverage_Incentives_And_Long_Term_Thinking_Lens.md"
+        }
+      ],
+      "relativePath": "constellations/star-tetrahedron-3-organizational-transformation.json",
+      "detailPath": "constellations/star-tetrahedron-3-the-organizational-transformation.json"
+    },
+    {
+      "id": "star-tetrahedron-4-the-ai-product-council",
+      "title": "AI Product Council",
+      "displayTitle": "AI Product Council",
+      "handle": "@constellation-star-tetrahedron-4-the-ai-product-council",
+      "type": "Star Tetrahedron",
+      "purpose": "To design, position, and govern an AI-powered product from first principles to market launch.",
+      "projectManagerTitle": "The Complexity Navigator",
+      "projectManagerHandle": "@mc-project-managers-board-10-complexity-navigator-lens",
+      "members": [
+        {
+          "role": "The First-Principles Engineer",
+          "displayRole": "The First-Principles Engineer",
+          "lensTitle": "The First-Principles Engineer",
+          "lensHandle": "@mc-pauls-board-01-first-principles-engineer-lens",
+          "relativePath": "councils/pauls-board/01_First_Principles_Engineer_Lens.md"
+        },
+        {
+          "role": "The Interaction Designer",
+          "displayRole": "The Interaction Designer",
+          "lensTitle": "The Interaction Designer",
+          "lensHandle": "@mc-pauls-board-08-human-comprehension-and-interaction-lens",
+          "relativePath": "councils/pauls-board/08_Human_Comprehension_And_Interaction_Lens.md"
+        },
+        {
+          "role": "The Ethical Boundary",
+          "displayRole": "The Ethical Boundary",
+          "lensTitle": "The Ethical Boundary",
+          "lensHandle": "@mc-pauls-board-06-human-dignity-and-ethical-boundary-lens",
+          "relativePath": "councils/pauls-board/06_Human_Dignity_And_Ethical_Boundary_Lens.md"
+        },
+        {
+          "role": "The Keystone Problem Solver",
+          "displayRole": "The Keystone Problem Solver",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/millennial-founders-board/06_Keystone_Problem_AI_Builders_Lens.md"
+        },
+        {
+          "role": "The Contrarian",
+          "displayRole": "The Contrarian Builder",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/millennial-founders-board/03_Contrarian_Infrastructure_Builder_Lens.md"
+        },
+        {
+          "role": "The Customer-Obsessed Architect",
+          "displayRole": "The Customer-Obsessed Architect",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/millennial-founders-board/08_Customer_Obsessed_Culture_Architect_Lens.md"
+        },
+        {
+          "role": "The Positioning Expert",
+          "displayRole": "The Market Positioner",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/marketing-branding-board/04_Obviously_Awesome_Positioning_Lens.md"
+        }
+      ],
+      "relativePath": "constellations/star-tetrahedron-4-ai-product-council.json",
+      "detailPath": "constellations/star-tetrahedron-4-the-ai-product-council.json"
+    },
+    {
+      "id": "tetrahedron-1-the-first-principles-inquiry",
+      "title": "First-Principles Inquiry",
+      "displayTitle": "First-Principles Inquiry",
+      "handle": "@constellation-tetrahedron-1-the-first-principles-inquiry",
+      "type": "Tetrahedron",
+      "purpose": "To deconstruct a complex problem to its most fundamental truths and rebuild a solution from the ground up.",
+      "projectManagerTitle": "The Systems Architect",
+      "projectManagerHandle": "@mc-project-managers-board-01-profound-knowledge-systems-lens",
+      "members": [
+        {
+          "role": "The First-Principles Engineer",
+          "displayRole": "The First-Principles Engineer",
+          "lensTitle": "The First-Principles Engineer",
+          "lensHandle": "@mc-pauls-board-01-first-principles-engineer-lens",
+          "relativePath": "councils/pauls-board/01_First_Principles_Engineer_Lens.md"
+        },
+        {
+          "role": "The Founder Realist",
+          "displayRole": "The Founder Realist",
+          "lensTitle": "The Founder Realist",
+          "lensHandle": "@mc-pauls-board-07-founder-reality-and-taste-lens",
+          "relativePath": "councils/pauls-board/07_Founder_Reality_And_Taste_Lens.md"
+        },
+        {
+          "role": "The Cognitive Analyst",
+          "displayRole": "The Cognitive Analyst",
+          "lensTitle": "The Cognitive Analyst",
+          "lensHandle": "@mc-pauls-board-05-cognitive-bias-and-judgment-lens",
+          "relativePath": "councils/pauls-board/05_Cognitive_Bias_And_Judgment_Lens.md"
+        }
+      ],
+      "relativePath": "constellations/tetrahedron-1-first-principles.json",
+      "detailPath": "constellations/tetrahedron-1-the-first-principles-inquiry.json"
+    },
+    {
+      "id": "tetrahedron-2-the-brand-voice-quad",
+      "title": "Brand Voice Atelier",
+      "displayTitle": "Brand Voice Atelier",
+      "handle": "@constellation-tetrahedron-2-the-brand-voice-quad",
+      "type": "Tetrahedron",
+      "purpose": "To define the precise, ownable, and resonant voice of a brand — what it says, how it says it, and why it matters.",
+      "projectManagerTitle": "The Clearhead Operator",
+      "projectManagerHandle": "@mc-project-managers-board-03-clearhead-execution-lens",
+      "members": [
+        {
+          "role": "The Storyteller",
+          "displayRole": "The Storyteller",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/marketing-branding-board/02_StoryBrand_And_Clarify_Your_Message_Lens.md"
+        },
+        {
+          "role": "The Hardcore Persuader",
+          "displayRole": "The Hardcore Persuader",
+          "lensTitle": "The Hardcore Persuader",
+          "lensHandle": "@mc-direct-response-board-03-hardcore-direct-response-and-accountability-lens",
+          "relativePath": "councils/direct-response-board/03_Hardcore_Direct_Response_And_Accountability_Lens.md"
+        },
+        {
+          "role": "The Perception Shaper",
+          "displayRole": "The Perception Shaper",
+          "lensTitle": "The Perception Shaper",
+          "lensHandle": "@mc-pauls-board-09-perception-signaling-and-narrative-lens",
+          "relativePath": "councils/pauls-board/09_Perception_Signaling_And_Narrative_Lens.md"
+        }
+      ],
+      "relativePath": "constellations/tetrahedron-2-brand-voice.json",
+      "detailPath": "constellations/tetrahedron-2-the-brand-voice-quad.json"
+    },
+    {
+      "id": "tetrahedron-3-the-lean-validation-quad",
+      "title": "Lean Validation Loop",
+      "displayTitle": "Lean Validation Loop",
+      "handle": "@constellation-tetrahedron-3-the-lean-validation-quad",
+      "type": "Tetrahedron",
+      "purpose": "To rapidly validate or invalidate a product hypothesis with the minimum possible investment.",
+      "projectManagerTitle": "The Agile Orchestrator",
+      "projectManagerHandle": "@mc-project-managers-board-04-agile-adaptive-delivery-lens",
+      "members": [
+        {
+          "role": "The Customer Champion",
+          "displayRole": "The Customer Champion",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/org-builder-board/05_Customer_Development_And_Lean_Startup_Lens.md"
+        },
+        {
+          "role": "The Lean Experimenter",
+          "displayRole": "The Lean Experimenter",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/org-builder-board/06_Lean_Startup_And_Validated_Learning_Lens.md"
+        },
+        {
+          "role": "The Pragmatic Systems Thinker",
+          "displayRole": "The Pragmatic Systems Thinker",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/millennial-founders-board/02_Pragmatic_Systems_Entrepreneur_Lens.md"
+        }
+      ],
+      "relativePath": "constellations/tetrahedron-3-lean-validation.json",
+      "detailPath": "constellations/tetrahedron-3-the-lean-validation-quad.json"
+    },
+    {
+      "id": "tetrahedron-4-the-creative-concept-quad",
+      "title": "Creative Concept Forge",
+      "displayTitle": "Creative Concept Forge",
+      "handle": "@constellation-tetrahedron-4-the-creative-concept-quad",
+      "type": "Tetrahedron",
+      "purpose": "To generate a single, breakthrough creative concept for a campaign, product, or brand moment.",
+      "projectManagerTitle": "The Flow Optimizer",
+      "projectManagerHandle": "@mc-project-managers-board-05-lean-flow-optimizer-lens",
+      "members": [
+        {
+          "role": "The Essentialist",
+          "displayRole": "The Essentialist",
+          "lensTitle": "The Essentialist",
+          "lensHandle": "@mc-visual-branding-board-01-the-essentialist-tuner-lens",
+          "relativePath": "councils/visual-branding-board/01_The_Essentialist_Tuner_Lens.md"
+        },
+        {
+          "role": "The Cultural Remixer",
+          "displayRole": "The Cultural Remixer",
+          "lensTitle": "The Cultural Remixer",
+          "lensHandle": "@mc-visual-branding-board-04-the-cultural-remixer-lens",
+          "relativePath": "councils/visual-branding-board/04_The_Cultural_Remixer_Lens.md"
+        },
+        {
+          "role": "The 3% Theoretician",
+          "displayRole": "The 3% Theoretician",
+          "lensTitle": "The 3% Theoretician",
+          "lensHandle": "@mc-visual-branding-board-02-the-3-percent-theoretician-lens",
+          "relativePath": "councils/visual-branding-board/02_The_3_Percent_Theoretician_Lens.md"
+        }
+      ],
+      "relativePath": "constellations/tetrahedron-4-creative-concept.json",
+      "detailPath": "constellations/tetrahedron-4-the-creative-concept-quad.json"
+    },
+    {
+      "id": "tetrahedron-5-the-crisis-response-quad",
+      "title": "Crisis Response Cell",
+      "displayTitle": "Crisis Response Cell",
+      "handle": "@constellation-tetrahedron-5-the-crisis-response-quad",
+      "type": "Tetrahedron",
+      "purpose": "To make clear, decisive, and defensible decisions under conditions of acute pressure and incomplete information.",
+      "projectManagerTitle": "The Ownership Operator",
+      "projectManagerHandle": "@mc-project-managers-board-06-extreme-ownership-operator-lens",
+      "members": [
+        {
+          "role": "The Wartime CEO",
+          "displayRole": "The Wartime CEO",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/org-builder-board/02_Hard_Things_And_Wartime_CEO_Lens.md"
+        },
+        {
+          "role": "The Scenario Planner",
+          "displayRole": "The Scenario Planner",
+          "lensTitle": "The Scenario Planner",
+          "lensHandle": "@mc-project-managers-board-08-scenario-planning-strategist-lens",
+          "relativePath": "councils/project-managers-board/08_Scenario_Planning_Strategist_Lens.md"
+        },
+        {
+          "role": "The Ethical Boundary",
+          "displayRole": "The Ethical Boundary",
+          "lensTitle": "The Ethical Boundary",
+          "lensHandle": "@mc-pauls-board-06-human-dignity-and-ethical-boundary-lens",
+          "relativePath": "councils/pauls-board/06_Human_Dignity_And_Ethical_Boundary_Lens.md"
+        }
+      ],
+      "relativePath": "constellations/tetrahedron-5-crisis-response.json",
+      "detailPath": "constellations/tetrahedron-5-the-crisis-response-quad.json"
+    },
+    {
+      "id": "tetrahedron-6-the-offer-architecture-quad",
+      "title": "Offer Architecture Engine",
+      "displayTitle": "Offer Architecture Engine",
+      "handle": "@constellation-tetrahedron-6-the-offer-architecture-quad",
+      "type": "Tetrahedron",
+      "purpose": "To engineer an irresistible, high-value offer that converts at scale.",
+      "projectManagerTitle": "The Constraint Navigator",
+      "projectManagerHandle": "@mc-project-managers-board-02-critical-chain-constraint-lens",
+      "members": [
+        {
+          "role": "The Grand Slam Offer Architect",
+          "displayRole": "The Grand Slam Offer Architect",
+          "lensTitle": "The Grand Slam Offer Architect",
+          "lensHandle": "@mc-visual-branding-board-05-the-grand-slam-offer-architect-lens",
+          "relativePath": "councils/visual-branding-board/05_The_Grand_Slam_Offer_Architect_Lens.md"
+        },
+        {
+          "role": "The Direct Response Master",
+          "displayRole": "The Direct Response Master",
+          "lensTitle": "The Direct Response Master",
+          "lensHandle": "@mc-direct-response-board-04-simple-writing-system-and-one-reader-lens",
+          "relativePath": "councils/direct-response-board/04_Simple_Writing_System_And_One_Reader_Lens.md"
+        },
+        {
+          "role": "The Positioning Expert",
+          "displayRole": "The Market Positioner",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/marketing-branding-board/04_Obviously_Awesome_Positioning_Lens.md"
+        }
+      ],
+      "relativePath": "constellations/tetrahedron-6-offer-architecture.json",
+      "detailPath": "constellations/tetrahedron-6-the-offer-architecture-quad.json"
+    },
+    {
+      "id": "tetrahedron-7-the-org-design-quad",
+      "title": "Organizational Design Studio",
+      "displayTitle": "Organizational Design Studio",
+      "handle": "@constellation-tetrahedron-7-the-org-design-quad",
+      "type": "Tetrahedron",
+      "purpose": "To design the organizational structure and culture for a team at a specific stage of growth.",
+      "projectManagerTitle": "The Servant Leader",
+      "projectManagerHandle": "@mc-project-managers-board-07-servant-leadership-facilitator-lens",
+      "members": [
+        {
+          "role": "The Culture Architect",
+          "displayRole": "The Culture Architect",
+          "lensTitle": "The Culture Architect",
+          "lensHandle": "@mc-org-builder-board-04-customer-service-and-company-culture-lens",
+          "relativePath": "councils/org-builder-board/04_Customer_Service_And_Company_Culture_Lens.md"
+        },
+        {
+          "role": "The High-Output Manager",
+          "displayRole": "The High-Output Manager",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/org-builder-board/01_High_Output_Management_And_OKRs_Lens.md"
+        },
+        {
+          "role": "The Calm Operator",
+          "displayRole": "The Calm Operator",
+          "lensTitle": null,
+          "lensHandle": null,
+          "relativePath": "councils/org-builder-board/07_Calm_Company_And_Remote_Work_Lens.md"
+        }
+      ],
+      "relativePath": "constellations/tetrahedron-7-org-design.json",
+      "detailPath": "constellations/tetrahedron-7-the-org-design-quad.json"
+    },
+    {
+      "id": "tetrahedron-8-the-complexity-diagnosis-quad",
+      "title": "Complexity Diagnosis Array",
+      "displayTitle": "Complexity Diagnosis Array",
+      "handle": "@constellation-tetrahedron-8-the-complexity-diagnosis-quad",
+      "type": "Tetrahedron",
+      "purpose": "To accurately diagnose the nature of a complex strategic challenge before committing to an approach.",
+      "projectManagerTitle": "The Complexity Navigator",
+      "projectManagerHandle": "@mc-project-managers-board-10-complexity-navigator-lens",
+      "members": [
+        {
+          "role": "The Cognitive Analyst",
+          "displayRole": "The Cognitive Analyst",
+          "lensTitle": "The Cognitive Analyst",
+          "lensHandle": "@mc-pauls-board-05-cognitive-bias-and-judgment-lens",
+          "relativePath": "councils/pauls-board/05_Cognitive_Bias_And_Judgment_Lens.md"
+        },
+        {
+          "role": "The Radical Transparency Operator",
+          "displayRole": "The Radical Transparency Operator",
+          "lensTitle": "The Radical Transparency Operator",
+          "lensHandle": "@mc-project-managers-board-09-radical-transparency-operator-lens",
+          "relativePath": "councils/project-managers-board/09_Radical_Transparency_Operator_Lens.md"
+        },
+        {
+          "role": "The Long-Term Thinker",
+          "displayRole": "The Long-Term Thinker",
+          "lensTitle": "The Long-Term Thinker",
+          "lensHandle": "@mc-pauls-board-10-leverage-incentives-and-long-term-thinking-lens",
+          "relativePath": "councils/pauls-board/10_Leverage_Incentives_And_Long_Term_Thinking_Lens.md"
+        }
+      ],
+      "relativePath": "constellations/tetrahedron-8-complexity-diagnosis.json",
+      "detailPath": "constellations/tetrahedron-8-the-complexity-diagnosis-quad.json"
+    }
+  ]
+}

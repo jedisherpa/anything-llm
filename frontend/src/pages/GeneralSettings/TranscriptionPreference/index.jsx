@@ -9,7 +9,10 @@ import AnythingLLMIcon from "@/media/logo/anything-llm-icon.png";
 import OpenAiWhisperOptions from "@/components/TranscriptionSelection/OpenAiOptions";
 import NativeTranscriptionOptions from "@/components/TranscriptionSelection/NativeTranscriptionOptions";
 import LLMItem from "@/components/LLMSelection/LLMItem";
-import { CaretUpDown, MagnifyingGlass, X } from "@phosphor-icons/react";
+import { CaretUpDown } from "@phosphor-icons/react/dist/csr/CaretUpDown";
+import { MagnifyingGlass } from "@phosphor-icons/react/dist/csr/MagnifyingGlass";
+import { X } from "@phosphor-icons/react/dist/csr/X";
+
 import CTAButton from "@/components/lib/CTAButton";
 import { useTranslation } from "react-i18next";
 
@@ -99,12 +102,12 @@ export default function TranscriptionModelPreference() {
   );
 
   return (
-    <div className="w-screen h-screen overflow-hidden bg-theme-bg-container flex">
+    <div className="metacanon-page-shell w-screen h-screen overflow-hidden bg-theme-bg-container flex">
       <Sidebar />
       {loading ? (
         <div
           style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
-          className="relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
+          className="metacanon-page-frame relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
         >
           <div className="w-full h-full flex justify-center items-center">
             <PreLoader />
@@ -113,7 +116,7 @@ export default function TranscriptionModelPreference() {
       ) : (
         <div
           style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
-          className="relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
+          className="metacanon-page-frame relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
         >
           <form onSubmit={handleSubmit} className="flex w-full">
             <div className="flex flex-col w-full px-1 md:pl-6 md:pr-[50px] py-16 md:py-6">
@@ -147,6 +150,7 @@ export default function TranscriptionModelPreference() {
                     onClick={() => setSearchMenuOpen(false)}
                   />
                 )}
+
                 {searchMenuOpen ? (
                   <div className="absolute top-0 left-0 w-full max-w-[640px] max-h-[310px] min-h-[64px] bg-theme-settings-input-bg rounded-lg flex flex-col justify-between cursor-pointer border-2 border-primary-button z-20">
                     <div className="w-full flex flex-col gap-y-1">
@@ -156,6 +160,7 @@ export default function TranscriptionModelPreference() {
                           weight="bold"
                           className="absolute left-4 z-30 text-theme-text-primary -ml-4 my-2"
                         />
+
                         <input
                           type="text"
                           name="provider-search"
@@ -168,6 +173,7 @@ export default function TranscriptionModelPreference() {
                             if (e.key === "Enter") e.preventDefault();
                           }}
                         />
+
                         <X
                           size={20}
                           weight="bold"
@@ -202,6 +208,7 @@ export default function TranscriptionModelPreference() {
                         alt={`${selectedProviderObject.name} logo`}
                         className="w-10 h-10 rounded-md"
                       />
+
                       <div className="flex flex-col text-left">
                         <div className="text-sm font-semibold text-white">
                           {selectedProviderObject.name}

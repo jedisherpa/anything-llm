@@ -24,7 +24,11 @@ jobs:
         with:
           node-version: '18'
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Cache root dependencies
+        id: cache-root
         uses: actions/cache@v3
         with:
           path: |
@@ -35,6 +39,7 @@ jobs:
             ${{ runner.os }}-yarn-root-
 
       - name: Cache server dependencies
+        id: cache-server
         uses: actions/cache@v3
         with:
           path: |
@@ -45,6 +50,7 @@ jobs:
             ${{ runner.os }}-yarn-server-
 
       - name: Cache collector dependencies
+        id: cache-collector
         uses: actions/cache@v3
         with:
           path: |
@@ -56,21 +62,21 @@ jobs:
 
       - name: Install root dependencies
         if: steps.cache-root.outputs.cache-hit != 'true'
-        run: yarn install --frozen-lockfile
+        run: corepack yarn install --frozen-lockfile
 
       - name: Install server dependencies
         if: steps.cache-server.outputs.cache-hit != 'true'
-        run: cd server && yarn install --frozen-lockfile
+        run: cd server && corepack yarn install --frozen-lockfile
 
       - name: Install collector dependencies
         if: steps.cache-collector.outputs.cache-hit != 'true'
-        run: cd collector && yarn install --frozen-lockfile
+        run: cd collector && corepack yarn install --frozen-lockfile
 
       - name: Setup environment and Prisma
-        run: yarn setup:envs && yarn prisma:setup
+        run: corepack yarn setup:envs && corepack yarn prisma:setup
 
       - name: Run test suites
-        run: yarn test
+        run: corepack yarn test
 
       - name: Fail job on error
         if: failure()

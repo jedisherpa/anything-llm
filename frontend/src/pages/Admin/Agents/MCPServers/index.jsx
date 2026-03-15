@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { titleCase } from "text-case";
-import { BookOpenText, ArrowClockwise } from "@phosphor-icons/react";
+import { BookOpenText } from "@phosphor-icons/react/dist/csr/BookOpenText";
+import { ArrowClockwise } from "@phosphor-icons/react/dist/csr/ArrowClockwise";
+
 import MCPLogo from "@/media/agents/mcp-logo.svg";
 import MCPServers from "@/models/mcpServers";
 import showToast from "@/utils/toast";
@@ -70,6 +72,7 @@ export function MCPServerHeader({
               size={16}
               className={loadingMcpServers ? "animate-spin" : ""}
             />
+
             <p className="text-sm">
               {loadingMcpServers ? "Loading..." : "Refresh"}
             </p>
@@ -89,7 +92,7 @@ export function MCPServersList({
 }) {
   if (isLoading) {
     return (
-      <div className="text-theme-text-secondary text-center text-xs flex flex-col gap-y-2">
+      <div className="prism-empty-state prism-empty-state--compact text-xs">
         <p>Loading MCP Servers from configuration file...</p>
         <a
           href="https://docs.anythingllm.com/mcp-compatibility/overview"
@@ -105,7 +108,7 @@ export function MCPServersList({
 
   if (servers.length === 0) {
     return (
-      <div className="text-theme-text-secondary text-center text-xs flex flex-col gap-y-2">
+      <div className="prism-empty-state prism-empty-state--compact text-xs">
         <p>No MCP servers found</p>
         <a
           href="https://docs.anythingllm.com/mcp-compatibility/overview"
@@ -120,16 +123,14 @@ export function MCPServersList({
   }
 
   return (
-    <div className="bg-theme-bg-secondary text-white rounded-xl w-full md:min-w-[360px]">
+    <div className="prism-interactive-list text-white rounded-xl w-full md:min-w-[360px]">
       {servers.map((server, index) => (
         <div
           key={server.name}
-          className={`py-3 px-4 flex items-center justify-between ${
+          className={`prism-interactive-list-row py-3 px-4 flex items-center justify-between ${
             index === 0 ? "rounded-t-xl" : ""
           } ${
-            index === servers.length - 1
-              ? "rounded-b-xl"
-              : "border-b border-white/10"
+            index === servers.length - 1 ? "rounded-b-xl" : ""
           } cursor-pointer transition-all duration-300 hover:bg-theme-bg-primary ${
             selectedServer?.name === server.name
               ? "bg-white/10 light:bg-theme-bg-sidebar"

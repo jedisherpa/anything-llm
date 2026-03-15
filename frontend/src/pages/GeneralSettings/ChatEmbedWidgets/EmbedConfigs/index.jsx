@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import * as Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { CodeBlock } from "@phosphor-icons/react";
+import { CodeBlock } from "@phosphor-icons/react/dist/csr/CodeBlock";
+
 import EmbedRow from "./EmbedRow";
 import NewEmbedModal from "./NewEmbedModal";
 import { useModal } from "@/hooks/useModal";
@@ -62,7 +63,7 @@ export default function EmbedConfigsView() {
         </div>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full text-xs text-left rounded-lg min-w-[640px] border-spacing-0">
+        <table className="prism-data-table w-full text-xs text-left rounded-lg min-w-[640px] border-spacing-0">
           <thead className="text-theme-text-secondary text-xs leading-[18px] uppercase border-white/10 border-b">
             <tr>
               <th scope="col" className="px-6 py-3">

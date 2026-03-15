@@ -3,6 +3,13 @@ const { safeJsonParse } = require("../../http");
 const { TokenManager } = require("../tiktoken");
 const { convertToPromptHistory } = require("./responses");
 
+const PRECISION_PROMPT_TOKEN_BUFFER = 600;
+const UNSUPPORTED_PRECISION_CONTENT_TYPES = new Set([
+  "image",
+  "image_url",
+  "input_image",
+]);
+
 /*
 What is the message Array compressor?
 TLDR: So anyway, i started blasting (your prompts & stuff)
@@ -50,7 +57,7 @@ async function messageArrayCompressor(llm, messages = [], rawHistory = []) {
   // assume the response will be at least 600 tokens. If the total prompt + reply is over we need to proactively
   // run the compressor to ensure the prompt has enough space to reply.
   // realistically - most users will not be impacted by this.
-  const tokenBuffer = 600;
+  const tokenBuffer = PRECISION_PROMPT_TOKEN_BUFFER;
   const tokenManager = new TokenManager(llm.model);
   // If no work needs to be done, just pass through.
   if (tokenManager.statsFrom(messages) + tokenBuffer < llm.promptWindowLimit())
@@ -191,7 +198,7 @@ async function messageArrayCompressor(llm, messages = [], rawHistory = []) {
 
 // Implementation of messageArrayCompressor, but for string only completion models
 async function messageStringCompressor(llm, promptArgs = {}, rawHistory = []) {
-  const tokenBuffer = 600;
+  const tokenBuffer = PRECISION_PROMPT_TOKEN_BUFFER;
   const tokenManager = new TokenManager(llm.model);
   const initialPrompt = llm.constructPrompt(promptArgs);
   if (
@@ -307,6 +314,197 @@ async function messageStringCompressor(llm, promptArgs = {}, rawHistory = []) {
     chatHistory: cHistory,
     userPrompt: cPrompt,
   });
+}
+
+function normalizePromptHandling({
+  promptHandling = null,
+  precisionMode = false,
+} = {}) {
+  if (precisionMode === true) return "precision";
+
+  switch (String(promptHandling ?? "").toLowerCase()) {
+    case "precision":
+      return "precision";
+    case "compressed":
+    case "compress":
+    case "default":
+    case "":
+      return "compress";
+    default:
+      return "compress";
+  }
+}
+
+function normalizePrecisionContent(content) {
+  if (content === null || content === undefined) return { text: "" };
+  if (typeof content === "string") return { text: content };
+  if (typeof content === "number" || typeof content === "boolean")
+    return { text: String(content) };
+
+  if (Array.isArray(content)) {
+    let text = "";
+    for (const item of content) {
+      const normalized = normalizePrecisionContent(item);
+      if (normalized.unsupported) return normalized;
+      text += `${normalized.text}\n`;
+    }
+    return { text };
+  }
+
+  if (typeof content === "object") {
+    if (Array.isArray(content.images) && content.images.length > 0) {
+      return {
+        unsupported: true,
+        reason: "image attachments are not supported in precision mode yet",
+      };
+    }
+
+    if (
+      typeof content.type === "string" &&
+      UNSUPPORTED_PRECISION_CONTENT_TYPES.has(content.type)
+    ) {
+      return {
+        unsupported: true,
+        reason: "image attachments are not supported in precision mode yet",
+      };
+    }
+
+    if (content.image_url || content.source?.media_type?.startsWith?.("image/"))
+      return {
+        unsupported: true,
+        reason: "image attachments are not supported in precision mode yet",
+      };
+
+    if (typeof content.text === "string") return { text: content.text };
+    if (content.hasOwnProperty("content"))
+      return normalizePrecisionContent(content.content);
+    return { text: JSON.stringify(content) };
+  }
+
+  return { text: String(content) };
+}
+
+function estimatePrecisionPromptTokens(messages = [], model = "gpt-4o") {
+  const tokenManager = new TokenManager(model);
+
+  if (typeof messages === "string") {
+    return {
+      supported: true,
+      estimatedPromptTokens: tokenManager.countFromString(messages),
+    };
+  }
+
+  if (!Array.isArray(messages)) {
+    return {
+      supported: true,
+      estimatedPromptTokens: tokenManager.countFromString(
+        JSON.stringify(messages)
+      ),
+    };
+  }
+
+  const normalizedMessages = [];
+  for (const message of messages) {
+    const normalized = normalizePrecisionContent(message);
+    if (normalized.unsupported)
+      return { supported: false, reason: normalized.reason };
+
+    normalizedMessages.push({
+      ...message,
+      content: normalized.text,
+    });
+  }
+
+  return {
+    supported: true,
+    estimatedPromptTokens: tokenManager.statsFrom(normalizedMessages),
+  };
+}
+
+async function buildMessagesWithPromptHandling({
+  llm,
+  promptArgs = {},
+  rawHistory = [],
+  promptHandling = null,
+  precisionMode = false,
+} = {}) {
+  const resolvedPromptHandling = normalizePromptHandling({
+    promptHandling,
+    precisionMode,
+  });
+
+  if (resolvedPromptHandling !== "precision") {
+    return {
+      messages: await llm.compressMessages(promptArgs, rawHistory),
+      promptHandling: resolvedPromptHandling,
+      metrics: null,
+      abort: null,
+    };
+  }
+
+  const messages = llm.constructPrompt(promptArgs);
+  const rawPromptWindowLimit = await Promise.resolve(llm.promptWindowLimit());
+  const promptWindowLimit =
+    Number.isFinite(Number(rawPromptWindowLimit)) &&
+    Number(rawPromptWindowLimit) > 0
+      ? Number(rawPromptWindowLimit)
+      : 4096;
+  const maxPromptTokens = Math.max(
+    promptWindowLimit - PRECISION_PROMPT_TOKEN_BUFFER,
+    0
+  );
+  const analysis = estimatePrecisionPromptTokens(messages, llm.model);
+
+  if (!analysis.supported) {
+    return {
+      messages: null,
+      promptHandling: resolvedPromptHandling,
+      metrics: null,
+      abort: {
+        error:
+          "Precision mode is not available for image attachments yet because the server cannot reliably estimate their token cost.",
+        metrics: {
+          prompt_handling: resolvedPromptHandling,
+          prompt_window_limit: promptWindowLimit,
+          max_prompt_tokens: maxPromptTokens,
+          reserved_response_tokens: PRECISION_PROMPT_TOKEN_BUFFER,
+          unsupported_reason: analysis.reason,
+        },
+      },
+    };
+  }
+
+  if (analysis.estimatedPromptTokens > maxPromptTokens) {
+    return {
+      messages: null,
+      promptHandling: resolvedPromptHandling,
+      metrics: null,
+      abort: {
+        error: `Precision mode rejected this request because the fully assembled prompt is estimated at ${analysis.estimatedPromptTokens} tokens, but the selected model only allows ${maxPromptTokens} prompt tokens after reserving ${PRECISION_PROMPT_TOKEN_BUFFER} tokens for the reply. Choose a larger-context model or reduce attached context.`,
+        metrics: {
+          prompt_handling: resolvedPromptHandling,
+          estimated_prompt_tokens: analysis.estimatedPromptTokens,
+          prompt_window_limit: promptWindowLimit,
+          max_prompt_tokens: maxPromptTokens,
+          reserved_response_tokens: PRECISION_PROMPT_TOKEN_BUFFER,
+          overflow_tokens: analysis.estimatedPromptTokens - maxPromptTokens,
+        },
+      },
+    };
+  }
+
+  return {
+    messages,
+    promptHandling: resolvedPromptHandling,
+    metrics: {
+      prompt_handling: resolvedPromptHandling,
+      estimated_prompt_tokens: analysis.estimatedPromptTokens,
+      prompt_window_limit: promptWindowLimit,
+      max_prompt_tokens: maxPromptTokens,
+      reserved_response_tokens: PRECISION_PROMPT_TOKEN_BUFFER,
+    },
+    abort: null,
+  };
 }
 
 // Cannonball prompting: aka where we shoot a proportionally big cannonball through a proportional large prompt
@@ -442,6 +640,9 @@ function fillSourceWindow({
 }
 
 module.exports = {
+  PRECISION_PROMPT_TOKEN_BUFFER,
+  normalizePromptHandling,
+  buildMessagesWithPromptHandling,
   messageArrayCompressor,
   messageStringCompressor,
   fillSourceWindow,

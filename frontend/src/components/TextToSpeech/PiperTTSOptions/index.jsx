@@ -3,7 +3,9 @@ import PiperTTSClient from "@/utils/piperTTS";
 import { titleCase } from "text-case";
 import { humanFileSize } from "@/utils/numbers";
 import showToast from "@/utils/toast";
-import { CircleNotch, PauseCircle, PlayCircle } from "@phosphor-icons/react";
+import { CircleNotch } from "@phosphor-icons/react/dist/csr/CircleNotch";
+import { PauseCircle } from "@phosphor-icons/react/dist/csr/PauseCircle";
+import { PlayCircle } from "@phosphor-icons/react/dist/csr/PlayCircle";
 
 export default function PiperTTSOptions({ settings }) {
   return (
@@ -208,6 +210,7 @@ function DemoVoiceSample({ voiceId }) {
           )}
         </>
       )}
+
       <audio
         ref={playerRef}
         hidden={true}

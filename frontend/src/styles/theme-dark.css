@@ -1,0 +1,47 @@
+:root {
+  /* Metacanon shell tokens - Dark (The Forge) */
+  --bg: #0d0d0f;
+  --sidebar-bg: #12110e;
+  --sidebar-bg-end: #0d0d0f;
+  --sidebar-glow-color: rgba(218, 165, 32, 0.04);
+  --sidebar-border: rgba(218, 165, 32, 0.06);
+  --subtle-border: rgba(255, 255, 255, 0.03);
+  --text-1: #e8e4dc;
+  --text-2: rgba(232, 228, 220, 0.35);
+  --text-3: rgba(232, 228, 220, 0.2);
+  --text-placeholder: rgba(232, 228, 220, 0.25);
+  --gold: #daa520;
+  --gold-glow: rgba(218, 165, 32, 0.4);
+  --gold-text: rgba(218, 165, 32, 0.6);
+  --gold-bg: rgba(218, 165, 32, 0.15);
+  --gold-border: rgba(218, 165, 32, 0.2);
+  --active-bg: rgba(218, 165, 32, 0.04);
+  --active-border: rgba(218, 165, 32, 0.06);
+  --chip-border: rgba(218, 165, 32, 0.06);
+  --chip-text: rgba(232, 228, 220, 0.3);
+  --comp-bg: rgba(255, 255, 255, 0.02);
+  --comp-border: rgba(218, 165, 32, 0.06);
+  --send-bg: rgba(218, 165, 32, 0.2);
+  --send-border: rgba(218, 165, 32, 0.3);
+  --send-icon: rgba(218, 165, 32, 0.6);
+  --mc-text: #0d0d0f;
+  --mc-shadow: 0 0 4px rgba(218, 165, 32, 0.5);
+  --thread-active: rgba(218, 165, 32, 0.7);
+  --inscription: rgba(218, 165, 32, 0.12);
+  --logo-filter: drop-shadow(0 0 8px rgba(218, 165, 32, 0.15));
+  --prism-filter: drop-shadow(0 0 20px rgba(218, 165, 32, 0.15))
+    drop-shadow(0 0 60px rgba(218, 165, 32, 0.05));
+  --prism-btn-filter: drop-shadow(0 0 4px rgba(218, 165, 32, 0.2));
+  --halo-border: rgba(218, 165, 32, 0.04);
+  --halo-shadow: none;
+  --cross-h: rgba(218, 165, 32, 0.08);
+  --cross-v: rgba(218, 165, 32, 0.06);
+  --display-font: "Cormorant Garamond", serif;
+  --display-weight: 300;
+  --help-grad: linear-gradient(135deg, #daa520, #c9941a, #e8c547);
+  --tagline-color: rgba(218, 165, 32, 0.3);
+  --status-label: "PRISM IDLE";
+  --placeholder-text: "Speak, and the Prism listens...";
+  --inscription-text: "the architecture of the self";
+  --tagline-text: "structure & soul";
+}

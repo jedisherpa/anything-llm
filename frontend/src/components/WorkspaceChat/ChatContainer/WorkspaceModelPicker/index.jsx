@@ -87,31 +87,23 @@ export default function WorkspaceModelPicker({ workspaceSlug = null }) {
       )}
       <div
         className={`hidden md:block absolute top-2 z-30 transition-all duration-500 ${
-          sidebarOpen ? "left-3" : "left-11"
+          sidebarOpen ? "left-8" : "left-11"
         }`}
       >
         <button
           type="button"
           onClick={() => setShowSelector(!showSelector)}
-          className={`group border-none cursor-pointer px-2.5 py-1 flex items-center rounded-full transition-all ${
-            showSelector
-              ? "bg-zinc-700 light:bg-slate-200"
-              : "hover:bg-zinc-700 light:hover:bg-slate-200"
-          }`}
+          className="metacanon-model-picker-button group flex cursor-pointer items-center rounded-full border-none px-3 py-2 transition-all"
+          data-open={showSelector ? "true" : "false"}
         >
-          <span
-            className={`text-xs ${
-              showSelector
-                ? "text-white light:text-slate-800"
-                : "text-zinc-500 light:text-slate-500 group-hover:text-white light:group-hover:text-slate-800"
-            }`}
-          >
-            {modelName || t("chat_window.select_model")}
+          <span className="metacanon-model-picker-button__text text-[14px] leading-none">
+            {modelName || t("chat_window.select_model")}{" "}
+            <span aria-hidden="true">▾</span>
           </span>
         </button>
 
         {showSelector && (
-          <div className="absolute left-0 top-full mt-1 bg-zinc-800 light:bg-white border border-zinc-700 light:border-slate-300 rounded-xl shadow-lg w-[620px] overflow-hidden">
+          <div className="metacanon-model-picker-panel absolute left-0 top-full mt-2 w-[620px] overflow-hidden rounded-[22px]">
             <LLMSelectorModal
               key={refreshKey}
               workspaceSlug={slug}

@@ -1,5 +1,7 @@
 import System from "@/models/system";
-import { CaretDown, CaretUp } from "@phosphor-icons/react";
+import { CaretDown } from "@phosphor-icons/react/dist/csr/CaretDown";
+import { CaretUp } from "@phosphor-icons/react/dist/csr/CaretUp";
+
 import { useState, useEffect } from "react";
 
 export default function CometApiLLMOptions({ settings }) {
@@ -65,6 +67,7 @@ function AdvancedControls({ settings }) {
             min={500}
             step={1}
           />
+
           <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
             Timeout value between token responses to auto-timeout the stream.
           </p>
@@ -140,6 +143,7 @@ function CometApiModelSelection({ settings }) {
         autoComplete="off"
         spellCheck={false}
       />
+
       <datalist id="cometapi-models-list">
         {models.map((model) => (
           <option key={model.id} value={model.id}>

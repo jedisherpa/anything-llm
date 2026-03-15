@@ -1,4 +1,4 @@
-import { Info } from "@phosphor-icons/react";
+import { Info } from "@phosphor-icons/react/dist/csr/Info";
 
 const TOGGLE_STYLES = {
   sm: "h-[12px] w-[20px] after:h-[8px] after:w-[8px] after:top-[2px] after:left-[2px] peer-checked:after:translate-x-full",
@@ -69,6 +69,7 @@ export default function Toggle({
           labelStyles={labelStyles}
           hint={hint}
         />
+
         <div className="shrink-0 ml-4">
           <ToggleSwitch
             name={name}
@@ -93,6 +94,7 @@ export default function Toggle({
         inputProps={inputProps}
         value={value}
       />
+
       {(label || description) && (
         <div className="ml-3">
           <TextContent
@@ -118,6 +120,7 @@ function ToggleSwitch({ name, disabled, size, inputProps, value }) {
         value={value}
         {...inputProps}
       />
+
       <div
         className={`
           relative shrink-0 peer pointer-events-none rounded-full
@@ -151,6 +154,7 @@ function TextContent({ label, description, labelStyles = {}, hint }) {
           )}
         </span>
       )}
+
       {description && (
         <span
           className={`text-zinc-400 light:text-zinc-600 ${labelStyles.description}`}

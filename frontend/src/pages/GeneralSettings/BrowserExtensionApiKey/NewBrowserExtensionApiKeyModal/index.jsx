@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { X } from "@phosphor-icons/react";
+import { X } from "@phosphor-icons/react/dist/csr/X";
+
 import BrowserExtensionApiKey from "@/models/browserExtensionApiKey";
 import { fullApiUrl, POPUP_BROWSER_EXTENSION_EVENT } from "@/utils/constants";
+import ModalWrapper from "@/components/ModalWrapper";
+import PrismHoverTarget from "@/components/PrismHoverTarget";
 
 export default function NewBrowserExtensionApiKeyModal({
   closeModal,
@@ -48,21 +51,23 @@ export default function NewBrowserExtensionApiKeyModal({
   }, [copied]);
 
   return (
-    <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="relative w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border">
+    <ModalWrapper isOpen={true}>
+      <div className="relative w-full max-w-2xl metacanon-modal-panel bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border">
         <div className="relative p-6 border-b rounded-t border-theme-modal-border">
           <div className="w-full flex gap-x-2 items-center">
             <h3 className="text-xl font-semibold text-white overflow-hidden overflow-ellipsis whitespace-nowrap">
               New Browser Extension API Key
             </h3>
           </div>
-          <button
-            onClick={closeModal}
-            type="button"
-            className="absolute top-4 right-4 transition-all duration-300 bg-transparent rounded-lg text-sm p-1 inline-flex items-center hover:bg-theme-modal-border hover:border-theme-modal-border hover:border-opacity-50 border-transparent border"
-          >
-            <X size={24} weight="bold" className="text-white" />
-          </button>
+          <PrismHoverTarget targetId="modal-browser-extension-api-key-close">
+            <button
+              onClick={closeModal}
+              type="button"
+              className="absolute top-4 right-4 transition-all duration-300 bg-transparent rounded-lg text-sm p-1 inline-flex items-center hover:bg-theme-modal-border hover:border-theme-modal-border hover:border-opacity-50 border-transparent border"
+            >
+              <X size={24} weight="bold" className="text-white" />
+            </button>
+          </PrismHoverTarget>
         </div>
         <div className="px-7 py-6">
           <form onSubmit={handleCreate}>
@@ -76,6 +81,7 @@ export default function NewBrowserExtensionApiKeyModal({
                   className="border-none bg-theme-settings-input-bg w-full text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg block w-full p-2.5"
                 />
               )}
+
               {isMultiUser && (
                 <p className="text-yellow-300 light:text-orange-500 text-xs md:text-sm font-semibold">
                   Warning: You are in multi-user mode, this API key will allow
@@ -83,6 +89,7 @@ export default function NewBrowserExtensionApiKeyModal({
                   share it cautiously.
                 </p>
               )}
+
               <p className="text-white text-opacity-60 text-xs md:text-sm">
                 After clicking "Create API Key", AnythingLLM will attempt to
                 connect to your browser extension automatically.
@@ -96,34 +103,40 @@ export default function NewBrowserExtensionApiKeyModal({
             <div className="flex justify-between items-center mt-6 pt-6 border-t border-theme-modal-border">
               {!apiKey ? (
                 <>
-                  <button
-                    onClick={closeModal}
-                    type="button"
-                    className="transition-all duration-300 text-white hover:bg-zinc-700 px-4 py-2 rounded-lg text-sm"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="transition-all duration-300 bg-white text-black hover:opacity-60 px-4 py-2 rounded-lg text-sm"
-                  >
-                    Create API Key
-                  </button>
+                  <PrismHoverTarget targetId="modal-browser-extension-api-key-cancel">
+                    <button
+                      onClick={closeModal}
+                      type="button"
+                      className="transition-all duration-300 text-white hover:bg-zinc-700 px-4 py-2 rounded-lg text-sm"
+                    >
+                      Cancel
+                    </button>
+                  </PrismHoverTarget>
+                  <PrismHoverTarget targetId="modal-browser-extension-api-key-create">
+                    <button
+                      type="submit"
+                      className="transition-all duration-300 bg-white text-black hover:opacity-60 px-4 py-2 rounded-lg text-sm"
+                    >
+                      Create API Key
+                    </button>
+                  </PrismHoverTarget>
                 </>
               ) : (
-                <button
-                  onClick={copyApiKey}
-                  type="button"
-                  disabled={copied}
-                  className="w-full transition-all duration-300 bg-white text-black hover:opacity-60 px-4 py-2 rounded-lg text-sm cursor-pointer"
-                >
-                  {copied ? "API Key Copied!" : "Copy API Key"}
-                </button>
+                <PrismHoverTarget targetId="modal-browser-extension-api-key-copy">
+                  <button
+                    onClick={copyApiKey}
+                    type="button"
+                    disabled={copied}
+                    className="w-full transition-all duration-300 bg-white text-black hover:opacity-60 px-4 py-2 rounded-lg text-sm cursor-pointer"
+                  >
+                    {copied ? "API Key Copied!" : "Copy API Key"}
+                  </button>
+                </PrismHoverTarget>
               )}
             </div>
           </form>
         </div>
       </div>
-    </div>
+    </ModalWrapper>
   );
 }

@@ -4,7 +4,8 @@ import useUser from "@/hooks/useUser";
 import System from "@/models/system";
 import paths from "@/utils/paths";
 import { userFromStorage } from "@/utils/request";
-import { Person } from "@phosphor-icons/react";
+import { Person } from "@phosphor-icons/react/dist/csr/Person";
+
 import { useEffect, useRef, useState } from "react";
 import AccountModal from "../AccountModal";
 import {
@@ -86,6 +87,7 @@ export default function UserButton() {
                 {t("profile_settings.account")}
               </button>
             )}
+
             <a
               href={supportEmail}
               className="text-white hover:bg-theme-action-menu-item-hover w-full text-left px-4 py-1.5 rounded-md"
@@ -109,6 +111,7 @@ export default function UserButton() {
           </div>
         </div>
       )}
+
       {user && showAccountSettings && (
         <AccountModal
           user={user}

@@ -1,7 +1,9 @@
 import { useState } from "react";
 import Sidebar from "@/components/SettingsSidebar";
 import { isMobile } from "react-device-detect";
-import { CaretLeft, CaretRight } from "@phosphor-icons/react";
+import { CaretLeft } from "@phosphor-icons/react/dist/csr/CaretLeft";
+import { CaretRight } from "@phosphor-icons/react/dist/csr/CaretRight";
+
 import EmbedConfigsView from "./EmbedConfigs";
 import EmbedChatsView from "./EmbedChats";
 
@@ -100,7 +102,7 @@ function WidgetLayout({ children }) {
   return (
     <div
       id="workspace-widget-settings-container"
-      className="w-screen h-screen overflow-hidden bg-theme-bg-container flex md:mt-0 mt-6"
+      className="metacanon-page-shell w-screen h-screen overflow-hidden bg-theme-bg-container flex md:mt-0 mt-6"
     >
       <Sidebar />
       <div

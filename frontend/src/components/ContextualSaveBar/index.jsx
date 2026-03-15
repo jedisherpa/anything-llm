@@ -1,4 +1,5 @@
-import { Warning } from "@phosphor-icons/react";
+import { Warning } from "@phosphor-icons/react/dist/csr/Warning";
+import PrismHoverTarget from "@/components/PrismHoverTarget";
 
 export default function ContextualSaveBar({
   showing = false,
@@ -20,12 +21,14 @@ export default function ContextualSaveBar({
         >
           Cancel
         </button>
-        <button
-          className="border-none text-theme-text-primary font-medium text-sm px-[10px] py-[6px] rounded-md bg-primary-button hover:bg-primary-button-hover"
-          onClick={onSave}
-        >
-          Save
-        </button>
+        <PrismHoverTarget targetId="contextual-save-bar-save">
+          <button
+            className="border-none text-theme-text-primary font-medium text-sm px-[10px] py-[6px] rounded-md bg-primary-button hover:bg-primary-button-hover"
+            onClick={onSave}
+          >
+            Save
+          </button>
+        </PrismHoverTarget>
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
-import { Info } from "@phosphor-icons/react";
+import { Info } from "@phosphor-icons/react/dist/csr/Info";
 
 export default function PaperlessNgxOptions() {
   const [loading, setLoading] = useState(false);

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { X } from "@phosphor-icons/react";
+import { X } from "@phosphor-icons/react/dist/csr/X";
+
 import Admin from "@/models/admin";
+import ModalWrapper from "@/components/ModalWrapper";
 import { MessageLimitInput, RoleHintDisplay } from "../..";
 import { AUTH_USER } from "@/utils/constants";
 import { useTranslation } from "react-i18next";
@@ -50,8 +52,8 @@ export default function EditUserModal({ currentUser, user, closeModal }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="relative w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border">
+    <ModalWrapper isOpen={true}>
+      <div className="relative w-full max-w-2xl metacanon-modal-panel bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border">
         <div className="relative p-6 border-b rounded-t border-theme-modal-border">
           <div className="w-full flex gap-x-2 items-center">
             <h3 className="text-xl font-semibold text-white overflow-hidden overflow-ellipsis whitespace-nowrap">
@@ -88,6 +90,7 @@ export default function EditUserModal({ currentUser, user, closeModal }) {
                   required={true}
                   autoComplete="off"
                 />
+
                 <p className="mt-2 text-xs text-white/60">
                   {t("common.username_requirements")}
                 </p>
@@ -107,6 +110,7 @@ export default function EditUserModal({ currentUser, user, closeModal }) {
                   autoComplete="off"
                   minLength={8}
                 />
+
                 <p className="mt-2 text-xs text-white/60">
                   Password must be at least 8 characters long
                 </p>
@@ -155,6 +159,7 @@ export default function EditUserModal({ currentUser, user, closeModal }) {
                 limit={messageLimit.limit}
                 updateState={setMessageLimit}
               />
+
               {error && <p className="text-red-400 text-sm">Error: {error}</p>}
             </div>
             <div className="flex justify-between items-center mt-6 pt-6 border-t border-theme-modal-border">
@@ -175,6 +180,6 @@ export default function EditUserModal({ currentUser, user, closeModal }) {
           </form>
         </div>
       </div>
-    </div>
+    </ModalWrapper>
   );
 }

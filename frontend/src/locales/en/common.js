@@ -2,12 +2,12 @@ const TRANSLATIONS = {
   onboarding: {
     home: {
       title: "Welcome to",
-      getStarted: "Get Started",
+      getStarted: "Explore the Artifact",
     },
     llm: {
-      title: "LLM Preference",
+      title: "Awaken Prism",
       description:
-        "AnythingLLM can work with many LLM providers. This will be the service which handles chatting.",
+        "Choose the language model service that will power Prism's voice, reasoning, and alignment.",
     },
     userSetup: {
       title: "User Setup",
@@ -34,8 +34,8 @@ const TRANSLATIONS = {
         "These settings can be reconfigured at any time in the settings.",
     },
     survey: {
-      title: "Welcome to AnythingLLM",
-      description: "Help us make AnythingLLM built for your needs. Optional.",
+      title: "Welcome to PrismAI",
+      description: "Help us shape PrismAI around your needs. Optional.",
       email: "What's your email?",
       useCase: "What will you use AnythingLLM for?",
       useCaseWork: "For work",
@@ -132,7 +132,7 @@ const TRANSLATIONS = {
     quickActions: {
       createAgent: "Create an Agent",
       editWorkspace: "Edit Workspace",
-      uploadDocument: "Upload a Document",
+      uploadDocument: "Feed Prism",
     },
   },
   "new-workspace": {
@@ -782,7 +782,7 @@ const TRANSLATIONS = {
   chat_window: {
     attachments_processing: "Attachments are processing. Please wait...",
     send_message: "Send a message",
-    attach_file: "Attach a file to this chat",
+    attach_file: "Feed Prism",
     text_size: "Change text size.",
     microphone: "Speak your prompt.",
     send: "Send prompt message to workspace",

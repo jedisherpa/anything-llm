@@ -1,6 +1,8 @@
 import System from "@/models/system";
 import showToast from "@/utils/toast";
-import { Gear, Plug } from "@phosphor-icons/react";
+import { Gear } from "@phosphor-icons/react/dist/csr/Gear";
+import { Plug } from "@phosphor-icons/react/dist/csr/Plug";
+
 import { useEffect, useState, useRef } from "react";
 import { sentenceCase } from "text-case";
 import Toggle from "@/components/lib/Toggle";
@@ -124,6 +126,7 @@ export default function ImportedSkillConfig({
                 enabled={config.active}
                 onChange={toggleSkill}
               />
+
               <ManageSkillMenu
                 config={config}
                 setImportedSkills={setImportedSkills}
@@ -163,6 +166,7 @@ export default function ImportedSkillConfig({
                     placeholder={props?.input?.placeholder || ""}
                     className="border-solid bg-transparent border border-white light:border-black rounded-md p-2 text-white text-sm"
                   />
+
                   <p className="text-white text-opacity-60 text-xs font-medium py-1.5">
                     {props?.input?.hint}
                   </p>

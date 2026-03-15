@@ -1,5 +1,20 @@
 const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+const { resolvePrismaDatasourceUrl } = require("../utils/prisma/databaseUrl");
+
+const datasourceUrl = resolvePrismaDatasourceUrl();
+if (datasourceUrl) process.env.DATABASE_URL = datasourceUrl;
+
+const prisma = new PrismaClient(
+  datasourceUrl
+    ? {
+        datasources: {
+          db: {
+            url: datasourceUrl,
+          },
+        },
+      }
+    : {}
+);
 
 async function main() {
   const settings = [

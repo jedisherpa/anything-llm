@@ -5,7 +5,10 @@ import System from "@/models/system";
 import showToast from "@/utils/toast";
 import { useModal } from "@/hooks/useModal";
 import CTAButton from "@/components/lib/CTAButton";
-import { CaretUpDown, MagnifyingGlass, X } from "@phosphor-icons/react";
+import { CaretUpDown } from "@phosphor-icons/react/dist/csr/CaretUpDown";
+import { MagnifyingGlass } from "@phosphor-icons/react/dist/csr/MagnifyingGlass";
+import { X } from "@phosphor-icons/react/dist/csr/X";
+
 import { useTranslation } from "react-i18next";
 import PreLoader from "@/components/Preloader";
 import ChangeWarningModal from "@/components/ChangeWarning";
@@ -192,12 +195,12 @@ export default function GeneralVectorDatabase() {
     VECTOR_DBS.find((vdb) => vdb.value === selectedVDB) ?? VECTOR_DBS[0];
 
   return (
-    <div className="w-screen h-screen overflow-hidden bg-theme-bg-container flex">
+    <div className="metacanon-page-shell w-screen h-screen overflow-hidden bg-theme-bg-container flex">
       <Sidebar />
       {loading ? (
         <div
           style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
-          className="relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
+          className="metacanon-page-frame relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
         >
           <div className="w-full h-full flex justify-center items-center">
             <PreLoader />
@@ -206,7 +209,7 @@ export default function GeneralVectorDatabase() {
       ) : (
         <div
           style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
-          className="relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
+          className="metacanon-page-frame relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
         >
           <form
             id="vectordb-form"
@@ -244,6 +247,7 @@ export default function GeneralVectorDatabase() {
                     onClick={() => setSearchMenuOpen(false)}
                   />
                 )}
+
                 {searchMenuOpen ? (
                   <div className="absolute top-0 left-0 w-full max-w-[640px] max-h-[310px] min-h-[64px] bg-theme-settings-input-bg rounded-lg flex flex-col justify-between cursor-pointer border-2 border-primary-button z-20">
                     <div className="w-full flex flex-col gap-y-1">
@@ -253,6 +257,7 @@ export default function GeneralVectorDatabase() {
                           weight="bold"
                           className="absolute left-4 z-30 text-theme-text-primary -ml-4 my-2"
                         />
+
                         <input
                           type="text"
                           name="vdb-search"
@@ -265,6 +270,7 @@ export default function GeneralVectorDatabase() {
                             if (e.key === "Enter") e.preventDefault();
                           }}
                         />
+
                         <X
                           size={20}
                           weight="bold"
@@ -299,6 +305,7 @@ export default function GeneralVectorDatabase() {
                         alt={`${selectedVDBObject.name} logo`}
                         className="w-10 h-10 rounded-md"
                       />
+
                       <div className="flex flex-col text-left">
                         <div className="text-sm font-semibold text-white">
                           {selectedVDBObject.name}
@@ -329,6 +336,7 @@ export default function GeneralVectorDatabase() {
           </form>
         </div>
       )}
+
       <ModalWrapper isOpen={isOpen}>
         <ChangeWarningModal
           warningText="Switching the vector database will reset all previously embedded documents in all workspaces.\n\nConfirming will clear all embeddings from your vector database and remove all documents from your workspaces. Your uploaded documents will not be deleted, they will be available for re-embedding."

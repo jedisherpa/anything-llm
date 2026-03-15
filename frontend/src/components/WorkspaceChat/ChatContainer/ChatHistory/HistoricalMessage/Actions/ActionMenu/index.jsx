@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Trash, DotsThreeVertical, TreeView } from "@phosphor-icons/react";
+import { Trash } from "@phosphor-icons/react/dist/csr/Trash";
+import { DotsThreeVertical } from "@phosphor-icons/react/dist/csr/DotsThreeVertical";
+import { TreeView } from "@phosphor-icons/react/dist/csr/TreeView";
+
 import { useTranslation } from "react-i18next";
 
 function ActionMenu({ chatId, forkThread, isEditing, role }) {

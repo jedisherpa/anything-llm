@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { X, Copy, Check } from "@phosphor-icons/react";
+import { X } from "@phosphor-icons/react/dist/csr/X";
+import { Copy } from "@phosphor-icons/react/dist/csr/Copy";
+import { Check } from "@phosphor-icons/react/dist/csr/Check";
+
 import Admin from "@/models/admin";
 import Workspace from "@/models/workspace";
 import showToast from "@/utils/toast";
+import ModalWrapper from "@/components/ModalWrapper";
 
 export default function NewInviteModal({ closeModal, onSuccess }) {
   const [invite, setInvite] = useState(null);
@@ -66,8 +70,8 @@ export default function NewInviteModal({ closeModal, onSuccess }) {
   }, []);
 
   return (
-    <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="relative w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border">
+    <ModalWrapper isOpen={true}>
+      <div className="relative w-full max-w-2xl metacanon-modal-panel bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border">
         <div className="relative p-6 border-b rounded-t border-theme-modal-border">
           <div className="w-full flex gap-x-2 items-center">
             <h3 className="text-xl font-semibold text-white overflow-hidden overflow-ellipsis whitespace-nowrap">
@@ -94,6 +98,7 @@ export default function NewInviteModal({ closeModal, onSuccess }) {
                     disabled={true}
                     className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg outline-none block w-full p-2.5 pr-10"
                   />
+
                   <button
                     type="button"
                     onClick={copyInviteLink}
@@ -112,6 +117,7 @@ export default function NewInviteModal({ closeModal, onSuccess }) {
                   </button>
                 </div>
               )}
+
               <p className="text-white text-opacity-60 text-xs md:text-sm">
                 After creation you will be able to copy the invite and send it
                 to a new user where they can create an account as the{" "}
@@ -182,7 +188,7 @@ export default function NewInviteModal({ closeModal, onSuccess }) {
           </form>
         </div>
       </div>
-    </div>
+    </ModalWrapper>
   );
 }
 
@@ -204,6 +210,7 @@ function WorkspaceOption({ workspace, selected, toggleSelection }) {
         checked={selected}
         className="hidden"
       />
+
       <div
         className={`w-4 h-4 rounded-full border-2 border-theme-sidebar-border mr-2 ${
           selected ? "bg-[var(--theme-sidebar-item-workspace-active)]" : ""

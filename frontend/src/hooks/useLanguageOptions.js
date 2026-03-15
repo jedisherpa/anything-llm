@@ -1,18 +1,25 @@
-import i18n from "@/i18n";
-import { resources as languages } from "@/locales/resources";
+import i18n, { changeAppLanguage } from "@/i18n";
+import {
+  resolveSupportedLanguage,
+  supportedLanguages,
+} from "@/locales/runtime";
 
 export function useLanguageOptions() {
-  const supportedLanguages = Object.keys(languages);
   const languageNames = new Intl.DisplayNames(supportedLanguages, {
     type: "language",
   });
-  const changeLanguage = (newLang = "en") => {
-    if (!Object.keys(languages).includes(newLang)) return false;
-    i18n.changeLanguage(newLang);
+
+  const changeLanguage = async (newLang = "en") => {
+    const resolvedLanguage = resolveSupportedLanguage(newLang);
+    if (!supportedLanguages.includes(resolvedLanguage)) return false;
+    await changeAppLanguage(resolvedLanguage);
+    return true;
   };
 
   return {
-    currentLanguage: i18n.language || "en",
+    currentLanguage: resolveSupportedLanguage(
+      i18n.resolvedLanguage || i18n.language || "en"
+    ),
     supportedLanguages,
     getLanguageName: (lang = "en") => languageNames.of(lang),
     changeLanguage,

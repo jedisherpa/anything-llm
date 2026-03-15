@@ -8,10 +8,11 @@ const { User } = require("../../models/user");
 const { WorkspaceChats } = require("../../models/workspaceChats");
 const { safeJsonParse } = require("../http");
 const {
-  USER_AGENT,
-  WORKSPACE_AGENT,
-  agentSkillsFromSystemSettings,
-} = require("./defaults");
+    USER_AGENT,
+    WORKSPACE_AGENT,
+    agentSkillsFromSystemSettings,
+    getLensAgentDefinitions,
+  } = require("./defaults");
 const { AgentHandler } = require(".");
 const {
   WorkspaceAgentInvocation,
@@ -239,10 +240,7 @@ class EphemeralAgentHandler extends AgentHandler {
           continue;
         }
 
-        this.aibitat.agents.get("@agent").functions = this.aibitat.agents
-          .get("@agent")
-          .functions.filter((f) => f !== name);
-        this.aibitat.agents.get("@agent").functions.push(plugin.name);
+        this.replaceAgentFunctionReference(name, plugin.name);
 
         this.aibitat.use(plugin.plugin());
         this.log(
@@ -271,13 +269,10 @@ class EphemeralAgentHandler extends AgentHandler {
           continue;
         }
 
-        // Remove the old function from the agent functions directly
-        // and push the new ones onto the end of the array so that they are loaded properly.
-        this.aibitat.agents.get("@agent").functions = this.aibitat.agents
-          .get("@agent")
-          .functions.filter((f) => f.name !== name);
-        for (const plugin of plugins)
-          this.aibitat.agents.get("@agent").functions.push(plugin.name);
+        this.replaceAgentFunctionReference(
+          name,
+          plugins.map((plugin) => plugin.name)
+        );
 
         plugins.forEach((plugin) => {
           this.aibitat.use(plugin.plugin());
@@ -339,12 +334,22 @@ class EphemeralAgentHandler extends AgentHandler {
       WORKSPACE_AGENT.name,
       await WORKSPACE_AGENT.getDefinition(this.provider, this.#workspace, user)
     );
+    const sharedFunctions = [
+      ...(this.aibitat.agents.get(WORKSPACE_AGENT.name)?.functions || []),
+    ];
+    this.sharedFunctions = sharedFunctions;
+    getLensAgentDefinitions(sharedFunctions).forEach(({ name, definition }) => {
+      this.aibitat.agent(name, definition);
+    });
 
     this.#funcsToLoad = [
-      ...(await agentSkillsFromSystemSettings()),
-      ...ImportedPlugin.activeImportedPlugins(),
-      ...AgentFlows.activeFlowPlugins(),
-      ...(await new MCPCompatibilityLayer().activeMCPServers()),
+      ...new Set([
+        ...sharedFunctions,
+        ...(await agentSkillsFromSystemSettings()),
+        ...ImportedPlugin.activeImportedPlugins(),
+        ...AgentFlows.activeFlowPlugins(),
+        ...(await new MCPCompatibilityLayer().activeMCPServers()),
+      ]),
     ];
   }
 
@@ -383,12 +388,62 @@ class EphemeralAgentHandler extends AgentHandler {
 
     // Load required agents (Default + custom)
     await this.#loadAgents();
+    this.setInitialChannelFromPrompt(this.#prompt);
+    this.ensurePromptHandlesLoaded(this.#prompt);
 
     // Attach all required plugins for functions to operate.
     await this.#attachPlugins(args);
   }
 
   startAgentCluster() {
+    if (this.shouldRunMetacanonConstellation(this.#prompt)) {
+      return this.runMetacanonConstellation(this.#prompt).catch((error) => {
+        this.log(
+          `Constellation execution failed (${error.message}). Falling back to standard flow.`
+        );
+        this.aibitat.introspect?.(
+          "Constellation fallback: continuing with standard routing."
+        );
+        return this.aibitat.start({
+          from: USER_AGENT.name,
+          to: this.channel ?? WORKSPACE_AGENT.name,
+          content: this.#prompt,
+        });
+      });
+    }
+
+    if (this.shouldRunCouncilPack(this.#prompt)) {
+      return this.runCouncilPack(this.#prompt).catch((error) => {
+        this.log(
+          `Council pack execution failed (${error.message}). Falling back to standard flow.`
+        );
+        this.aibitat.introspect?.(
+          "Council pack fallback: continuing with standard routing."
+        );
+        return this.aibitat.start({
+          from: USER_AGENT.name,
+          to: this.channel ?? WORKSPACE_AGENT.name,
+          content: this.#prompt,
+        });
+      });
+    }
+
+    if (this.shouldRunLensDeliberation(this.#prompt)) {
+      return this.runLensDeliberation(this.#prompt).catch((error) => {
+        this.log(
+          `Lens deliberation failed (${error.message}). Falling back to standard @agent flow.`
+        );
+        this.aibitat.introspect?.(
+          "Lens deliberation fallback: continuing with standard @agent flow."
+        );
+        return this.aibitat.start({
+          from: USER_AGENT.name,
+          to: this.channel ?? WORKSPACE_AGENT.name,
+          content: this.#prompt,
+        });
+      });
+    }
+
     return this.aibitat.start({
       from: USER_AGENT.name,
       to: this.channel ?? WORKSPACE_AGENT.name,

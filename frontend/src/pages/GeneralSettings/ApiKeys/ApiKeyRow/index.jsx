@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import Admin from "@/models/admin";
 import showToast from "@/utils/toast";
-import { Trash } from "@phosphor-icons/react";
+import { Trash } from "@phosphor-icons/react/dist/csr/Trash";
+
 import { userFromStorage } from "@/utils/request";
 import System from "@/models/system";
 

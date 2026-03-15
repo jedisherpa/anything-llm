@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { v4 } = require("uuid");
+const { COLLECTOR_TMP_DIR } = require("../constants");
 const defaultWhisper = "Xenova/whisper-small"; // Model Card: https://huggingface.co/Xenova/whisper-small
 const fileSize = {
   "Xenova/whisper-small": "250mb",
@@ -66,7 +67,7 @@ class LocalWhisper {
       const wavefile = require("wavefile");
       const { FFMPEGWrapper } = require("./ffmpeg");
       const ffmpeg = new FFMPEGWrapper();
-      const outFolder = path.resolve(__dirname, `../../storage/tmp`);
+      const outFolder = COLLECTOR_TMP_DIR;
       if (!fs.existsSync(outFolder))
         fs.mkdirSync(outFolder, { recursive: true });
 

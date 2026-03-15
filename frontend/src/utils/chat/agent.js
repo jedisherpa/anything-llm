@@ -3,6 +3,7 @@ import { safeJsonParse } from "../request";
 import { saveAs } from "file-saver";
 import { API_BASE } from "../constants";
 import { useEffect, useState } from "react";
+import { signalPrismError } from "@/utils/prism/events";
 
 export const AGENT_SESSION_START = "agentSessionStart";
 export const AGENT_SESSION_END = "agentSessionEnd";
@@ -178,6 +179,7 @@ export default function handleSocketResponse(socket, event, setChatHistory) {
   }
 
   if (data.type === "wssFailure") {
+    signalPrismError({ source: "agent-wss", message: data.content });
     return setChatHistory((prev) => {
       return [
         ...prev.filter((msg) => !!msg.content),

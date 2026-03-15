@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import System from "@/models/system";
 import { OLLAMA_COMMON_URLS } from "@/utils/constants";
-import { CaretDown, CaretUp, Info, CircleNotch } from "@phosphor-icons/react";
+import { CaretDown } from "@phosphor-icons/react/dist/csr/CaretDown";
+import { CaretUp } from "@phosphor-icons/react/dist/csr/CaretUp";
+import { Info } from "@phosphor-icons/react/dist/csr/Info";
+import { CircleNotch } from "@phosphor-icons/react/dist/csr/CircleNotch";
+
 import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
 import { Tooltip } from "react-tooltip";
 import { Link } from "react-router-dom";
@@ -66,6 +70,7 @@ export default function OllamaLLMOptions({ settings }) {
                     data-tooltip-id="ollama-base-url"
                     data-tooltip-content="Enter the URL where Ollama is running."
                   />
+
                   <Tooltip
                     id="ollama-base-url"
                     place="top"
@@ -120,6 +125,7 @@ export default function OllamaLLMOptions({ settings }) {
                   className="text-theme-text-secondary cursor-pointer"
                   data-tooltip-id="ollama-keep-alive"
                 />
+
                 <Tooltip
                   id="ollama-keep-alive"
                   place="top"
@@ -171,6 +177,7 @@ export default function OllamaLLMOptions({ settings }) {
                   className="text-theme-text-secondary cursor-pointer"
                   data-tooltip-id="ollama-model-context-window"
                 />
+
                 <Tooltip
                   id="ollama-model-context-window"
                   place="top"
@@ -231,6 +238,7 @@ export default function OllamaLLMOptions({ settings }) {
                   className="text-theme-text-secondary cursor-pointer"
                   data-tooltip-id="ollama-authentication-token"
                 />
+
                 <Tooltip
                   id="ollama-authentication-token"
                   place="top"

@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PrismAI</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <div class="ambient ambient-left" aria-hidden="true"></div>
+      <div class="ambient ambient-right" aria-hidden="true"></div>
+
+      <header class="hero">
+        <div class="brand-mark-wrap" aria-hidden="true">
+          <div class="brand-mark-glow"></div>
+          <img
+            src="./prism-dodeca.png"
+            alt=""
+            class="brand-mark"
+            width="132"
+            height="132"
+          />
+        </div>
+        <div class="hero-copy">
+          <p class="kicker">PrismAI</p>
+          <h1>Preparing Prism...</h1>
+          <p id="subtitle">
+            Loading your local PrismAI workspace and bringing the Prism interface online.
+          </p>
+        </div>
+        <div class="status-pill">
+          <span class="status-pill__dot"></span>
+          Local-first startup
+        </div>
+      </header>
+
+      <section class="panel panel-intro">
+        <p class="panel-intro__eyebrow">Powered by AnythingLLM</p>
+        <p class="panel-intro__copy">
+          PrismAI runs entirely on your machine. This loader starts the local runtime, restores
+          your workspace, and opens the full Prism environment as soon as it is ready.
+        </p>
+      </section>
+
+      <section class="panel progress-panel" aria-live="polite">
+        <div class="progress-panel__meta">
+          <p class="progress-panel__eyebrow">Startup Progress</p>
+          <p id="progressLabel" class="progress-panel__label">Initializing Prism shell...</p>
+        </div>
+        <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="12">
+          <div id="progressFill" class="progress-bar__fill"></div>
+        </div>
+        <div class="progress-panel__footer">
+          <span id="progressPercent">12%</span>
+          <span id="phaseLabel">Booting local shell</span>
+        </div>
+      </section>
+
+      <section id="startupBanner" class="startup-banner hidden" role="alert">
+        <div class="startup-banner__copy">
+          <p class="startup-banner__eyebrow">Startup attention needed</p>
+          <h2 id="startupBannerTitle">Prism needs input</h2>
+          <p id="startupBannerMessage">
+            PrismAI started, but one part of startup needs attention.
+          </p>
+          <p id="startupBannerHint" class="startup-banner__hint"></p>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Runtime Details</h2>
+        <dl id="statusGrid" class="status-grid">
+          <dt>Mode</dt>
+          <dd id="modeValue">loading...</dd>
+          <dt>Startup Phase</dt>
+          <dd id="startupPhaseValue">loading...</dd>
+          <dt>Interface URL</dt>
+          <dd id="appUrlValue">loading...</dd>
+          <dt>Local Storage</dt>
+          <dd id="storageValue">loading...</dd>
+          <dt>Core Runtime</dt>
+          <dd id="coreValue">loading...</dd>
+          <dt>Logs Folder</dt>
+          <dd id="logsValue">loading...</dd>
+          <dt>Telemetry</dt>
+          <dd id="telemetryValue">loading...</dd>
+        </dl>
+        <pre id="startupError" class="warning hidden"></pre>
+      </section>
+
+      <section class="actions">
+        <button id="openBrowserBtn">Open PrismAI In Browser</button>
+        <button id="openApplicationsBtn" class="secondary hidden">Open Applications Folder</button>
+        <button id="openLogsBtn" class="secondary">Open Logs Folder</button>
+        <button id="toDesktopBtn">Enter Desktop Mode</button>
+        <button id="toWebBtn">Enter Browser Mode</button>
+        <button id="restartBtn">Restart Prism</button>
+        <button id="refreshBtn" class="secondary">Refresh Status</button>
+      </section>
+    </main>
+
+    <script src="./main.js"></script>
+  </body>
+</html>

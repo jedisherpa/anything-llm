@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
-import { TextT } from "@phosphor-icons/react";
+import { TextT } from "@phosphor-icons/react/dist/csr/TextT";
+
 import { Tooltip } from "react-tooltip";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/hooks/useTheme";
@@ -7,7 +8,7 @@ import { useTheme } from "@/hooks/useTheme";
 export default function TextSizeButton() {
   const tooltipRef = useRef(null);
   const { t } = useTranslation();
-  const { theme } = useTheme();
+  const { isLightTheme } = useTheme();
 
   const toggleTooltip = () => {
     if (!tooltipRef.current) return;
@@ -40,9 +41,7 @@ export default function TextSizeButton() {
         delayShow={300}
         delayHide={800}
         arrowColor={
-          theme === "light"
-            ? "var(--theme-modal-border)"
-            : "var(--theme-bg-primary)"
+          isLightTheme ? "var(--theme-modal-border)" : "var(--theme-bg-primary)"
         }
         className="z-99 !w-[140px] !bg-theme-bg-primary !px-[5px] !rounded-lg !pointer-events-auto light:border-2 light:border-theme-modal-border"
       >

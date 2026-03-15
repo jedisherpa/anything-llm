@@ -4,10 +4,13 @@
 import { createPortal } from "react-dom";
 import ModalWrapper from "@/components/ModalWrapper";
 import { useModal } from "@/hooks/useModal";
-import { X, Gear } from "@phosphor-icons/react";
+import { X } from "@phosphor-icons/react/dist/csr/X";
+import { Gear } from "@phosphor-icons/react/dist/csr/Gear";
+
 import System from "@/models/system";
 import showToast from "@/utils/toast";
 import { useEffect, useState } from "react";
+import PrismHoverTarget from "@/components/PrismHoverTarget";
 
 const NO_SETTINGS_NEEDED = ["default", "none"];
 export default function AgentLLMItem({
@@ -62,6 +65,7 @@ export default function AgentLLMItem({
           readOnly={true}
           formNoValidate={true}
         />
+
         <div className="flex gap-x-4 items-center justify-between">
           <div className="flex gap-x-4 items-center">
             <img
@@ -69,6 +73,7 @@ export default function AgentLLMItem({
               alt={`${name} logo`}
               className="w-10 h-10 rounded-md"
             />
+
             <div className="flex flex-col">
               <div className="text-sm font-semibold text-white">{name}</div>
               <div className="mt-1 text-xs text-white/60">{description}</div>
@@ -135,42 +140,44 @@ function SetupProvider({
   // to the parent container form so we don't have nested forms.
   return createPortal(
     <ModalWrapper isOpen={isOpen}>
-      <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center">
-        <div className="relative w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border">
-          <div className="relative p-6 border-b rounded-t border-theme-modal-border">
-            <div className="w-full flex gap-x-2 items-center">
-              <h3 className="text-xl font-semibold text-white overflow-hidden overflow-ellipsis whitespace-nowrap">
-                {LLMOption.name} Settings
-              </h3>
-            </div>
-            <button
-              onClick={closeModal}
-              type="button"
-              className="absolute top-4 right-4 transition-all duration-300 bg-transparent rounded-lg text-sm p-1 inline-flex items-center hover:bg-theme-modal-border hover:border-theme-modal-border hover:border-opacity-50 border-transparent border"
-            >
-              <X size={24} weight="bold" className="text-white" />
-            </button>
+      <div className="relative w-full max-w-2xl metacanon-modal-panel bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border">
+        <div className="relative p-6 border-b rounded-t border-theme-modal-border">
+          <div className="w-full flex gap-x-2 items-center">
+            <h3 className="text-xl font-semibold text-white overflow-hidden overflow-ellipsis whitespace-nowrap">
+              {LLMOption.name} Settings
+            </h3>
           </div>
-          <form id="provider-form" onSubmit={handleUpdate}>
-            <div className="px-7 py-6">
-              <div className="space-y-6 max-h-[60vh] overflow-y-auto p-1">
-                <p className="text-sm text-white/60">
-                  To use {LLMOption.name} as this workspace's agent LLM you need
-                  to set it up first.
-                </p>
-                <div>
-                  {LLMOption.options(settings, { credentialsOnly: true })}
-                </div>
+          <button
+            onClick={closeModal}
+            type="button"
+            className="absolute top-4 right-4 transition-all duration-300 bg-transparent rounded-lg text-sm p-1 inline-flex items-center hover:bg-theme-modal-border hover:border-theme-modal-border hover:border-opacity-50 border-transparent border"
+          >
+            <X size={24} weight="bold" className="text-white" />
+          </button>
+        </div>
+        <form id="provider-form" onSubmit={handleUpdate}>
+          <div className="px-7 py-6">
+            <div className="space-y-6 max-h-[60vh] overflow-y-auto p-1">
+              <p className="text-sm text-white/60">
+                To use {LLMOption.name} as this workspace's agent LLM you need
+                to set it up first.
+              </p>
+              <div>
+                {LLMOption.options(settings, { credentialsOnly: true })}
               </div>
             </div>
-            <div className="flex justify-between items-center mt-6 pt-6 border-t border-theme-modal-border px-7 pb-6">
-              <button
-                type="button"
-                onClick={closeModal}
-                className="transition-all duration-300 text-white hover:bg-zinc-700 px-4 py-2 rounded-lg text-sm"
-              >
-                Cancel
-              </button>
+          </div>
+          <div className="flex justify-between items-center mt-6 pt-6 border-t border-theme-modal-border px-7 pb-6">
+            <button
+              type="button"
+              onClick={closeModal}
+              className="transition-all duration-300 text-white hover:bg-zinc-700 px-4 py-2 rounded-lg text-sm"
+            >
+              Cancel
+            </button>
+            <PrismHoverTarget
+              targetId={`agent-llm-settings-save-${LLMOption.value}`}
+            >
               <button
                 type="submit"
                 form="provider-form"
@@ -178,9 +185,9 @@ function SetupProvider({
               >
                 Save {LLMOption.name} settings
               </button>
-            </div>
-          </form>
-        </div>
+            </PrismHoverTarget>
+          </div>
+        </form>
       </div>
     </ModalWrapper>,
     document.getElementById("workspace-agent-settings-container")

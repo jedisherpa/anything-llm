@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import AgentFlows from "@/models/agentFlows";
 import showToast from "@/utils/toast";
-import { FlowArrow, Gear } from "@phosphor-icons/react";
+import { FlowArrow } from "@phosphor-icons/react/dist/csr/FlowArrow";
+import { Gear } from "@phosphor-icons/react/dist/csr/Gear";
+
 import { useNavigate } from "react-router-dom";
 import paths from "@/utils/paths";
 import Toggle from "@/components/lib/Toggle";

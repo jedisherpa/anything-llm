@@ -7,7 +7,10 @@ import useQuery from "@/hooks/useQuery";
 import ChatRow from "./ChatRow";
 import showToast from "@/utils/toast";
 import System from "@/models/system";
-import { CaretDown, Download, Trash } from "@phosphor-icons/react";
+import { CaretDown } from "@phosphor-icons/react/dist/csr/CaretDown";
+import { Download } from "@phosphor-icons/react/dist/csr/Download";
+import { Trash } from "@phosphor-icons/react/dist/csr/Trash";
+
 import { saveAs } from "file-saver";
 import { useTranslation } from "react-i18next";
 import { CanViewChatHistory } from "@/components/CanViewChatHistory";
@@ -117,11 +120,11 @@ export default function WorkspaceChats() {
 
   return (
     <CanViewChatHistory>
-      <div className="w-screen h-screen overflow-hidden bg-theme-bg-container flex">
+      <div className="metacanon-page-shell w-screen h-screen overflow-hidden bg-theme-bg-container flex">
         <Sidebar />
         <div
           style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
-          className="relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
+          className="metacanon-page-frame relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
         >
           <div className="flex flex-col w-full px-1 md:pl-6 md:pr-[50px] md:py-6 py-16">
             <div className="w-full flex flex-col gap-y-1 pb-6 border-white/10 border-b-2">
@@ -230,7 +233,7 @@ function ChatsContainer({
 
   return (
     <>
-      <table className="w-full text-xs text-left rounded-lg min-w-[640px] border-spacing-0">
+      <table className="prism-data-table w-full text-xs text-left rounded-lg min-w-[640px] border-spacing-0">
         <thead className="text-theme-text-secondary text-xs leading-[18px] font-bold uppercase border-white/10 border-b">
           <tr>
             <th scope="col" className="px-6 py-3 rounded-tl-lg">

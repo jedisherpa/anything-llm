@@ -5,14 +5,13 @@ import { isMobile } from "react-device-detect";
 import Admin from "@/models/admin";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
-import {
-  CaretLeft,
-  CaretRight,
-  Plug,
-  Robot,
-  Hammer,
-  FlowArrow,
-} from "@phosphor-icons/react";
+import { CaretLeft } from "@phosphor-icons/react/dist/csr/CaretLeft";
+import { CaretRight } from "@phosphor-icons/react/dist/csr/CaretRight";
+import { Plug } from "@phosphor-icons/react/dist/csr/Plug";
+import { Robot } from "@phosphor-icons/react/dist/csr/Robot";
+import { Hammer } from "@phosphor-icons/react/dist/csr/Hammer";
+import { FlowArrow } from "@phosphor-icons/react/dist/csr/FlowArrow";
+
 import ContextualSaveBar from "@/components/ContextualSaveBar";
 import { castToType } from "@/utils/types";
 import { FullScreenLoader } from "@/components/Preloader";
@@ -263,6 +262,7 @@ export default function AdminAgents() {
             type="hidden"
             value={agentSkills.join(",")}
           />
+
           <input
             name="system::disabled_agent_skills"
             type="hidden"
@@ -287,6 +287,7 @@ export default function AdminAgents() {
                 (skill) => !disabledAgentSkills.includes(skill)
               )}
             />
+
             {/* Configurable skills */}
             <SkillList
               skills={configurableSkills}
@@ -314,12 +315,14 @@ export default function AdminAgents() {
               selectedFlow={selectedFlow}
               handleClick={handleFlowClick}
             />
+
             <input
               type="hidden"
               name="system::active_agent_flows"
               id="active_agent_flows"
               value={activeFlowIds.join(",")}
             />
+
             <MCPServerHeader
               setMcpServers={setMcpServers}
               setSelectedMcpServer={setSelectedMcpServer}
@@ -449,11 +452,13 @@ export default function AdminAgents() {
           type="hidden"
           value={agentSkills.join(",")}
         />
+
         <input
           name="system::disabled_agent_skills"
           type="hidden"
           value={disabledAgentSkills.join(",")}
         />
+
         <input
           type="hidden"
           name="system::active_agent_flows"
@@ -481,6 +486,7 @@ export default function AdminAgents() {
                   (skill) => !disabledAgentSkills.includes(skill)
                 )}
               />
+
               {/* Configurable skills */}
               <SkillList
                 skills={configurableSkills}
@@ -623,7 +629,7 @@ function SkillLayout({ children, hasChanges, handleSubmit, handleCancel }) {
   return (
     <div
       id="workspace-agent-settings-container"
-      className="w-screen h-screen overflow-hidden bg-theme-bg-container flex md:mt-0 mt-6"
+      className="metacanon-page-shell w-screen h-screen overflow-hidden bg-theme-bg-container flex md:mt-0 mt-6"
     >
       <Sidebar />
       <div
@@ -682,6 +688,7 @@ function SkillList({
                   {activeSkills.includes(skill) ? "On" : "Off"}
                 </div>
               )}
+
               <CaretRight
                 size={14}
                 weight="bold"

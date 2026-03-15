@@ -7,6 +7,7 @@ __pycache__
 v-env
 .DS_Store
 aws_cf_deploy_anything_llm.json
-yarn.lock
+package-lock.json
+frontend/vite.config.js.timestamp-*.mjs
 *.bak
 .idea

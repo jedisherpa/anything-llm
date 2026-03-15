@@ -1,7 +1,8 @@
 import { useState } from "react";
 import MarkdownIt from "markdown-it";
-import hljs from "highlight.js";
-import { CaretDown } from "@phosphor-icons/react";
+import hljs from "@/utils/chat/hljs";
+import { CaretDown } from "@phosphor-icons/react/dist/csr/CaretDown";
+
 import "highlight.js/styles/github-dark.css";
 import DOMPurify from "@/utils/chat/purify";
 
@@ -37,6 +38,7 @@ const ThoughtBubble = ({ thought }) => {
           weight="bold"
           className={`transition-transform ${isExpanded ? "rotate-180" : ""}`}
         />
+
         <span className="text-xs font-medium">View thoughts</span>
       </div>
       {isExpanded && (

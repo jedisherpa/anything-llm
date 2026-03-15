@@ -1,4 +1,5 @@
-import { CaretDown, CaretUp } from "@phosphor-icons/react";
+import { CaretDown } from "@phosphor-icons/react/dist/csr/CaretDown";
+import { CaretUp } from "@phosphor-icons/react/dist/csr/CaretUp";
 import { useEffect, useState } from "react";
 import { safeJsonParse } from "@/utils/request";
 

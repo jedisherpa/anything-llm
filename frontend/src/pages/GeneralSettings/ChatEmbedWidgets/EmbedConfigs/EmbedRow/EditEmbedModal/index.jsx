@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import { X } from "@phosphor-icons/react";
+import { X } from "@phosphor-icons/react/dist/csr/X";
+
+import ModalWrapper from "@/components/ModalWrapper";
 import {
   BooleanInput,
   ChatModeSelection,
@@ -11,6 +13,7 @@ import {
 import Embed from "@/models/embed";
 import showToast from "@/utils/toast";
 import { safeJsonParse } from "@/utils/request";
+import PrismHoverTarget from "@/components/PrismHoverTarget";
 
 export default function EditEmbedModal({ embed, closeModal }) {
   const [error, setError] = useState(null);
@@ -31,21 +34,23 @@ export default function EditEmbedModal({ embed, closeModal }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="relative w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border">
+    <ModalWrapper isOpen={true}>
+      <div className="relative w-full max-w-2xl metacanon-modal-panel bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border">
         <div className="relative p-6 border-b rounded-t border-theme-modal-border">
           <div className="w-full flex gap-x-2 items-center">
             <h3 className="text-xl font-semibold text-white overflow-hidden overflow-ellipsis whitespace-nowrap">
               Update embed #{embed.id}
             </h3>
           </div>
-          <button
-            onClick={closeModal}
-            type="button"
-            className="absolute top-4 right-4 transition-all duration-300 bg-transparent rounded-lg text-sm p-1 inline-flex items-center hover:bg-theme-modal-border hover:border-theme-modal-border hover:border-opacity-50 border-transparent border"
-          >
-            <X size={24} weight="bold" className="text-white" />
-          </button>
+          <PrismHoverTarget targetId="modal-edit-embed-close">
+            <button
+              onClick={closeModal}
+              type="button"
+              className="absolute top-4 right-4 transition-all duration-300 bg-transparent rounded-lg text-sm p-1 inline-flex items-center hover:bg-theme-modal-border hover:border-theme-modal-border hover:border-opacity-50 border-transparent border"
+            >
+              <X size={24} weight="bold" className="text-white" />
+            </button>
+          </PrismHoverTarget>
         </div>
         <div className="px-7 py-6">
           <form onSubmit={handleUpdate}>
@@ -57,36 +62,42 @@ export default function EditEmbedModal({ embed, closeModal }) {
                   safeJsonParse(embed.allowlist_domains, null) || []
                 }
               />
+
               <NumberInput
                 name="max_chats_per_day"
                 title="Max chats per day"
                 hint="Limit the amount of chats this embedded chat can process in a 24 hour period. Zero is unlimited."
                 defaultValue={embed.max_chats_per_day}
               />
+
               <NumberInput
                 name="max_chats_per_session"
                 title="Max chats per session"
                 hint="Limit the amount of chats a session user can send with this embed in a 24 hour period. Zero is unlimited."
                 defaultValue={embed.max_chats_per_session}
               />
+
               <NumberInput
                 name="message_limit"
                 title="Message History Limit"
                 hint="The number of previous messages to include in the chat context. Default is 20."
                 defaultValue={embed.message_limit}
               />
+
               <BooleanInput
                 name="allow_model_override"
                 title="Enable dynamic model use"
                 hint="Allow setting of the preferred LLM model to override the workspace default."
                 defaultValue={embed.allow_model_override}
               />
+
               <BooleanInput
                 name="allow_temperature_override"
                 title="Enable dynamic LLM temperature"
                 hint="Allow setting of the LLM temperature to override the workspace default."
                 defaultValue={embed.allow_temperature_override}
               />
+
               <BooleanInput
                 name="allow_prompt_override"
                 title="Enable Prompt Override"
@@ -105,23 +116,27 @@ export default function EditEmbedModal({ embed, closeModal }) {
               </p>
             </div>
             <div className="flex justify-between items-center mt-6 pt-6 border-t border-theme-modal-border">
-              <button
-                onClick={closeModal}
-                type="button"
-                className="transition-all duration-300 text-white hover:bg-zinc-700 px-4 py-2 rounded-lg text-sm"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="transition-all duration-300 bg-white text-black hover:opacity-60 px-4 py-2 rounded-lg text-sm"
-              >
-                Update embed
-              </button>
+              <PrismHoverTarget targetId="modal-edit-embed-cancel">
+                <button
+                  onClick={closeModal}
+                  type="button"
+                  className="transition-all duration-300 text-white hover:bg-zinc-700 px-4 py-2 rounded-lg text-sm"
+                >
+                  Cancel
+                </button>
+              </PrismHoverTarget>
+              <PrismHoverTarget targetId="modal-edit-embed-submit">
+                <button
+                  type="submit"
+                  className="transition-all duration-300 bg-white text-black hover:opacity-60 px-4 py-2 rounded-lg text-sm"
+                >
+                  Update embed
+                </button>
+              </PrismHoverTarget>
             </div>
           </form>
         </div>
       </div>
-    </div>
+    </ModalWrapper>
   );
 }

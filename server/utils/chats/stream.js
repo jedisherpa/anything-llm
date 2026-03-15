@@ -3,6 +3,7 @@ const { DocumentManager } = require("../DocumentManager");
 const { WorkspaceChats } = require("../../models/workspaceChats");
 const { WorkspaceParsedFiles } = require("../../models/workspaceParsedFiles");
 const { getVectorDbClass, getLLMProvider } = require("../helpers");
+const { buildMessagesWithPromptHandling, fillSourceWindow } = require("../helpers/chat");
 const { writeResponseChunk } = require("../helpers/chat/responses");
 const { grepAgents } = require("./agents");
 const {
@@ -22,7 +23,8 @@ async function streamChatWithWorkspace(
   chatMode = "chat",
   user = null,
   thread = null,
-  attachments = []
+  attachments = [],
+  { promptHandling = null, precisionMode = false } = {}
 ) {
   const uuid = uuidv4();
   const updatedMessage = await grepCommand(message, user);
@@ -177,7 +179,6 @@ async function streamChatWithWorkspace(
     return;
   }
 
-  const { fillSourceWindow } = require("../helpers/chat");
   const filledSources = fillSourceWindow({
     nDocs: workspace?.topN || 4,
     searchResults: vectorSearchResults.sources,
@@ -226,18 +227,34 @@ async function streamChatWithWorkspace(
     return;
   }
 
-  // Compress & Assemble message to ensure prompt passes token limit with room for response
-  // and build system messages based on inputs and history.
-  const messages = await LLMConnector.compressMessages(
-    {
+  const messagePreparation = await buildMessagesWithPromptHandling({
+    llm: LLMConnector,
+    promptArgs: {
       systemPrompt: await chatPrompt(workspace, user),
       userPrompt: updatedMessage,
       contextTexts,
       chatHistory,
       attachments,
     },
-    rawHistory
-  );
+    rawHistory,
+    promptHandling,
+    precisionMode,
+  });
+
+  if (messagePreparation.abort) {
+    writeResponseChunk(response, {
+      id: uuid,
+      type: "abort",
+      textResponse: null,
+      sources: [],
+      close: true,
+      error: messagePreparation.abort.error,
+      metrics: messagePreparation.abort.metrics,
+    });
+    return;
+  }
+
+  const messages = messagePreparation.messages;
 
   // If streaming is not explicitly enabled for connector
   // we do regular waiting of a response and send a single chunk.

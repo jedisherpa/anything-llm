@@ -29,6 +29,9 @@ jobs:
         with:
           node-version: "18"
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Cache server dependencies
         uses: actions/cache@v4
         with:
@@ -54,19 +57,19 @@ jobs:
             ${{ runner.os }}-yarn-collector-
 
       - name: Install server dependencies
-        run: cd server && yarn install --frozen-lockfile
+        run: cd server && corepack yarn install --frozen-lockfile
 
       - name: Install frontend dependencies
-        run: cd frontend && yarn install --frozen-lockfile
+        run: cd frontend && corepack yarn install --frozen-lockfile
 
       - name: Install collector dependencies
-        run: cd collector && yarn install --frozen-lockfile
+        run: cd collector && corepack yarn install --frozen-lockfile
 
       - name: Lint server
-        run: cd server && yarn lint:check
+        run: cd server && corepack yarn lint:check
 
       - name: Lint frontend
-        run: cd frontend && yarn lint:check
+        run: cd frontend && corepack yarn lint:check
 
       - name: Lint collector
-        run: cd collector && yarn lint:check
+        run: cd collector && corepack yarn lint:check

@@ -5,7 +5,9 @@ import useQuery from "@/hooks/useQuery";
 import ChatRow from "./ChatRow";
 import Embed from "@/models/embed";
 import { useTranslation } from "react-i18next";
-import { CaretDown, Download } from "@phosphor-icons/react";
+import { CaretDown } from "@phosphor-icons/react/dist/csr/CaretDown";
+import { Download } from "@phosphor-icons/react/dist/csr/Download";
+
 import showToast from "@/utils/toast";
 import { saveAs } from "file-saver";
 import System from "@/models/system";
@@ -176,7 +178,7 @@ export default function EmbedChatsView() {
         </p>
       </div>
       <div className="overflow-x-auto mt-6">
-        <table className="w-full text-xs text-left rounded-lg min-w-[640px] border-spacing-0">
+        <table className="prism-data-table w-full text-xs text-left rounded-lg min-w-[640px] border-spacing-0">
           <thead className="text-theme-text-secondary text-xs leading-[18px] font-bold uppercase border-white/10 border-b">
             <tr>
               <th scope="col" className="px-6 py-3 rounded-tl-lg">

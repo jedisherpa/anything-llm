@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { titleCase } from "text-case";
 import Admin from "@/models/admin";
-import { Trash } from "@phosphor-icons/react";
+import { Trash } from "@phosphor-icons/react/dist/csr/Trash";
 
 export default function InviteRow({ invite }) {
   const rowRef = useRef(null);

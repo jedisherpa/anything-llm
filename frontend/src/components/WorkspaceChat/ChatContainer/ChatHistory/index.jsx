@@ -1,19 +1,21 @@
 import {
+  Suspense,
   useEffect,
   useRef,
   useState,
   useMemo,
   useCallback,
   forwardRef,
+  lazy,
 } from "react";
 import HistoricalMessage from "./HistoricalMessage";
 import PromptReply from "./PromptReply";
 import StatusResponse from "./StatusResponse";
 import { useManageWorkspaceModal } from "../../../Modals/ManageWorkspace";
 import ManageWorkspace from "../../../Modals/ManageWorkspace";
-import { ArrowDown } from "@phosphor-icons/react";
+import { ArrowDown } from "@phosphor-icons/react/dist/csr/ArrowDown";
+
 import debounce from "lodash.debounce";
-import Chartable from "./Chartable";
 import Workspace from "@/models/workspace";
 import { useParams } from "react-router-dom";
 import paths from "@/utils/paths";
@@ -21,6 +23,8 @@ import Appearance from "@/models/appearance";
 import useTextSize from "@/hooks/useTextSize";
 import useChatHistoryScrollHandle from "@/hooks/useChatHistoryScrollHandle";
 import { ThoughtExpansionProvider } from "./ThoughtContainer";
+
+const LazyChartable = lazy(() => import("./Chartable"));
 
 export default forwardRef(function (
   {
@@ -285,7 +289,18 @@ function buildMessages({
     }
 
     if (props.type === "rechartVisualize" && !!props.content) {
-      acc.push(<Chartable key={props.uuid} props={props} />);
+      acc.push(
+        <Suspense
+          key={props.uuid}
+          fallback={
+            <div className="w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-6 text-sm text-white/60">
+              Rendering chart...
+            </div>
+          }
+        >
+          <LazyChartable props={props} />
+        </Suspense>
+      );
     } else if (isLastBotReply && props.animate) {
       acc.push(
         <PromptReply

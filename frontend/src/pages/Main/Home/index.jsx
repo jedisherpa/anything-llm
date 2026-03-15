@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { isMobile } from "react-device-detect";
 import { SidebarMobileHeader } from "@/components/Sidebar";
-import PromptInput, {
+import {
   PROMPT_INPUT_EVENT,
   PROMPT_INPUT_ID,
 } from "@/components/WorkspaceChat/ChatContainer/PromptInput";
@@ -20,12 +20,11 @@ import Workspace from "@/models/workspace";
 import paths from "@/utils/paths";
 import showToast from "@/utils/toast";
 import { safeJsonParse } from "@/utils/request";
-import QuickActions from "@/components/lib/QuickActions";
-import SuggestedMessages from "@/components/lib/SuggestedMessages";
 import useUser from "@/hooks/useUser";
 import TextSizeMenu from "@/components/WorkspaceChat/ChatContainer/TextSizeMenu";
 import WorkspaceModelPicker from "@/components/WorkspaceChat/ChatContainer/WorkspaceModelPicker";
 import { ChatTooltips } from "@/components/WorkspaceChat/ChatContainer/ChatTooltips";
+import MetacanonHomeStage from "@/components/Metacanon/HomeStage";
 
 async function getTargetWorkspace() {
   const lastVisited = safeJsonParse(
@@ -180,6 +179,7 @@ function HomeContent({ workspace, setWorkspace, threadSlug, setThreadSlug }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [chatMode, setChatMode] = useState(workspace?.chatMode || "chat");
   const { files, parseAttachments } = useContext(DndUploaderContext);
 
   useEffect(() => {
@@ -189,6 +189,35 @@ function HomeContent({ workspace, setWorkspace, threadSlug, setThreadSlug }) {
       })
     );
   }, []);
+
+  useEffect(() => {
+    setChatMode(workspace?.chatMode || "chat");
+  }, [workspace?.chatMode, workspace?.slug]);
+
+  async function handleChatModeChange(nextMode) {
+    if (!nextMode || nextMode === chatMode) return;
+    const previousMode = chatMode;
+    setChatMode(nextMode);
+
+    if (!workspace?.slug) return;
+
+    const { workspace: updatedWorkspace, message } = await Workspace.update(
+      workspace.slug,
+      { chatMode: nextMode }
+    );
+
+    if (!updatedWorkspace) {
+      setChatMode(previousMode);
+      showToast(message || "Failed to update chat mode.", "error");
+      return;
+    }
+
+    setWorkspace((current) => ({ ...current, ...updatedWorkspace }));
+    showToast(
+      nextMode === "chat" ? "Chat mode enabled." : "Query mode enabled.",
+      "success"
+    );
+  }
 
   async function submitMessage(message, attachments = []) {
     if (!message || loading) return;
@@ -277,40 +306,29 @@ function HomeContent({ workspace, setWorkspace, threadSlug, setThreadSlug }) {
   return (
     <div
       style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
-      className="transition-all duration-500 relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-zinc-900 light:bg-white w-full h-full overflow-hidden border-none light:border-solid light:border light:border-theme-modal-border"
+      className="metacanon-home-surface transition-all duration-500 relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] w-full h-full overflow-hidden border-none light:border-solid light:border light:border-theme-modal-border"
     >
       {isMobile && <SidebarMobileHeader />}
       <TextSizeMenu />
       <WorkspaceModelPicker workspaceSlug={workspace?.slug} />
       <DnDFileUploaderWrapper>
-        <div className="flex flex-col h-full w-full items-center justify-center">
-          <div className="flex flex-col items-center w-full max-w-[750px]">
-            <h1 className="text-white text-xl md:text-2xl mb-11 text-center">
-              {t("main-page.greeting")}
-            </h1>
-            <PromptInput
-              submit={handleSubmit}
-              isStreaming={loading}
-              sendCommand={sendCommand}
-              attachments={files}
-              centered={true}
-              workspaceSlug={workspace?.slug}
-              threadSlug={threadSlug}
-            />
-            <QuickActions
-              hasAvailableWorkspace={!!workspace}
-              onCreateAgent={() => navigate(paths.settings.agentSkills())}
-              onEditWorkspace={handleEditWorkspace}
-              onUploadDocument={() =>
-                document.getElementById("dnd-chat-file-uploader")?.click()
-              }
-            />
-          </div>
-          <SuggestedMessages
-            suggestedMessages={workspace?.suggestedMessages}
-            sendCommand={sendCommand}
-          />
-        </div>
+        <MetacanonHomeStage
+          submit={handleSubmit}
+          isStreaming={loading}
+          sendCommand={sendCommand}
+          attachments={files}
+          workspaceSlug={workspace?.slug}
+          threadSlug={threadSlug}
+          chatMode={chatMode}
+          onChatModeChange={handleChatModeChange}
+          hasAvailableWorkspace={!!workspace}
+          onCreateAgent={() => navigate(paths.settings.agentSkills())}
+          onConnectLLM={() => navigate(paths.settings.llmPreference())}
+          onEditWorkspace={handleEditWorkspace}
+          onUploadDocument={() =>
+            document.getElementById("dnd-chat-file-uploader")?.click()
+          }
+        />
       </DnDFileUploaderWrapper>
       <ChatTooltips />
     </div>

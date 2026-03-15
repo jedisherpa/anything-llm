@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/refs */
 import { memo, useRef, useEffect } from "react";
-import { Warning } from "@phosphor-icons/react";
+import { Warning } from "@phosphor-icons/react/dist/csr/Warning";
+
 import renderMarkdown from "@/utils/chat/markdown";
 import Citations from "../Citation";
 import {
@@ -45,6 +46,7 @@ const PromptReply = ({ uuid, reply, pending, error, sources = [] }) => {
           message={reply}
           messageId={uuid}
         />
+
         <Citations sources={sources} />
       </div>
     </div>
@@ -94,6 +96,7 @@ function RenderAssistantChatContent({ message, messageId }) {
           messageId={messageId}
         />
       )}
+
       <span
         className="break-words"
         dangerouslySetInnerHTML={{ __html: renderMarkdown(contentRef.current) }}

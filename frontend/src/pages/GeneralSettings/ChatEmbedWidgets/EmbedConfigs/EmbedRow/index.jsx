@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
-import { DotsThreeOutline } from "@phosphor-icons/react";
+import { DotsThreeOutline } from "@phosphor-icons/react/dist/csr/DotsThreeOutline";
+
 import showToast from "@/utils/toast";
 import { useModal } from "@/hooks/useModal";
 import ModalWrapper from "@/components/ModalWrapper";

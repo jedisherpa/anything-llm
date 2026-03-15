@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Admin from "@/models/admin";
 import showToast from "@/utils/toast";
 import { useTranslation } from "react-i18next";
+import PrismHoverTarget from "@/components/PrismHoverTarget";
 
 export default function CustomSiteSettings() {
   const { t } = useTranslation();
@@ -109,12 +110,14 @@ export default function CustomSiteSettings() {
       </div>
 
       {hasChanges && (
-        <button
-          type="submit"
-          className="transition-all mt-2 w-fit duration-300 border border-slate-200 px-5 py-2.5 rounded-lg text-white text-sm items-center flex gap-x-2 hover:bg-slate-200 hover:text-slate-800 focus:ring-gray-800"
-        >
-          Save
-        </button>
+        <PrismHoverTarget targetId="settings-custom-site-settings-save">
+          <button
+            type="submit"
+            className="transition-all mt-2 w-fit duration-300 border border-slate-200 px-5 py-2.5 rounded-lg text-white text-sm items-center flex gap-x-2 hover:bg-slate-200 hover:text-slate-800 focus:ring-gray-800"
+          >
+            Save
+          </button>
+        </PrismHoverTarget>
       )}
     </form>
   );

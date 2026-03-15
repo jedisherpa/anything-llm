@@ -6,15 +6,17 @@ import PrivateRoute, {
   AdminRoute,
   ManagerRoute,
 } from "@/components/PrivateRoute";
-import Login from "@/pages/Login";
-import SimpleSSOPassthrough from "@/pages/Login/SSO/simple";
-import OnboardingFlow from "@/pages/OnboardingFlow";
+import "@/styles/theme-dark.css";
+import "@/styles/theme-light.css";
+import "@/styles/theme-cathedral.css";
+import "@/styles/prism-presence.css";
 import "@/index.css";
+import "@/styles/prism-app-treatment.css";
 
 const isDev = import.meta.env.DEV;
 const REACTWRAP = isDev ? React.Fragment : React.StrictMode;
 
-const router = createBrowserRouter([
+const appRoutes = [
   {
     path: "/",
     element: <App />,
@@ -28,11 +30,50 @@ const router = createBrowserRouter([
       },
       {
         path: "/login",
-        element: <Login />,
+        lazy: async () => {
+          const { default: Login } = await import("@/pages/Login");
+          return { element: <Login /> };
+        },
       },
       {
         path: "/sso/simple",
-        element: <SimpleSSOPassthrough />,
+        lazy: async () => {
+          const { default: SimpleSSOPassthrough } = await import(
+            "@/pages/Login/SSO/simple"
+          );
+          return { element: <SimpleSSOPassthrough /> };
+        },
+      },
+      {
+        path: "/metacanonai",
+        lazy: async () => {
+          const { default: MetacanonAIPage } = await import(
+            "@/pages/MetacanonAI"
+          );
+          return { element: <PrivateRoute Component={MetacanonAIPage} /> };
+        },
+      },
+      {
+        path: "/metacanonai/library",
+        lazy: async () => {
+          const { default: MetacanonAILibraryPage } = await import(
+            "@/pages/MetacanonAILibrary"
+          );
+          return {
+            element: <PrivateRoute Component={MetacanonAILibraryPage} />,
+          };
+        },
+      },
+      {
+        path: "/metacanonai/manual-previews",
+        lazy: async () => {
+          const { default: MetacanonAIManualPreviewsPage } = await import(
+            "@/pages/MetacanonAIManualPreviews"
+          );
+          return {
+            element: <PrivateRoute Component={MetacanonAIManualPreviewsPage} />,
+          };
+        },
       },
       {
         path: "/workspace/:slug/settings/:tab",
@@ -314,11 +355,21 @@ const router = createBrowserRouter([
       // Onboarding Flow
       {
         path: "/onboarding",
-        element: <OnboardingFlow />,
+        lazy: async () => {
+          const { default: OnboardingFlow } = await import(
+            "@/pages/OnboardingFlow"
+          );
+          return { element: <OnboardingFlow /> };
+        },
       },
       {
         path: "/onboarding/:step",
-        element: <OnboardingFlow />,
+        lazy: async () => {
+          const { default: OnboardingFlow } = await import(
+            "@/pages/OnboardingFlow"
+          );
+          return { element: <OnboardingFlow /> };
+        },
       },
       // Experimental feature pages
       {
@@ -382,7 +433,50 @@ const router = createBrowserRouter([
       },
     ],
   },
-]);
+];
+
+if (isDev) {
+  appRoutes[0].children.splice(
+    3,
+    0,
+    {
+      path: "/prism-hero",
+      lazy: async () => {
+        const { default: PrismHeroPage } = await import("@/pages/PrismHero");
+        return { element: <PrismHeroPage /> };
+      },
+    },
+    {
+      path: "/prism-dodecahedron",
+      lazy: async () => {
+        const { default: PrismDodecahedronPage } = await import(
+          "@/pages/PrismDodecahedron"
+        );
+        return { element: <PrismDodecahedronPage /> };
+      },
+    },
+    {
+      path: "/metacanonai/ui-lab",
+      lazy: async () => {
+        const { default: MetacanonUILabPage } = await import(
+          "@/pages/MetacanonAILab"
+        );
+        return { element: <PrivateRoute Component={MetacanonUILabPage} /> };
+      },
+    },
+    {
+      path: "/metacanonai/repo-lab",
+      lazy: async () => {
+        const { default: MetacanonAIRepoPage } = await import(
+          "@/pages/MetacanonAIRepo"
+        );
+        return { element: <PrivateRoute Component={MetacanonAIRepoPage} /> };
+      },
+    }
+  );
+}
+
+const router = createBrowserRouter(appRoutes);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <REACTWRAP>

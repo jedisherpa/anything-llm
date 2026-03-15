@@ -3,7 +3,8 @@ import {
   ONBOARDING_SURVEY_URL,
 } from "@/utils/constants";
 import paths from "@/utils/paths";
-import { CheckCircle } from "@phosphor-icons/react";
+import { CheckCircle } from "@phosphor-icons/react/dist/csr/CheckCircle";
+
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -182,6 +183,7 @@ export default function Survey({ setHeader, setForwardBtn, setBackBtn }) {
                 onChange={(e) => setSelectedOption(e.target.value)}
                 className="hidden"
               />
+
               <div
                 className={`w-4 h-4 rounded-full border-2 border-theme-sidebar-border mr-2 ${
                   selectedOption === "job"
@@ -208,6 +210,7 @@ export default function Survey({ setHeader, setForwardBtn, setBackBtn }) {
                 onChange={(e) => setSelectedOption(e.target.value)}
                 className="hidden"
               />
+
               <div
                 className={`w-4 h-4 rounded-full border-2 border-theme-sidebar-border mr-2 ${
                   selectedOption === "personal"
@@ -234,6 +237,7 @@ export default function Survey({ setHeader, setForwardBtn, setBackBtn }) {
                 onChange={(e) => setSelectedOption(e.target.value)}
                 className="hidden"
               />
+
               <div
                 className={`w-4 h-4 rounded-full border-2 border-theme-sidebar-border mr-2 ${
                   selectedOption === "other"

@@ -1,0 +1,48 @@
+[data-theme="cathedral"] {
+  /* Metacanon shell tokens - Cathedral (The Sanctuary) */
+  --bg: #08080e;
+  --sidebar-bg: #0c0c14;
+  --sidebar-bg-end: #08080e;
+  --sidebar-glow-color: rgba(218, 165, 32, 0.05);
+  --sidebar-border: rgba(218, 165, 32, 0.04);
+  --subtle-border: rgba(255, 255, 255, 0.02);
+  --text-1: #d4cfc4;
+  --text-2: rgba(212, 207, 196, 0.3);
+  --text-3: rgba(212, 207, 196, 0.15);
+  --text-placeholder: rgba(212, 207, 196, 0.2);
+  --gold: #daa520;
+  --gold-glow: rgba(218, 165, 32, 0.5);
+  --gold-text: rgba(218, 165, 32, 0.5);
+  --gold-bg: rgba(218, 165, 32, 0.08);
+  --gold-border: rgba(218, 165, 32, 0.12);
+  --active-bg: rgba(218, 165, 32, 0.03);
+  --active-border: rgba(218, 165, 32, 0.04);
+  --chip-border: rgba(218, 165, 32, 0.04);
+  --chip-text: rgba(212, 207, 196, 0.2);
+  --comp-bg: rgba(255, 255, 255, 0.015);
+  --comp-border: rgba(218, 165, 32, 0.04);
+  --send-bg: rgba(218, 165, 32, 0.12);
+  --send-border: rgba(218, 165, 32, 0.2);
+  --send-icon: rgba(218, 165, 32, 0.5);
+  --mc-text: #08080e;
+  --mc-shadow: 0 0 6px rgba(218, 165, 32, 0.4);
+  --thread-active: rgba(218, 165, 32, 0.5);
+  --inscription: rgba(218, 165, 32, 0.1);
+  --logo-filter: drop-shadow(0 0 12px rgba(218, 165, 32, 0.2));
+  --prism-filter: drop-shadow(0 0 30px rgba(218, 165, 32, 0.2))
+    drop-shadow(0 0 80px rgba(0, 128, 128, 0.08));
+  --prism-btn-filter: drop-shadow(0 0 6px rgba(218, 165, 32, 0.25));
+  --halo-border: rgba(218, 165, 32, 0.03);
+  --halo-shadow: 0 0 40px rgba(0, 128, 128, 0.04),
+    0 0 80px rgba(218, 165, 32, 0.03);
+  --cross-h: rgba(218, 165, 32, 0.05);
+  --cross-v: rgba(218, 165, 32, 0.04);
+  --display-font: "Cormorant Garamond", serif;
+  --display-weight: 300;
+  --help-grad: linear-gradient(135deg, #daa520, #e8c547, #40e0d0, #daa520);
+  --tagline-color: rgba(218, 165, 32, 0.2);
+  --status-label: "SANCTUARY";
+  --placeholder-text: "Speak, and the Prism listens...";
+  --inscription-text: "sovereignty is not a feature • it is the architecture";
+  --tagline-text: "structure & soul";
+}

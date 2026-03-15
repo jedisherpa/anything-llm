@@ -1,6 +1,7 @@
 import { useEffect, useState, forwardRef } from "react";
 import { useTranslation } from "react-i18next";
-import { X } from "@phosphor-icons/react";
+import { X } from "@phosphor-icons/react/dist/csr/X";
+
 import PromptHistory from "@/models/promptHistory";
 import PromptHistoryItem from "./PromptHistoryItem";
 import * as Skeleton from "react-loading-skeleton";
@@ -69,6 +70,7 @@ export default forwardRef(function ChatPromptHistory(
               {t("chat.prompt.history.clearAll")}
             </button>
           )}
+
           <button
             type="button"
             className="text-theme-text-secondary cursor-pointer hover:text-primary-button border-none"

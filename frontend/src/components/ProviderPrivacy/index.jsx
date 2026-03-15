@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import System from "@/models/system";
 import { PROVIDER_PRIVACY_MAP } from "./constants";
-import { ArrowSquareOut } from "@phosphor-icons/react";
+import { ArrowSquareOut } from "@phosphor-icons/react/dist/csr/ArrowSquareOut";
+
 import AnythingLLMIcon from "@/media/logo/anything-llm-icon.png";
 import { Link } from "react-router-dom";
 import { titleCase, sentenceCase } from "text-case";
@@ -14,6 +15,7 @@ function defaultProvider(providerString) {
     description: [
       `"${providerString}" has no known data handling policy defined in AnythingLLM.`,
     ],
+
     logo: AnythingLLMIcon,
   };
 }
@@ -57,11 +59,13 @@ export default function ProviderPrivacy() {
         provider={providers.llmProvider}
         altText="LLM Logo"
       />
+
       <ProviderPrivacyItem
         title="Embedding Preference"
         provider={providers.embeddingEngine}
         altText="Embedding Logo"
       />
+
       <ProviderPrivacyItem
         title="Vector Database"
         provider={providers.vectorDb}
@@ -81,6 +85,7 @@ function ProviderPrivacyItem({ title, provider, altText }) {
           alt={altText}
           className="w-8 h-8 rounded flex-shrink-0 mt-0.5"
         />
+
         <div className="flex flex-col gap-2 flex-1">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-theme-text-primary text-sm font-semibold">

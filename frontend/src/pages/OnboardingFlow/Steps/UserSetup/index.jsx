@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { AUTH_TIMESTAMP, AUTH_TOKEN, AUTH_USER } from "@/utils/constants";
 import { useTranslation } from "react-i18next";
 import { USERNAME_MIN_LENGTH, USERNAME_MAX_LENGTH } from "@/utils/username";
-import { PW_REGEX } from "@/pages/GeneralSettings/Security";
+import { PW_REGEX } from "@/utils/security";
 
 export default function UserSetup({ setHeader, setForwardBtn, setBackBtn }) {
   const { t } = useTranslation();

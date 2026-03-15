@@ -1,5 +1,6 @@
 import ConnectorImages from "@/components/DataConnectorOption/media";
-import { MagnifyingGlass } from "@phosphor-icons/react";
+import { MagnifyingGlass } from "@phosphor-icons/react/dist/csr/MagnifyingGlass";
+
 import { useTranslation } from "react-i18next";
 import GithubOptions from "./Connectors/Github";
 import GitlabOptions from "./Connectors/Gitlab";
@@ -82,6 +83,7 @@ export default function DataConnectors() {
             weight="bold"
             className="absolute left-4 z-30 text-white"
           />
+
           <input
             type="text"
             placeholder={t("connectors.search-placeholder")}

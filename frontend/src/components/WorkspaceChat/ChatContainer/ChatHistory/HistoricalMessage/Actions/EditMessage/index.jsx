@@ -1,4 +1,5 @@
-import { Info, Pencil } from "@phosphor-icons/react";
+import { Info } from "@phosphor-icons/react/dist/csr/Info";
+import { Pencil } from "@phosphor-icons/react/dist/csr/Pencil";
 import { useState, useEffect, useRef } from "react";
 import Appearance from "@/models/appearance";
 import { useTranslation } from "react-i18next";
@@ -122,6 +123,7 @@ export function EditMessageForm({
           defaultValue={message}
           onChange={adjustTextArea}
         />
+
         <EditActionBar
           onCancel={cancelEdits}
           onSave={handleSave}
@@ -144,6 +146,7 @@ export function EditMessageForm({
         defaultValue={message}
         onChange={adjustTextArea}
       />
+
       <EditActionBar onCancel={cancelEdits} />
     </form>
   );
@@ -158,6 +161,7 @@ function EditActionBar({ onCancel, onSave, isUserMessage = false }) {
           size={12}
           className="shrink-0 mt-0.5 text-zinc-200 light:text-slate-800"
         />
+
         <span className="text-zinc-200 light:text-slate-800 text-xs leading-4">
           {isUserMessage
             ? t("chat_window.edit_info_user")
@@ -181,6 +185,7 @@ function EditActionBar({ onCancel, onSave, isUserMessage = false }) {
             {t("chat_window.save")}
           </button>
         )}
+
         <button
           type="submit"
           className="border-none bg-zinc-50 light:bg-slate-800 text-zinc-800 light:text-white text-sm font-medium w-[70px] h-9 rounded-lg hover:bg-zinc-200 light:hover:bg-slate-800"

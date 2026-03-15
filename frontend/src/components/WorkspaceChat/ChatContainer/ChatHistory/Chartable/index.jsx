@@ -34,7 +34,8 @@ import renderMarkdown from "@/utils/chat/markdown.js";
 import { memo, useCallback, useState } from "react";
 import { saveAs } from "file-saver";
 import { useGenerateImage } from "recharts-to-png";
-import { CircleNotch, DownloadSimple } from "@phosphor-icons/react";
+import { CircleNotch } from "@phosphor-icons/react/dist/csr/CircleNotch";
+import { DownloadSimple } from "@phosphor-icons/react/dist/csr/DownloadSimple";
 
 const dataFormatter = (number) => {
   return Intl.NumberFormat("us").format(number).toString();
@@ -89,6 +90,7 @@ export function Chartable({ props }) {
             />
           </div>
         );
+
       case "bar":
         return (
           <div className="bg-theme-bg-primary p-8 rounded-xl text-white light:border light:border-theme-border-primary">
@@ -108,6 +110,7 @@ export function Chartable({ props }) {
             />
           </div>
         );
+
       case "line":
         return (
           <div className="bg-theme-bg-primary p-8 pb-12 rounded-xl text-white h-[500px] w-full light:border light:border-theme-border-primary">
@@ -125,6 +128,7 @@ export function Chartable({ props }) {
             />
           </div>
         );
+
       case "composed":
         return (
           <div className="bg-theme-bg-primary p-8 rounded-xl text-white light:border light:border-theme-border-primary">
@@ -138,12 +142,14 @@ export function Chartable({ props }) {
                 className="mb-5 justify-end"
               />
             )}
+
             <ComposedChart width={500} height={260} data={data}>
               <CartesianGrid
                 strokeDasharray="3 3"
                 horizontal
                 vertical={false}
               />
+
               <XAxis
                 dataKey="name"
                 tickLine={false}
@@ -156,6 +162,7 @@ export function Chartable({ props }) {
                 }}
                 padding={{ left: 10, right: 10 }}
               />
+
               <YAxis
                 tickLine={false}
                 axisLine={false}
@@ -166,6 +173,7 @@ export function Chartable({ props }) {
                   fontFamily: "Inter; Helvetica",
                 }}
               />
+
               <Tooltip legendColor={getTremorColor(color || "blue")} />
               <Line
                 type="linear"
@@ -174,6 +182,7 @@ export function Chartable({ props }) {
                 dot={false}
                 strokeWidth={2}
               />
+
               <Bar
                 dataKey="value"
                 name="value"
@@ -183,6 +192,7 @@ export function Chartable({ props }) {
             </ComposedChart>
           </div>
         );
+
       case "scatter":
         return (
           <div className="bg-theme-bg-primary p-8 rounded-xl text-white light:border light:border-theme-border-primary">
@@ -198,12 +208,14 @@ export function Chartable({ props }) {
                 />
               </div>
             )}
+
             <ScatterChart width={500} height={260} data={data}>
               <CartesianGrid
                 strokeDasharray="3 3"
                 horizontal
                 vertical={false}
               />
+
               <XAxis
                 dataKey="name"
                 tickLine={false}
@@ -216,6 +228,7 @@ export function Chartable({ props }) {
                 }}
                 padding={{ left: 10, right: 10 }}
               />
+
               <YAxis
                 tickLine={false}
                 axisLine={false}
@@ -226,11 +239,13 @@ export function Chartable({ props }) {
                   fontFamily: "Inter; Helvetica",
                 }}
               />
+
               <Tooltip legendColor={getTremorColor(color || "blue")} />
               <Scatter dataKey={value} fill={getTremorColor(color || "blue")} />
             </ScatterChart>
           </div>
         );
+
       case "pie":
         return (
           <div className="bg-theme-bg-primary p-8 rounded-xl text-white light:border light:border-theme-border-primary">
@@ -257,6 +272,7 @@ export function Chartable({ props }) {
             />
           </div>
         );
+
       case "radar":
         return (
           <div className="bg-theme-bg-primary p-8 rounded-xl text-white light:border light:border-theme-border-primary">
@@ -272,6 +288,7 @@ export function Chartable({ props }) {
                 />
               </div>
             )}
+
             <RadarChart
               cx={300}
               cy={250}
@@ -293,6 +310,7 @@ export function Chartable({ props }) {
             </RadarChart>
           </div>
         );
+
       case "radialbar":
         return (
           <div className="bg-theme-bg-primary p-8 rounded-xl text-white light:border light:border-theme-border-primary">
@@ -308,6 +326,7 @@ export function Chartable({ props }) {
                 />
               </div>
             )}
+
             <RadialBarChart
               width={500}
               height={300}
@@ -326,10 +345,12 @@ export function Chartable({ props }) {
                 }}
                 dataKey="value"
               />
+
               <Tooltip legendColor={getTremorColor(color || "blue")} />
             </RadialBarChart>
           </div>
         );
+
       case "treemap":
         return (
           <div className="bg-theme-bg-primary p-8 rounded-xl text-white light:border light:border-theme-border-primary">
@@ -345,6 +366,7 @@ export function Chartable({ props }) {
                 />
               </div>
             )}
+
             <Treemap
               width={500}
               height={260}
@@ -358,6 +380,7 @@ export function Chartable({ props }) {
             </Treemap>
           </div>
         );
+
       case "funnel":
         return (
           <div className="bg-theme-bg-primary p-8 rounded-xl text-white light:border light:border-theme-border-primary">
@@ -373,12 +396,14 @@ export function Chartable({ props }) {
                 />
               </div>
             )}
+
             <FunnelChart width={500} height={300} data={data}>
               <Tooltip legendColor={getTremorColor(color || "blue")} />
               <Funnel dataKey="value" color={getTremorColor(color || "blue")} />
             </FunnelChart>
           </div>
         );
+
       default:
         return <p>Unsupported chart type.</p>;
     }
@@ -432,6 +457,7 @@ const customTooltip = (props) => {
         <div
           className={`flex w-1.5 flex-col bg-${categoryPayload?.color}-500 rounded`}
         />
+
         <div className="w-full">
           <div className="flex items-center justify-between space-x-8">
             <p className="whitespace-nowrap text-right text-tremor-content">

@@ -6,7 +6,7 @@ import ModalWrapper from "@/components/ModalWrapper";
 import EditVariableModal from "./EditVariableModal";
 import { titleCase } from "text-case";
 import truncate from "truncate";
-import { Trash } from "@phosphor-icons/react";
+import { Trash } from "@phosphor-icons/react/dist/csr/Trash";
 
 /**
  * A row component for displaying a system prompt variable

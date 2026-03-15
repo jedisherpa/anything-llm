@@ -1,4 +1,4 @@
-import { X } from "@phosphor-icons/react";
+import { X } from "@phosphor-icons/react/dist/csr/X";
 import { useTranslation } from "react-i18next";
 import ModalWrapper from "@/components/ModalWrapper";
 import { combineLikeSources } from "../../ChatHistory/Citation";

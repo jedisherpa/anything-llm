@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { Plus } from "@phosphor-icons/react";
+import { Plus } from "@phosphor-icons/react/dist/csr/Plus";
+
 import { useTranslation } from "react-i18next";
 import System from "@/models/system";
 import { useModal } from "@/hooks/useModal";
@@ -199,6 +200,7 @@ export default function SlashCommandsTab({
             weight="bold"
             className="text-white light:text-slate-900"
           />
+
           <span className="text-xs text-white light:text-slate-900">
             {t("chat_window.add_new")}
           </span>
@@ -211,6 +213,7 @@ export default function SlashCommandsTab({
         onClose={closeAddModal}
         onSave={handleSavePreset}
       />
+
       {selectedPreset && (
         <EditPresetModal
           isOpen={isEditModalOpen}
@@ -223,6 +226,7 @@ export default function SlashCommandsTab({
           preset={selectedPreset}
         />
       )}
+
       <PublishEntityModal
         show={isPublishModalOpen}
         onClose={closePublishModal}

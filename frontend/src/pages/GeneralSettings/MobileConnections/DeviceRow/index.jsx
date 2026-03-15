@@ -2,7 +2,9 @@ import showToast from "@/utils/toast";
 import MobileConnection from "@/models/mobile";
 import { useState } from "react";
 import moment from "moment";
-import { BugDroid, AppleLogo } from "@phosphor-icons/react";
+import { BugDroid } from "@phosphor-icons/react/dist/csr/BugDroid";
+import { AppleLogo } from "@phosphor-icons/react/dist/csr/AppleLogo";
+
 import { Link } from "react-router-dom";
 import paths from "@/utils/paths";
 
@@ -40,6 +42,7 @@ export default function DeviceRow({ device, removeDevice }) {
                 className="fill-theme-text-primary"
               />
             )}
+
             <span className="text-sm">{device.deviceName}</span>
           </div>
         </td>

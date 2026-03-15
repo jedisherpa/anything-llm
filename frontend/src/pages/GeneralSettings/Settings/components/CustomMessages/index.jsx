@@ -1,7 +1,8 @@
 import EditingChatBubble from "@/components/EditingChatBubble";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
-import { Plus } from "@phosphor-icons/react";
+import { Plus } from "@phosphor-icons/react/dist/csr/Plus";
+
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -80,6 +81,7 @@ export default function CustomMessages() {
                 removeMessage={removeMessage}
               />
             )}
+
             {message.response && (
               <EditingChatBubble
                 message={message}

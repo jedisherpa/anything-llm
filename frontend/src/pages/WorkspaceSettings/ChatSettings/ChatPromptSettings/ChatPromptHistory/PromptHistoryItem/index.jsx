@@ -1,4 +1,4 @@
-import { DotsThreeVertical } from "@phosphor-icons/react";
+import { DotsThreeVertical } from "@phosphor-icons/react/dist/csr/DotsThreeVertical";
 import { useRef, useState, useEffect } from "react";
 import PromptHistory from "@/models/promptHistory";
 import { useTranslation } from "react-i18next";
@@ -59,6 +59,7 @@ export default function PromptHistoryItem({
               <span className="mx-1 text-white">•</span>
             </>
           )}
+
           <span className="text-white opacity-50 light:opacity-100">
             {moment(modifiedAt).fromNow()}
           </span>

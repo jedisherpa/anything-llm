@@ -1,4 +1,4 @@
-import { X } from "@phosphor-icons/react";
+import { X } from "@phosphor-icons/react/dist/csr/X";
 import { useTranslation } from "react-i18next";
 import paths from "@/utils/paths";
 import { Link } from "react-router-dom";

@@ -1,4 +1,4 @@
-import { Info } from "@phosphor-icons/react";
+import { Info } from "@phosphor-icons/react/dist/csr/Info";
 import { useTranslation } from "react-i18next";
 import { Tooltip } from "react-tooltip";
 
@@ -96,6 +96,7 @@ export default function AzureAiOptions({ settings }) {
                 wordWrap: "break-word",
               }}
             />
+
             <div
               type="button"
               className="text-theme-text-secondary cursor-pointer hover:bg-theme-bg-primary flex items-center justify-center rounded-full"

@@ -2,7 +2,10 @@ import React, { useEffect, useState, useRef } from "react";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
 import LLMItem from "@/components/LLMSelection/LLMItem";
-import { CaretUpDown, MagnifyingGlass, X } from "@phosphor-icons/react";
+import { CaretUpDown } from "@phosphor-icons/react/dist/csr/CaretUpDown";
+import { MagnifyingGlass } from "@phosphor-icons/react/dist/csr/MagnifyingGlass";
+import { X } from "@phosphor-icons/react/dist/csr/X";
+
 import CTAButton from "@/components/lib/CTAButton";
 import AnythingLLMIcon from "@/media/logo/anything-llm-icon.png";
 import BrowserNative from "@/components/SpeechToText/BrowserNative";
@@ -108,6 +111,7 @@ export default function SpeechToTextProvider({ settings }) {
               onClick={() => setSearchMenuOpen(false)}
             />
           )}
+
           {searchMenuOpen ? (
             <div className="absolute top-0 left-0 w-full max-w-[640px] max-h-[310px] min-h-[64px] bg-theme-settings-input-bg rounded-lg flex flex-col justify-between cursor-pointer border-2 border-primary-button z-20">
               <div className="w-full flex flex-col gap-y-1">
@@ -117,6 +121,7 @@ export default function SpeechToTextProvider({ settings }) {
                     weight="bold"
                     className="absolute left-4 z-30 text-theme-text-primary -ml-4 my-2"
                   />
+
                   <input
                     type="text"
                     name="stt-provider-search"
@@ -129,6 +134,7 @@ export default function SpeechToTextProvider({ settings }) {
                       if (e.key === "Enter") e.preventDefault();
                     }}
                   />
+
                   <X
                     size={20}
                     weight="bold"
@@ -163,6 +169,7 @@ export default function SpeechToTextProvider({ settings }) {
                   alt={`${selectedProviderObject.name} logo`}
                   className="w-10 h-10 rounded-md"
                 />
+
                 <div className="flex flex-col text-left">
                   <div className="text-sm font-semibold text-white">
                     {selectedProviderObject.name}

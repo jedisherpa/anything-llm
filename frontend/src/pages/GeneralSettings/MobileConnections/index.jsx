@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import Sidebar from "@/components/SettingsSidebar";
 import * as Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { QrCode } from "@phosphor-icons/react";
+import { QrCode } from "@phosphor-icons/react/dist/csr/QrCode";
+
 import { useModal } from "@/hooks/useModal";
 import CTAButton from "@/components/lib/CTAButton";
 import MobileConnection from "@/models/mobile";
@@ -43,11 +44,11 @@ export default function MobileDevices() {
   };
 
   return (
-    <div className="w-screen h-screen overflow-hidden bg-theme-bg-container flex md:mt-0 mt-6">
+    <div className="metacanon-page-shell w-screen h-screen overflow-hidden bg-theme-bg-container flex md:mt-0 mt-6">
       <Sidebar />
       <div
         style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
-        className="relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
+        className="metacanon-page-frame relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
       >
         <div className="flex flex-col w-full px-1 md:pl-6 md:pr-[50px] md:py-6 py-16">
           <div className="w-full flex flex-col gap-y-1 pb-6 border-white/10 border-b-2">
@@ -81,7 +82,7 @@ export default function MobileDevices() {
                 containerClassName="flex w-full"
               />
             ) : (
-              <table className="w-full text-xs text-left rounded-lg min-w-[640px] border-spacing-0">
+              <table className="prism-data-table w-full text-xs text-left rounded-lg min-w-[640px] border-spacing-0">
                 <thead className="text-theme-text-secondary text-xs leading-[18px] font-bold uppercase border-white/10 border-b">
                   <tr>
                     <th scope="col" className="px-6 py-3">
@@ -97,7 +98,7 @@ export default function MobileDevices() {
                 </thead>
                 <tbody>
                   {devices.length === 0 ? (
-                    <tr className="bg-transparent text-theme-text-secondary text-sm font-medium">
+                    <tr className="prism-table-empty-row bg-transparent text-theme-text-secondary text-sm font-medium">
                       <td colSpan="4" className="px-6 py-4 text-center">
                         No devices found
                       </td>

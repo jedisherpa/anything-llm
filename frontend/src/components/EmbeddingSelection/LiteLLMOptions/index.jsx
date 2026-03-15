@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import System from "@/models/system";
-import { Warning, Info } from "@phosphor-icons/react";
+import { Warning } from "@phosphor-icons/react/dist/csr/Warning";
+import { Info } from "@phosphor-icons/react/dist/csr/Info";
+
 import { Tooltip } from "react-tooltip";
 
 export default function LiteLLMOptions({ settings }) {
@@ -34,6 +36,7 @@ export default function LiteLLMOptions({ settings }) {
           basePath={basePath}
           apiKey={apiKey}
         />
+
         <div className="flex flex-col w-60">
           <div
             data-tooltip-place="top"
@@ -44,6 +47,7 @@ export default function LiteLLMOptions({ settings }) {
               size={16}
               className="text-theme-text-secondary cursor-pointer"
             />
+
             <label className="text-white text-sm font-semibold block">
               Max embedding chunk length
             </label>
@@ -174,6 +178,7 @@ function EmbeddingModelTooltip() {
         data-tooltip-id="model-tooltip"
         data-tooltip-place="right"
       />
+
       <Tooltip
         delayHide={300}
         id="model-tooltip"

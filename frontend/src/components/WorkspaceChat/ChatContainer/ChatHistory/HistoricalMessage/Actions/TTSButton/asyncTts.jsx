@@ -1,5 +1,8 @@
 import { useEffect, useState, useRef } from "react";
-import { SpeakerHigh, PauseCircle, CircleNotch } from "@phosphor-icons/react";
+import { SpeakerHigh } from "@phosphor-icons/react/dist/csr/SpeakerHigh";
+import { PauseCircle } from "@phosphor-icons/react/dist/csr/PauseCircle";
+import { CircleNotch } from "@phosphor-icons/react/dist/csr/CircleNotch";
+
 import Workspace from "@/models/workspace";
 import showToast from "@/utils/toast";
 import { useTranslation } from "react-i18next";
@@ -79,6 +82,7 @@ export default function AsyncTTSMessage({ slug, chatId }) {
             )}
           </>
         )}
+
         <audio
           ref={playerRef}
           hidden={true}

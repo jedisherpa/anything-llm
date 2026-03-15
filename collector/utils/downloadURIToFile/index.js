@@ -37,6 +37,9 @@ async function downloadURIToFile(url, maxTimeout = 10_000) {
       urlObj.pathname.replace(/\//g, "-"),
       { lower: true }
     )}`;
+    if (!fs.existsSync(WATCH_DIRECTORY)) {
+      fs.mkdirSync(WATCH_DIRECTORY, { recursive: true });
+    }
     const localFilePath = path.join(WATCH_DIRECTORY, filename);
     const writeStream = fs.createWriteStream(localFilePath);
     await pipeline(res.body, writeStream);

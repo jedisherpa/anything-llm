@@ -1,4 +1,7 @@
-import { CaretDown, CaretUp, Plus, CaretLeft } from "@phosphor-icons/react";
+import { CaretDown } from "@phosphor-icons/react/dist/csr/CaretDown";
+import { CaretUp } from "@phosphor-icons/react/dist/csr/CaretUp";
+import { Plus } from "@phosphor-icons/react/dist/csr/Plus";
+import { CaretLeft } from "@phosphor-icons/react/dist/csr/CaretLeft";
 import AnythingInfinityLogo from "@/media/logo/anything-llm-infinity.png";
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -58,6 +61,7 @@ export default function HeaderMenu({
                 alt="logo"
                 className="w-[20px] light:invert"
               />
+
               <span className="text-theme-text-primary text-sm uppercase tracking-widest">
                 Builder
               </span>

@@ -1,7 +1,10 @@
 import React, { useState } from "react";
-import { MagnifyingGlass, X } from "@phosphor-icons/react";
+import { MagnifyingGlass } from "@phosphor-icons/react/dist/csr/MagnifyingGlass";
+import { X } from "@phosphor-icons/react/dist/csr/X";
+
 import Admin from "@/models/admin";
 import showToast from "@/utils/toast";
+import PrismHoverTarget from "@/components/PrismHoverTarget";
 
 export default function AddMemberModal({ closeModal, workspace, users }) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -61,7 +64,7 @@ export default function AddMemberModal({ closeModal, workspace, users }) {
 
   return (
     <div className="relative w-full max-w-[550px] max-h-full">
-      <div className="w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border overflow-hidden">
+      <div className="w-full max-w-2xl metacanon-modal-panel bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border overflow-hidden">
         <div className="flex items-center justify-between p-6 border-b rounded-t border-theme-modal-border">
           <div className="flex items-center gap-x-4">
             <h3 className="text-base font-semibold text-white">Users</h3>
@@ -71,6 +74,7 @@ export default function AddMemberModal({ closeModal, workspace, users }) {
                 className="w-[400px] h-[34px] bg-theme-bg-primary rounded-[100px] text-white placeholder:text-theme-text-secondary text-sm px-10 pl-10"
                 placeholder="Search for a user"
               />
+
               <MagnifyingGlass
                 size={16}
                 weight="bold"
@@ -78,22 +82,25 @@ export default function AddMemberModal({ closeModal, workspace, users }) {
               />
             </div>
           </div>
-          <button
-            onClick={closeModal}
-            type="button"
-            className="border-none bg-transparent rounded-lg text-sm p-1.5 ml-auto inline-flex items-center bg-sidebar-button hover:bg-theme-modal-border hover:border-theme-modal-border hover:border-opacity-50 border-transparent border"
-          >
-            <X className="text-white text-lg" />
-          </button>
+          <PrismHoverTarget targetId="modal-add-member-close">
+            <button
+              onClick={closeModal}
+              type="button"
+              className="border-none bg-transparent rounded-lg text-sm p-1.5 ml-auto inline-flex items-center bg-sidebar-button hover:bg-theme-modal-border hover:border-theme-modal-border hover:border-opacity-50 border-transparent border"
+            >
+              <X className="text-white text-lg" />
+            </button>
+          </PrismHoverTarget>
         </div>
         <form onSubmit={handleUpdate}>
           <div className="py-[17px] px-[20px]">
-            <table className="gap-y-[8px] flex flex-col max-h-[385px] overflow-y-auto no-scroll">
+            <div className="prism-selection-list no-scroll" role="list">
               {filteredUsers.length > 0 ? (
                 filteredUsers.map((user) => (
-                  <tr
+                  <button
+                    type="button"
                     key={user.id}
-                    className="flex items-center gap-x-2 cursor-pointer"
+                    className="prism-selection-row cursor-pointer text-left"
                     onClick={() => handleUserSelect(user.id)}
                   >
                     <div
@@ -109,52 +116,58 @@ export default function AddMemberModal({ closeModal, workspace, users }) {
                     <p className="text-theme-text-primary text-sm font-medium">
                       {user.username}
                     </p>
-                  </tr>
+                  </button>
                 ))
               ) : (
-                <p className="text-theme-text-secondary text-sm font-medium ">
+                <p className="prism-empty-state prism-empty-state--compact text-sm font-medium">
                   No users found
                 </p>
               )}
-            </table>
+            </div>
           </div>
           <div className="flex w-full justify-between items-center p-3 space-x-2 border-t rounded-b border-gray-500/50">
             <div className="flex items-center gap-x-2">
-              <button
-                type="button"
-                onClick={handleSelectAll}
-                className="flex items-center gap-x-2 ml-2"
-              >
-                <div
-                  className="shrink-0 w-3 h-3 rounded border-[1px] border-white flex justify-center items-center cursor-pointer"
-                  role="checkbox"
-                  aria-checked={selectedUsers.length === filteredUsers.length}
-                  tabIndex={0}
-                >
-                  {selectedUsers.length === filteredUsers.length && (
-                    <div className="w-2 h-2 bg-white rounded-[2px]" />
-                  )}
-                </div>
-                <p className="text-white text-sm font-medium">Select All</p>
-              </button>
-              {selectedUsers.length > 0 && (
+              <PrismHoverTarget targetId="modal-add-member-select-all">
                 <button
                   type="button"
-                  onClick={handleUnselect}
+                  onClick={handleSelectAll}
                   className="flex items-center gap-x-2 ml-2"
                 >
-                  <p className="text-theme-text-secondary text-sm font-medium hover:text-theme-text-primary">
-                    Unselect
-                  </p>
+                  <div
+                    className="shrink-0 w-3 h-3 rounded border-[1px] border-white flex justify-center items-center cursor-pointer"
+                    role="checkbox"
+                    aria-checked={selectedUsers.length === filteredUsers.length}
+                    tabIndex={0}
+                  >
+                    {selectedUsers.length === filteredUsers.length && (
+                      <div className="w-2 h-2 bg-white rounded-[2px]" />
+                    )}
+                  </div>
+                  <p className="text-white text-sm font-medium">Select All</p>
                 </button>
+              </PrismHoverTarget>
+              {selectedUsers.length > 0 && (
+                <PrismHoverTarget targetId="modal-add-member-unselect">
+                  <button
+                    type="button"
+                    onClick={handleUnselect}
+                    className="flex items-center gap-x-2 ml-2"
+                  >
+                    <p className="text-theme-text-secondary text-sm font-medium hover:text-theme-text-primary">
+                      Unselect
+                    </p>
+                  </button>
+                </PrismHoverTarget>
               )}
             </div>
-            <button
-              type="submit"
-              className="transition-all duration-300 text-xs px-2 py-1 font-semibold rounded-lg bg-primary-button hover:bg-secondary border-2 border-transparent hover:border-primary-button hover:text-white h-[32px] w-[68px] -mr-8 whitespace-nowrap shadow-[0_4px_14px_rgba(0,0,0,0.25)]"
-            >
-              Save
-            </button>
+            <PrismHoverTarget targetId="modal-add-member-save">
+              <button
+                type="submit"
+                className="transition-all duration-300 text-xs px-2 py-1 font-semibold rounded-lg bg-primary-button hover:bg-secondary border-2 border-transparent hover:border-primary-button hover:text-white h-[32px] w-[68px] -mr-8 whitespace-nowrap shadow-[0_4px_14px_rgba(0,0,0,0.25)]"
+              >
+                Save
+              </button>
+            </PrismHoverTarget>
           </div>
         </form>
       </div>

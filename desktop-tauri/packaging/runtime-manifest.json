@@ -1,0 +1,30 @@
+{
+  "server": {
+    "include": [
+      "index.js",
+      "package.json",
+      "yarn.lock",
+      "endpoints",
+      "jobs",
+      "middleware",
+      "models",
+      "prisma",
+      "public",
+      "swagger",
+      "utils"
+    ]
+  },
+  "collector": {
+    "include": [
+      "index.js",
+      "package.json",
+      "yarn.lock",
+      "extensions",
+      "middleware",
+      "processLink",
+      "processRawText",
+      "processSingleFile",
+      "utils"
+    ]
+  }
+}

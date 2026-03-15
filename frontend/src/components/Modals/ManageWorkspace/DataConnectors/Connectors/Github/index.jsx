@@ -4,7 +4,9 @@ import { useTranslation } from "react-i18next";
 import showToast from "@/utils/toast";
 import pluralize from "pluralize";
 import { TagsInput } from "react-tag-input-component";
-import { Info, Warning } from "@phosphor-icons/react";
+import { Info } from "@phosphor-icons/react/dist/csr/Info";
+import { Warning } from "@phosphor-icons/react/dist/csr/Warning";
+
 import { Tooltip } from "react-tooltip";
 
 const DEFAULT_BRANCHES = ["main", "master"];
@@ -253,6 +255,7 @@ function PATAlert({ accessToken }) {
               __html: t("connectors.github.token_information"),
             }}
           />
+
           <br />
           <br />
           <a
@@ -284,6 +287,7 @@ function PATTooltip({ accessToken }) {
           data-tooltip-place="right"
         />
       )}
+
       <Tooltip
         delayHide={300}
         id="access-token-tooltip"

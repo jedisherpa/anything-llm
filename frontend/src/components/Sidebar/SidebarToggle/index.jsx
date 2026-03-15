@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { SidebarSimple } from "@phosphor-icons/react";
+import { SidebarSimple } from "@phosphor-icons/react/dist/csr/SidebarSimple";
+
 import paths from "@/utils/paths";
 import { Tooltip } from "react-tooltip";
 const SIDEBAR_TOGGLE_STORAGE_KEY = "anythingllm_sidebar_toggle";

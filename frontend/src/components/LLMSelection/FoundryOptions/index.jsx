@@ -84,10 +84,16 @@ export default function FoundryOptions({ settings }) {
                 </>
               ) : (
                 <option disabled value="">
-                  No models found
+                  No models available
                 </option>
               )}
             </select>
+          )}
+          {!loading && !!basePath && models.length === 0 && (
+            <div className="prism-empty-state prism-empty-state--compact mt-2 text-xs">
+              Prism couldn&apos;t find any Foundry models yet. Check the URL and
+              confirm the provider has at least one loaded model.
+            </div>
           )}
         </div>
         <div className="flex flex-col w-60">

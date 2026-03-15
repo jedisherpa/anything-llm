@@ -1,5 +1,6 @@
 import React from "react";
-import { Plus, X } from "@phosphor-icons/react";
+import { Plus } from "@phosphor-icons/react/dist/csr/Plus";
+import { X } from "@phosphor-icons/react/dist/csr/X";
 
 export default function StartNode({
   config,
@@ -31,6 +32,7 @@ export default function StartNode({
             autoComplete="off"
             spellCheck={false}
           />
+
           <input
             type="text"
             placeholder="Initial value"
@@ -44,6 +46,7 @@ export default function StartNode({
             autoComplete="off"
             spellCheck={false}
           />
+
           {config.variables.length > 1 && (
             <button
               onClick={() => handleDeleteVariable(index, variable.name)}
@@ -53,6 +56,7 @@ export default function StartNode({
               <X className="w-4 h-4" />
             </button>
           )}
+
           {index === config.variables.length - 1 && (
             <button
               onClick={() => {

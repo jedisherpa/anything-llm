@@ -3,11 +3,13 @@ import LGroupImg from "./l_group.png";
 import RGroupImg from "./r_group.png";
 import LGroupImgLight from "./l_group-light.png";
 import RGroupImgLight from "./r_group-light.png";
-import AnythingLLMLogo from "@/media/logo/anything-llm.png";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { useTheme } from "@/hooks/useTheme";
 import { useTranslation } from "react-i18next";
 import useRedirectToHomeOnOnboardingComplete from "@/hooks/useOnboardingComplete";
+import useLogo from "@/hooks/useLogo";
+import AwakenPrismModal from "@/components/Metacanon/AwakenPrismModal";
 
 const IMG_SRCSET = {
   light: {
@@ -23,12 +25,18 @@ const IMG_SRCSET = {
 export default function OnboardingHome() {
   const navigate = useNavigate();
   useRedirectToHomeOnOnboardingComplete();
-  const { theme } = useTheme();
+  const { isLightTheme } = useTheme();
+  const { logo } = useLogo();
   const { t } = useTranslation();
-  const srcSet = IMG_SRCSET?.[theme] || IMG_SRCSET.default;
+  const [showAwakenPrism, setShowAwakenPrism] = useState(false);
+  const srcSet = isLightTheme ? IMG_SRCSET.light : IMG_SRCSET.default;
 
   return (
     <>
+      <AwakenPrismModal
+        isOpen={showAwakenPrism}
+        onClose={() => setShowAwakenPrism(false)}
+      />
       <div className="relative w-screen h-screen flex overflow-hidden bg-theme-bg-primary">
         <div
           className="hidden md:block fixed bottom-10 left-10 w-[320px] h-[320px] bg-no-repeat bg-contain"
@@ -46,16 +54,28 @@ export default function OnboardingHome() {
               {t("onboarding.home.title")}
             </p>
             <img
-              src={AnythingLLMLogo}
-              alt="AnythingLLM"
-              className="md:h-[50px] flex-shrink-0 max-w-[300px] light:invert"
+              src={logo}
+              alt="PrismAI"
+              className="md:h-[96px] flex-shrink-0 max-w-[560px]"
             />
-            <button
-              onClick={() => navigate(paths.onboarding.llmPreference())}
-              className="border-[2px] border-theme-text-primary animate-pulse light:animate-none w-full md:max-w-[350px] md:min-w-[300px] text-center py-3 bg-theme-button-primary hover:bg-theme-bg-secondary text-theme-text-primary font-semibold text-sm my-10 rounded-md "
-            >
-              {t("onboarding.home.getStarted")}
-            </button>
+            <div className="mt-10 flex w-full flex-col items-center gap-4 md:max-w-[720px] md:flex-row md:justify-center">
+              <button
+                onClick={() => navigate(paths.onboarding.llmPreference())}
+                className="w-full rounded-[16px] border-[2px] border-theme-text-primary bg-theme-button-primary px-6 py-4 text-center text-sm font-semibold text-theme-text-primary transition hover:bg-theme-bg-secondary md:max-w-[320px]"
+              >
+                {t("onboarding.home.getStarted")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowAwakenPrism(true)}
+                className="w-full rounded-[16px] border border-theme-sidebar-border bg-theme-sidebar-item-default px-6 py-4 text-center text-sm font-semibold text-theme-text-primary transition hover:bg-theme-sidebar-item-hover md:max-w-[320px]"
+              >
+                Awaken Prism
+                <span className="mt-1 block text-[11px] font-normal uppercase tracking-[0.16em] text-theme-text-secondary">
+                  QR Pairing
+                </span>
+              </button>
+            </div>
           </div>
         </div>
       </div>

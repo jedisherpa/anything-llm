@@ -1,24 +1,25 @@
 import React, { useEffect, useRef, useState } from "react";
-import { List, Plus } from "@phosphor-icons/react";
+import { List } from "@phosphor-icons/react/dist/csr/List";
+import { Plus } from "@phosphor-icons/react/dist/csr/Plus";
+
 import NewWorkspaceModal, {
   useNewWorkspaceModal,
 } from "../Modals/NewWorkspace";
 import ActiveWorkspaces from "./ActiveWorkspaces";
-import useLogo from "@/hooks/useLogo";
 import useUser from "@/hooks/useUser";
 import Footer from "../Footer";
 import SettingsButton from "../SettingsButton";
-import { Link } from "react-router-dom";
-import paths from "@/utils/paths";
 import { useTranslation } from "react-i18next";
 import { useSidebarToggle, ToggleSidebarButton } from "./SidebarToggle";
 import SearchBox from "./SearchBox";
 import { Tooltip } from "react-tooltip";
 import { createPortal } from "react-dom";
+import PrismPresence from "@/components/PrismPresence";
+import { MetacanonSidebarBrand } from "@/components/Metacanon/Branding";
+import SidebarFeaturedLenses from "./FeaturedLenses";
 
 export default function Sidebar() {
   const { user } = useUser();
-  const { logo } = useLogo();
   const sidebarRef = useRef(null);
   const { showSidebar, setShowSidebar, canToggleSidebar } = useSidebarToggle();
   const {
@@ -31,10 +32,10 @@ export default function Sidebar() {
     <>
       <div
         style={{
-          width: showSidebar ? "292px" : "0px",
+          width: showSidebar ? "344px" : "0px",
           paddingLeft: showSidebar ? "0px" : "16px",
         }}
-        className="relative transition-all duration-500"
+        className="relative h-full transition-all duration-500"
       >
         {canToggleSidebar && (
           <ToggleSidebarButton
@@ -42,31 +43,38 @@ export default function Sidebar() {
             setShowSidebar={setShowSidebar}
           />
         )}
-        <div className="overflow-hidden h-full">
-          <div className="flex shrink-0 w-full justify-center my-[18px]">
-            <div className="flex w-[250px] min-w-[250px]">
-              <Link to={paths.home()} aria-label="Home">
-                <img
-                  src={logo}
-                  alt="Logo"
-                  className={`rounded max-h-[24px] object-contain transition-opacity duration-500 ${showSidebar ? "opacity-100" : "opacity-0"}`}
-                />
-              </Link>
-            </div>
-          </div>
+
+        <div className="overflow-hidden h-full flex flex-col">
           <div
             ref={sidebarRef}
-            className="relative m-[16px] rounded-[16px] bg-theme-bg-sidebar light:bg-slate-200 border-[2px] border-theme-sidebar-border light:border-none min-w-[250px] p-[10px] h-[calc(100%-76px)]"
+            className="metacanon-sidebar-panel relative m-[16px] flex-1 min-h-0 rounded-[18px] border border-theme-sidebar-border min-w-[304px] p-[14px]"
           >
             <div className="flex flex-col h-full overflow-hidden">
               <div className="flex-grow flex flex-col min-w-[235px] min-h-0">
-                <div className="relative h-[calc(100%-60px)] flex flex-col w-full justify-between pt-[10px] overflow-y-scroll no-scroll">
-                  <div className="flex flex-col gap-y-[14px]">
-                    <SearchBox user={user} showNewWsModal={showNewWsModal} />
-                    <ActiveWorkspaces />
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <MetacanonSidebarBrand />
+                  <div className="hidden shrink-0 md:flex">
+                    <PrismPresence
+                      surface="sidebar"
+                      size="xs"
+                      label="Prism"
+                      caption="Idle"
+                      align="left"
+                      showState={false}
+                    />
                   </div>
                 </div>
-                <div className="absolute bottom-0 left-0 right-0 pb-3 rounded-b-[16px] bg-theme-bg-sidebar light:bg-slate-200 bg-opacity-80 backdrop-filter backdrop-blur-md z-10">
+                <div className="relative flex-1 min-h-0 flex flex-col w-full pt-[4px]">
+                  <div className="flex flex-col gap-y-[14px] overflow-y-scroll no-scroll pb-[86px]">
+                    <SearchBox user={user} showNewWsModal={showNewWsModal} />
+                    <div className="metacanon-sidebar-section-label px-2 text-[11px] font-semibold uppercase tracking-[0.26em]">
+                      Workspaces
+                    </div>
+                    <ActiveWorkspaces />
+                    <SidebarFeaturedLenses />
+                  </div>
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 pt-2 pb-1 rounded-b-[16px] border-t border-theme-sidebar-border bg-transparent bg-opacity-95 backdrop-filter backdrop-blur-md z-10">
                   <Footer />
                 </div>
               </div>
@@ -81,7 +89,6 @@ export default function Sidebar() {
 }
 
 export function SidebarMobileHeader() {
-  const { logo } = useLogo();
   const sidebarRef = useRef(null);
   const [showSidebar, setShowSidebar] = useState(false);
   const [showBgOverlay, setShowBgOverlay] = useState(false);
@@ -120,12 +127,7 @@ export function SidebarMobileHeader() {
           <List className="h-6 w-6" />
         </button>
         <div className="flex items-center justify-center flex-grow">
-          <img
-            src={logo}
-            alt="Logo"
-            className="block mx-auto h-6 w-auto"
-            style={{ maxHeight: "40px", objectFit: "contain" }}
-          />
+          <MetacanonSidebarBrand />
         </div>
         <div className="w-12"></div>
       </div>
@@ -143,23 +145,25 @@ export function SidebarMobileHeader() {
           }  duration-500 fixed top-0 left-0 bg-theme-bg-secondary bg-opacity-75 w-screen h-screen`}
           onClick={() => setShowSidebar(false)}
         />
+
         <div
           ref={sidebarRef}
-          className="relative h-[100vh] fixed top-0 left-0  rounded-r-[26px] bg-theme-bg-sidebar w-[80%] p-[18px] "
+          className="metacanon-sidebar-panel relative h-[100vh] fixed top-0 left-0 rounded-r-[26px] bg-theme-bg-sidebar w-[80%] p-[18px]"
         >
           <div className="w-full h-full flex flex-col overflow-x-hidden items-between">
             {/* Header Information */}
             <div className="flex w-full items-center justify-between gap-x-4">
               <div className="flex shrink-1 w-fit items-center justify-start">
-                <img
-                  src={logo}
-                  alt="Logo"
-                  className="rounded w-full max-h-[40px]"
-                  style={{ objectFit: "contain" }}
-                />
+                <MetacanonSidebarBrand />
               </div>
               {(!user || user?.role !== "default") && (
                 <div className="flex gap-x-2 items-center text-slate-500 shink-0">
+                  <PrismPresence
+                    surface="sidebar-mobile"
+                    size="sm"
+                    label="Prism"
+                  />
+
                   <SettingsButton />
                 </div>
               )}
@@ -173,7 +177,9 @@ export function SidebarMobileHeader() {
                     user={user}
                     showNewWsModal={showNewWsModal}
                   />
+
                   <ActiveWorkspaces />
+                  <SidebarFeaturedLenses />
                 </div>
               </div>
               <div className="z-99 absolute bottom-0 left-0 right-0 pt-2 pb-6 rounded-br-[26px] bg-theme-bg-sidebar bg-opacity-80 backdrop-filter backdrop-blur-md">
@@ -216,6 +222,7 @@ function WorkspaceAndThreadTooltips() {
         delayShow={800}
         className="tooltip !text-xs z-99"
       />
+
       <Tooltip
         id="workspace-thread-name"
         place="right"

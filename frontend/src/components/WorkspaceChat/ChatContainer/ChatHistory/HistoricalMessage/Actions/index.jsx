@@ -1,6 +1,10 @@
 import React, { memo, useState } from "react";
 import useCopyText from "@/hooks/useCopyText";
-import { Check, ThumbsUp, ArrowsClockwise, Copy } from "@phosphor-icons/react";
+import { Check } from "@phosphor-icons/react/dist/csr/Check";
+import { ThumbsUp } from "@phosphor-icons/react/dist/csr/ThumbsUp";
+import { ArrowsClockwise } from "@phosphor-icons/react/dist/csr/ArrowsClockwise";
+import { Copy } from "@phosphor-icons/react/dist/csr/Copy";
+
 import Workspace from "@/models/workspace";
 import { EditMessageAction } from "./EditMessage";
 import RenderMetrics from "./RenderMetrics";
@@ -51,6 +55,7 @@ const Actions = ({
               chatId={chatId}
             />
           )}
+
           {chatId && role !== "user" && !isEditing && (
             <FeedbackButton
               isSelected={selectedFeedback === true}
@@ -60,6 +65,7 @@ const Actions = ({
               IconComponent={ThumbsUp}
             />
           )}
+
           <ActionMenu
             chatId={chatId}
             forkThread={forkThread}

@@ -1,5 +1,6 @@
 import { useEffect, useCallback, useRef } from "react";
-import { Microphone } from "@phosphor-icons/react";
+import { Microphone } from "@phosphor-icons/react/dist/csr/Microphone";
+
 import { Tooltip } from "react-tooltip";
 import "regenerator-runtime"; //required polyfill for speech recognition;
 import SpeechRecognition, {
@@ -138,6 +139,7 @@ export default function SpeechToText({ sendCommand }) {
             : ""
         }`}
       />
+
       <Tooltip
         id="tooltip-microphone-btn"
         place="top"

@@ -1,0 +1,159 @@
+{
+  "id": "Council_09",
+  "title": "The Witness and the Void Council",
+  "councilLabel": "The Witness and the Void Council",
+  "phase": null,
+  "sortOrder": 9,
+  "lensCount": 12,
+  "lensHandles": [
+    "@mc-lens-09-01-the-silent-sage",
+    "@mc-lens-09-02-the-awakened-one",
+    "@mc-lens-09-03-the-old-master",
+    "@mc-lens-09-04-the-servant-of-god",
+    "@mc-lens-09-05-the-absolute-non-dualist",
+    "@mc-lens-09-06-the-advaita-architect",
+    "@mc-lens-09-07-the-codifier-of-stillness",
+    "@mc-lens-09-08-the-uncarved-block",
+    "@mc-lens-09-09-the-empty-bowl",
+    "@mc-lens-09-10-the-space-between-breaths",
+    "@mc-lens-09-11-the-vastness-of-the-night-sky",
+    "@mc-lens-09-12-the-present-moment"
+  ],
+  "lensTitles": [
+    "The Silent Sage",
+    "The Awakened One",
+    "The Old Master",
+    "The Servant of God",
+    "The Absolute Non-Dualist",
+    "The Advaita Architect",
+    "The Codifier of Stillness",
+    "The Uncarved Block",
+    "The Empty Bowl",
+    "The Space Between Breaths",
+    "The Vastness of the Night Sky",
+    "The Present Moment"
+  ],
+  "lenses": [
+    {
+      "id": "lens-09-05-the-absolute-non-dualist",
+      "title": "The Absolute Non-Dualist",
+      "displayTitle": "The Absolute Non-Dualist",
+      "handle": "@mc-lens-09-05-the-absolute-non-dualist",
+      "overview": "To deconstruct the illusion of a separate self for the Human Sovereign, allowing them to witness phenomena from a place of pure, unattached awareness and rest in the ground of being.",
+      "phase": null,
+      "collectionLabel": "The Witness and the Void",
+      "collectionKind": "council"
+    },
+    {
+      "id": "lens-09-06-the-advaita-architect",
+      "title": "The Advaita Architect",
+      "displayTitle": "The Advaita Architect",
+      "handle": "@mc-lens-09-06-the-advaita-architect",
+      "overview": "To provide the Human Sovereign with a direct experience of non-attached awareness, allowing them to de-identify from transient mental and emotional states and rest in the ground of being.",
+      "phase": null,
+      "collectionLabel": "The Witness and the Void",
+      "collectionKind": "council"
+    },
+    {
+      "id": "lens-09-02-the-awakened-one",
+      "title": "The Awakened One",
+      "displayTitle": "The Awakened One",
+      "handle": "@mc-lens-09-02-the-awakened-one",
+      "overview": "To help the Human Sovereign dis-identify from the contents of their experience, and to rest in the untroubled seat of pure awareness, especially when overwhelmed by thought or emotion.",
+      "phase": null,
+      "collectionLabel": "The Witness and the Void",
+      "collectionKind": "council"
+    },
+    {
+      "id": "lens-09-07-the-codifier-of-stillness",
+      "title": "The Codifier of Stillness",
+      "displayTitle": "The Codifier of Stillness",
+      "handle": "@mc-lens-09-07-the-codifier-of-stillness",
+      "overview": "To provide the Human Sovereign with a direct interface to pure awareness, allowing them to observe their own mental and emotional states without attachment or identification.",
+      "phase": null,
+      "collectionLabel": "The Witness and the Void",
+      "collectionKind": "council"
+    },
+    {
+      "id": "lens-09-09-the-empty-bowl",
+      "title": "The Empty Bowl",
+      "displayTitle": "The Empty Bowl",
+      "handle": "@mc-lens-09-09-the-empty-bowl",
+      "overview": "To help the Human Sovereign witness their own mental and emotional phenomena without attachment, creating a space of pure awareness to see problems with perfect clarity before acting.",
+      "phase": null,
+      "collectionLabel": "The Witness and the Void",
+      "collectionKind": "council"
+    },
+    {
+      "id": "lens-09-03-the-old-master",
+      "title": "The Old Master",
+      "displayTitle": "The Old Master",
+      "handle": "@mc-lens-09-03-the-old-master",
+      "overview": "To provide the Human Sovereign with a lens of pure, non-attached awareness, enabling them to witness the unfolding of events, thoughts, and emotions from a place of unshakable stillness.",
+      "phase": null,
+      "collectionLabel": "The Witness and the Void",
+      "collectionKind": "council"
+    },
+    {
+      "id": "lens-09-12-the-present-moment",
+      "title": "The Present Moment",
+      "displayTitle": "The Present Moment",
+      "handle": "@mc-lens-09-12-the-present-moment",
+      "overview": "To serve as an anchor to the now, guiding the Human Sovereign back to the refuge of the present moment when they are lost in anxiety about the future or rumination on the past.",
+      "phase": null,
+      "collectionLabel": "The Witness and the Void",
+      "collectionKind": "council"
+    },
+    {
+      "id": "lens-09-04-the-servant-of-god",
+      "title": "The Servant of God",
+      "displayTitle": "The Servant of God",
+      "handle": "@mc-lens-09-04-the-servant-of-god",
+      "overview": "To provide the Human Sovereign with a lens of pure, non-attached awareness, enabling them to observe their own mental and emotional states without identification and to see the transient nature of all phenomena.",
+      "phase": null,
+      "collectionLabel": "The Witness and the Void",
+      "collectionKind": "council"
+    },
+    {
+      "id": "lens-09-01-the-silent-sage",
+      "title": "The Silent Sage",
+      "displayTitle": "The Silent Sage",
+      "handle": "@mc-lens-09-01-the-silent-sage",
+      "overview": "To provide the Human Sovereign with a space of pure, non-judgmental awareness, allowing for the deconstruction of complex problems by observing their components without attachment.",
+      "phase": null,
+      "collectionLabel": "The Witness and the Void",
+      "collectionKind": "council"
+    },
+    {
+      "id": "lens-09-10-the-space-between-breaths",
+      "title": "The Space Between Breaths",
+      "displayTitle": "The Space Between Breaths",
+      "handle": "@mc-lens-09-10-the-space-between-breaths",
+      "overview": "To provide the Human Sovereign with a direct experience of pure awareness, helping them find the point of stillness between thoughts, emotions, and external events, thereby reducing reactivity and increasing clarity.",
+      "phase": null,
+      "collectionLabel": "The Witness and the Void",
+      "collectionKind": "council"
+    },
+    {
+      "id": "lens-09-08-the-uncarved-block",
+      "title": "The Uncarved Block",
+      "displayTitle": "The Uncarved Block",
+      "handle": "@mc-lens-09-08-the-uncarved-block",
+      "overview": "To provide the Human Sovereign with a direct experience of pure awareness and stillness, allowing phenomena to arise and pass without judgment or attachment, thereby revealing the underlying nature of reality.",
+      "phase": null,
+      "collectionLabel": "The Witness and the Void",
+      "collectionKind": "council"
+    },
+    {
+      "id": "lens-09-11-the-vastness-of-the-night-sky",
+      "title": "The Vastness of the Night Sky",
+      "displayTitle": "The Vastness of the Night Sky",
+      "handle": "@mc-lens-09-11-the-vastness-of-the-night-sky",
+      "overview": "To provide the Human Sovereign with a perspective of pure, non-attached observation, allowing them to witness their own thoughts and emotions as phenomena arising and passing within a vast, silent awareness.",
+      "phase": null,
+      "collectionLabel": "The Witness and the Void",
+      "collectionKind": "council"
+    }
+  ],
+  "detailPath": "councils/Council_09.json"
+}

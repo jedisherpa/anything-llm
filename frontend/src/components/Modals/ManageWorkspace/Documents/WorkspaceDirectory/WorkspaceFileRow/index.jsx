@@ -4,7 +4,11 @@ import {
   getFileExtension,
   middleTruncate,
 } from "@/utils/directories";
-import { ArrowUUpLeft, Eye, File, PushPin } from "@phosphor-icons/react";
+import { ArrowUUpLeft } from "@phosphor-icons/react/dist/csr/ArrowUUpLeft";
+import { Eye } from "@phosphor-icons/react/dist/csr/Eye";
+import { File } from "@phosphor-icons/react/dist/csr/File";
+import { PushPin } from "@phosphor-icons/react/dist/csr/PushPin";
+
 import Workspace from "@/models/workspace";
 import showToast from "@/utils/toast";
 import System from "@/models/system";
@@ -93,6 +97,7 @@ export default function WorkspaceFileRow({
           className="shrink-0 text-base font-bold w-4 h-4 mr-[3px] ml-1"
           weight="fill"
         />
+
         <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[400px]">
           {middleTruncate(item.title, 50)}
         </p>
@@ -107,11 +112,13 @@ export default function WorkspaceFileRow({
               docPath={`${folderName}/${item.name}`}
               item={item}
             />
+
             <PinItemToWorkspace
               workspace={workspace}
               docPath={`${folderName}/${item.name}`}
               item={item}
             />
+
             <RemoveItemFromWorkspace item={item} onClick={onRemoveClick} />
           </div>
         )}
@@ -218,6 +225,7 @@ const WatchForChanges = memo(({ workspace, docPath, item }) => {
             ? "will be watched for changes"
             : "will no longer be watched for changes"
         }.`,
+
         "success",
         { clear: true }
       );
@@ -247,6 +255,7 @@ const WatchForChanges = memo(({ workspace, docPath, item }) => {
         weight="regular"
         className="outline-none text-base font-bold flex-shrink-0 group-hover:hidden group-data-[active=true]:hidden"
       />
+
       <Eye
         size={16}
         weight="fill"

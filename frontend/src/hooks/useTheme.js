@@ -2,46 +2,46 @@ import { REFETCH_LOGO_EVENT } from "@/LogoContext";
 import { useState, useEffect } from "react";
 
 const availableThemes = {
-  system: "System",
-  light: "Light",
-  dark: "Dark",
+  dark: "Prism Dark",
+  light: "Prism Light",
+  cathedral: "Cathedral",
 };
+
+const LIGHT_THEMES = new Set(["light"]);
+
+function getInitialTheme() {
+  const stored = localStorage.getItem("theme");
+
+  if (stored === "default" || !stored) return "dark";
+  if (stored === "sanctuary") return "light";
+  if (stored === "system") {
+    return window?.matchMedia?.("(prefers-color-scheme: light)")?.matches
+      ? "light"
+      : "dark";
+  }
+
+  return Object.prototype.hasOwnProperty.call(availableThemes, stored)
+    ? stored
+    : "dark";
+}
 
 /**
  * Determines the current theme of the application.
- * "system" follows the OS preference, "light" and "dark" force that mode.
- * @returns {{theme: ('system' | 'light' | 'dark'), setTheme: function, availableThemes: object}}
+ * "system" follows the OS preference, and explicit themes force that mode.
+ * @returns {{theme: string, resolvedTheme: string, isLightTheme: boolean, setTheme: function, availableThemes: object}}
  */
 export function useTheme() {
-  const [theme, _setTheme] = useState(() => {
-    const stored = localStorage.getItem("theme");
-    if (stored === "default") return "dark"; // migrate legacy value
-    return stored || "system";
-  });
+  const [theme, _setTheme] = useState(getInitialTheme);
 
-  const [systemTheme, setSystemTheme] = useState(() =>
-    window.matchMedia?.("(prefers-color-scheme: light)").matches
-      ? "light"
-      : "dark"
-  );
-
-  // Listen for OS level theme changes
-  useEffect(() => {
-    if (!window.matchMedia) return;
-    const mql = window.matchMedia("(prefers-color-scheme: light)");
-    const handler = (e) => setSystemTheme(e.matches ? "light" : "dark");
-    mql.addEventListener("change", handler);
-    return () => mql.removeEventListener("change", handler);
-  }, []);
-
-  const resolvedTheme = theme === "system" ? systemTheme : theme;
+  const resolvedTheme = theme;
+  const isLightTheme = LIGHT_THEMES.has(resolvedTheme);
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", resolvedTheme);
-    document.body.classList.toggle("light", resolvedTheme === "light");
+    document.body.classList.toggle("light", isLightTheme);
     localStorage.setItem("theme", theme);
     window.dispatchEvent(new Event(REFETCH_LOGO_EVENT));
-  }, [resolvedTheme, theme]);
+  }, [resolvedTheme, theme, isLightTheme]);
 
   // In development, attach keybind combinations to toggle theme
   useEffect(() => {
@@ -49,7 +49,13 @@ export function useTheme() {
     function toggleOnKeybind(e) {
       if (e.metaKey && e.key === ".") {
         e.preventDefault();
-        _setTheme((prev) => (prev === "light" ? "dark" : "light"));
+        _setTheme((prev) => {
+          const themes = Object.keys(availableThemes);
+          const currentIndex = themes.indexOf(prev);
+          const nextIndex =
+            currentIndex >= 0 ? (currentIndex + 1) % themes.length : 0;
+          return themes[nextIndex];
+        });
       }
     }
     document.addEventListener("keydown", toggleOnKeybind);
@@ -65,5 +71,5 @@ export function useTheme() {
     _setTheme(newTheme);
   }
 
-  return { theme, setTheme, availableThemes };
+  return { theme, resolvedTheme, isLightTheme, setTheme, availableThemes };
 }

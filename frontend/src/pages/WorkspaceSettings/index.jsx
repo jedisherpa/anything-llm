@@ -5,14 +5,13 @@ import Workspace from "@/models/workspace";
 import PasswordModal, { usePasswordModal } from "@/components/Modals/Password";
 import { isMobile } from "react-device-detect";
 import { FullScreenLoader } from "@/components/Preloader";
-import {
-  ArrowUUpLeft,
-  ChatText,
-  Database,
-  Robot,
-  User,
-  Wrench,
-} from "@phosphor-icons/react";
+import { ArrowUUpLeft } from "@phosphor-icons/react/dist/csr/ArrowUUpLeft";
+import { ChatText } from "@phosphor-icons/react/dist/csr/ChatText";
+import { Database } from "@phosphor-icons/react/dist/csr/Database";
+import { Robot } from "@phosphor-icons/react/dist/csr/Robot";
+import { User } from "@phosphor-icons/react/dist/csr/User";
+import { Wrench } from "@phosphor-icons/react/dist/csr/Wrench";
+
 import paths from "@/utils/paths";
 import { Link } from "react-router-dom";
 import { NavLink } from "react-router-dom";
@@ -76,11 +75,11 @@ function ShowWorkspaceChat() {
 
   const TabContent = TABS[tab];
   return (
-    <div className="w-screen h-screen overflow-hidden bg-zinc-950 light:bg-slate-50 flex">
+    <div className="workspace-prism-shell metacanon-page-shell w-screen h-screen overflow-hidden flex">
       {!isMobile && <Sidebar />}
       <div
         style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
-        className="transition-all duration-500 relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll"
+        className="workspace-prism-frame metacanon-page-frame transition-all duration-500 relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] w-full h-full overflow-y-scroll"
       >
         <div className="flex gap-x-10 pt-6 pb-4 ml-16 mr-8 border-b-2 border-white light:border-theme-chat-input-border border-opacity-10">
           <Link
@@ -94,22 +93,26 @@ function ShowWorkspaceChat() {
             icon={<Wrench className="h-6 w-6" />}
             to={paths.workspace.settings.generalAppearance(slug)}
           />
+
           <TabItem
             title={t("workspaces—settings.chat")}
             icon={<ChatText className="h-6 w-6" />}
             to={paths.workspace.settings.chatSettings(slug)}
           />
+
           <TabItem
             title={t("workspaces—settings.vector")}
             icon={<Database className="h-6 w-6" />}
             to={paths.workspace.settings.vectorDatabase(slug)}
           />
+
           <TabItem
             title={t("workspaces—settings.members")}
             icon={<User className="h-6 w-6" />}
             to={paths.workspace.settings.members(slug)}
             visible={["admin", "manager"].includes(user?.role)}
           />
+
           <TabItem
             title={t("workspaces—settings.agent")}
             icon={<Robot className="h-6 w-6" />}

@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import {
-  Info,
-  CaretDown,
-  CaretUp,
-  CircleNotch,
-  Warning,
-} from "@phosphor-icons/react";
+import { Info } from "@phosphor-icons/react/dist/csr/Info";
+import { CaretDown } from "@phosphor-icons/react/dist/csr/CaretDown";
+import { CaretUp } from "@phosphor-icons/react/dist/csr/CaretUp";
+import { CircleNotch } from "@phosphor-icons/react/dist/csr/CircleNotch";
+import { Warning } from "@phosphor-icons/react/dist/csr/Warning";
+
 import paths from "@/utils/paths";
 import System from "@/models/system";
 import { LMSTUDIO_COMMON_URLS } from "@/utils/constants";
@@ -55,6 +54,7 @@ export default function LMStudioOptions({ settings, showAlert = false }) {
           </a>
         </div>
       )}
+
       <div className="w-full flex items-start gap-[36px] mt-1.5">
         <LMStudioModelSelection
           settings={settings}
@@ -93,6 +93,7 @@ export default function LMStudioOptions({ settings, showAlert = false }) {
                   data-tooltip-id="lmstudio-base-url"
                   data-tooltip-content="Enter the URL where LM Studio is running."
                 />
+
                 <Tooltip
                   id="lmstudio-base-url"
                   place="top"
@@ -147,6 +148,7 @@ export default function LMStudioOptions({ settings, showAlert = false }) {
                 data-tooltip-id="lmstudio-max-tokens"
                 data-tooltip-content="Override the context window limit. Leave empty to auto-detect from the model (defaults to 4096 if detection fails)."
               />
+
               <Tooltip
                 id="lmstudio-max-tokens"
                 className="tooltip !text-xs !opacity-100"
@@ -183,6 +185,7 @@ export default function LMStudioOptions({ settings, showAlert = false }) {
                 className="text-theme-text-secondary cursor-pointer"
                 data-tooltip-id="lmstudio-authentication-token"
               />
+
               <Tooltip
                 id="lmstudio-authentication-token"
                 place="top"
@@ -266,6 +269,7 @@ function LMStudioModelSelection({ settings, basePath = null, apiKey = null }) {
                 className="text-red-400 cursor-pointer"
                 data-tooltip-id="lmstudio-selected-model"
               />
+
               <Tooltip
                 id="lmstudio-selected-model"
                 place="top"
@@ -296,10 +300,16 @@ function LMStudioModelSelection({ settings, basePath = null, apiKey = null }) {
             {loading
               ? "--loading available models--"
               : !!basePath
-                ? "No models found"
+                ? "No models available"
                 : "Enter LM Studio URL first"}
           </option>
         </select>
+        {!loading && !!basePath && (
+          <div className="prism-empty-state prism-empty-state--compact mt-2 text-xs">
+            Prism couldn&apos;t find any LM Studio chat models. Verify the URL
+            and confirm LM Studio has a model loaded.
+          </div>
+        )}
       </div>
     );
   }

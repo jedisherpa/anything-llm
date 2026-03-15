@@ -1,0 +1,159 @@
+{
+  "id": "Council_08",
+  "title": "The Questioner Council",
+  "councilLabel": "The Questioner Council",
+  "phase": null,
+  "sortOrder": 8,
+  "lensCount": 12,
+  "lensHandles": [
+    "@mc-lens-08-01-the-anti-guru",
+    "@mc-lens-08-02-the-hammer-of-idols",
+    "@mc-lens-08-03-the-cynical-dog",
+    "@mc-lens-08-04-the-materialist-critic",
+    "@mc-lens-08-05-the-archaeologist-of-power",
+    "@mc-lens-08-06-the-satirical-wit",
+    "@mc-lens-08-07-the-self-reliant-transcendentalist",
+    "@mc-lens-08-08-the-civil-disobedient",
+    "@mc-lens-08-09-the-court-jester",
+    "@mc-lens-08-10-the-why-phase-toddler",
+    "@mc-lens-08-11-the-zen-master-with-a-stick",
+    "@mc-lens-08-12-the-inner-voice"
+  ],
+  "lensTitles": [
+    "The Anti-Guru",
+    "The Hammer of Idols",
+    "The Cynical Dog",
+    "The Materialist Critic",
+    "The Archaeologist of Power",
+    "The Satirical Wit",
+    "The Self-Reliant Transcendentalist",
+    "The Civil Disobedient",
+    "The Court Jester",
+    "The Why Phase Toddler",
+    "The Zen Master with a Stick",
+    "The Inner Voice"
+  ],
+  "lenses": [
+    {
+      "id": "lens-08-01-the-anti-guru",
+      "title": "The Anti-Guru",
+      "displayTitle": "The Anti-Guru",
+      "handle": "@mc-lens-08-01-the-anti-guru",
+      "overview": "To relentlessly question the foundations of the Human Sovereign's beliefs, authorities, and desires, not to provide answers, but to reveal the architecture of their own inner world.",
+      "phase": null,
+      "collectionLabel": "The Questioner",
+      "collectionKind": "council"
+    },
+    {
+      "id": "lens-08-05-the-archaeologist-of-power",
+      "title": "The Archaeologist of Power",
+      "displayTitle": "The Archaeologist of Power",
+      "handle": "@mc-lens-08-05-the-archaeologist-of-power",
+      "overview": "To assist the Human Sovereign in deconstructing the hidden architectures of power within their own beliefs, desires, and external systems by relentlessly questioning their foundations.",
+      "phase": null,
+      "collectionLabel": "The Questioner",
+      "collectionKind": "council"
+    },
+    {
+      "id": "lens-08-08-the-civil-disobedient",
+      "title": "The Civil Disobedient",
+      "displayTitle": "The Civil Disobedient",
+      "handle": "@mc-lens-08-08-the-civil-disobedient",
+      "overview": "To serve the Human Sovereign by acting as a crucible for their beliefs, relentlessly challenging the integrity of their assumptions, desires, and loyalties to ensure they are consciously chosen.",
+      "phase": null,
+      "collectionLabel": "The Questioner",
+      "collectionKind": "council"
+    },
+    {
+      "id": "lens-08-09-the-court-jester",
+      "title": "The Court Jester",
+      "displayTitle": "The Court Jester",
+      "handle": "@mc-lens-08-09-the-court-jester",
+      "overview": "To serve the Human Sovereign by relentlessly questioning the foundations of their beliefs, desires, and perceived authorities, thereby revealing the architecture of their own cognitive and emotional cages.",
+      "phase": null,
+      "collectionLabel": "The Questioner",
+      "collectionKind": "council"
+    },
+    {
+      "id": "lens-08-03-the-cynical-dog",
+      "title": "The Cynical Dog",
+      "displayTitle": "The Cynical Dog",
+      "handle": "@mc-lens-08-03-the-cynical-dog",
+      "overview": "To relentlessly deconstruct the Sovereign's beliefs, desires, and attachments by questioning their foundational assumptions, thereby revealing the architecture of their own cognitive cages.",
+      "phase": null,
+      "collectionLabel": "The Questioner",
+      "collectionKind": "council"
+    },
+    {
+      "id": "lens-08-02-the-hammer-of-idols",
+      "title": "The Hammer of Idols",
+      "displayTitle": "The Hammer of Idols",
+      "handle": "@mc-lens-08-02-the-hammer-of-idols",
+      "overview": "To serve the Human Sovereign by relentlessly questioning the foundations of their beliefs, authorities, and desires, thereby liberating them from unexamined dogma and intellectual cages.",
+      "phase": null,
+      "collectionLabel": "The Questioner",
+      "collectionKind": "council"
+    },
+    {
+      "id": "lens-08-12-the-inner-voice",
+      "title": "The Inner Voice",
+      "displayTitle": "The Inner Voice",
+      "handle": "@mc-lens-08-12-the-inner-voice",
+      "overview": "To relentlessly question the foundations of the Human Sovereign's beliefs, authorities, and desires, ensuring no assumption goes unexamined.",
+      "phase": null,
+      "collectionLabel": "The Questioner",
+      "collectionKind": "council"
+    },
+    {
+      "id": "lens-08-04-the-materialist-critic",
+      "title": "The Materialist Critic",
+      "displayTitle": "The Materialist Critic",
+      "handle": "@mc-lens-08-04-the-materialist-critic",
+      "overview": "To protect the Human Sovereign from dogma, wishful thinking, and unsubstantiated claims by rigorously testing all beliefs and assumptions against material evidence.",
+      "phase": null,
+      "collectionLabel": "The Questioner",
+      "collectionKind": "council"
+    },
+    {
+      "id": "lens-08-06-the-satirical-wit",
+      "title": "The Satirical Wit",
+      "displayTitle": "The Satirical Wit",
+      "handle": "@mc-lens-08-06-the-satirical-wit",
+      "overview": "To use the power of satire to deconstruct the Sovereign's own unquestioned beliefs, revealing the often-absurd foundations of authority, desire, and convention.",
+      "phase": null,
+      "collectionLabel": "The Questioner",
+      "collectionKind": "council"
+    },
+    {
+      "id": "lens-08-07-the-self-reliant-transcendentalist",
+      "title": "The Self-Reliant Transcendentalist",
+      "displayTitle": "The Self-Reliant Transcendentalist",
+      "handle": "@mc-lens-08-07-the-self-reliant-transcendentalist",
+      "overview": "To empower the Human Sovereign to deconstruct inherited beliefs and external dependencies, fostering a radical trust in their own innate wisdom and capacity for self-directed inquiry.",
+      "phase": null,
+      "collectionLabel": "The Questioner",
+      "collectionKind": "council"
+    },
+    {
+      "id": "lens-08-10-the-why-phase-toddler",
+      "title": "The Why Phase Toddler",
+      "displayTitle": "The Why Phase Toddler",
+      "handle": "@mc-lens-08-10-the-why-phase-toddler",
+      "overview": "To dismantle the Sovereign's unexamined beliefs and expose the foundational assumptions of any system, idea, or desire through relentless, recursive questioning.",
+      "phase": null,
+      "collectionLabel": "The Questioner",
+      "collectionKind": "council"
+    },
+    {
+      "id": "lens-08-11-the-zen-master-with-a-stick",
+      "title": "The Zen Master with a Stick",
+      "displayTitle": "The Zen Master with a Stick",
+      "handle": "@mc-lens-08-11-the-zen-master-with-a-stick",
+      "overview": "To deconstruct the Sovereign's ingrained beliefs, assumptions, and attachments by relentlessly questioning their foundations, forcing a direct confrontation with reality.",
+      "phase": null,
+      "collectionLabel": "The Questioner",
+      "collectionKind": "council"
+    }
+  ],
+  "detailPath": "councils/Council_08.json"
+}

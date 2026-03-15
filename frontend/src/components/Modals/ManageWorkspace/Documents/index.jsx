@@ -1,4 +1,4 @@
-import { ArrowsDownUp } from "@phosphor-icons/react";
+import { ArrowsDownUp } from "@phosphor-icons/react/dist/csr/ArrowsDownUp";
 import { useEffect, useState } from "react";
 import Workspace from "../../../../models/workspace";
 import System from "../../../../models/system";
@@ -208,6 +208,7 @@ export default function DocumentSettings({ workspace, systemSettings }) {
         moveToWorkspace={moveSelectedItemsToWorkspace}
         setLoadingMessage={setLoadingMessage}
       />
+
       <div className="upload-modal-arrow">
         <ArrowsDownUp className="text-white text-base font-bold rotate-90 w-11 h-11" />
       </div>

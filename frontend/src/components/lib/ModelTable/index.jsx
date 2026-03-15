@@ -1,13 +1,12 @@
 import { useRef, useState, useEffect } from "react";
-import {
-  CaretDown,
-  CaretRight,
-  Cpu,
-  Circle,
-  DotsThreeVertical,
-  CloudArrowDown,
-  CircleNotch,
-} from "@phosphor-icons/react";
+import { CaretDown } from "@phosphor-icons/react/dist/csr/CaretDown";
+import { CaretRight } from "@phosphor-icons/react/dist/csr/CaretRight";
+import { Cpu } from "@phosphor-icons/react/dist/csr/Cpu";
+import { Circle } from "@phosphor-icons/react/dist/csr/Circle";
+import { DotsThreeVertical } from "@phosphor-icons/react/dist/csr/DotsThreeVertical";
+import { CloudArrowDown } from "@phosphor-icons/react/dist/csr/CloudArrowDown";
+import { CircleNotch } from "@phosphor-icons/react/dist/csr/CircleNotch";
+
 import pluralize from "pluralize";
 import { titleCase } from "text-case";
 import { humanFileSize } from "@/utils/numbers";
@@ -69,6 +68,7 @@ export default function ModelTable({
             className="text-theme-text-secondary"
           />
         )}
+
         <div className="flex items-center gap-x-[4px]">
           <MonoProviderIcon
             provider={alias}
@@ -76,6 +76,7 @@ export default function ModelTable({
             size={16}
             className="text-theme-text-primary"
           />
+
           <p className="flex items-center gap-x-1 text-theme-text-primary text-base font-bold">
             {titleCase(alias)}
             <span className="text-theme-text-secondary font-normal text-sm">
@@ -131,6 +132,7 @@ function DeviceTypeTag({ deviceType }) {
           textClass="text-theme-text-primary"
         />
       );
+
     case "gpu":
       return (
         <DeviceTypeTagWrapper
@@ -139,6 +141,7 @@ function DeviceTypeTag({ deviceType }) {
           textClass="text-theme-text-primary"
         />
       );
+
     case "npu":
       return (
         <DeviceTypeTagWrapper
@@ -147,6 +150,7 @@ function DeviceTypeTag({ deviceType }) {
           textClass="text-theme-text-primary"
         />
       );
+
     default:
       return (
         <DeviceTypeTagWrapper
@@ -255,6 +259,7 @@ function ModelRow({
               className="text-theme-text-primary"
             />
           )}
+
         <p className="text-theme-text-primary text-base">{model.name}</p>
         <p className="text-theme-text-secondary opacity-70 text-base">
           {fileSize}
@@ -311,6 +316,7 @@ function ModelRow({
             />
           </button>
         )}
+
         {!model.downloaded && processing && (
           <div className="flex items-center justify-center gap-x-[10px] whitespace-nowrap">
             {!downloadPercentage && (
@@ -320,6 +326,7 @@ function ModelRow({
                 className="text-theme-text-primary animate-spin"
               />
             )}
+
             <p className="text-theme-text-secondary text-sm">
               {downloadPercentage}%
             </p>

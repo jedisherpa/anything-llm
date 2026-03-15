@@ -1,12 +1,35 @@
 const prisma = require("../utils/prisma");
 const { v4: uuidv4 } = require("uuid");
+const {
+  LENS_AGENT_HANDLES,
+} = require("../utils/agents/aibitat/prompts/lensAgents");
+const {
+  getSupportedMetacanonHandles,
+} = require("../utils/agents/metacanon/library");
+
+function supportedAgentHandles() {
+  return new Set([
+    "@agent",
+    ...LENS_AGENT_HANDLES,
+    ...getSupportedMetacanonHandles(),
+  ]);
+}
 
 const WorkspaceAgentInvocation = {
-  // returns array of strings with their @ handle.
-  // must start with @agent for now.
+  // returns array of normalized @handles present in the prompt when the
+  // prompt starts with a supported agent handle.
   parseAgents: function (promptString) {
-    if (!promptString.startsWith("@agent")) return [];
-    return promptString.split(/\s+/).filter((v) => v.startsWith("@"));
+    if (!promptString || typeof promptString !== "string") return [];
+    const normalized = promptString.trim().toLowerCase();
+    const tokens = normalized
+      .split(/\s+/)
+      .map((token) => token.replace(/[^a-z0-9@_-]/g, ""));
+    if (tokens.length === 0) return [];
+
+    const firstToken = tokens[0];
+    if (!supportedAgentHandles().has(firstToken)) return [];
+
+    return tokens.filter((token) => token.startsWith("@"));
   },
 
   close: async function (uuid) {

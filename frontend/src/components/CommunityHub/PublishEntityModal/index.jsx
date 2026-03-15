@@ -1,4 +1,4 @@
-import { X } from "@phosphor-icons/react";
+import { X } from "@phosphor-icons/react/dist/csr/X";
 import { useCommunityHubAuth } from "@/hooks/useCommunityHubAuth";
 import UnauthenticatedHubModal from "@/components/CommunityHub/UnauthenticatedHubModal";
 import SystemPrompts from "./SystemPrompts";

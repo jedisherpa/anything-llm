@@ -7,7 +7,7 @@ This guide will help you set up and use Prisma for the project. Prisma is a powe
 To get started with setting up Prisma, you should run the setup script from the project root directory:
 
 ```sh
-yarn setup
+corepack yarn setup
 ```
 
 This script will install the necessary node modules in both the server and frontend directories, set up the environment files, and set up Prisma (generate client, run migrations, and seed the database).
@@ -20,12 +20,16 @@ In the project root's `package.json`, there are several scripts set up to help y
 - **prisma:migrate**: Runs the migrations to ensure the database is in sync with the schema.
 - **prisma:seed**: Seeds the database with initial data.
 - **prisma:setup**: A convenience script that runs `prisma:generate`, `prisma:migrate`, and `prisma:seed` in sequence.
+- **prisma:prepare:postgres**: Generates `server/prisma/schema.postgresql.prisma` from the canonical schema.
+- **prisma:generate:postgres**: Generates a Prisma client using the PostgreSQL-ready schema.
+- **prisma:migrate:postgres**: Runs Prisma migrations against PostgreSQL using the PostgreSQL-ready schema.
+- **prisma:setup:postgres**: Convenience script for the PostgreSQL-ready schema path.
 - **sqlite:migrate**: (To be run from the `server` directory) This script is for users transitioning from the old SQLite custom ORM setup to Prisma and will migrate all existing data over to Prisma. If you're a new user, your setup will already use Prisma.
 
-To run any of these scripts, use `yarn` followed by the script name from the project root directory. For example:
+To run any of these scripts, use `corepack yarn` followed by the script name from the project root directory. For example:
 
 ```sh
-yarn prisma:setup
+corepack yarn prisma:setup
 ```
 
 ## Manual Prisma Commands
@@ -42,6 +46,7 @@ These commands should be run from the `server` directory, where the Prisma schem
 ## Notes
 
 - Always make sure to run scripts from the root level to avoid path issues.
+- SQLite remains the default local and desktop runtime. The PostgreSQL scripts are a prep path for scalable server deployments and do not automatically cut over the desktop runtime.
 - Before running migrations, ensure that the Prisma schema is correctly defined to prevent data loss or corruption.
 - If you are adding a new feature or making changes that require a change in the database schema, create a new migration rather than editing existing migrations.
 - For users transitioning from the old SQLite ORM, navigate to the `server` directory and run the `sqlite:migrate` script to smoothly transition to Prisma. If you're setting up the project fresh, this step is unnecessary as the setup will already be using Prisma.
