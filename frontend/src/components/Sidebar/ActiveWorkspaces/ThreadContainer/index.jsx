@@ -1,7 +1,10 @@
 import Workspace from "@/models/workspace";
 import paths from "@/utils/paths";
 import showToast from "@/utils/toast";
-import { Plus, CircleNotch, Trash } from "@phosphor-icons/react";
+import { Plus } from "@phosphor-icons/react/dist/csr/Plus";
+import { CircleNotch } from "@phosphor-icons/react/dist/csr/CircleNotch";
+import { Trash } from "@phosphor-icons/react/dist/csr/Trash";
+
 import { useEffect, useState } from "react";
 import ThreadItem from "./ThreadItem";
 import { useParams } from "react-router-dom";
@@ -121,7 +124,9 @@ export default function ThreadContainer({
   if (loading) {
     return (
       <div className="flex flex-col bg-pulse w-full h-10 items-center justify-center">
-        <p className="text-xs text-white animate-pulse">loading threads....</p>
+        <p className="text-xs text-theme-text-secondary animate-pulse">
+          loading threads....
+        </p>
       </div>
     );
   }
@@ -138,6 +143,7 @@ export default function ThreadContainer({
         thread={{ slug: null, name: "default" }}
         hasNext={threads.length > 0 || isVirtualThread}
       />
+
       {threads.map((thread, i) => (
         <ThreadItem
           key={thread.slug}
@@ -162,11 +168,13 @@ export default function ThreadContainer({
           hasNext={false}
         />
       )}
+
       <DeleteAllThreadButton
         ctrlPressed={ctrlPressed}
         threads={threads}
         onDelete={handleDeleteAll}
       />
+
       <NewThreadButton workspace={workspace} />
     </div>
   );
@@ -190,31 +198,31 @@ function NewThreadButton({ workspace }) {
   return (
     <button
       onClick={onClick}
-      className="w-full relative flex h-[40px] items-center border-none hover:bg-[var(--theme-sidebar-thread-selected)] light:hover:bg-slate-300 hover:light:bg-theme-sidebar-subitem-hover rounded-lg"
+      className="metacanon-thread-new relative mt-2 flex h-[38px] w-full items-center rounded-[12px] border-none"
     >
       <div className="flex w-full gap-x-2 items-center pl-4">
-        <div className="bg-zinc-800 light:bg-slate-50 p-2 rounded-lg h-[24px] w-[24px] flex items-center justify-center">
+        <div className="bg-transparent p-2 rounded-lg h-[24px] w-[24px] flex items-center justify-center">
           {loading ? (
             <CircleNotch
               weight="bold"
               size={14}
-              className="shrink-0 animate-spin text-white light:text-theme-text-primary"
+              className="shrink-0 animate-spin text-[var(--gold)]"
             />
           ) : (
             <Plus
               weight="bold"
               size={14}
-              className="shrink-0 text-white light:text-theme-text-primary"
+              className="shrink-0 text-theme-text-secondary"
             />
           )}
         </div>
 
         {loading ? (
-          <p className="text-left text-white light:text-theme-text-primary text-sm">
+          <p className="text-left text-theme-text-primary text-sm">
             Starting Thread...
           </p>
         ) : (
-          <p className="text-left text-white light:text-theme-text-primary text-sm font-semibold">
+          <p className="text-left text-theme-text-secondary text-sm font-medium">
             New Thread
           </p>
         )}
@@ -230,17 +238,17 @@ function DeleteAllThreadButton({ ctrlPressed, threads, onDelete }) {
     <button
       type="button"
       onClick={onDelete}
-      className="w-full relative flex h-[40px] items-center border-none hover:bg-red-400/20 rounded-lg group"
+      className="group relative flex h-[40px] w-full items-center rounded-lg border-none hover:bg-red-400/20"
     >
       <div className="flex w-full gap-x-2 items-center pl-4">
         <div className="bg-transparent p-2 rounded-lg h-[24px] w-[24px] flex items-center justify-center">
           <Trash
             weight="bold"
             size={14}
-            className="shrink-0 text-white light:text-red-500/50 group-hover:text-red-400"
+            className="shrink-0 text-theme-text-secondary light:text-red-500/50 group-hover:text-red-400"
           />
         </div>
-        <p className="text-white light:text-theme-text-secondary text-left text-sm group-hover:text-red-400">
+        <p className="text-theme-text-secondary text-left text-sm group-hover:text-red-400">
           Delete Selected
         </p>
       </div>

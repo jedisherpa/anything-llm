@@ -1,4 +1,5 @@
-import { ArrowSquareOut, Info } from "@phosphor-icons/react";
+import { ArrowSquareOut } from "@phosphor-icons/react/dist/csr/ArrowSquareOut";
+import { Info } from "@phosphor-icons/react/dist/csr/Info";
 import { AWS_REGIONS } from "./regions";
 import { useState } from "react";
 
@@ -36,6 +37,7 @@ export default function AwsBedrockLLMOptions({ settings }) {
           name="AwsBedrockLLMConnectionMethod"
           value={connectionMethod}
         />
+
         <div className="flex flex-col w-full">
           <label className="text-theme-text-primary text-sm font-semibold block mb-3">
             Authentication Method
@@ -99,6 +101,7 @@ export default function AwsBedrockLLMOptions({ settings }) {
             </div>
           </>
         )}
+
         {connectionMethod === "sessionToken" && (
           <div className="flex flex-col w-60">
             <label className="text-theme-text-primary text-sm font-semibold block mb-3">
@@ -118,6 +121,7 @@ export default function AwsBedrockLLMOptions({ settings }) {
             />
           </div>
         )}
+
         {connectionMethod === "apiKey" && (
           <div className="flex flex-col w-60">
             <label className="text-theme-text-primary text-sm font-semibold block mb-3">
@@ -135,6 +139,7 @@ export default function AwsBedrockLLMOptions({ settings }) {
             />
           </div>
         )}
+
         <div className="flex flex-col w-60">
           <label className="text-white text-sm font-semibold block mb-3">
             AWS region

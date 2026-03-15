@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { X } from "@phosphor-icons/react";
+import { X } from "@phosphor-icons/react/dist/csr/X";
+
 import { useTranslation } from "react-i18next";
 import renderMarkdown from "@/utils/chat/markdown";
 import DOMPurify from "@/utils/chat/purify";

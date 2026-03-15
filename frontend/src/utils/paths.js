@@ -55,6 +55,21 @@ export default {
   docs: () => {
     return "https://docs.anythingllm.com";
   },
+  metacanonAI: () => {
+    return "/metacanonai";
+  },
+  metacanonAILab: () => {
+    return "/metacanonai/ui-lab";
+  },
+  metacanonAILibrary: () => {
+    return "/metacanonai/library";
+  },
+  metacanonAIManualPreviews: () => {
+    return "/metacanonai/manual-previews";
+  },
+  metacanonAIRepoLab: () => {
+    return "/metacanonai/repo-lab";
+  },
   chatModes: () => {
     return "https://docs.anythingllm.com/features/chat-modes";
   },

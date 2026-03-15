@@ -1,0 +1,213 @@
+:root {
+  color-scheme: dark;
+  --bg-top: #09090c;
+  --bg-bottom: #17120a;
+  --panel: rgba(20, 18, 13, 0.78);
+  --panel-border: rgba(220, 175, 71, 0.24);
+  --text: #f7f1e2;
+  --muted: rgba(247, 241, 226, 0.72);
+  --accent: #d7ac35;
+  --accent-strong: #f1ca63;
+  --button: rgba(255, 255, 255, 0.06);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "SF Pro Display", "Segoe UI", sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at top left, rgba(219, 176, 60, 0.16), transparent 34%),
+    radial-gradient(circle at bottom right, rgba(64, 224, 208, 0.1), transparent 30%),
+    linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
+}
+
+.legal-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 28px 32px;
+}
+
+.legal-hero {
+  margin-bottom: 24px;
+}
+
+.legal-kicker,
+.label {
+  margin: 0 0 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 11px;
+  color: var(--accent-strong);
+}
+
+.legal-hero h1 {
+  margin: 0;
+  font-size: clamp(34px, 6vw, 48px);
+  line-height: 1.05;
+}
+
+.legal-subtitle {
+  max-width: 780px;
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.legal-panel {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 24px;
+  box-shadow: 0 22px 80px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(22px);
+}
+
+.legal-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  padding: 20px 22px;
+  margin-bottom: 24px;
+}
+
+.legal-summary strong,
+.legal-summary a {
+  display: block;
+  font-size: 14px;
+  color: var(--text);
+  text-decoration: none;
+  word-break: break-word;
+}
+
+.legal-summary a:hover {
+  color: var(--accent-strong);
+}
+
+.legal-docs {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  min-height: 620px;
+  overflow: hidden;
+}
+
+.legal-tabs {
+  padding: 18px;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.legal-tab {
+  width: 100%;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  text-align: left;
+  padding: 14px 16px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: 160ms ease;
+  margin-bottom: 10px;
+}
+
+.legal-tab:hover,
+.legal-tab[aria-selected="true"] {
+  background: rgba(215, 172, 53, 0.12);
+  border-color: rgba(215, 172, 53, 0.24);
+  color: var(--text);
+}
+
+.legal-tab__title {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.legal-tab__path {
+  display: block;
+  font-size: 12px;
+  line-height: 1.5;
+  opacity: 0.75;
+}
+
+.legal-content {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.legal-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 14px;
+}
+
+button {
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-weight: 700;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  color: #130f07;
+}
+
+button.secondary {
+  background: var(--button);
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.legal-content h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.doc-path {
+  margin: 10px 0 18px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.doc-body {
+  margin: 0;
+  padding: 18px;
+  min-height: 420px;
+  max-height: 520px;
+  overflow: auto;
+  border-radius: 18px;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: "SF Mono", "Menlo", monospace;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: rgba(247, 241, 226, 0.92);
+}
+
+@media (max-width: 900px) {
+  .legal-shell {
+    padding: 22px 16px 18px;
+  }
+
+  .legal-summary,
+  .legal-docs {
+    grid-template-columns: 1fr;
+  }
+
+  .legal-tabs {
+    border-right: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+}

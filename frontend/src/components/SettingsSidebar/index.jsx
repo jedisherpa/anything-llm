@@ -1,16 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import paths from "@/utils/paths";
 import useLogo from "@/hooks/useLogo";
-import {
-  House,
-  List,
-  Flask,
-  Gear,
-  UserCircleGear,
-  PencilSimpleLine,
-  Nut,
-  Toolbox,
-} from "@phosphor-icons/react";
+import { House } from "@phosphor-icons/react/dist/csr/House";
+import { List } from "@phosphor-icons/react/dist/csr/List";
+import { Flask } from "@phosphor-icons/react/dist/csr/Flask";
+import { Gear } from "@phosphor-icons/react/dist/csr/Gear";
+import { UserCircleGear } from "@phosphor-icons/react/dist/csr/UserCircleGear";
+import { PencilSimpleLine } from "@phosphor-icons/react/dist/csr/PencilSimpleLine";
+import { Nut } from "@phosphor-icons/react/dist/csr/Nut";
+import { Toolbox } from "@phosphor-icons/react/dist/csr/Toolbox";
+
 import AgentIcon from "@/media/animations/agent-static.png";
 import CommunityHubIcon from "@/media/illustrations/community-hub.png";
 import useUser from "@/hooks/useUser";
@@ -23,6 +22,9 @@ import System from "@/models/system";
 import Option from "./MenuOption";
 import { CanViewChatHistoryProvider } from "../CanViewChatHistory";
 import useAppVersion from "@/hooks/useAppVersion";
+import PrismHoverTarget from "@/components/PrismHoverTarget";
+import PrismPresence from "@/components/PrismPresence";
+import MetacanonThemeSwitcher from "@/components/Metacanon/ThemeSwitcher";
 
 export default function SettingsSidebar() {
   const { t } = useTranslation();
@@ -59,8 +61,8 @@ export default function SettingsSidebar() {
             <img
               src={logo}
               alt="Logo"
-              className="block mx-auto h-6 w-auto"
-              style={{ maxHeight: "40px", objectFit: "contain" }}
+              className="block mx-auto max-h-[58px] max-w-[308px] w-auto"
+              style={{ maxHeight: "58px", objectFit: "contain" }}
             />
           </div>
           <div className="w-12"></div>
@@ -79,28 +81,39 @@ export default function SettingsSidebar() {
             }  duration-500 fixed top-0 left-0 bg-theme-bg-secondary bg-opacity-75 w-screen h-screen`}
             onClick={() => setShowSidebar(false)}
           />
+
           <div
             ref={sidebarRef}
-            className="h-[100vh] fixed top-0 left-0 rounded-r-[26px] bg-theme-bg-sidebar w-[80%] p-[18px]"
+            className="metacanon-sidebar-panel h-[100vh] fixed top-0 left-0 rounded-r-[26px] bg-theme-bg-sidebar w-[80%] p-[18px]"
           >
             <div className="w-full h-full flex flex-col overflow-x-hidden items-between">
               {/* Header Information */}
               <div className="flex w-full items-center justify-between gap-x-4">
-                <div className="flex shrink-1 w-fit items-center justify-start">
+                <div className="flex shrink-1 w-fit items-center justify-start gap-x-3">
+                  <PrismPresence
+                    surface="settings-sidebar-mobile"
+                    size="sm"
+                    label="Prism"
+                    caption="Standby"
+                    align="left"
+                  />
+
                   <img
                     src={logo}
                     alt="Logo"
-                    className="rounded w-full max-h-[40px]"
+                    className="rounded w-auto max-h-[68px] max-w-[308px]"
                     style={{ objectFit: "contain" }}
                   />
                 </div>
                 <div className="flex gap-x-2 items-center text-slate-500 shrink-0">
-                  <a
-                    href={paths.home()}
-                    className="transition-all duration-300 p-2 rounded-full text-white bg-theme-action-menu-bg hover:bg-theme-action-menu-item-hover hover:border-slate-100 hover:border-opacity-50 border-transparent border"
-                  >
-                    <House className="h-4 w-4" />
-                  </a>
+                  <PrismHoverTarget targetId="settings-sidebar-home">
+                    <a
+                      href={paths.home()}
+                      className="transition-all duration-300 p-2 rounded-full text-white bg-theme-action-menu-bg hover:bg-theme-action-menu-item-hover hover:border-slate-100 hover:border-opacity-50 border-transparent border"
+                    >
+                      <House className="h-4 w-4" />
+                    </a>
+                  </PrismHoverTarget>
                 </div>
               </div>
 
@@ -108,23 +121,31 @@ export default function SettingsSidebar() {
               <div className="h-full flex flex-col w-full justify-between pt-4 overflow-y-scroll no-scroll">
                 <div className="h-auto md:sidebar-items">
                   <div className="flex flex-col gap-y-4 pb-[60px] overflow-y-scroll no-scroll">
+                    <div className="px-3">
+                      <MetacanonThemeSwitcher
+                        showLabel={false}
+                        className="w-full justify-between"
+                      />
+                    </div>
                     <SidebarOptions user={user} t={t} />
                     <div className="h-[1.5px] bg-[#3D4147] mx-3 mt-[14px]" />
                     <SupportEmail />
-                    <Link
-                      hidden={
-                        user?.hasOwnProperty("role") && user.role !== "admin"
-                      }
-                      to={paths.settings.privacy()}
-                      className="text-theme-text-secondary hover:text-white text-xs leading-[18px] mx-3"
-                    >
-                      {t("settings.privacy")}
-                    </Link>
+                    <PrismHoverTarget targetId="settings-privacy-mobile">
+                      <Link
+                        hidden={
+                          user?.hasOwnProperty("role") && user.role !== "admin"
+                        }
+                        to={paths.settings.privacy()}
+                        className="text-theme-text-secondary hover:text-white text-xs leading-[18px] mx-3"
+                      >
+                        {t("settings.privacy")}
+                      </Link>
+                    </PrismHoverTarget>
                     <AppVersion />
                   </div>
                 </div>
               </div>
-              <div className="absolute bottom-2 left-0 right-0 pt-2 bg-theme-bg-sidebar bg-opacity-80 backdrop-filter backdrop-blur-md">
+              <div className="absolute bottom-2 left-0 right-0 pt-2 pb-1 border-t border-theme-sidebar-border bg-theme-bg-sidebar bg-opacity-95 backdrop-filter backdrop-blur-md">
                 <Footer />
               </div>
             </div>
@@ -136,46 +157,64 @@ export default function SettingsSidebar() {
 
   return (
     <>
-      <div>
-        <Link
-          to={paths.home()}
-          className="flex shrink-0 max-w-[55%] items-center justify-start mx-[20.5px] my-[18px]"
-        >
-          <img
-            src={logo}
-            alt="Logo"
-            className="rounded max-h-[24px]"
-            style={{ objectFit: "contain" }}
+      <div className="h-full flex flex-col">
+        <div className="flex shrink-0 items-center justify-start gap-1 mx-[20.5px] mb-[12px] mt-[10px]">
+          <PrismPresence
+            surface="settings-sidebar"
+            size="xs"
+            label="Prism"
+            caption="Standby"
+            align="left"
           />
-        </Link>
+
+          <Link
+            to={paths.home()}
+            className="flex shrink-0 max-w-[228px] items-center justify-start"
+          >
+            <img
+              src={logo}
+              alt="Logo"
+              className="rounded max-h-[44px] max-w-[228px]"
+              style={{ objectFit: "contain" }}
+            />
+          </Link>
+        </div>
         <div
           ref={sidebarRef}
-          className="transition-all duration-500 relative m-[16px] rounded-[16px] bg-theme-bg-sidebar border-[2px] border-theme-sidebar-border light:border-none min-w-[250px] p-[10px] h-[calc(100%-76px)]"
+          className="metacanon-sidebar-panel transition-all duration-500 relative m-[16px] mt-0 flex-1 min-h-0 rounded-[16px] bg-theme-bg-sidebar border-[2px] border-theme-sidebar-border light:border-none min-w-[250px] p-[10px]"
         >
           <div className="w-full h-full flex flex-col overflow-x-hidden items-between min-w-[235px]">
             <div className="text-theme-text-secondary text-sm font-medium uppercase mt-[4px] mb-0 ml-2">
               {t("settings.title")}
             </div>
-            <div className="relative h-[calc(100%-60px)] flex flex-col w-full justify-between pt-[10px] overflow-y-scroll no-scroll">
+            <div className="relative flex-1 min-h-0 flex flex-col w-full pt-[10px]">
               <div className="h-auto sidebar-items">
-                <div className="flex flex-col gap-y-2 pb-[60px] overflow-y-scroll no-scroll">
+                <div className="flex flex-col gap-y-2 pb-[86px] overflow-y-scroll no-scroll">
+                  <div className="px-2 pb-1">
+                    <MetacanonThemeSwitcher
+                      showLabel={false}
+                      className="w-full justify-between"
+                    />
+                  </div>
                   <SidebarOptions user={user} t={t} />
                   <div className="h-[1.5px] bg-[#3D4147] mx-3 mt-[14px]" />
                   <SupportEmail />
-                  <Link
-                    hidden={
-                      user?.hasOwnProperty("role") && user.role !== "admin"
-                    }
-                    to={paths.settings.privacy()}
-                    className="text-theme-text-secondary hover:text-white hover:light:text-theme-text-primary text-xs leading-[18px] mx-3"
-                  >
-                    {t("settings.privacy")}
-                  </Link>
+                  <PrismHoverTarget targetId="settings-privacy-desktop">
+                    <Link
+                      hidden={
+                        user?.hasOwnProperty("role") && user.role !== "admin"
+                      }
+                      to={paths.settings.privacy()}
+                      className="text-theme-text-secondary hover:text-white hover:light:text-theme-text-primary text-xs leading-[18px] mx-3"
+                    >
+                      {t("settings.privacy")}
+                    </Link>
+                  </PrismHoverTarget>
                   <AppVersion />
                 </div>
               </div>
             </div>
-            <div className="absolute bottom-0 left-0 right-0 pt-4 pb-3 rounded-b-[16px] bg-theme-bg-sidebar bg-opacity-80 backdrop-filter backdrop-blur-md z-10">
+            <div className="absolute bottom-0 left-0 right-0 pt-2 pb-2 rounded-b-[16px] border-t border-theme-sidebar-border bg-theme-bg-sidebar bg-opacity-95 backdrop-filter backdrop-blur-md z-10">
               <Footer />
             </div>
           </div>
@@ -202,12 +241,14 @@ function SupportEmail() {
   }, []);
 
   return (
-    <Link
-      to={supportEmail}
-      className="text-theme-text-secondary hover:text-white hover:light:text-theme-text-primary text-xs leading-[18px] mx-3 mt-1"
-    >
-      {t("settings.contact")}
-    </Link>
+    <PrismHoverTarget targetId="settings-support-email">
+      <Link
+        to={supportEmail}
+        className="text-theme-text-secondary hover:text-white hover:light:text-theme-text-primary text-xs leading-[18px] mx-3 mt-1"
+      >
+        {t("settings.contact")}
+      </Link>
+    </PrismHoverTarget>
   );
 }
 
@@ -258,6 +299,7 @@ const SidebarOptions = ({ user = null, t }) => (
             },
           ]}
         />
+
         <Option
           btnText={t("settings.admin")}
           icon={<UserCircleGear className="h-5 w-5 flex-shrink-0" />}
@@ -293,6 +335,7 @@ const SidebarOptions = ({ user = null, t }) => (
             },
           ]}
         />
+
         <Option
           btnText={t("settings.agent-skills")}
           icon={
@@ -307,6 +350,7 @@ const SidebarOptions = ({ user = null, t }) => (
           flex={true}
           roles={["admin"]}
         />
+
         <Option
           btnText={t("settings.community-hub.title")}
           icon={
@@ -337,6 +381,7 @@ const SidebarOptions = ({ user = null, t }) => (
             },
           ]}
         />
+
         <Option
           btnText={t("settings.customization")}
           icon={<PencilSimpleLine className="h-5 w-5 flex-shrink-0" />}
@@ -362,6 +407,7 @@ const SidebarOptions = ({ user = null, t }) => (
             },
           ]}
         />
+
         <Option
           btnText={t("settings.tools")}
           icon={<Toolbox className="h-5 w-5 flex-shrink-0" />}
@@ -406,6 +452,7 @@ const SidebarOptions = ({ user = null, t }) => (
             },
           ]}
         />
+
         <Option
           btnText={t("settings.security")}
           icon={<Nut className="h-5 w-5 flex-shrink-0" />}
@@ -415,6 +462,7 @@ const SidebarOptions = ({ user = null, t }) => (
           roles={["admin", "manager"]}
           hidden={user?.role}
         />
+
         <HoldToReveal key="exp_features">
           <Option
             btnText={t("settings.experimental-features")}

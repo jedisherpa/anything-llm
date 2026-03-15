@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { CaretDown, CaretUp } from "@phosphor-icons/react";
+import { CaretDown } from "@phosphor-icons/react/dist/csr/CaretDown";
+import { CaretUp } from "@phosphor-icons/react/dist/csr/CaretUp";
+
 import System from "@/models/system";
 import PreLoader from "@/components/Preloader";
 import { DPAIS_COMMON_URLS } from "@/utils/constants";
@@ -28,6 +30,7 @@ export default function DellProAIStudioOptions({ settings }) {
               settings={settings}
               basePath={basePath.value}
             />
+
             <div className="flex flex-col w-60">
               <label className="text-white text-sm font-semibold block mb-2">
                 Model context window

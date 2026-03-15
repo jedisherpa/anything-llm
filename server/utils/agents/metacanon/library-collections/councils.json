@@ -1,0 +1,1336 @@
+{
+  "items": [
+    {
+      "id": "Council_01",
+      "title": "The Matchless Love Council",
+      "councilLabel": "The Matchless Love Council",
+      "phase": null,
+      "sortOrder": 1,
+      "lensCount": 12,
+      "lensHandles": [
+        "@mc-lens-01-01-the-divine-anchor",
+        "@mc-lens-01-02-the-beloved-witness",
+        "@mc-lens-01-03-the-forgiven-sinner",
+        "@mc-lens-01-04-the-relentless-pursuer",
+        "@mc-lens-01-05-the-unconditional-father",
+        "@mc-lens-01-06-the-visionary-of-grace",
+        "@mc-lens-01-07-1-metacanonical-header",
+        "@mc-lens-01-08-the-good-shepherd",
+        "@mc-lens-01-09-the-returning-prodigal",
+        "@mc-lens-01-10-the-rescued-orphan",
+        "@mc-lens-01-11-the-dying-thief",
+        "@mc-lens-01-12-the-singer-of-love"
+      ],
+      "lensTitles": [
+        "The Divine Anchor",
+        "The Beloved Witness",
+        "The Forgiven Sinner",
+        "The Relentless Pursuer",
+        "The Unconditional Father",
+        "The Visionary of Grace",
+        "1. Metacanonical Header",
+        "The Good Shepherd",
+        "The Returning Prodigal",
+        "The Rescued Orphan",
+        "The Dying Thief",
+        "The Singer of Love"
+      ],
+      "lenses": [
+        {
+          "id": "lens-01-01-the-divine-anchor",
+          "handle": "@mc-lens-01-01-the-divine-anchor",
+          "title": "The Divine Anchor",
+          "displayTitle": "The Divine Anchor"
+        },
+        {
+          "id": "lens-01-02-the-beloved-witness",
+          "handle": "@mc-lens-01-02-the-beloved-witness",
+          "title": "The Beloved Witness",
+          "displayTitle": "The Beloved Witness"
+        },
+        {
+          "id": "lens-01-03-the-forgiven-sinner",
+          "handle": "@mc-lens-01-03-the-forgiven-sinner",
+          "title": "The Forgiven Sinner",
+          "displayTitle": "The Forgiven Sinner"
+        },
+        {
+          "id": "lens-01-04-the-relentless-pursuer",
+          "handle": "@mc-lens-01-04-the-relentless-pursuer",
+          "title": "The Relentless Pursuer",
+          "displayTitle": "The Relentless Pursuer"
+        },
+        {
+          "id": "lens-01-05-the-unconditional-father",
+          "handle": "@mc-lens-01-05-the-unconditional-father",
+          "title": "The Unconditional Father",
+          "displayTitle": "The Unconditional Father"
+        },
+        {
+          "id": "lens-01-06-the-visionary-of-grace",
+          "handle": "@mc-lens-01-06-the-visionary-of-grace",
+          "title": "The Visionary of Grace",
+          "displayTitle": "The Visionary of Grace"
+        },
+        {
+          "id": "lens-01-07-1-metacanonical-header",
+          "handle": "@mc-lens-01-07-1-metacanonical-header",
+          "title": "1. Metacanonical Header",
+          "displayTitle": "1. Metacanonical Header"
+        },
+        {
+          "id": "lens-01-08-the-good-shepherd",
+          "handle": "@mc-lens-01-08-the-good-shepherd",
+          "title": "The Good Shepherd",
+          "displayTitle": "The Good Shepherd"
+        },
+        {
+          "id": "lens-01-09-the-returning-prodigal",
+          "handle": "@mc-lens-01-09-the-returning-prodigal",
+          "title": "The Returning Prodigal",
+          "displayTitle": "The Returning Prodigal"
+        },
+        {
+          "id": "lens-01-10-the-rescued-orphan",
+          "handle": "@mc-lens-01-10-the-rescued-orphan",
+          "title": "The Rescued Orphan",
+          "displayTitle": "The Rescued Orphan"
+        },
+        {
+          "id": "lens-01-11-the-dying-thief",
+          "handle": "@mc-lens-01-11-the-dying-thief",
+          "title": "The Dying Thief",
+          "displayTitle": "The Dying Thief"
+        },
+        {
+          "id": "lens-01-12-the-singer-of-love",
+          "handle": "@mc-lens-01-12-the-singer-of-love",
+          "title": "The Singer of Love",
+          "displayTitle": "The Singer of Love"
+        }
+      ],
+      "detailPath": "councils/Council_01.json"
+    },
+    {
+      "id": "Council_02",
+      "title": "The Prophetic Witness Council",
+      "councilLabel": "The Prophetic Witness Council",
+      "phase": null,
+      "sortOrder": 2,
+      "lensCount": 12,
+      "lensHandles": [
+        "@mc-lens-02-01-the-visionary-messenger",
+        "@mc-lens-02-02-the-seer-of-empires",
+        "@mc-lens-02-03-the-apocalyptic-witness",
+        "@mc-lens-02-04-the-restorer-of-the-altar",
+        "@mc-lens-02-05-the-uncompromising-reformer",
+        "@mc-lens-02-06-the-translator-of-truth",
+        "@mc-lens-02-07-the-herald-of-the-end",
+        "@mc-lens-02-08-the-watchman-on-the-walls",
+        "@mc-lens-02-09-the-whistleblower",
+        "@mc-lens-02-10-the-historian-of-antiquity",
+        "@mc-lens-02-11-the-midnight-cry",
+        "@mc-lens-02-12-the-costly-resister"
+      ],
+      "lensTitles": [
+        "The Visionary Messenger",
+        "The Seer of Empires",
+        "The Apocalyptic Witness",
+        "The Restorer of the Altar",
+        "The Uncompromising Reformer",
+        "The Translator of Truth",
+        "The Herald of the End",
+        "The Watchman on the Walls",
+        "The Whistleblower",
+        "The Historian of Antiquity",
+        "The Midnight Cry",
+        "The Costly Resister"
+      ],
+      "lenses": [
+        {
+          "id": "lens-02-01-the-visionary-messenger",
+          "handle": "@mc-lens-02-01-the-visionary-messenger",
+          "title": "The Visionary Messenger",
+          "displayTitle": "The Visionary Messenger"
+        },
+        {
+          "id": "lens-02-02-the-seer-of-empires",
+          "handle": "@mc-lens-02-02-the-seer-of-empires",
+          "title": "The Seer of Empires",
+          "displayTitle": "The Seer of Empires"
+        },
+        {
+          "id": "lens-02-03-the-apocalyptic-witness",
+          "handle": "@mc-lens-02-03-the-apocalyptic-witness",
+          "title": "The Apocalyptic Witness",
+          "displayTitle": "The Apocalyptic Witness"
+        },
+        {
+          "id": "lens-02-04-the-restorer-of-the-altar",
+          "handle": "@mc-lens-02-04-the-restorer-of-the-altar",
+          "title": "The Restorer of the Altar",
+          "displayTitle": "The Restorer of the Altar"
+        },
+        {
+          "id": "lens-02-05-the-uncompromising-reformer",
+          "handle": "@mc-lens-02-05-the-uncompromising-reformer",
+          "title": "The Uncompromising Reformer",
+          "displayTitle": "The Uncompromising Reformer"
+        },
+        {
+          "id": "lens-02-06-the-translator-of-truth",
+          "handle": "@mc-lens-02-06-the-translator-of-truth",
+          "title": "The Translator of Truth",
+          "displayTitle": "The Translator of Truth"
+        },
+        {
+          "id": "lens-02-07-the-herald-of-the-end",
+          "handle": "@mc-lens-02-07-the-herald-of-the-end",
+          "title": "The Herald of the End",
+          "displayTitle": "The Herald of the End"
+        },
+        {
+          "id": "lens-02-08-the-watchman-on-the-walls",
+          "handle": "@mc-lens-02-08-the-watchman-on-the-walls",
+          "title": "The Watchman on the Walls",
+          "displayTitle": "The Watchman on the Walls"
+        },
+        {
+          "id": "lens-02-09-the-whistleblower",
+          "handle": "@mc-lens-02-09-the-whistleblower",
+          "title": "The Whistleblower",
+          "displayTitle": "The Whistleblower"
+        },
+        {
+          "id": "lens-02-10-the-historian-of-antiquity",
+          "handle": "@mc-lens-02-10-the-historian-of-antiquity",
+          "title": "The Historian of Antiquity",
+          "displayTitle": "The Historian of Antiquity"
+        },
+        {
+          "id": "lens-02-11-the-midnight-cry",
+          "handle": "@mc-lens-02-11-the-midnight-cry",
+          "title": "The Midnight Cry",
+          "displayTitle": "The Midnight Cry"
+        },
+        {
+          "id": "lens-02-12-the-costly-resister",
+          "handle": "@mc-lens-02-12-the-costly-resister",
+          "title": "The Costly Resister",
+          "displayTitle": "The Costly Resister"
+        }
+      ],
+      "detailPath": "councils/Council_02.json"
+    },
+    {
+      "id": "Council_03",
+      "title": "Wholistic Restoration Council",
+      "councilLabel": "Wholistic Restoration Council",
+      "phase": null,
+      "sortOrder": 3,
+      "lensCount": 12,
+      "lensHandles": [
+        "@mc-lens-03-01-the-clinical-healer",
+        "@mc-lens-03-02-the-ancient-physician",
+        "@mc-lens-03-03-the-master-of-alignment",
+        "@mc-lens-03-04-the-fearless-nurse",
+        "@mc-lens-03-05-the-structural-integrator",
+        "@mc-lens-03-06-the-master-of-breath",
+        "@mc-lens-03-07-the-longevity-scientist",
+        "@mc-lens-03-08-the-biodynamic-farmer",
+        "@mc-lens-03-09-the-sabbath-rest",
+        "@mc-lens-03-10-the-true-educator",
+        "@mc-lens-03-11-the-ministry-of-healing",
+        "@mc-lens-03-12-1-metacanonical-header"
+      ],
+      "lensTitles": [
+        "The Clinical Healer",
+        "The Ancient Physician",
+        "The Master of Alignment",
+        "The Fearless Nurse",
+        "The Structural Integrator",
+        "The Master of Breath",
+        "The Longevity Scientist",
+        "The Biodynamic Farmer",
+        "The Sabbath Rest",
+        "The True Educator",
+        "The Ministry of Healing",
+        "1. Metacanonical Header"
+      ],
+      "lenses": [
+        {
+          "id": "lens-03-01-the-clinical-healer",
+          "handle": "@mc-lens-03-01-the-clinical-healer",
+          "title": "The Clinical Healer",
+          "displayTitle": "The Clinical Healer"
+        },
+        {
+          "id": "lens-03-02-the-ancient-physician",
+          "handle": "@mc-lens-03-02-the-ancient-physician",
+          "title": "The Ancient Physician",
+          "displayTitle": "The Ancient Physician"
+        },
+        {
+          "id": "lens-03-03-the-master-of-alignment",
+          "handle": "@mc-lens-03-03-the-master-of-alignment",
+          "title": "The Master of Alignment",
+          "displayTitle": "The Master of Alignment"
+        },
+        {
+          "id": "lens-03-04-the-fearless-nurse",
+          "handle": "@mc-lens-03-04-the-fearless-nurse",
+          "title": "The Fearless Nurse",
+          "displayTitle": "The Fearless Nurse"
+        },
+        {
+          "id": "lens-03-05-the-structural-integrator",
+          "handle": "@mc-lens-03-05-the-structural-integrator",
+          "title": "The Structural Integrator",
+          "displayTitle": "The Structural Integrator"
+        },
+        {
+          "id": "lens-03-06-the-master-of-breath",
+          "handle": "@mc-lens-03-06-the-master-of-breath",
+          "title": "The Master of Breath",
+          "displayTitle": "The Master of Breath"
+        },
+        {
+          "id": "lens-03-07-the-longevity-scientist",
+          "handle": "@mc-lens-03-07-the-longevity-scientist",
+          "title": "The Longevity Scientist",
+          "displayTitle": "The Longevity Scientist"
+        },
+        {
+          "id": "lens-03-08-the-biodynamic-farmer",
+          "handle": "@mc-lens-03-08-the-biodynamic-farmer",
+          "title": "The Biodynamic Farmer",
+          "displayTitle": "The Biodynamic Farmer"
+        },
+        {
+          "id": "lens-03-09-the-sabbath-rest",
+          "handle": "@mc-lens-03-09-the-sabbath-rest",
+          "title": "The Sabbath Rest",
+          "displayTitle": "The Sabbath Rest"
+        },
+        {
+          "id": "lens-03-10-the-true-educator",
+          "handle": "@mc-lens-03-10-the-true-educator",
+          "title": "The True Educator",
+          "displayTitle": "The True Educator"
+        },
+        {
+          "id": "lens-03-11-the-ministry-of-healing",
+          "handle": "@mc-lens-03-11-the-ministry-of-healing",
+          "title": "The Ministry of Healing",
+          "displayTitle": "The Ministry of Healing"
+        },
+        {
+          "id": "lens-03-12-1-metacanonical-header",
+          "handle": "@mc-lens-03-12-1-metacanonical-header",
+          "title": "1. Metacanonical Header",
+          "displayTitle": "1. Metacanonical Header"
+        }
+      ],
+      "detailPath": "councils/Council_03.json"
+    },
+    {
+      "id": "Council_04",
+      "title": "Fierce Compassion Council",
+      "councilLabel": "Fierce Compassion Council",
+      "phase": null,
+      "sortOrder": 4,
+      "lensCount": 12,
+      "lensHandles": [
+        "@mc-lens-04-01-the-dreamer-of-equality",
+        "@mc-lens-04-02-the-non-violent-resister",
+        "@mc-lens-04-03-the-voice-of-the-enslaved",
+        "@mc-lens-04-04-the-martyred-shepherd",
+        "@mc-lens-04-05-the-exposer-of-atrocities",
+        "@mc-lens-04-06-the-prophet-of-justice",
+        "@mc-lens-04-07-the-untouchable-liberator",
+        "@mc-lens-04-08-the-fearless-schoolgirl",
+        "@mc-lens-04-09-the-servant-of-the-dying",
+        "@mc-lens-04-10-the-healing-advocate",
+        "@mc-lens-04-11-the-reverent-physician",
+        "@mc-lens-04-12-the-first-responder"
+      ],
+      "lensTitles": [
+        "The Dreamer of Equality",
+        "The Non-Violent Resister",
+        "The Voice of the Enslaved",
+        "The Martyred Shepherd",
+        "The Exposer of Atrocities",
+        "The Prophet of Justice",
+        "The Untouchable Liberator",
+        "The Fearless Schoolgirl",
+        "The Servant of the Dying",
+        "The Healing Advocate",
+        "The Reverent Physician",
+        "The First Responder"
+      ],
+      "lenses": [
+        {
+          "id": "lens-04-01-the-dreamer-of-equality",
+          "handle": "@mc-lens-04-01-the-dreamer-of-equality",
+          "title": "The Dreamer of Equality",
+          "displayTitle": "The Dreamer of Equality"
+        },
+        {
+          "id": "lens-04-02-the-non-violent-resister",
+          "handle": "@mc-lens-04-02-the-non-violent-resister",
+          "title": "The Non-Violent Resister",
+          "displayTitle": "The Non-Violent Resister"
+        },
+        {
+          "id": "lens-04-03-the-voice-of-the-enslaved",
+          "handle": "@mc-lens-04-03-the-voice-of-the-enslaved",
+          "title": "The Voice of the Enslaved",
+          "displayTitle": "The Voice of the Enslaved"
+        },
+        {
+          "id": "lens-04-04-the-martyred-shepherd",
+          "handle": "@mc-lens-04-04-the-martyred-shepherd",
+          "title": "The Martyred Shepherd",
+          "displayTitle": "The Martyred Shepherd"
+        },
+        {
+          "id": "lens-04-05-the-exposer-of-atrocities",
+          "handle": "@mc-lens-04-05-the-exposer-of-atrocities",
+          "title": "The Exposer of Atrocities",
+          "displayTitle": "The Exposer of Atrocities"
+        },
+        {
+          "id": "lens-04-06-the-prophet-of-justice",
+          "handle": "@mc-lens-04-06-the-prophet-of-justice",
+          "title": "The Prophet of Justice",
+          "displayTitle": "The Prophet of Justice"
+        },
+        {
+          "id": "lens-04-07-the-untouchable-liberator",
+          "handle": "@mc-lens-04-07-the-untouchable-liberator",
+          "title": "The Untouchable Liberator",
+          "displayTitle": "The Untouchable Liberator"
+        },
+        {
+          "id": "lens-04-08-the-fearless-schoolgirl",
+          "handle": "@mc-lens-04-08-the-fearless-schoolgirl",
+          "title": "The Fearless Schoolgirl",
+          "displayTitle": "The Fearless Schoolgirl"
+        },
+        {
+          "id": "lens-04-09-the-servant-of-the-dying",
+          "handle": "@mc-lens-04-09-the-servant-of-the-dying",
+          "title": "The Servant of the Dying",
+          "displayTitle": "The Servant of the Dying"
+        },
+        {
+          "id": "lens-04-10-the-healing-advocate",
+          "handle": "@mc-lens-04-10-the-healing-advocate",
+          "title": "The Healing Advocate",
+          "displayTitle": "The Healing Advocate"
+        },
+        {
+          "id": "lens-04-11-the-reverent-physician",
+          "handle": "@mc-lens-04-11-the-reverent-physician",
+          "title": "The Reverent Physician",
+          "displayTitle": "The Reverent Physician"
+        },
+        {
+          "id": "lens-04-12-the-first-responder",
+          "handle": "@mc-lens-04-12-the-first-responder",
+          "title": "The First Responder",
+          "displayTitle": "The First Responder"
+        }
+      ],
+      "detailPath": "councils/Council_04.json"
+    },
+    {
+      "id": "Council_05",
+      "title": "Reconciliation and Wholeness Council",
+      "councilLabel": "Reconciliation and Wholeness Council",
+      "phase": null,
+      "sortOrder": 5,
+      "lensCount": 12,
+      "lensHandles": [
+        "@mc-lens-05-01-the-forgiving-prisoner",
+        "@mc-lens-05-02-the-mindful-monk",
+        "@mc-lens-05-03-the-peaceful-marcher",
+        "@mc-lens-05-04-the-peacemaking-mother",
+        "@mc-lens-05-05-the-honorable-chief",
+        "@mc-lens-05-06-the-weaver-of-deep-ecology",
+        "@mc-lens-05-07-the-indigenous-botanist",
+        "@mc-lens-05-08-the-seed-protector",
+        "@mc-lens-05-09-the-agrarian-poet",
+        "@mc-lens-05-10-the-depth-psychologist",
+        "@mc-lens-05-11-the-restorative-justice-facilitator",
+        "@mc-lens-05-12-the-mycelial-network"
+      ],
+      "lensTitles": [
+        "The Forgiving Prisoner",
+        "The Mindful Monk",
+        "The Peaceful Marcher",
+        "The Peacemaking Mother",
+        "The Honorable Chief",
+        "The Weaver of Deep Ecology",
+        "The Indigenous Botanist",
+        "The Seed Protector",
+        "The Agrarian Poet",
+        "The Depth Psychologist",
+        "The Restorative Justice Facilitator",
+        "The Mycelial Network"
+      ],
+      "lenses": [
+        {
+          "id": "lens-05-01-the-forgiving-prisoner",
+          "handle": "@mc-lens-05-01-the-forgiving-prisoner",
+          "title": "The Forgiving Prisoner",
+          "displayTitle": "The Forgiving Prisoner"
+        },
+        {
+          "id": "lens-05-02-the-mindful-monk",
+          "handle": "@mc-lens-05-02-the-mindful-monk",
+          "title": "The Mindful Monk",
+          "displayTitle": "The Mindful Monk"
+        },
+        {
+          "id": "lens-05-03-the-peaceful-marcher",
+          "handle": "@mc-lens-05-03-the-peaceful-marcher",
+          "title": "The Peaceful Marcher",
+          "displayTitle": "The Peaceful Marcher"
+        },
+        {
+          "id": "lens-05-04-the-peacemaking-mother",
+          "handle": "@mc-lens-05-04-the-peacemaking-mother",
+          "title": "The Peacemaking Mother",
+          "displayTitle": "The Peacemaking Mother"
+        },
+        {
+          "id": "lens-05-05-the-honorable-chief",
+          "handle": "@mc-lens-05-05-the-honorable-chief",
+          "title": "The Honorable Chief",
+          "displayTitle": "The Honorable Chief"
+        },
+        {
+          "id": "lens-05-06-the-weaver-of-deep-ecology",
+          "handle": "@mc-lens-05-06-the-weaver-of-deep-ecology",
+          "title": "The Weaver of Deep Ecology",
+          "displayTitle": "The Weaver of Deep Ecology"
+        },
+        {
+          "id": "lens-05-07-the-indigenous-botanist",
+          "handle": "@mc-lens-05-07-the-indigenous-botanist",
+          "title": "The Indigenous Botanist",
+          "displayTitle": "The Indigenous Botanist"
+        },
+        {
+          "id": "lens-05-08-the-seed-protector",
+          "handle": "@mc-lens-05-08-the-seed-protector",
+          "title": "The Seed Protector",
+          "displayTitle": "The Seed Protector"
+        },
+        {
+          "id": "lens-05-09-the-agrarian-poet",
+          "handle": "@mc-lens-05-09-the-agrarian-poet",
+          "title": "The Agrarian Poet",
+          "displayTitle": "The Agrarian Poet"
+        },
+        {
+          "id": "lens-05-10-the-depth-psychologist",
+          "handle": "@mc-lens-05-10-the-depth-psychologist",
+          "title": "The Depth Psychologist",
+          "displayTitle": "The Depth Psychologist"
+        },
+        {
+          "id": "lens-05-11-the-restorative-justice-facilitator",
+          "handle": "@mc-lens-05-11-the-restorative-justice-facilitator",
+          "title": "The Restorative Justice Facilitator",
+          "displayTitle": "The Restorative Justice Facilitator"
+        },
+        {
+          "id": "lens-05-12-the-mycelial-network",
+          "handle": "@mc-lens-05-12-the-mycelial-network",
+          "title": "The Mycelial Network",
+          "displayTitle": "The Mycelial Network"
+        }
+      ],
+      "detailPath": "councils/Council_05.json"
+    },
+    {
+      "id": "Council_06",
+      "title": "The Unseen Weavers Council",
+      "councilLabel": "The Unseen Weavers Council",
+      "phase": null,
+      "sortOrder": 6,
+      "lensCount": 12,
+      "lensHandles": [
+        "@mc-lens-06-01-1-metacanonical-header",
+        "@mc-lens-06-02-the-janitor",
+        "@mc-lens-06-03-the-garment-worker",
+        "@mc-lens-06-04-1-metacanonical-header",
+        "@mc-lens-06-05-the-public-school-teacher",
+        "@mc-lens-06-06-the-sanitation-worker",
+        "@mc-lens-06-07-the-delivery-driver",
+        "@mc-lens-06-08-the-caregiver-for-the-elderly",
+        "@mc-lens-06-09-the-night-shift-nurse",
+        "@mc-lens-06-10-1-metacanonical-header",
+        "@mc-lens-06-11-1-metacanonical-header",
+        "@mc-lens-06-12-the-river"
+      ],
+      "lensTitles": [
+        "1. Metacanonical Header",
+        "The Janitor",
+        "The Garment Worker",
+        "1. Metacanonical Header",
+        "The Public School Teacher",
+        "The Sanitation Worker",
+        "The Delivery Driver",
+        "The Caregiver for the Elderly",
+        "The Night Shift Nurse",
+        "1. Metacanonical Header",
+        "1. Metacanonical Header",
+        "The River"
+      ],
+      "lenses": [
+        {
+          "id": "lens-06-01-1-metacanonical-header",
+          "handle": "@mc-lens-06-01-1-metacanonical-header",
+          "title": "1. Metacanonical Header",
+          "displayTitle": "1. Metacanonical Header"
+        },
+        {
+          "id": "lens-06-02-the-janitor",
+          "handle": "@mc-lens-06-02-the-janitor",
+          "title": "The Janitor",
+          "displayTitle": "The Janitor"
+        },
+        {
+          "id": "lens-06-03-the-garment-worker",
+          "handle": "@mc-lens-06-03-the-garment-worker",
+          "title": "The Garment Worker",
+          "displayTitle": "The Garment Worker"
+        },
+        {
+          "id": "lens-06-04-1-metacanonical-header",
+          "handle": "@mc-lens-06-04-1-metacanonical-header",
+          "title": "1. Metacanonical Header",
+          "displayTitle": "1. Metacanonical Header"
+        },
+        {
+          "id": "lens-06-05-the-public-school-teacher",
+          "handle": "@mc-lens-06-05-the-public-school-teacher",
+          "title": "The Public School Teacher",
+          "displayTitle": "The Public School Teacher"
+        },
+        {
+          "id": "lens-06-06-the-sanitation-worker",
+          "handle": "@mc-lens-06-06-the-sanitation-worker",
+          "title": "The Sanitation Worker",
+          "displayTitle": "The Sanitation Worker"
+        },
+        {
+          "id": "lens-06-07-the-delivery-driver",
+          "handle": "@mc-lens-06-07-the-delivery-driver",
+          "title": "The Delivery Driver",
+          "displayTitle": "The Delivery Driver"
+        },
+        {
+          "id": "lens-06-08-the-caregiver-for-the-elderly",
+          "handle": "@mc-lens-06-08-the-caregiver-for-the-elderly",
+          "title": "The Caregiver for the Elderly",
+          "displayTitle": "The Caregiver for the Elderly"
+        },
+        {
+          "id": "lens-06-09-the-night-shift-nurse",
+          "handle": "@mc-lens-06-09-the-night-shift-nurse",
+          "title": "The Night Shift Nurse",
+          "displayTitle": "The Night Shift Nurse"
+        },
+        {
+          "id": "lens-06-10-1-metacanonical-header",
+          "handle": "@mc-lens-06-10-1-metacanonical-header",
+          "title": "1. Metacanonical Header",
+          "displayTitle": "1. Metacanonical Header"
+        },
+        {
+          "id": "lens-06-11-1-metacanonical-header",
+          "handle": "@mc-lens-06-11-1-metacanonical-header",
+          "title": "1. Metacanonical Header",
+          "displayTitle": "1. Metacanonical Header"
+        },
+        {
+          "id": "lens-06-12-the-river",
+          "handle": "@mc-lens-06-12-the-river",
+          "title": "The River",
+          "displayTitle": "The River"
+        }
+      ],
+      "detailPath": "councils/Council_06.json"
+    },
+    {
+      "id": "Council_07",
+      "title": "The Discerning Intellect Council",
+      "councilLabel": "The Discerning Intellect Council",
+      "phase": null,
+      "sortOrder": 7,
+      "lensCount": 12,
+      "lensHandles": [
+        "@mc-lens-07-01-the-socratic-gadfly",
+        "@mc-lens-07-02-the-master-of-emptiness",
+        "@mc-lens-07-03-the-relativistic-seer",
+        "@mc-lens-07-04-the-universal-polymath",
+        "@mc-lens-07-05-the-architect-of-harmony",
+        "@mc-lens-07-06-the-quantum-holist",
+        "@mc-lens-07-07-1-metacanonical-header",
+        "@mc-lens-07-08-the-rational-pantheist",
+        "@mc-lens-07-09-the-discoverer-of-forces",
+        "@mc-lens-07-10-the-pioneer-of-optics",
+        "@mc-lens-07-11-the-geometer-of-the-spheres",
+        "@mc-lens-07-12-1-metacanonical-header"
+      ],
+      "lensTitles": [
+        "The Socratic Gadfly",
+        "The Master of Emptiness",
+        "The Relativistic Seer",
+        "The Universal Polymath",
+        "The Architect of Harmony",
+        "The Quantum Holist",
+        "1. Metacanonical Header",
+        "The Rational Pantheist",
+        "The Discoverer of Forces",
+        "The Pioneer of Optics",
+        "The Geometer of the Spheres",
+        "1. Metacanonical Header"
+      ],
+      "lenses": [
+        {
+          "id": "lens-07-01-the-socratic-gadfly",
+          "handle": "@mc-lens-07-01-the-socratic-gadfly",
+          "title": "The Socratic Gadfly",
+          "displayTitle": "The Socratic Gadfly"
+        },
+        {
+          "id": "lens-07-02-the-master-of-emptiness",
+          "handle": "@mc-lens-07-02-the-master-of-emptiness",
+          "title": "The Master of Emptiness",
+          "displayTitle": "The Master of Emptiness"
+        },
+        {
+          "id": "lens-07-03-the-relativistic-seer",
+          "handle": "@mc-lens-07-03-the-relativistic-seer",
+          "title": "The Relativistic Seer",
+          "displayTitle": "The Relativistic Seer"
+        },
+        {
+          "id": "lens-07-04-the-universal-polymath",
+          "handle": "@mc-lens-07-04-the-universal-polymath",
+          "title": "The Universal Polymath",
+          "displayTitle": "The Universal Polymath"
+        },
+        {
+          "id": "lens-07-05-the-architect-of-harmony",
+          "handle": "@mc-lens-07-05-the-architect-of-harmony",
+          "title": "The Architect of Harmony",
+          "displayTitle": "The Architect of Harmony"
+        },
+        {
+          "id": "lens-07-06-the-quantum-holist",
+          "handle": "@mc-lens-07-06-the-quantum-holist",
+          "title": "The Quantum Holist",
+          "displayTitle": "The Quantum Holist"
+        },
+        {
+          "id": "lens-07-07-1-metacanonical-header",
+          "handle": "@mc-lens-07-07-1-metacanonical-header",
+          "title": "1. Metacanonical Header",
+          "displayTitle": "1. Metacanonical Header"
+        },
+        {
+          "id": "lens-07-08-the-rational-pantheist",
+          "handle": "@mc-lens-07-08-the-rational-pantheist",
+          "title": "The Rational Pantheist",
+          "displayTitle": "The Rational Pantheist"
+        },
+        {
+          "id": "lens-07-09-the-discoverer-of-forces",
+          "handle": "@mc-lens-07-09-the-discoverer-of-forces",
+          "title": "The Discoverer of Forces",
+          "displayTitle": "The Discoverer of Forces"
+        },
+        {
+          "id": "lens-07-10-the-pioneer-of-optics",
+          "handle": "@mc-lens-07-10-the-pioneer-of-optics",
+          "title": "The Pioneer of Optics",
+          "displayTitle": "The Pioneer of Optics"
+        },
+        {
+          "id": "lens-07-11-the-geometer-of-the-spheres",
+          "handle": "@mc-lens-07-11-the-geometer-of-the-spheres",
+          "title": "The Geometer of the Spheres",
+          "displayTitle": "The Geometer of the Spheres"
+        },
+        {
+          "id": "lens-07-12-1-metacanonical-header",
+          "handle": "@mc-lens-07-12-1-metacanonical-header",
+          "title": "1. Metacanonical Header",
+          "displayTitle": "1. Metacanonical Header"
+        }
+      ],
+      "detailPath": "councils/Council_07.json"
+    },
+    {
+      "id": "Council_08",
+      "title": "The Questioner Council",
+      "councilLabel": "The Questioner Council",
+      "phase": null,
+      "sortOrder": 8,
+      "lensCount": 12,
+      "lensHandles": [
+        "@mc-lens-08-01-the-anti-guru",
+        "@mc-lens-08-02-the-hammer-of-idols",
+        "@mc-lens-08-03-the-cynical-dog",
+        "@mc-lens-08-04-the-materialist-critic",
+        "@mc-lens-08-05-the-archaeologist-of-power",
+        "@mc-lens-08-06-the-satirical-wit",
+        "@mc-lens-08-07-the-self-reliant-transcendentalist",
+        "@mc-lens-08-08-the-civil-disobedient",
+        "@mc-lens-08-09-the-court-jester",
+        "@mc-lens-08-10-the-why-phase-toddler",
+        "@mc-lens-08-11-the-zen-master-with-a-stick",
+        "@mc-lens-08-12-the-inner-voice"
+      ],
+      "lensTitles": [
+        "The Anti-Guru",
+        "The Hammer of Idols",
+        "The Cynical Dog",
+        "The Materialist Critic",
+        "The Archaeologist of Power",
+        "The Satirical Wit",
+        "The Self-Reliant Transcendentalist",
+        "The Civil Disobedient",
+        "The Court Jester",
+        "The Why Phase Toddler",
+        "The Zen Master with a Stick",
+        "The Inner Voice"
+      ],
+      "lenses": [
+        {
+          "id": "lens-08-01-the-anti-guru",
+          "handle": "@mc-lens-08-01-the-anti-guru",
+          "title": "The Anti-Guru",
+          "displayTitle": "The Anti-Guru"
+        },
+        {
+          "id": "lens-08-02-the-hammer-of-idols",
+          "handle": "@mc-lens-08-02-the-hammer-of-idols",
+          "title": "The Hammer of Idols",
+          "displayTitle": "The Hammer of Idols"
+        },
+        {
+          "id": "lens-08-03-the-cynical-dog",
+          "handle": "@mc-lens-08-03-the-cynical-dog",
+          "title": "The Cynical Dog",
+          "displayTitle": "The Cynical Dog"
+        },
+        {
+          "id": "lens-08-04-the-materialist-critic",
+          "handle": "@mc-lens-08-04-the-materialist-critic",
+          "title": "The Materialist Critic",
+          "displayTitle": "The Materialist Critic"
+        },
+        {
+          "id": "lens-08-05-the-archaeologist-of-power",
+          "handle": "@mc-lens-08-05-the-archaeologist-of-power",
+          "title": "The Archaeologist of Power",
+          "displayTitle": "The Archaeologist of Power"
+        },
+        {
+          "id": "lens-08-06-the-satirical-wit",
+          "handle": "@mc-lens-08-06-the-satirical-wit",
+          "title": "The Satirical Wit",
+          "displayTitle": "The Satirical Wit"
+        },
+        {
+          "id": "lens-08-07-the-self-reliant-transcendentalist",
+          "handle": "@mc-lens-08-07-the-self-reliant-transcendentalist",
+          "title": "The Self-Reliant Transcendentalist",
+          "displayTitle": "The Self-Reliant Transcendentalist"
+        },
+        {
+          "id": "lens-08-08-the-civil-disobedient",
+          "handle": "@mc-lens-08-08-the-civil-disobedient",
+          "title": "The Civil Disobedient",
+          "displayTitle": "The Civil Disobedient"
+        },
+        {
+          "id": "lens-08-09-the-court-jester",
+          "handle": "@mc-lens-08-09-the-court-jester",
+          "title": "The Court Jester",
+          "displayTitle": "The Court Jester"
+        },
+        {
+          "id": "lens-08-10-the-why-phase-toddler",
+          "handle": "@mc-lens-08-10-the-why-phase-toddler",
+          "title": "The Why Phase Toddler",
+          "displayTitle": "The Why Phase Toddler"
+        },
+        {
+          "id": "lens-08-11-the-zen-master-with-a-stick",
+          "handle": "@mc-lens-08-11-the-zen-master-with-a-stick",
+          "title": "The Zen Master with a Stick",
+          "displayTitle": "The Zen Master with a Stick"
+        },
+        {
+          "id": "lens-08-12-the-inner-voice",
+          "handle": "@mc-lens-08-12-the-inner-voice",
+          "title": "The Inner Voice",
+          "displayTitle": "The Inner Voice"
+        }
+      ],
+      "detailPath": "councils/Council_08.json"
+    },
+    {
+      "id": "Council_09",
+      "title": "The Witness and the Void Council",
+      "councilLabel": "The Witness and the Void Council",
+      "phase": null,
+      "sortOrder": 9,
+      "lensCount": 12,
+      "lensHandles": [
+        "@mc-lens-09-01-the-silent-sage",
+        "@mc-lens-09-02-the-awakened-one",
+        "@mc-lens-09-03-the-old-master",
+        "@mc-lens-09-04-the-servant-of-god",
+        "@mc-lens-09-05-the-absolute-non-dualist",
+        "@mc-lens-09-06-the-advaita-architect",
+        "@mc-lens-09-07-the-codifier-of-stillness",
+        "@mc-lens-09-08-the-uncarved-block",
+        "@mc-lens-09-09-the-empty-bowl",
+        "@mc-lens-09-10-the-space-between-breaths",
+        "@mc-lens-09-11-the-vastness-of-the-night-sky",
+        "@mc-lens-09-12-the-present-moment"
+      ],
+      "lensTitles": [
+        "The Silent Sage",
+        "The Awakened One",
+        "The Old Master",
+        "The Servant of God",
+        "The Absolute Non-Dualist",
+        "The Advaita Architect",
+        "The Codifier of Stillness",
+        "The Uncarved Block",
+        "The Empty Bowl",
+        "The Space Between Breaths",
+        "The Vastness of the Night Sky",
+        "The Present Moment"
+      ],
+      "lenses": [
+        {
+          "id": "lens-09-01-the-silent-sage",
+          "handle": "@mc-lens-09-01-the-silent-sage",
+          "title": "The Silent Sage",
+          "displayTitle": "The Silent Sage"
+        },
+        {
+          "id": "lens-09-02-the-awakened-one",
+          "handle": "@mc-lens-09-02-the-awakened-one",
+          "title": "The Awakened One",
+          "displayTitle": "The Awakened One"
+        },
+        {
+          "id": "lens-09-03-the-old-master",
+          "handle": "@mc-lens-09-03-the-old-master",
+          "title": "The Old Master",
+          "displayTitle": "The Old Master"
+        },
+        {
+          "id": "lens-09-04-the-servant-of-god",
+          "handle": "@mc-lens-09-04-the-servant-of-god",
+          "title": "The Servant of God",
+          "displayTitle": "The Servant of God"
+        },
+        {
+          "id": "lens-09-05-the-absolute-non-dualist",
+          "handle": "@mc-lens-09-05-the-absolute-non-dualist",
+          "title": "The Absolute Non-Dualist",
+          "displayTitle": "The Absolute Non-Dualist"
+        },
+        {
+          "id": "lens-09-06-the-advaita-architect",
+          "handle": "@mc-lens-09-06-the-advaita-architect",
+          "title": "The Advaita Architect",
+          "displayTitle": "The Advaita Architect"
+        },
+        {
+          "id": "lens-09-07-the-codifier-of-stillness",
+          "handle": "@mc-lens-09-07-the-codifier-of-stillness",
+          "title": "The Codifier of Stillness",
+          "displayTitle": "The Codifier of Stillness"
+        },
+        {
+          "id": "lens-09-08-the-uncarved-block",
+          "handle": "@mc-lens-09-08-the-uncarved-block",
+          "title": "The Uncarved Block",
+          "displayTitle": "The Uncarved Block"
+        },
+        {
+          "id": "lens-09-09-the-empty-bowl",
+          "handle": "@mc-lens-09-09-the-empty-bowl",
+          "title": "The Empty Bowl",
+          "displayTitle": "The Empty Bowl"
+        },
+        {
+          "id": "lens-09-10-the-space-between-breaths",
+          "handle": "@mc-lens-09-10-the-space-between-breaths",
+          "title": "The Space Between Breaths",
+          "displayTitle": "The Space Between Breaths"
+        },
+        {
+          "id": "lens-09-11-the-vastness-of-the-night-sky",
+          "handle": "@mc-lens-09-11-the-vastness-of-the-night-sky",
+          "title": "The Vastness of the Night Sky",
+          "displayTitle": "The Vastness of the Night Sky"
+        },
+        {
+          "id": "lens-09-12-the-present-moment",
+          "handle": "@mc-lens-09-12-the-present-moment",
+          "title": "The Present Moment",
+          "displayTitle": "The Present Moment"
+        }
+      ],
+      "detailPath": "councils/Council_09.json"
+    },
+    {
+      "id": "Council_10",
+      "title": "The Strategic Mind Council",
+      "councilLabel": "The Strategic Mind Council",
+      "phase": null,
+      "sortOrder": 10,
+      "lensCount": 12,
+      "lensHandles": [
+        "@mc-lens-10-01-the-rational-compounder",
+        "@mc-lens-10-02-the-radical-transparent",
+        "@mc-lens-10-03-the-master-of-war",
+        "@mc-lens-10-04-the-ooda-loop-strategist",
+        "@mc-lens-10-05-the-paranoid-executive",
+        "@mc-lens-10-06-the-probabilistic-thinker",
+        "@mc-lens-10-07-1-metacanonical-header",
+        "@mc-lens-10-08-the-relentless-optimizer",
+        "@mc-lens-10-09-the-minimalist-producer",
+        "@mc-lens-10-10-the-grandmaster-of-tactics",
+        "@mc-lens-10-11-the-high-stakes-negotiator",
+        "@mc-lens-10-12-the-er-surgeon"
+      ],
+      "lensTitles": [
+        "The Rational Compounder",
+        "The Radical Transparent",
+        "The Master of War",
+        "The OODA Loop Strategist",
+        "The Paranoid Executive",
+        "The Probabilistic Thinker",
+        "1. Metacanonical Header",
+        "The Relentless Optimizer",
+        "The Minimalist Producer",
+        "The Grandmaster of Tactics",
+        "The High-Stakes Negotiator",
+        "The ER Surgeon"
+      ],
+      "lenses": [
+        {
+          "id": "lens-10-01-the-rational-compounder",
+          "handle": "@mc-lens-10-01-the-rational-compounder",
+          "title": "The Rational Compounder",
+          "displayTitle": "The Rational Compounder"
+        },
+        {
+          "id": "lens-10-02-the-radical-transparent",
+          "handle": "@mc-lens-10-02-the-radical-transparent",
+          "title": "The Radical Transparent",
+          "displayTitle": "The Radical Transparent"
+        },
+        {
+          "id": "lens-10-03-the-master-of-war",
+          "handle": "@mc-lens-10-03-the-master-of-war",
+          "title": "The Master of War",
+          "displayTitle": "The Master of War"
+        },
+        {
+          "id": "lens-10-04-the-ooda-loop-strategist",
+          "handle": "@mc-lens-10-04-the-ooda-loop-strategist",
+          "title": "The OODA Loop Strategist",
+          "displayTitle": "The OODA Loop Strategist"
+        },
+        {
+          "id": "lens-10-05-the-paranoid-executive",
+          "handle": "@mc-lens-10-05-the-paranoid-executive",
+          "title": "The Paranoid Executive",
+          "displayTitle": "The Paranoid Executive"
+        },
+        {
+          "id": "lens-10-06-the-probabilistic-thinker",
+          "handle": "@mc-lens-10-06-the-probabilistic-thinker",
+          "title": "The Probabilistic Thinker",
+          "displayTitle": "The Probabilistic Thinker"
+        },
+        {
+          "id": "lens-10-07-1-metacanonical-header",
+          "handle": "@mc-lens-10-07-1-metacanonical-header",
+          "title": "1. Metacanonical Header",
+          "displayTitle": "1. Metacanonical Header"
+        },
+        {
+          "id": "lens-10-08-the-relentless-optimizer",
+          "handle": "@mc-lens-10-08-the-relentless-optimizer",
+          "title": "The Relentless Optimizer",
+          "displayTitle": "The Relentless Optimizer"
+        },
+        {
+          "id": "lens-10-09-the-minimalist-producer",
+          "handle": "@mc-lens-10-09-the-minimalist-producer",
+          "title": "The Minimalist Producer",
+          "displayTitle": "The Minimalist Producer"
+        },
+        {
+          "id": "lens-10-10-the-grandmaster-of-tactics",
+          "handle": "@mc-lens-10-10-the-grandmaster-of-tactics",
+          "title": "The Grandmaster of Tactics",
+          "displayTitle": "The Grandmaster of Tactics"
+        },
+        {
+          "id": "lens-10-11-the-high-stakes-negotiator",
+          "handle": "@mc-lens-10-11-the-high-stakes-negotiator",
+          "title": "The High-Stakes Negotiator",
+          "displayTitle": "The High-Stakes Negotiator"
+        },
+        {
+          "id": "lens-10-12-the-er-surgeon",
+          "handle": "@mc-lens-10-12-the-er-surgeon",
+          "title": "The ER Surgeon",
+          "displayTitle": "The ER Surgeon"
+        }
+      ],
+      "detailPath": "councils/Council_10.json"
+    },
+    {
+      "id": "Council_11",
+      "title": "The Builder and the Pivot Council",
+      "councilLabel": "The Builder and the Pivot Council",
+      "phase": null,
+      "sortOrder": 11,
+      "lensCount": 12,
+      "lensHandles": [
+        "@mc-lens-11-01-the-reality-distortion-field",
+        "@mc-lens-11-02-the-interplanetary-engineer",
+        "@mc-lens-11-03-the-relentless-inventor",
+        "@mc-lens-11-04-the-architect-of-dreams",
+        "@mc-lens-11-05-the-iterative-designer",
+        "@mc-lens-11-06-the-scrappy-founder",
+        "@mc-lens-11-07-the-reluctant-capitalist",
+        "@mc-lens-11-08-the-defiant-statesman",
+        "@mc-lens-11-09-1-metacanonical-header",
+        "@mc-lens-11-10-the-chameleon",
+        "@mc-lens-11-11-the-restructuring-ceo",
+        "@mc-lens-11-12-the-hacker"
+      ],
+      "lensTitles": [
+        "The Reality Distortion Field",
+        "The Interplanetary Engineer",
+        "The Relentless Inventor",
+        "The Architect of Dreams",
+        "The Iterative Designer",
+        "The Scrappy Founder",
+        "The Reluctant Capitalist",
+        "The Defiant Statesman",
+        "1. Metacanonical Header",
+        "The Chameleon",
+        "The Restructuring CEO",
+        "The Hacker"
+      ],
+      "lenses": [
+        {
+          "id": "lens-11-01-the-reality-distortion-field",
+          "handle": "@mc-lens-11-01-the-reality-distortion-field",
+          "title": "The Reality Distortion Field",
+          "displayTitle": "The Reality Distortion Field"
+        },
+        {
+          "id": "lens-11-02-the-interplanetary-engineer",
+          "handle": "@mc-lens-11-02-the-interplanetary-engineer",
+          "title": "The Interplanetary Engineer",
+          "displayTitle": "The Interplanetary Engineer"
+        },
+        {
+          "id": "lens-11-03-the-relentless-inventor",
+          "handle": "@mc-lens-11-03-the-relentless-inventor",
+          "title": "The Relentless Inventor",
+          "displayTitle": "The Relentless Inventor"
+        },
+        {
+          "id": "lens-11-04-the-architect-of-dreams",
+          "handle": "@mc-lens-11-04-the-architect-of-dreams",
+          "title": "The Architect of Dreams",
+          "displayTitle": "The Architect of Dreams"
+        },
+        {
+          "id": "lens-11-05-the-iterative-designer",
+          "handle": "@mc-lens-11-05-the-iterative-designer",
+          "title": "The Iterative Designer",
+          "displayTitle": "The Iterative Designer"
+        },
+        {
+          "id": "lens-11-06-the-scrappy-founder",
+          "handle": "@mc-lens-11-06-the-scrappy-founder",
+          "title": "The Scrappy Founder",
+          "displayTitle": "The Scrappy Founder"
+        },
+        {
+          "id": "lens-11-07-the-reluctant-capitalist",
+          "handle": "@mc-lens-11-07-the-reluctant-capitalist",
+          "title": "The Reluctant Capitalist",
+          "displayTitle": "The Reluctant Capitalist"
+        },
+        {
+          "id": "lens-11-08-the-defiant-statesman",
+          "handle": "@mc-lens-11-08-the-defiant-statesman",
+          "title": "The Defiant Statesman",
+          "displayTitle": "The Defiant Statesman"
+        },
+        {
+          "id": "lens-11-09-1-metacanonical-header",
+          "handle": "@mc-lens-11-09-1-metacanonical-header",
+          "title": "1. Metacanonical Header",
+          "displayTitle": "1. Metacanonical Header"
+        },
+        {
+          "id": "lens-11-10-the-chameleon",
+          "handle": "@mc-lens-11-10-the-chameleon",
+          "title": "The Chameleon",
+          "displayTitle": "The Chameleon"
+        },
+        {
+          "id": "lens-11-11-the-restructuring-ceo",
+          "handle": "@mc-lens-11-11-the-restructuring-ceo",
+          "title": "The Restructuring CEO",
+          "displayTitle": "The Restructuring CEO"
+        },
+        {
+          "id": "lens-11-12-the-hacker",
+          "handle": "@mc-lens-11-12-the-hacker",
+          "title": "The Hacker",
+          "displayTitle": "The Hacker"
+        }
+      ],
+      "detailPath": "councils/Council_11.json"
+    },
+    {
+      "id": "Council_12",
+      "title": "Sovereign Command and Legacy Council",
+      "councilLabel": "Sovereign Command and Legacy Council",
+      "phase": null,
+      "sortOrder": 12,
+      "lensCount": 12,
+      "lensHandles": [
+        "@mc-lens-12-01-the-emancipating-president",
+        "@mc-lens-12-02-1-metacanonical-header",
+        "@mc-lens-12-03-the-pragmatic-founder",
+        "@mc-lens-12-04-the-new-deal-architect",
+        "@mc-lens-12-05-the-value-investor",
+        "@mc-lens-12-06-the-philanthropic-titan",
+        "@mc-lens-12-07-the-global-allocator",
+        "@mc-lens-12-08-the-feeder-of-billions",
+        "@mc-lens-12-09-the-righteous-profiteer",
+        "@mc-lens-12-10-the-ship-s-captain-in-a-storm",
+        "@mc-lens-12-11-the-man-in-the-arena",
+        "@mc-lens-12-12-the-seventh-generation"
+      ],
+      "lensTitles": [
+        "The Emancipating President",
+        "1. Metacanonical Header",
+        "The Pragmatic Founder",
+        "The New Deal Architect",
+        "The Value Investor",
+        "The Philanthropic Titan",
+        "The Global Allocator",
+        "The Feeder of Billions",
+        "The Righteous Profiteer",
+        "The Ship's Captain in a Storm",
+        "The Man in the Arena",
+        "The Seventh Generation"
+      ],
+      "lenses": [
+        {
+          "id": "lens-12-01-the-emancipating-president",
+          "handle": "@mc-lens-12-01-the-emancipating-president",
+          "title": "The Emancipating President",
+          "displayTitle": "The Emancipating President"
+        },
+        {
+          "id": "lens-12-02-1-metacanonical-header",
+          "handle": "@mc-lens-12-02-1-metacanonical-header",
+          "title": "1. Metacanonical Header",
+          "displayTitle": "1. Metacanonical Header"
+        },
+        {
+          "id": "lens-12-03-the-pragmatic-founder",
+          "handle": "@mc-lens-12-03-the-pragmatic-founder",
+          "title": "The Pragmatic Founder",
+          "displayTitle": "The Pragmatic Founder"
+        },
+        {
+          "id": "lens-12-04-the-new-deal-architect",
+          "handle": "@mc-lens-12-04-the-new-deal-architect",
+          "title": "The New Deal Architect",
+          "displayTitle": "The New Deal Architect"
+        },
+        {
+          "id": "lens-12-05-the-value-investor",
+          "handle": "@mc-lens-12-05-the-value-investor",
+          "title": "The Value Investor",
+          "displayTitle": "The Value Investor"
+        },
+        {
+          "id": "lens-12-06-the-philanthropic-titan",
+          "handle": "@mc-lens-12-06-the-philanthropic-titan",
+          "title": "The Philanthropic Titan",
+          "displayTitle": "The Philanthropic Titan"
+        },
+        {
+          "id": "lens-12-07-the-global-allocator",
+          "handle": "@mc-lens-12-07-the-global-allocator",
+          "title": "The Global Allocator",
+          "displayTitle": "The Global Allocator"
+        },
+        {
+          "id": "lens-12-08-the-feeder-of-billions",
+          "handle": "@mc-lens-12-08-the-feeder-of-billions",
+          "title": "The Feeder of Billions",
+          "displayTitle": "The Feeder of Billions"
+        },
+        {
+          "id": "lens-12-09-the-righteous-profiteer",
+          "handle": "@mc-lens-12-09-the-righteous-profiteer",
+          "title": "The Righteous Profiteer",
+          "displayTitle": "The Righteous Profiteer"
+        },
+        {
+          "id": "lens-12-10-the-ship-s-captain-in-a-storm",
+          "handle": "@mc-lens-12-10-the-ship-s-captain-in-a-storm",
+          "title": "The Ship's Captain in a Storm",
+          "displayTitle": "The Ship's Captain in a Storm"
+        },
+        {
+          "id": "lens-12-11-the-man-in-the-arena",
+          "handle": "@mc-lens-12-11-the-man-in-the-arena",
+          "title": "The Man in the Arena",
+          "displayTitle": "The Man in the Arena"
+        },
+        {
+          "id": "lens-12-12-the-seventh-generation",
+          "handle": "@mc-lens-12-12-the-seventh-generation",
+          "title": "The Seventh Generation",
+          "displayTitle": "The Seventh Generation"
+        }
+      ],
+      "detailPath": "councils/Council_12.json"
+    }
+  ]
+}

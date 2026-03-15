@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { CaretRight } from "@phosphor-icons/react";
+import { CaretRight } from "@phosphor-icons/react/dist/csr/CaretRight";
+
 import { Link, useLocation } from "react-router-dom";
 import { safeJsonParse } from "@/utils/request";
 import useScrollActiveItemIntoView from "@/hooks/useScrollActiveItemIntoView";
+import PrismHoverTarget from "@/components/PrismHoverTarget";
 
 export default function MenuOption({
   btnText,
@@ -67,52 +69,46 @@ export default function MenuOption({
 
   return (
     <div>
-      <div
-        className={`
-          flex items-center justify-between w-full
-          transition-all duration-300
-          rounded-[6px]
-          ${
-            isActive
-              ? "bg-theme-sidebar-subitem-selected font-medium border-outline"
-              : "hover:bg-theme-sidebar-subitem-hover"
-          }
-        `}
+      <PrismHoverTarget
+        targetId={`settings-menu-${generateStorageKey({
+          key: `${btnText}-${href || "parent"}`,
+        })}`}
       >
-        <Link
-          ref={ref}
-          to={href}
-          className={`flex flex-grow items-center px-[12px] h-[32px] font-medium ${
-            isChild ? "hover:text-white" : "text-white light:text-black"
-          }`}
-          onClick={hasChildren ? handleClick : undefined}
+        <div
+          data-active={isActive ? "true" : "false"}
+          className="metacanon-settings-option flex items-center justify-between w-full transition-all duration-300 rounded-[10px]"
         >
-          {icon}
-          <p
-            className={`${
-              isChild ? "text-xs" : "text-sm"
-            } leading-loose whitespace-nowrap overflow-hidden ml-2 ${
-              isActive
-                ? "text-white font-semibold"
-                : "text-white light:text-black"
-            } ${!icon && "pl-5"}`}
+          <Link
+            ref={ref}
+            to={href}
+            className="metacanon-settings-option-link flex flex-grow items-center px-[12px] h-[32px] font-medium transition-colors"
+            onClick={hasChildren ? handleClick : undefined}
           >
-            {btnText}
-          </p>
-        </Link>
-        {hasChildren && (
-          <button onClick={handleClick} className="p-2 text-white">
-            <CaretRight
-              size={16}
-              weight="bold"
-              // color={isExpanded ? "#000000" : "var(--theme-sidebar-subitem-icon)"}
-              className={`transition-transform text-white light:text-black ${
-                isExpanded ? "rotate-90" : ""
-              }`}
-            />
-          </button>
-        )}
-      </div>
+            {icon}
+            <p
+              className={`${
+                isChild ? "text-xs" : "text-sm"
+              } metacanon-settings-option-label leading-loose whitespace-nowrap overflow-hidden ml-2 ${
+                isActive ? "font-semibold" : ""
+              } ${!icon && "pl-5"}`}
+            >
+              {btnText}
+            </p>
+          </Link>
+          {hasChildren && (
+            <button
+              onClick={handleClick}
+              className="metacanon-settings-option-caret p-2 transition-colors"
+            >
+              <CaretRight
+                size={16}
+                weight="bold"
+                className={`transition-transform ${isExpanded ? "rotate-90" : ""}`}
+              />
+            </button>
+          )}
+        </div>
+      </PrismHoverTarget>
       {isExpanded && hasChildren && (
         <div className="mt-1 rounded-r-lg w-full">
           {childOptions.map((childOption, index) => (

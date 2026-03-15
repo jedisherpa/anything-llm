@@ -1,0 +1,44 @@
+{
+  "id": "tetrahedron-5-the-crisis-response-quad",
+  "name": "Tetrahedron 5: The \"Crisis Response\" Quad",
+  "title": "Crisis Response Cell",
+  "displayTitle": "Crisis Response Cell",
+  "handle": "@constellation-tetrahedron-5-the-crisis-response-quad",
+  "type": "Tetrahedron",
+  "purpose": "To make clear, decisive, and defensible decisions under conditions of acute pressure and incomplete information.",
+  "projectManager": "/home/ubuntu/councils/project-managers-board/06_Extreme_Ownership_Operator_Lens.md",
+  "projectManagerRelativePath": "councils/project-managers-board/06_Extreme_Ownership_Operator_Lens.md",
+  "projectManagerId": "project-managers-board-06-extreme-ownership-operator-lens",
+  "projectManagerHandle": "@mc-project-managers-board-06-extreme-ownership-operator-lens",
+  "projectManagerTitle": "The Ownership Operator",
+  "members": [
+    {
+      "role": "The Wartime CEO",
+      "lens_path": "/home/ubuntu/councils/org-builder-board/02_Hard_Things_And_Wartime_CEO_Lens.docx",
+      "displayRole": "The Wartime CEO",
+      "relativePath": "councils/org-builder-board/02_Hard_Things_And_Wartime_CEO_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    },
+    {
+      "role": "The Scenario Planner",
+      "lens_path": "/home/ubuntu/councils/project-managers-board/08_Scenario_Planning_Strategist_Lens.md",
+      "displayRole": "The Scenario Planner",
+      "relativePath": "councils/project-managers-board/08_Scenario_Planning_Strategist_Lens.md",
+      "lensId": "project-managers-board-08-scenario-planning-strategist-lens",
+      "lensHandle": "@mc-project-managers-board-08-scenario-planning-strategist-lens",
+      "lensTitle": "The Scenario Planner"
+    },
+    {
+      "role": "The Ethical Boundary",
+      "lens_path": "/home/ubuntu/councils/pauls-board/06_Human_Dignity_And_Ethical_Boundary_Lens.docx",
+      "displayRole": "The Ethical Boundary",
+      "relativePath": "councils/pauls-board/06_Human_Dignity_And_Ethical_Boundary_Lens.md",
+      "lensId": "pauls-board-06-human-dignity-and-ethical-boundary-lens",
+      "lensHandle": "@mc-pauls-board-06-human-dignity-and-ethical-boundary-lens",
+      "lensTitle": "The Ethical Boundary"
+    }
+  ],
+  "relativePath": "constellations/tetrahedron-5-crisis-response.json"
+}

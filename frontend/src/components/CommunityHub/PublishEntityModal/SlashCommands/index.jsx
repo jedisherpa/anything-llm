@@ -3,7 +3,8 @@ import { useTranslation } from "react-i18next";
 import CommunityHub from "@/models/communityHub";
 import showToast from "@/utils/toast";
 import paths from "@/utils/paths";
-import { X } from "@phosphor-icons/react";
+import { X } from "@phosphor-icons/react/dist/csr/X";
+
 import { Link } from "react-router-dom";
 
 export default function SlashCommands({ entity }) {
@@ -196,6 +197,7 @@ export default function SlashCommands({ entity }) {
                   defaultChecked
                   onChange={(e) => setVisibility(e.target.value)}
                 />
+
                 <input
                   type="radio"
                   id="private"
@@ -204,6 +206,7 @@ export default function SlashCommands({ entity }) {
                   className="peer/private hidden"
                   onChange={(e) => setVisibility(e.target.value)}
                 />
+
                 <label
                   htmlFor="public"
                   className="h-[36px] px-4 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer text-theme-text-primary hover:text-theme-text-secondary peer-checked/public:bg-theme-sidebar-item-hover peer-checked/public:text-theme-primary-button flex items-center justify-center"

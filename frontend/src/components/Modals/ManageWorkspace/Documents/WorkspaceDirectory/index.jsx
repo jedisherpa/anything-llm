@@ -3,7 +3,9 @@ import { dollarFormat } from "@/utils/numbers";
 import WorkspaceFileRow from "./WorkspaceFileRow";
 import { memo, useEffect, useState } from "react";
 import ModalWrapper from "@/components/ModalWrapper";
-import { Eye, PushPin } from "@phosphor-icons/react";
+import { Eye } from "@phosphor-icons/react/dist/csr/Eye";
+import { PushPin } from "@phosphor-icons/react/dist/csr/PushPin";
+
 import { SEEN_DOC_PIN_ALERT, SEEN_WATCH_ALERT } from "@/utils/constants";
 import paths from "@/utils/paths";
 import { Link } from "react-router-dom";
@@ -128,6 +130,7 @@ function WorkspaceDirectory({
               highlightWorkspace ? "border-4 border-cyan-300/80 z-[999]" : ""
             }`}
           />
+
           <div className="relative w-full h-full bg-theme-settings-input-bg rounded-2xl overflow-hidden border border-theme-modal-border">
             <div className="text-white/80 text-xs grid grid-cols-12 py-2 px-3.5 border-b border-white/20 light:border-theme-modal-border bg-theme-settings-input-bg sticky top-0 z-10">
               <div className="col-span-10 flex items-center gap-x-[4px]">
@@ -155,6 +158,7 @@ function WorkspaceDirectory({
                 ) : (
                   <div className="shrink-0 w-3 h-3" />
                 )}
+
                 <p className="ml-[7px] text-theme-text-primary">Name</p>
               </div>
               <p className="col-span-2" />
@@ -276,13 +280,14 @@ const PinAlert = memo(() => {
 
   return (
     <ModalWrapper isOpen={showAlert} noPortal={true}>
-      <div className="w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border overflow-hidden">
+      <div className="w-full max-w-2xl metacanon-modal-panel bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border overflow-hidden">
         <div className="relative p-6 border-b rounded-t border-theme-modal-border">
           <div className="flex items-center gap-2">
             <PushPin
               className="text-theme-text-primary text-lg w-6 h-6"
               weight="regular"
             />
+
             <h3 className="text-xl font-semibold text-white">
               {t("connectors.pinning.what_pinning")}
             </h3>
@@ -341,13 +346,14 @@ const DocumentWatchAlert = memo(() => {
 
   return (
     <ModalWrapper isOpen={showAlert} noPortal={true}>
-      <div className="w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border overflow-hidden">
+      <div className="w-full max-w-2xl metacanon-modal-panel bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border overflow-hidden">
         <div className="relative p-6 border-b rounded-t border-theme-modal-border">
           <div className="flex items-center gap-2">
             <Eye
               className="text-theme-text-primary text-lg w-6 h-6"
               weight="regular"
             />
+
             <h3 className="text-xl font-semibold text-white">
               {t("connectors.watching.what_watching")}
             </h3>
@@ -445,18 +451,21 @@ function WorkspaceDocumentTooltips() {
           );
         }}
       />
+
       <Tooltip
         id="watch-changes"
         place="bottom"
         delayShow={300}
         className="tooltip invert !text-xs"
       />
+
       <Tooltip
         id="pin-document"
         place="bottom"
         delayShow={300}
         className="tooltip invert !text-xs"
       />
+
       <Tooltip
         id="remove-document"
         place="bottom"

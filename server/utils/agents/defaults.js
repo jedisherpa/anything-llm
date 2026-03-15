@@ -5,6 +5,14 @@ const Provider = require("./aibitat/providers/ai-provider");
 const ImportedPlugin = require("./imported");
 const { AgentFlows } = require("../agentFlows");
 const MCPCompatibilityLayer = require("../MCP");
+const {
+  getLensAgentDefinitions,
+  LENS_AGENT_HANDLES,
+} = require("./aibitat/prompts/lensAgents");
+const {
+  getImportedLensDefinition,
+  getSupportedMetacanonHandles,
+} = require("./metacanon/library");
 
 // This is a list of skills that are built-in and default enabled.
 const DEFAULT_SKILLS = [
@@ -98,4 +106,8 @@ module.exports = {
   USER_AGENT,
   WORKSPACE_AGENT,
   agentSkillsFromSystemSettings,
+  getLensAgentDefinitions,
+  LENS_AGENT_HANDLES,
+  getImportedLensDefinition,
+  getSupportedMetacanonHandles,
 };

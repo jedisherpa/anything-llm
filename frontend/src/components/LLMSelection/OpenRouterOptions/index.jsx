@@ -1,5 +1,7 @@
 import System from "@/models/system";
-import { CaretDown, CaretUp } from "@phosphor-icons/react";
+import { CaretDown } from "@phosphor-icons/react/dist/csr/CaretDown";
+import { CaretUp } from "@phosphor-icons/react/dist/csr/CaretUp";
+
 import { useState, useEffect } from "react";
 
 export default function OpenRouterOptions({ settings }) {

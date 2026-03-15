@@ -1,0 +1,62 @@
+{
+  "id": "octahedron-2-the-scale-architecture-council",
+  "name": "Octahedron 2: The \"Scale Architecture\" Council",
+  "title": "Scale Architecture Engine",
+  "displayTitle": "Scale Architecture Engine",
+  "handle": "@constellation-octahedron-2-the-scale-architecture-council",
+  "type": "Octahedron",
+  "purpose": "To design the systems, structures, and strategies required to scale a proven product and organization.",
+  "projectManager": "/home/ubuntu/councils/project-managers-board/04_Agile_Adaptive_Delivery_Lens.md",
+  "projectManagerRelativePath": "councils/project-managers-board/04_Agile_Adaptive_Delivery_Lens.md",
+  "projectManagerId": "project-managers-board-04-agile-adaptive-delivery-lens",
+  "projectManagerHandle": "@mc-project-managers-board-04-agile-adaptive-delivery-lens",
+  "projectManagerTitle": "The Agile Orchestrator",
+  "members": [
+    {
+      "role": "The Blitzscaling Strategist",
+      "lens_path": "/home/ubuntu/councils/org-builder-board/03_Blitzscaling_And_Network_Effects_Lens.docx",
+      "displayRole": "The Blitzscaling Strategist",
+      "relativePath": "councils/org-builder-board/03_Blitzscaling_And_Network_Effects_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    },
+    {
+      "role": "The Systems Thinker",
+      "lens_path": "/home/ubuntu/councils/millennial-founders-board/02_Pragmatic_Systems_Entrepreneur_Lens.docx",
+      "displayRole": "The Systems Entrepreneur",
+      "relativePath": "councils/millennial-founders-board/02_Pragmatic_Systems_Entrepreneur_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    },
+    {
+      "role": "The High-Output Manager",
+      "lens_path": "/home/ubuntu/councils/org-builder-board/01_High_Output_Management_And_OKRs_Lens.docx",
+      "displayRole": "The High-Output Manager",
+      "relativePath": "councils/org-builder-board/01_High_Output_Management_And_OKRs_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    },
+    {
+      "role": "The Financial Analyst",
+      "lens_path": "/home/ubuntu/councils/pauls-board/10_Leverage_Incentives_And_Long_Term_Thinking_Lens.docx",
+      "displayRole": "The Long-Term Thinker",
+      "relativePath": "councils/pauls-board/10_Leverage_Incentives_And_Long_Term_Thinking_Lens.md",
+      "lensId": "pauls-board-10-leverage-incentives-and-long-term-thinking-lens",
+      "lensHandle": "@mc-pauls-board-10-leverage-incentives-and-long-term-thinking-lens",
+      "lensTitle": "The Long-Term Thinker"
+    },
+    {
+      "role": "The Market Positioner",
+      "lens_path": "/home/ubuntu/councils/marketing-branding-board/04_Obviously_Awesome_Positioning_Lens.docx",
+      "displayRole": "The Market Positioner",
+      "relativePath": "councils/marketing-branding-board/04_Obviously_Awesome_Positioning_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    }
+  ],
+  "relativePath": "constellations/octahedron-2-scale-architecture.json"
+}

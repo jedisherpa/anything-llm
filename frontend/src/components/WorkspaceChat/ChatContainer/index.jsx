@@ -29,11 +29,21 @@ import { clearPromptInputDraft } from "@/hooks/usePromptInputStorage";
 import { safeJsonParse } from "@/utils/request";
 import { useTranslation } from "react-i18next";
 import paths from "@/utils/paths";
-import QuickActions from "@/components/lib/QuickActions";
-import SuggestedMessages from "@/components/lib/SuggestedMessages";
 import TextSizeMenu from "./TextSizeMenu";
 import WorkspaceModelPicker from "./WorkspaceModelPicker";
 import SourcesSidebar, { SourcesSidebarProvider } from "./SourcesSidebar";
+import PrismPresence from "@/components/PrismPresence";
+import MetacanonHomeStage from "@/components/Metacanon/HomeStage";
+import { buildAlignedPrompt } from "@/utils/metacanonAlignment";
+import {
+  signalPrismError,
+  signalPrismResponse,
+  signalPrismThinking,
+} from "@/utils/prism/events";
+import showToast from "@/utils/toast";
+
+const AGENT_HANDLE_PATTERN =
+  /^\s*@(?:agent|torus|watcher|auditor|synthesizer|prism)\b/i;
 
 export default function ChatContainer({ workspace, knownHistory = [] }) {
   const navigate = useNavigate();
@@ -43,13 +53,40 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
   const [chatHistory, setChatHistory] = useState(knownHistory);
   const [socketId, setSocketId] = useState(null);
   const [websocket, setWebsocket] = useState(null);
+  const [chatMode, setChatMode] = useState(workspace?.chatMode || "chat");
   const { files, parseAttachments } = useContext(DndUploaderContext);
   const { chatHistoryRef } = useChatContainerQuickScroll();
   const pendingMessageChecked = useRef(false);
+  const previousLoadingResponse = useRef(false);
 
   const { listening, resetTranscript } = useSpeechRecognition({
     clearTranscriptOnListen: true,
   });
+
+  useEffect(() => {
+    setChatMode(workspace?.chatMode || "chat");
+  }, [workspace?.chatMode, workspace?.slug]);
+
+  async function handleChatModeChange(nextMode) {
+    if (!workspace?.slug || !nextMode || nextMode === chatMode) return;
+    const previousMode = chatMode;
+    setChatMode(nextMode);
+    const { workspace: updatedWorkspace, message } = await Workspace.update(
+      workspace.slug,
+      { chatMode: nextMode }
+    );
+
+    if (!updatedWorkspace) {
+      setChatMode(previousMode);
+      showToast(message || "Failed to update chat mode.", "error");
+      return;
+    }
+
+    showToast(
+      nextMode === "chat" ? "Chat mode enabled." : "Query mode enabled.",
+      "success"
+    );
+  }
 
   /**
    * Emit an update to the state of the prompt input without directly
@@ -67,8 +104,9 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const currentMessage =
-      document.getElementById(PROMPT_INPUT_ID)?.value || "";
+    const currentMessage = buildAlignedPrompt(
+      document.getElementById(PROMPT_INPUT_ID)?.value || ""
+    );
     if (!currentMessage) return false;
 
     // Clear the localStorage draft for this thread/workspace so that if the
@@ -158,6 +196,7 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
     }
 
     if (!text || text === "") return false;
+    text = buildAlignedPrompt(text);
 
     // Clear the localStorage draft so that if the PromptInput remounts
     // (e.g. /reset causing empty→chat or chat→empty transitions),
@@ -268,6 +307,34 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
     loadingResponse === true && fetchReply();
   }, [loadingResponse, chatHistory, workspace]);
 
+  useEffect(() => {
+    const promptMessage =
+      chatHistory.length > 0 ? chatHistory[chatHistory.length - 1] : null;
+    const isAgentInvocation = AGENT_HANDLE_PATTERN.test(
+      promptMessage?.userMessage || ""
+    );
+
+    if (isAgentInvocation) {
+      previousLoadingResponse.current = loadingResponse;
+      return;
+    }
+
+    if (!!websocket || !!socketId) {
+      previousLoadingResponse.current = loadingResponse;
+      return;
+    }
+
+    if (loadingResponse && !previousLoadingResponse.current) {
+      signalPrismThinking({ source: "chat-stream" });
+    }
+
+    if (!loadingResponse && previousLoadingResponse.current) {
+      signalPrismResponse({ source: "chat-stream" });
+    }
+
+    previousLoadingResponse.current = loadingResponse;
+  }, [chatHistory, loadingResponse, socketId, websocket]);
+
   // TODO: Simplify this WSS stuff
   useEffect(() => {
     let socket = null;
@@ -325,6 +392,7 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
         window.dispatchEvent(new CustomEvent(AGENT_SESSION_START));
         window.dispatchEvent(new CustomEvent(CLEAR_ATTACHMENTS_EVENT));
       } catch (e) {
+        signalPrismError({ source: "agent-socket", message: e.message });
         setChatHistory((prev) => [
           ...prev.filter((msg) => !!msg.content),
           {
@@ -362,42 +430,33 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
     return (
       <div
         style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
-        className="transition-all duration-500 relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-zinc-900 light:bg-white w-full h-full overflow-hidden border-none light:border-solid light:border light:border-theme-modal-border"
+        className="metacanon-home-surface transition-all duration-500 relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] w-full h-full overflow-hidden border-none light:border-solid light:border light:border-theme-modal-border"
       >
         {isMobile && <SidebarMobileHeader />}
         <TextSizeMenu />
         <WorkspaceModelPicker workspaceSlug={workspace.slug} />
         <DnDFileUploaderWrapper>
-          <div className="flex flex-col h-full w-full items-center justify-center">
-            <div className="flex flex-col items-center w-full max-w-[750px]">
-              <h1 className="text-white text-xl md:text-2xl mb-11 text-center">
-                {t("main-page.greeting")}
-              </h1>
-              <PromptInput
-                submit={handleSubmit}
-                isStreaming={loadingResponse}
-                sendCommand={sendCommand}
-                attachments={files}
-                centered={true}
-              />
-              <QuickActions
-                hasAvailableWorkspace={!!workspace}
-                onCreateAgent={() => navigate(paths.settings.agentSkills())}
-                onEditWorkspace={() =>
-                  navigate(
-                    paths.workspace.settings.generalAppearance(workspace.slug)
-                  )
-                }
-                onUploadDocument={() =>
-                  document.getElementById("dnd-chat-file-uploader")?.click()
-                }
-              />
-            </div>
-            <SuggestedMessages
-              suggestedMessages={workspace?.suggestedMessages}
-              sendCommand={sendCommand}
-            />
-          </div>
+          <MetacanonHomeStage
+            submit={handleSubmit}
+            isStreaming={loadingResponse}
+            sendCommand={sendCommand}
+            attachments={files}
+            workspaceSlug={workspace.slug}
+            threadSlug={threadSlug}
+            chatMode={chatMode}
+            onChatModeChange={handleChatModeChange}
+            hasAvailableWorkspace={!!workspace}
+            onCreateAgent={() => navigate(paths.settings.agentSkills())}
+            onConnectLLM={() => navigate(paths.settings.llmPreference())}
+            onEditWorkspace={() =>
+              navigate(
+                paths.workspace.settings.generalAppearance(workspace.slug)
+              )
+            }
+            onUploadDocument={() =>
+              document.getElementById("dnd-chat-file-uploader")?.click()
+            }
+          />
         </DnDFileUploaderWrapper>
         <ChatTooltips />
       </div>
@@ -411,7 +470,16 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
         className="relative flex md:ml-[2px] md:mr-[16px] md:my-[16px] w-full h-full z-[2]"
       >
         <TextSizeMenu />
-        <div className="flex-1 min-w-0 transition-all duration-500 relative md:rounded-[16px] bg-zinc-900 light:bg-white text-white light:text-slate-900 h-full overflow-hidden border-none light:border-solid light:border light:border-theme-modal-border">
+        <div className="workspace-prism-chat-panel flex-1 min-w-0 transition-all duration-500 relative md:rounded-[16px] text-white light:text-slate-900 h-full overflow-hidden">
+          <div className="absolute top-5 right-5 z-10 hidden md:block">
+            <PrismPresence
+              surface="chat"
+              size="md"
+              label="Prism"
+              caption="Listening"
+              align="left"
+            />
+          </div>
           {isMobile && <SidebarMobileHeader />}
           <WorkspaceModelPicker workspaceSlug={workspace.slug} />
           <DnDFileUploaderWrapper>
@@ -433,6 +501,8 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
                   sendCommand={sendCommand}
                   attachments={files}
                   centered={false}
+                  chatMode={chatMode}
+                  onChatModeChange={handleChatModeChange}
                 />
               </div>
             </div>

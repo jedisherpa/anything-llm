@@ -19,6 +19,9 @@
  */
 class MetaGenerator {
   name = "MetaGenerator";
+  static DEFAULT_TITLE = "PrismAI";
+  static DEFAULT_DESCRIPTION =
+    "PrismAI | Local-first AI workspace built on AnythingLLM";
 
   /** @type {MetaGenerator|null} */
   static _instance = null;
@@ -27,8 +30,8 @@ class MetaGenerator {
   #customConfig = null;
 
   #defaultManifest = {
-    name: "AnythingLLM",
-    short_name: "AnythingLLM",
+    name: MetaGenerator.DEFAULT_TITLE,
+    short_name: MetaGenerator.DEFAULT_TITLE,
     display: "standalone",
     orientation: "portrait",
     start_url: "/",
@@ -59,21 +62,21 @@ class MetaGenerator {
       {
         tag: "title",
         props: null,
-        content: "AnythingLLM | Your personal LLM trained on anything",
+        content: MetaGenerator.DEFAULT_TITLE,
       },
 
       {
         tag: "meta",
         props: {
           name: "title",
-          content: "AnythingLLM | Your personal LLM trained on anything",
+          content: MetaGenerator.DEFAULT_TITLE,
         },
       },
       {
         tag: "meta",
         props: {
           description: "title",
-          content: "AnythingLLM | Your personal LLM trained on anything",
+          content: MetaGenerator.DEFAULT_DESCRIPTION,
         },
       },
 
@@ -87,14 +90,14 @@ class MetaGenerator {
         tag: "meta",
         props: {
           property: "og:title",
-          content: "AnythingLLM | Your personal LLM trained on anything",
+          content: MetaGenerator.DEFAULT_TITLE,
         },
       },
       {
         tag: "meta",
         props: {
           property: "og:description",
-          content: "AnythingLLM | Your personal LLM trained on anything",
+          content: MetaGenerator.DEFAULT_DESCRIPTION,
         },
       },
       {
@@ -119,14 +122,14 @@ class MetaGenerator {
         tag: "meta",
         props: {
           property: "twitter:title",
-          content: "AnythingLLM | Your personal LLM trained on anything",
+          content: MetaGenerator.DEFAULT_TITLE,
         },
       },
       {
         tag: "meta",
         props: {
           property: "twitter:description",
-          content: "AnythingLLM | Your personal LLM trained on anything",
+          content: MetaGenerator.DEFAULT_DESCRIPTION,
         },
       },
       {
@@ -227,9 +230,7 @@ class MetaGenerator {
           return {
             tag: "title",
             props: null,
-            content:
-              customTitle ??
-              "AnythingLLM | Your personal LLM trained on anything",
+            content: customTitle ?? MetaGenerator.DEFAULT_TITLE,
           };
         }
         // Override meta title
@@ -238,9 +239,7 @@ class MetaGenerator {
             tag: "meta",
             props: {
               name: "title",
-              content:
-                customTitle ??
-                "AnythingLLM | Your personal LLM trained on anything",
+              content: customTitle ?? MetaGenerator.DEFAULT_TITLE,
             },
           };
         }
@@ -250,9 +249,7 @@ class MetaGenerator {
             tag: "meta",
             props: {
               property: "og:title",
-              content:
-                customTitle ??
-                "AnythingLLM | Your personal LLM trained on anything",
+              content: customTitle ?? MetaGenerator.DEFAULT_TITLE,
             },
           };
         }
@@ -262,9 +259,7 @@ class MetaGenerator {
             tag: "meta",
             props: {
               property: "twitter:title",
-              content:
-                customTitle ??
-                "AnythingLLM | Your personal LLM trained on anything",
+              content: customTitle ?? MetaGenerator.DEFAULT_TITLE,
             },
           };
         }
@@ -330,7 +325,7 @@ class MetaGenerator {
       const { SystemSettings } = require("../../models/systemSettings");
       const manifestName = await SystemSettings.getValueOrFallback(
         { label: "meta_page_title" },
-        "AnythingLLM"
+        MetaGenerator.DEFAULT_TITLE
       );
       const faviconURL = await SystemSettings.getValueOrFallback(
         { label: "meta_page_favicon" },

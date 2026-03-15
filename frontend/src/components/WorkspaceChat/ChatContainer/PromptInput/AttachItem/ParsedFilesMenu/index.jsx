@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { X, CircleNotch, Warning } from "@phosphor-icons/react";
+import { X } from "@phosphor-icons/react/dist/csr/X";
+import { CircleNotch } from "@phosphor-icons/react/dist/csr/CircleNotch";
+import { Warning } from "@phosphor-icons/react/dist/csr/Warning";
+
 import Workspace from "@/models/workspace";
 import { nFormatter } from "@/utils/numbers";
 import showToast from "@/utils/toast";
@@ -122,6 +125,7 @@ export default function ParsedFilesMenu({
           {contextWindowLimitExceeded && (
             <Warning size={14} className="text-orange-600" />
           )}
+
           <div
             className={`text-xs ${contextWindowLimitExceeded ? "text-orange-600" : "text-theme-text-secondary"}`}
           >
@@ -137,6 +141,7 @@ export default function ParsedFilesMenu({
               className="flex-shrink-0 mt-1 text-yellow-500 light:text-yellow-600"
               size={16}
             />
+
             <div className="text-xs text-theme-text-primary">
               Your context window is getting full. Some files may be truncated
               or excluded from chat responses. We recommend embedding these
@@ -159,6 +164,7 @@ export default function ParsedFilesMenu({
           </button>
         </div>
       )}
+
       <div className="flex flex-col gap-1 max-h-[300px] overflow-y-auto">
         {files.length > 0 &&
           files.map((file, i) => (
@@ -186,8 +192,9 @@ export default function ParsedFilesMenu({
             Loading...
           </div>
         )}
+
         {!isLoading && files.length === 0 && (
-          <div className="text-xs text-theme-text-secondary text-center py-2">
+          <div className="prism-empty-state prism-empty-state--compact text-xs">
             No files found
           </div>
         )}

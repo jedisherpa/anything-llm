@@ -1,0 +1,44 @@
+{
+  "id": "tetrahedron-2-the-brand-voice-quad",
+  "name": "Tetrahedron 2: The \"Brand Voice\" Quad",
+  "title": "Brand Voice Atelier",
+  "displayTitle": "Brand Voice Atelier",
+  "handle": "@constellation-tetrahedron-2-the-brand-voice-quad",
+  "type": "Tetrahedron",
+  "purpose": "To define the precise, ownable, and resonant voice of a brand — what it says, how it says it, and why it matters.",
+  "projectManager": "/home/ubuntu/councils/project-managers-board/03_Clearhead_Execution_Lens.md",
+  "projectManagerRelativePath": "councils/project-managers-board/03_Clearhead_Execution_Lens.md",
+  "projectManagerId": "project-managers-board-03-clearhead-execution-lens",
+  "projectManagerHandle": "@mc-project-managers-board-03-clearhead-execution-lens",
+  "projectManagerTitle": "The Clearhead Operator",
+  "members": [
+    {
+      "role": "The Storyteller",
+      "lens_path": "/home/ubuntu/councils/marketing-branding-board/02_StoryBrand_And_Clarify_Your_Message_Lens.docx",
+      "displayRole": "The Storyteller",
+      "relativePath": "councils/marketing-branding-board/02_StoryBrand_And_Clarify_Your_Message_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    },
+    {
+      "role": "The Hardcore Persuader",
+      "lens_path": "/home/ubuntu/councils/direct-response-board/03_Hardcore_Direct_Response_And_Accountability_Lens.md",
+      "displayRole": "The Hardcore Persuader",
+      "relativePath": "councils/direct-response-board/03_Hardcore_Direct_Response_And_Accountability_Lens.md",
+      "lensId": "direct-response-board-03-hardcore-direct-response-and-accountability-lens",
+      "lensHandle": "@mc-direct-response-board-03-hardcore-direct-response-and-accountability-lens",
+      "lensTitle": "The Hardcore Persuader"
+    },
+    {
+      "role": "The Perception Shaper",
+      "lens_path": "/home/ubuntu/councils/pauls-board/09_Perception_Signaling_And_Narrative_Lens.docx",
+      "displayRole": "The Perception Shaper",
+      "relativePath": "councils/pauls-board/09_Perception_Signaling_And_Narrative_Lens.md",
+      "lensId": "pauls-board-09-perception-signaling-and-narrative-lens",
+      "lensHandle": "@mc-pauls-board-09-perception-signaling-and-narrative-lens",
+      "lensTitle": "The Perception Shaper"
+    }
+  ],
+  "relativePath": "constellations/tetrahedron-2-brand-voice.json"
+}

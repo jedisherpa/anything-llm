@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
 import DBConnection from "./DBConnection";
-import { Plus, Database, CircleNotch } from "@phosphor-icons/react";
+import { Plus } from "@phosphor-icons/react/dist/csr/Plus";
+import { Database } from "@phosphor-icons/react/dist/csr/Database";
+import { CircleNotch } from "@phosphor-icons/react/dist/csr/CircleNotch";
+
 import NewSQLConnection from "./SQLConnectionModal";
 import { useModal } from "@/hooks/useModal";
 import SQLAgentImage from "@/media/agents/sql-agent.png";
@@ -103,6 +106,7 @@ export default function AgentSQLConnectorSelection({
                 color="var(--theme-text-primary)"
                 weight="bold"
               />
+
               <label
                 htmlFor="name"
                 className="text-theme-text-primary text-md font-bold"
@@ -121,6 +125,7 @@ export default function AgentSQLConnectorSelection({
             alt="SQL Agent"
             className="w-full rounded-md"
           />
+
           <p className="text-theme-text-secondary text-opacity-60 text-xs font-medium py-1.5">
             {description}
           </p>
@@ -131,12 +136,14 @@ export default function AgentSQLConnectorSelection({
                 type="hidden"
                 value={JSON.stringify(connections)}
               />
+
               <input
                 type="hidden"
                 value={JSON.stringify(
                   connections.filter((conn) => conn.action !== "remove")
                 )}
               />
+
               <div className="flex flex-col mt-2 gap-y-2">
                 <p className="text-theme-text-primary font-semibold text-sm">
                   Your database connections
@@ -163,6 +170,7 @@ export default function AgentSQLConnectorSelection({
                         />
                       ))
                   )}
+
                   <button
                     type="button"
                     onClick={openModal}
@@ -194,6 +202,7 @@ export default function AgentSQLConnectorSelection({
         onSubmit={handleAddConnection}
         connections={connections}
       />
+
       <Tooltip
         id="edit-sql-connection-tooltip"
         content="Edit SQL connection"
@@ -206,6 +215,7 @@ export default function AgentSQLConnectorSelection({
           wordWrap: "break-word",
         }}
       />
+
       <Tooltip
         id="delete-sql-connection-tooltip"
         content="Delete SQL connection"

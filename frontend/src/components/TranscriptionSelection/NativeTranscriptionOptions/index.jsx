@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Gauge } from "@phosphor-icons/react";
+import { Gauge } from "@phosphor-icons/react/dist/csr/Gauge";
 
 export default function NativeTranscriptionOptions({ settings }) {
   const { t } = useTranslation();

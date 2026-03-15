@@ -1,7 +1,9 @@
 import PostgreSQLLogo from "./icons/postgresql.png";
 import MySQLLogo from "./icons/mysql.png";
 import MSSQLLogo from "./icons/mssql.png";
-import { PencilSimple, X } from "@phosphor-icons/react";
+import { PencilSimple } from "@phosphor-icons/react/dist/csr/PencilSimple";
+import { X } from "@phosphor-icons/react/dist/csr/X";
+
 import { useModal } from "@/hooks/useModal";
 import EditSQLConnection from "./SQLConnectionModal";
 
@@ -38,6 +40,7 @@ export default function DBConnection({
         alt={`${engine} logo`}
         className="w-10 h-10 rounded-md"
       />
+
       <div className="flex w-full items-center justify-between">
         <div className="flex flex-col">
           <div className="text-sm font-semibold text-white">{database_id}</div>

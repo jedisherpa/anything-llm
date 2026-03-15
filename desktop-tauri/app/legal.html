@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PrismAI Open Source Licenses</title>
+    <link rel="stylesheet" href="./legal.css" />
+  </head>
+  <body>
+    <main class="legal-shell">
+      <header class="legal-hero">
+        <p class="legal-kicker">PrismAI</p>
+        <h1>Open Source Licenses</h1>
+        <p class="legal-subtitle">
+          PrismAI ships modified AnythingLLM components under the MIT License. This view keeps the
+          original upstream materials bundled and accessible from inside the desktop app.
+        </p>
+      </header>
+
+      <section class="legal-panel legal-summary">
+        <div>
+          <span class="label">Upstream Project</span>
+          <strong id="projectName">AnythingLLM</strong>
+        </div>
+        <div>
+          <span class="label">Upstream Version</span>
+          <strong id="upstreamVersion">loading...</strong>
+        </div>
+        <div>
+          <span class="label">Source Commit</span>
+          <strong id="upstreamCommit">loading...</strong>
+        </div>
+        <div>
+          <span class="label">Repository</span>
+          <a id="repositoryUrl" href="#">loading...</a>
+        </div>
+      </section>
+
+      <section class="legal-panel legal-docs">
+        <aside id="docTabs" class="legal-tabs" aria-label="Open source documents"></aside>
+        <div class="legal-content">
+          <div class="legal-actions">
+            <button id="openFileBtn" class="secondary">Open Bundled File</button>
+          </div>
+          <article>
+            <h2 id="docTitle">Loading…</h2>
+            <p id="docPath" class="doc-path"></p>
+            <pre id="docBody" class="doc-body">Loading open source materials...</pre>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <script src="./legal.js"></script>
+  </body>
+</html>

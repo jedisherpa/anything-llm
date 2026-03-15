@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { X } from "@phosphor-icons/react";
+import { X } from "@phosphor-icons/react/dist/csr/X";
+
 import Workspace from "@/models/workspace";
 import { TagsInput } from "react-tag-input-component";
 import Embed from "@/models/embed";
+import ModalWrapper from "@/components/ModalWrapper";
 import Toggle from "@/components/lib/Toggle";
+import PrismHoverTarget from "@/components/PrismHoverTarget";
 
 export function enforceSubmissionSchema(form) {
   const data = {};
@@ -39,21 +42,23 @@ export default function NewEmbedModal({ closeModal }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="relative w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border">
+    <ModalWrapper isOpen={true}>
+      <div className="relative w-full max-w-2xl metacanon-modal-panel bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border">
         <div className="relative p-6 border-b rounded-t border-theme-modal-border">
           <div className="w-full flex gap-x-2 items-center">
             <h3 className="text-xl font-semibold text-white overflow-hidden overflow-ellipsis whitespace-nowrap">
               Create new embed for workspace
             </h3>
           </div>
-          <button
-            onClick={closeModal}
-            type="button"
-            className="absolute top-4 right-4 transition-all duration-300 bg-transparent rounded-lg text-sm p-1 inline-flex items-center hover:bg-theme-modal-border hover:border-theme-modal-border hover:border-opacity-50 border-transparent border"
-          >
-            <X size={24} weight="bold" className="text-white" />
-          </button>
+          <PrismHoverTarget targetId="modal-new-embed-close">
+            <button
+              onClick={closeModal}
+              type="button"
+              className="absolute top-4 right-4 transition-all duration-300 bg-transparent rounded-lg text-sm p-1 inline-flex items-center hover:bg-theme-modal-border hover:border-theme-modal-border hover:border-opacity-50 border-transparent border"
+            >
+              <X size={24} weight="bold" className="text-white" />
+            </button>
+          </PrismHoverTarget>
         </div>
         <div className="px-7 py-6">
           <form onSubmit={handleCreate}>
@@ -66,27 +71,32 @@ export default function NewEmbedModal({ closeModal }) {
                 title="Max chats per day"
                 hint="Limit the amount of chats this embedded chat can process in a 24 hour period. Zero is unlimited."
               />
+
               <NumberInput
                 name="max_chats_per_session"
                 title="Max chats per session"
                 hint="Limit the amount of chats a session user can send with this embed in a 24 hour period. Zero is unlimited."
               />
+
               <NumberInput
                 name="message_limit"
                 title="Message History Limit"
                 hint="The number of previous messages to include in the chat context. Default is 20."
                 defaultValue={20}
               />
+
               <BooleanInput
                 name="allow_model_override"
                 title="Enable dynamic model use"
                 hint="Allow setting of the preferred LLM model to override the workspace default."
               />
+
               <BooleanInput
                 name="allow_temperature_override"
                 title="Enable dynamic LLM temperature"
                 hint="Allow setting of the LLM temperature to override the workspace default."
               />
+
               <BooleanInput
                 name="allow_prompt_override"
                 title="Enable Prompt Override"
@@ -104,24 +114,28 @@ export default function NewEmbedModal({ closeModal }) {
               </p>
             </div>
             <div className="flex justify-between items-center mt-6 pt-6 border-t border-theme-modal-border">
-              <button
-                onClick={closeModal}
-                type="button"
-                className="transition-all duration-300 text-white hover:bg-zinc-700 px-4 py-2 rounded-lg text-sm"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="transition-all duration-300 bg-white text-black hover:opacity-60 px-4 py-2 rounded-lg text-sm"
-              >
-                Create embed
-              </button>
+              <PrismHoverTarget targetId="modal-new-embed-cancel">
+                <button
+                  onClick={closeModal}
+                  type="button"
+                  className="transition-all duration-300 text-white hover:bg-zinc-700 px-4 py-2 rounded-lg text-sm"
+                >
+                  Cancel
+                </button>
+              </PrismHoverTarget>
+              <PrismHoverTarget targetId="modal-new-embed-submit">
+                <button
+                  type="submit"
+                  className="transition-all duration-300 bg-white text-black hover:opacity-60 px-4 py-2 rounded-lg text-sm"
+                >
+                  Create embed
+                </button>
+              </PrismHoverTarget>
             </div>
           </form>
         </div>
       </div>
-    </div>
+    </ModalWrapper>
   );
 }
 
@@ -207,6 +221,7 @@ export const ChatModeSelection = ({ defaultValue = null }) => {
             onChange={(e) => setChatMode(e.target.value)}
             className="hidden"
           />
+
           <div
             className={`w-4 h-4 rounded-full border-2 border-theme-sidebar-border mr-2 ${
               chatMode === "chat"
@@ -233,6 +248,7 @@ export const ChatModeSelection = ({ defaultValue = null }) => {
             onChange={(e) => setChatMode(e.target.value)}
             className="hidden"
           />
+
           <div
             className={`w-4 h-4 rounded-full border-2 border-theme-sidebar-border mr-2 ${
               chatMode === "query"

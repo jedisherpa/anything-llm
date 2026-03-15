@@ -1,4 +1,4 @@
-import { CaretRight } from "@phosphor-icons/react";
+import { CaretRight } from "@phosphor-icons/react/dist/csr/CaretRight";
 import { sentenceCase } from "text-case";
 
 export default function ImportedSkillList({
@@ -8,7 +8,7 @@ export default function ImportedSkillList({
 }) {
   if (skills.length === 0)
     return (
-      <div className="text-theme-text-secondary text-center text-xs flex flex-col gap-y-2">
+      <div className="prism-empty-state prism-empty-state--compact text-xs">
         <p>No imported skills found</p>
         <p>
           Learn about agent skills in the{" "}
@@ -26,18 +26,14 @@ export default function ImportedSkillList({
     );
 
   return (
-    <div
-      className={`bg-theme-bg-secondary text-white rounded-xl w-full md:min-w-[360px]`}
-    >
+    <div className="prism-interactive-list text-white rounded-xl w-full md:min-w-[360px]">
       {skills.map((config, index) => (
         <div
           key={config.hubId}
-          className={`py-3 px-4 flex items-center justify-between ${
+          className={`prism-interactive-list-row py-3 px-4 flex items-center justify-between ${
             index === 0 ? "rounded-t-xl" : ""
           } ${
-            index === Object.keys(skills).length - 1
-              ? "rounded-b-xl"
-              : "border-b border-white/10"
+            index === Object.keys(skills).length - 1 ? "rounded-b-xl" : ""
           } cursor-pointer transition-all duration-300 hover:bg-theme-bg-primary ${
             selectedSkill === config.hubId ? "bg-theme-bg-primary" : ""
           }`}

@@ -1,0 +1,58 @@
+{
+  "items": [
+    {
+      "id": "5-ai-only-lens-edition-v1-2-md",
+      "name": "AI Only Lens Edition v1.2",
+      "format": "md",
+      "relativePath": "Governance_Documents/5_AI_Only_Lens_Edition_v1.2.md",
+      "repoRelativePath": "data/metacanon/governance-documents/Governance_Documents/5_AI_Only_Lens_Edition_v1.2.md",
+      "overview": "Metacanon Constitution: AI-Only Lens Edition (v1.2) Version 1.2 Adopted: [Insert Date, e.g., 3/8/2026] Last Amended: [Insert Date, e.g., 3/8/2026] (Added provisions for AI support of human Emotional/Relational Thresholds; reinforced non-anthropomorphic framing for AI...",
+      "detailPath": "constitution/5-ai-only-lens-edition-v1-2-md.json"
+    },
+    {
+      "id": "metacanon-orchestrated-agents-plain-language-overview-for-programmers-marketers-pdf",
+      "name": "Metacanon orchestrated Agents — Plain language Overview For Programmers & Marketers",
+      "format": "pdf",
+      "relativePath": "constitution/Metacanon-orchestrated Agents — Plain-language Overview For Programmers & Marketers.pdf",
+      "repoRelativePath": null,
+      "overview": "",
+      "detailPath": "constitution/metacanon-orchestrated-agents-plain-language-overview-for-programmers-marketers-pdf.json"
+    },
+    {
+      "id": "1-v1-0-the-canonical-preamble-docx",
+      "name": "v1.0 The Canonical Preamble",
+      "format": "docx",
+      "relativePath": "Governance_Documents/1_v1.0_The_Canonical_Preamble.docx",
+      "repoRelativePath": "data/metacanon/governance-documents/Governance_Documents/1_v1.0_The_Canonical_Preamble.docx",
+      "overview": "The Canonical Preamble A Foundational Orientation for All Downstream Interpretation Purpose of This Document This text establishes the ontological and ethical ground from which all subsequent governance, structure, process, and authority within this system arise. It does not...",
+      "detailPath": "constitution/1-v1-0-the-canonical-preamble-docx.json"
+    },
+    {
+      "id": "2-v2-0-metacanon-constitution-second-edition-pdf",
+      "name": "v2.0 Metacanon Constitution Second Edition",
+      "format": "pdf",
+      "relativePath": "Governance_Documents/2_v2.0_Metacanon_Constitution_Second_Edition.pdf",
+      "repoRelativePath": "data/metacanon/governance-documents/Governance_Documents/2_v2.0_Metacanon_Constitution_Second_Edition.pdf",
+      "overview": "",
+      "detailPath": "constitution/2-v2-0-metacanon-constitution-second-edition-pdf.json"
+    },
+    {
+      "id": "3-v3-0-metacanon-constitution-md",
+      "name": "v3.0 Metacanon Constitution",
+      "format": "md",
+      "relativePath": "Governance_Documents/3_v3.0_Metacanon_Constitution.md",
+      "repoRelativePath": "data/metacanon/governance-documents/Governance_Documents/3_v3.0_Metacanon_Constitution.md",
+      "overview": "The Metacanon Constitution (Third Edition) *Version 3.0* *Adopted: [Date]* *Last Amended: [Date]* --- Version History v3.0: Comprehensive update incorporating AI Agent governance provisions based on the Poly Math Persona Experiment (PMPE) evaluation. Key additions include a new...",
+      "detailPath": "constitution/3-v3-0-metacanon-constitution-md.json"
+    },
+    {
+      "id": "4-values-and-the-values-prism-pdf",
+      "name": "Values and The Values Prism",
+      "format": "pdf",
+      "relativePath": "Governance_Documents/4_Values_and_The_Values_Prism.pdf",
+      "repoRelativePath": "data/metacanon/governance-documents/Governance_Documents/4_Values_and_The_Values_Prism.pdf",
+      "overview": "",
+      "detailPath": "constitution/4-values-and-the-values-prism-pdf.json"
+    }
+  ]
+}

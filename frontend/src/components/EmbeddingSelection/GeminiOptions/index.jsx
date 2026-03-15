@@ -1,4 +1,4 @@
-import { Info } from "@phosphor-icons/react";
+import { Info } from "@phosphor-icons/react/dist/csr/Info";
 import { Tooltip } from "react-tooltip";
 
 const DEFAULT_MODELS = [
@@ -68,6 +68,7 @@ export default function GeminiOptions({ settings }) {
             size={16}
             className="text-theme-text-secondary cursor-pointer"
           />
+
           <Tooltip
             id="embedding-output-dimensions-tooltip"
             place="top"

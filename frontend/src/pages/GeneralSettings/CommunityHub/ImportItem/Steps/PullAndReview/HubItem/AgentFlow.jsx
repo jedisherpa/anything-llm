@@ -2,7 +2,8 @@ import CTAButton from "@/components/lib/CTAButton";
 import CommunityHubImportItemSteps from "../..";
 import showToast from "@/utils/toast";
 import paths from "@/utils/paths";
-import { CircleNotch } from "@phosphor-icons/react";
+import { CircleNotch } from "@phosphor-icons/react/dist/csr/CircleNotch";
+
 import { useState } from "react";
 import AgentFlows from "@/models/agentFlows";
 import { safeJsonParse } from "@/utils/request";

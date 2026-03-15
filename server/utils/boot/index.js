@@ -18,6 +18,7 @@ const { PushNotifications } = require("../PushNotifications");
 // build and copy frontend to server/public with correct API_BASE and start server in prod model and all should be ok
 function bootSSL(app, port = 3001) {
   try {
+    const host = process.env.SERVER_BIND_HOST || "127.0.0.1";
     console.log(
       `\x1b[33m[SSL BOOT ENABLED]\x1b[0m Loading the certificate and key for HTTPS mode...`
     );
@@ -29,7 +30,7 @@ function bootSSL(app, port = 3001) {
     const server = https.createServer(credentials, app);
 
     server
-      .listen(port, async () => {
+      .listen(port, host, async () => {
         await markOnboarded();
         await setupTelemetry();
         new CommunicationKey(true);
@@ -37,7 +38,7 @@ function bootSSL(app, port = 3001) {
         new BackgroundService().boot();
         await eagerLoadContextWindows();
         await PushNotifications.setupPushNotificationService();
-        console.log(`Primary server in HTTPS mode listening on port ${port}`);
+        console.log(`Primary server in HTTPS mode listening on ${host}:${port}`);
       })
       .on("error", catchSigTerms);
 
@@ -59,9 +60,10 @@ function bootSSL(app, port = 3001) {
 
 function bootHTTP(app, port = 3001) {
   if (!app) throw new Error('No "app" defined - crashing!');
+  const host = process.env.SERVER_BIND_HOST || "127.0.0.1";
 
   app
-    .listen(port, async () => {
+    .listen(port, host, async () => {
       await markOnboarded();
       await setupTelemetry();
       new CommunicationKey(true);
@@ -69,7 +71,7 @@ function bootHTTP(app, port = 3001) {
       new BackgroundService().boot();
       await eagerLoadContextWindows();
       await PushNotifications.setupPushNotificationService();
-      console.log(`Primary server in HTTP mode listening on port ${port}`);
+      console.log(`Primary server in HTTP mode listening on ${host}:${port}`);
     })
     .on("error", catchSigTerms);
 

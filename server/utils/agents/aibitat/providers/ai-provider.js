@@ -29,6 +29,7 @@ const {
   createBedrockChatClient,
 } = require("../../../AiProviders/bedrock/utils");
 const { OllamaAILLM } = require("../../../AiProviders/ollama");
+const { withAiOnlyLens } = require("../prompts/aiOnlyLens");
 
 const DEFAULT_WORKSPACE_PROMPT =
   "You are a helpful ai assistant who can assist the user and use tools available to help answer the users prompts and questions.";
@@ -370,9 +371,11 @@ class Provider {
   static defaultSystemPromptForProvider(provider = null) {
     switch (provider) {
       case "lmstudio":
-        return "You are a helpful ai assistant who can assist the user and use tools available to help answer the users prompts and questions. Tools will be handled by another assistant and you will simply receive their responses to help answer the user prompt - always try to answer the user's prompt the best you can with the context available to you and your general knowledge.";
+        return withAiOnlyLens(
+          "You are a helpful ai assistant who can assist the user and use tools available to help answer the users prompts and questions. Tools will be handled by another assistant and you will simply receive their responses to help answer the user prompt - always try to answer the user's prompt the best you can with the context available to you and your general knowledge."
+        );
       default:
-        return DEFAULT_WORKSPACE_PROMPT;
+        return withAiOnlyLens(DEFAULT_WORKSPACE_PROMPT);
     }
   }
 
@@ -390,11 +393,12 @@ class Provider {
   }) {
     if (!workspace?.openAiPrompt)
       return Provider.defaultSystemPromptForProvider(provider);
-    return await SystemPromptVariables.expandSystemPromptVariables(
+    const expandedPrompt = await SystemPromptVariables.expandSystemPromptVariables(
       workspace.openAiPrompt,
       user?.id || null,
       workspace.id
     );
+    return withAiOnlyLens(expandedPrompt);
   }
 
   /**

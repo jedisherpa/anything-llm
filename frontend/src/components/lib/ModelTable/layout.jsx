@@ -1,9 +1,7 @@
 import { useState } from "react";
-import {
-  ArrowClockwise,
-  CircleNotch,
-  MagnifyingGlass,
-} from "@phosphor-icons/react";
+import { ArrowClockwise } from "@phosphor-icons/react/dist/csr/ArrowClockwise";
+import { CircleNotch } from "@phosphor-icons/react/dist/csr/CircleNotch";
+import { MagnifyingGlass } from "@phosphor-icons/react/dist/csr/MagnifyingGlass";
 
 export default function ModelTableLayout({
   children,
@@ -38,6 +36,7 @@ export default function ModelTableLayout({
             color="var(--theme-text-primary)"
             className="absolute left-[9px] top-[10px] text-theme-settings-input-placeholder peer-focus:invisible"
           />
+
           <input
             type="search"
             placeholder="Search models"
@@ -66,6 +65,7 @@ export default function ModelTableLayout({
                 className="w-4 h-4 text-theme-text-secondary"
               />
             )}
+
             <span
               className={`text-sm font-medium ${isRefreshing ? "hidden" : "text-theme-text-secondary"}`}
             >

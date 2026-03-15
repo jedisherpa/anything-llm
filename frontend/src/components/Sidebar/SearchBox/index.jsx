@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import { Plus, MagnifyingGlass } from "@phosphor-icons/react";
+import { Plus } from "@phosphor-icons/react/dist/csr/Plus";
+import { MagnifyingGlass } from "@phosphor-icons/react/dist/csr/MagnifyingGlass";
+
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import paths from "@/utils/paths";
@@ -7,6 +9,7 @@ import Preloader from "@/components/Preloader";
 import debounce from "lodash.debounce";
 import Workspace from "@/models/workspace";
 import { Tooltip } from "react-tooltip";
+import PrismHoverTarget from "@/components/PrismHoverTarget";
 
 const DEFAULT_SEARCH_RESULTS = {
   workspaces: [],
@@ -52,20 +55,22 @@ export default function SearchBox({ user, showNewWsModal }) {
   }, []);
 
   return (
-    <div className="flex gap-x-[5px] w-full items-center h-[32px]">
+    <div className="flex gap-x-[8px] w-full items-center h-[44px]">
       <div className="relative h-full w-full flex">
-        <input
-          ref={searchRef}
-          type="search"
-          placeholder={t("common.search")}
-          onChange={handleSearch}
-          onReset={handleReset}
-          onFocus={(e) => e.target.select()}
-          className="border-none w-full h-full rounded-lg bg-theme-sidebar-item-default pl-9 focus:pl-4 pr-1 placeholder:text-white/50 light:placeholder:text-slate-500 placeholder:font-semibold outline-none text-theme-text-primary search-input peer text-sm"
-        />
+        <PrismHoverTarget targetId="sidebar-search">
+          <input
+            ref={searchRef}
+            type="search"
+            placeholder={t("common.search")}
+            onChange={handleSearch}
+            onReset={handleReset}
+            onFocus={(e) => e.target.select()}
+            className="metacanon-sidebar-search border-none w-full h-full rounded-[14px] pl-11 focus:pl-4 pr-4 placeholder:text-theme-settings-input-placeholder placeholder:font-medium outline-none text-theme-text-primary search-input peer text-[15px]"
+          />
+        </PrismHoverTarget>
         <MagnifyingGlass
-          size={14}
-          className="absolute left-3 top-1/2 transform -translate-y-1/2 text-theme-settings-input-placeholder peer-focus:invisible"
+          size={17}
+          className="absolute left-4 top-1/2 transform -translate-y-1/2 text-theme-settings-input-placeholder peer-focus:invisible"
           weight="bold"
           hidden={!!searchTerm}
         />
@@ -74,6 +79,7 @@ export default function SearchBox({ user, showNewWsModal }) {
         user={user}
         showNewWsModal={showNewWsModal}
       />
+
       <SearchResults
         searchResults={searchResults}
         searchTerm={searchTerm}
@@ -85,7 +91,7 @@ export default function SearchBox({ user, showNewWsModal }) {
 
 function SearchResultWrapper({ children }) {
   return (
-    <div className="absolute right-0 top-[6.2%] w-full flex flex-col gap-y-[24px] h-auto bg-theme-modal-border light:bg-theme-bg-primary light:border-2 light:border-theme-modal-border rounded-lg p-[16px] z-10 max-h-[calc(100%-24px)] overflow-y-scroll no-scroll">
+    <div className="metacanon-search-results-panel absolute right-0 top-[6.2%] z-10 flex h-auto max-h-[calc(100%-24px)] w-full flex-col gap-y-[24px] overflow-y-scroll rounded-[18px] p-[16px] no-scroll">
       {children}
     </div>
   );
@@ -111,7 +117,7 @@ function SearchResults({ searchResults, searchTerm, loading }) {
   ) {
     return (
       <SearchResultWrapper>
-        <div className="flex flex-col gap-y-[8px] h-[200px] justify-center items-center">
+        <div className="prism-empty-state prism-empty-state--compact h-[200px]">
           <p className="text-theme-text-secondary text-xs font-semibold text-center">
             No results found for
             <br />
@@ -134,6 +140,7 @@ function SearchResults({ searchResults, searchTerm, loading }) {
           name: workspace.name,
         }))}
       />
+
       <SearchResultCategory
         name="Threads"
         items={searchResults.threads?.map((thread) => ({
@@ -170,21 +177,23 @@ function SearchResultCategory({ items, name }) {
 
 function SearchResultItem({ to, name, hint }) {
   return (
-    <Link
-      to={to}
-      reloadDocument={true}
-      onClick={() => window.dispatchEvent(new Event(SEARCH_RESULT_SELECTED))}
-      className="hover:bg-[#FFF]/10 light:hover:bg-[#000]/10 transition-all duration-300 rounded-sm px-[8px] py-[2px]"
-    >
-      <p className="text-theme-text-primary text-sm truncate w-[80%]">
-        {name}
-        {hint && (
-          <span className="text-theme-text-secondary text-xs ml-[4px]">
-            | {hint}
-          </span>
-        )}
-      </p>
-    </Link>
+    <PrismHoverTarget targetId={`search-result-${to}`}>
+      <Link
+        to={to}
+        reloadDocument={true}
+        onClick={() => window.dispatchEvent(new Event(SEARCH_RESULT_SELECTED))}
+        className="rounded-[10px] px-[8px] py-[4px] transition-all duration-300 hover:bg-theme-sidebar-subitem-hover"
+      >
+        <p className="text-theme-text-primary text-sm truncate w-[80%]">
+          {name}
+          {hint && (
+            <span className="text-theme-text-secondary text-xs ml-[4px]">
+              | {hint}
+            </span>
+          )}
+        </p>
+      </Link>
+    </PrismHoverTarget>
   );
 }
 
@@ -194,18 +203,16 @@ function ShortWidthNewWorkspaceButton({ user, showNewWsModal }) {
 
   return (
     <>
-      <button
-        data-tooltip-id="new-workspace-tooltip"
-        data-tooltip-content={t("new-workspace.title")}
-        onClick={showNewWsModal}
-        className="border-none flex items-center justify-center bg-white  rounded-lg p-[8px] hover:bg-white/80 light:hover:bg-slate-300 transition-all duration-300"
-      >
-        <Plus
-          size={16}
-          weight="bold"
-          className="text-black light:text-slate-500"
-        />
-      </button>
+      <PrismHoverTarget targetId="new-workspace-button">
+        <button
+          data-tooltip-id="new-workspace-tooltip"
+          data-tooltip-content={t("new-workspace.title")}
+          onClick={showNewWsModal}
+          className="metacanon-search-create-button border-none flex h-[44px] w-[44px] items-center justify-center rounded-[14px] transition-all duration-300"
+        >
+          <Plus size={18} weight="bold" />
+        </button>
+      </PrismHoverTarget>
       <Tooltip
         id="new-workspace-tooltip"
         place="top"

@@ -1,0 +1,44 @@
+{
+  "id": "tetrahedron-1-the-first-principles-inquiry",
+  "name": "Tetrahedron 1: The \"First Principles\" Inquiry",
+  "title": "First-Principles Inquiry",
+  "displayTitle": "First-Principles Inquiry",
+  "handle": "@constellation-tetrahedron-1-the-first-principles-inquiry",
+  "type": "Tetrahedron",
+  "purpose": "To deconstruct a complex problem to its most fundamental truths and rebuild a solution from the ground up.",
+  "projectManager": "/home/ubuntu/councils/project-managers-board/01_Profound_Knowledge_Systems_Lens.md",
+  "projectManagerRelativePath": "councils/project-managers-board/01_Profound_Knowledge_Systems_Lens.md",
+  "projectManagerId": "project-managers-board-01-profound-knowledge-systems-lens",
+  "projectManagerHandle": "@mc-project-managers-board-01-profound-knowledge-systems-lens",
+  "projectManagerTitle": "The Systems Architect",
+  "members": [
+    {
+      "role": "The First-Principles Engineer",
+      "lens_path": "/home/ubuntu/councils/pauls-board/01_First_Principles_Engineer_Lens.docx",
+      "displayRole": "The First-Principles Engineer",
+      "relativePath": "councils/pauls-board/01_First_Principles_Engineer_Lens.md",
+      "lensId": "pauls-board-01-first-principles-engineer-lens",
+      "lensHandle": "@mc-pauls-board-01-first-principles-engineer-lens",
+      "lensTitle": "The First-Principles Engineer"
+    },
+    {
+      "role": "The Founder Realist",
+      "lens_path": "/home/ubuntu/councils/pauls-board/07_Founder_Reality_And_Taste_Lens.docx",
+      "displayRole": "The Founder Realist",
+      "relativePath": "councils/pauls-board/07_Founder_Reality_And_Taste_Lens.md",
+      "lensId": "pauls-board-07-founder-reality-and-taste-lens",
+      "lensHandle": "@mc-pauls-board-07-founder-reality-and-taste-lens",
+      "lensTitle": "The Founder Realist"
+    },
+    {
+      "role": "The Cognitive Analyst",
+      "lens_path": "/home/ubuntu/councils/pauls-board/05_Cognitive_Bias_And_Judgment_Lens.docx",
+      "displayRole": "The Cognitive Analyst",
+      "relativePath": "councils/pauls-board/05_Cognitive_Bias_And_Judgment_Lens.md",
+      "lensId": "pauls-board-05-cognitive-bias-and-judgment-lens",
+      "lensHandle": "@mc-pauls-board-05-cognitive-bias-and-judgment-lens",
+      "lensTitle": "The Cognitive Analyst"
+    }
+  ],
+  "relativePath": "constellations/tetrahedron-1-first-principles.json"
+}

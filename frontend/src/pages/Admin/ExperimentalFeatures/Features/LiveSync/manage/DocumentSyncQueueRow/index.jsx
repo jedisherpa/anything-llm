@@ -1,5 +1,6 @@
 import { useRef } from "react";
-import { Trash } from "@phosphor-icons/react";
+import { Trash } from "@phosphor-icons/react/dist/csr/Trash";
+
 import { stripUuidAndJsonFromString } from "@/components/Modals/ManageWorkspace/Documents/Directory/utils";
 import moment from "moment";
 import System from "@/models/system";

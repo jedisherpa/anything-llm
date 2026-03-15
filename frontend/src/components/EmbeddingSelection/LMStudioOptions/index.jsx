@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import System from "@/models/system";
 import { LMSTUDIO_COMMON_URLS } from "@/utils/constants";
-import {
-  CaretDown,
-  CaretUp,
-  Info,
-  CircleNotch,
-  Warning,
-} from "@phosphor-icons/react";
+import { CaretDown } from "@phosphor-icons/react/dist/csr/CaretDown";
+import { CaretUp } from "@phosphor-icons/react/dist/csr/CaretUp";
+import { Info } from "@phosphor-icons/react/dist/csr/Info";
+import { CircleNotch } from "@phosphor-icons/react/dist/csr/CircleNotch";
+import { Warning } from "@phosphor-icons/react/dist/csr/Warning";
+
 import { Tooltip } from "react-tooltip";
 import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
 
@@ -43,6 +42,7 @@ export default function LMStudioEmbeddingOptions({ settings }) {
           basePath={basePath.value}
           apiKey={authTokenValue.value}
         />
+
         <div className="flex flex-col w-60">
           <div
             data-tooltip-place="top"
@@ -56,6 +56,7 @@ export default function LMStudioEmbeddingOptions({ settings }) {
               size={16}
               className="text-theme-text-secondary cursor-pointer"
             />
+
             <Tooltip id="max-embedding-chunk-length-tooltip">
               Maximum length of text chunks, in characters, for embedding.
             </Tooltip>
@@ -105,6 +106,7 @@ export default function LMStudioEmbeddingOptions({ settings }) {
                   data-tooltip-id="lmstudio-base-url"
                   data-tooltip-content="Enter the URL where LM Studio is running."
                 />
+
                 <Tooltip
                   id="lmstudio-base-url"
                   place="top"
@@ -158,6 +160,7 @@ export default function LMStudioEmbeddingOptions({ settings }) {
                 className="text-theme-text-secondary cursor-pointer"
                 data-tooltip-id="lmstudio-authentication-token"
               />
+
               <Tooltip
                 id="lmstudio-authentication-token"
                 place="top"
@@ -241,6 +244,7 @@ function LMStudioModelSelection({ settings, basePath = null, apiKey = null }) {
                 className="text-red-400 cursor-pointer"
                 data-tooltip-id="lmstudio-embedding-model"
               />
+
               <Tooltip
                 id="lmstudio-embedding-model"
                 place="top"
@@ -271,10 +275,16 @@ function LMStudioModelSelection({ settings, basePath = null, apiKey = null }) {
             {loading
               ? "--loading available models--"
               : !!basePath
-                ? "No models found"
+                ? "No models available"
                 : "Enter LM Studio URL first"}
           </option>
         </select>
+        {!loading && !!basePath && (
+          <div className="prism-empty-state prism-empty-state--compact mt-2 text-xs">
+            Prism couldn&apos;t find any LM Studio embedding models. Verify the
+            URL and confirm LM Studio has an embedding model loaded.
+          </div>
+        )}
       </div>
     );
   }

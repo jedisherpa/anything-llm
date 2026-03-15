@@ -4,7 +4,10 @@ import { memo, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import FolderRow from "./FolderRow";
 import System from "@/models/system";
-import { MagnifyingGlass, Plus, Trash } from "@phosphor-icons/react";
+import { MagnifyingGlass } from "@phosphor-icons/react/dist/csr/MagnifyingGlass";
+import { Plus } from "@phosphor-icons/react/dist/csr/Plus";
+import { Trash } from "@phosphor-icons/react/dist/csr/Trash";
+
 import Document from "@/models/document";
 import showToast from "@/utils/toast";
 import FolderSelectionPopup from "./FolderSelectionPopup";
@@ -208,6 +211,7 @@ function Directory({
                 onChange={handleSearch}
                 className="border-none search-input bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder focus:outline-primary-button active:outline-primary-button outline-none text-sm rounded-lg pl-9 pr-2.5 py-2 w-[250px] h-[32px] light:border-theme-modal-border light:border"
               />
+
               <MagnifyingGlass
                 size={14}
                 className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white"
@@ -223,6 +227,7 @@ function Directory({
                 weight="bold"
                 className="text-theme-text-primary light:text-[#0ba5ec]"
               />
+
               <div className="text-theme-text-primary light:text-[#0ba5ec] text-xs font-bold leading-[18px]">
                 {t("connectors.directory.new-folder")}
               </div>
@@ -319,14 +324,13 @@ function Directory({
           />
         </div>
         {isFolderModalOpen && (
-          <div className="bg-black/60 backdrop-blur-sm fixed top-0 left-0 outline-none w-screen h-screen flex items-center justify-center z-30">
-            <NewFolderModal
-              closeModal={closeFolderModal}
-              files={files}
-              setFiles={setFiles}
-            />
-          </div>
+          <NewFolderModal
+            closeModal={closeFolderModal}
+            files={files}
+            setFiles={setFiles}
+          />
         )}
+
         <ContextMenu
           contextMenu={contextMenu}
           closeContextMenu={closeContextMenu}

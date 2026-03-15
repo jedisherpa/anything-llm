@@ -1,4 +1,28 @@
-const WATCH_DIRECTORY = require("path").resolve(__dirname, "../hotdir");
+const path = require("path");
+
+function resolveCollectorDataRoot() {
+  if (process.env.COLLECTOR_DATA_DIR) {
+    return path.resolve(process.env.COLLECTOR_DATA_DIR);
+  }
+
+  if (process.env.NODE_ENV === "development") {
+    return path.resolve(__dirname, "..");
+  }
+
+  if (process.env.STORAGE_DIR) {
+    return path.resolve(process.env.STORAGE_DIR, "..", "collector");
+  }
+
+  return path.resolve(__dirname, "..");
+}
+
+const COLLECTOR_DATA_ROOT = resolveCollectorDataRoot();
+const WATCH_DIRECTORY = process.env.COLLECTOR_HOTDIR
+  ? path.resolve(process.env.COLLECTOR_HOTDIR)
+  : path.resolve(COLLECTOR_DATA_ROOT, "hotdir");
+const COLLECTOR_TMP_DIR = process.env.COLLECTOR_TMP_DIR
+  ? path.resolve(process.env.COLLECTOR_TMP_DIR)
+  : path.resolve(COLLECTOR_DATA_ROOT, "storage", "tmp");
 
 const ACCEPTED_MIMES = {
   "text/plain": [".txt", ".md", ".org", ".adoc", ".rst"],
@@ -76,6 +100,8 @@ const SUPPORTED_FILETYPE_CONVERTERS = {
 };
 
 module.exports = {
+  COLLECTOR_DATA_ROOT,
+  COLLECTOR_TMP_DIR,
   SUPPORTED_FILETYPE_CONVERTERS,
   WATCH_DIRECTORY,
   ACCEPTED_MIMES,

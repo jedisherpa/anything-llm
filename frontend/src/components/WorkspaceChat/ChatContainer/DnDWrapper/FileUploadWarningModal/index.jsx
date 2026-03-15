@@ -1,4 +1,4 @@
-import { CircleNotch } from "@phosphor-icons/react";
+import { CircleNotch } from "@phosphor-icons/react/dist/csr/CircleNotch";
 import ModalWrapper from "@/components/ModalWrapper";
 import pluralize from "pluralize";
 import { numberWithCommas } from "@/utils/numbers";

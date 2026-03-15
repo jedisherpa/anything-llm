@@ -1,0 +1,71 @@
+{
+  "title": "Prism Library",
+  "tracks": [
+    {
+      "id": "fights-aint-fair",
+      "name": "Fights Ain't Fair",
+      "filename": "fights-aint-fair.mp3",
+      "url": "/music/fights-aint-fair.mp3"
+    },
+    {
+      "id": "cash-it-out-violin-remix",
+      "name": "Cash It Out (Violin Remix)",
+      "filename": "cash-it-out-violin-remix.mp3",
+      "url": "/music/cash-it-out-violin-remix.mp3"
+    },
+    {
+      "id": "see-the-future",
+      "name": "See The Future",
+      "filename": "see-the-future.mp3",
+      "url": "/music/see-the-future.mp3"
+    },
+    {
+      "id": "tryin-to-be-true",
+      "name": "Tryin' To Be True",
+      "filename": "tryin-to-be-true.mp3",
+      "url": "/music/tryin-to-be-true.mp3"
+    },
+    {
+      "id": "gravity-speaking",
+      "name": "Gravity Speaking",
+      "filename": "gravity-speaking.mp3",
+      "url": "/music/gravity-speaking.mp3"
+    },
+    {
+      "id": "when-im-talking-to-you",
+      "name": "When I'm Talking To You",
+      "filename": "when-im-talking-to-you.mp3",
+      "url": "/music/when-im-talking-to-you.mp3"
+    },
+    {
+      "id": "truth-with-a-spine",
+      "name": "Truth With A Spine",
+      "filename": "truth-with-a-spine.mp3",
+      "url": "/music/truth-with-a-spine.mp3"
+    },
+    {
+      "id": "line-in-the-sand",
+      "name": "Line in the Sand",
+      "filename": "line-in-the-sand.mp3",
+      "url": "/music/line-in-the-sand.mp3"
+    },
+    {
+      "id": "gods-mind-dreamin",
+      "name": "God's Mind Dreamin'",
+      "filename": "gods-mind-dreamin.mp3",
+      "url": "/music/gods-mind-dreamin.mp3"
+    },
+    {
+      "id": "echos-of-the-5th",
+      "name": "Echos of the 5th",
+      "filename": "echos-of-the-5th.mp3",
+      "url": "/music/echos-of-the-5th.mp3"
+    },
+    {
+      "id": "cash-it-out",
+      "name": "Cash It Out",
+      "filename": "cash-it-out.mp3",
+      "url": "/music/cash-it-out.mp3"
+    }
+  ]
+}

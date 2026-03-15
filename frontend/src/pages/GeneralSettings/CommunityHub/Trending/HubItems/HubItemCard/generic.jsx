@@ -1,5 +1,7 @@
 import paths from "@/utils/paths";
-import { Eye, LockSimple } from "@phosphor-icons/react";
+import { Eye } from "@phosphor-icons/react/dist/csr/Eye";
+import { LockSimple } from "@phosphor-icons/react/dist/csr/LockSimple";
+
 import { Link } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 

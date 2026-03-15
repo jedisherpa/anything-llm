@@ -1,4 +1,4 @@
-import { Info } from "@phosphor-icons/react";
+import { Info } from "@phosphor-icons/react/dist/csr/Info";
 import { Tooltip } from "react-tooltip";
 
 export default function PGVectorOptions({ settings }) {
@@ -16,6 +16,7 @@ export default function PGVectorOptions({ settings }) {
               data-tooltip-id="pgvector-connection-string-tooltip"
               data-tooltip-place="right"
             />
+
             <Tooltip
               delayHide={300}
               id="pgvector-connection-string-tooltip"
@@ -67,6 +68,7 @@ export default function PGVectorOptions({ settings }) {
               data-tooltip-id="pgvector-table-name-tooltip"
               data-tooltip-place="right"
             />
+
             <Tooltip
               delayHide={300}
               id="pgvector-table-name-tooltip"

@@ -1,3 +1,5 @@
+import PrismHoverTarget from "@/components/PrismHoverTarget";
+
 export default function SuggestedMessages({
   suggestedMessages = [],
   sendCommand,
@@ -17,13 +19,15 @@ export default function SuggestedMessages({
             {index > 0 && (
               <div className="border-t border-zinc-800 light:border-theme-chat-input-border" />
             )}
-            <button
-              type="button"
-              onClick={() => sendCommand({ text, autoSubmit: true })}
-              className="w-full text-left py-3 px-3 text-white/80 text-sm font-normal leading-5 hover:text-white transition-colors light:text-theme-text-primary light:hover:text-theme-text-primary/80 hover:bg-zinc-800 light:hover:bg-black/20 rounded-lg"
-            >
-              {text}
-            </button>
+            <PrismHoverTarget targetId={`suggested-message-${index}`}>
+              <button
+                type="button"
+                onClick={() => sendCommand({ text, autoSubmit: true })}
+                className="w-full text-left py-3 px-3 text-white/80 text-sm font-normal leading-5 hover:text-white transition-colors light:text-theme-text-primary light:hover:text-theme-text-primary/80 hover:bg-zinc-800 light:hover:bg-black/20 rounded-lg"
+              >
+                {text}
+              </button>
+            </PrismHoverTarget>
           </div>
         );
       })}

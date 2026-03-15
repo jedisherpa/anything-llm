@@ -1,4 +1,4 @@
-import { MagnifyingGlass } from "@phosphor-icons/react";
+import { MagnifyingGlass } from "@phosphor-icons/react/dist/csr/MagnifyingGlass";
 import { useTranslation } from "react-i18next";
 
 export default function LLMSelectorSidePanel({
@@ -17,6 +17,7 @@ export default function LLMSelectorSidePanel({
           className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400 light:text-slate-400"
           weight="bold"
         />
+
         <input
           id="llm-search-input"
           type="search"
@@ -43,6 +44,7 @@ export default function LLMSelectorSidePanel({
               alt={`${llm.name} logo`}
               className="w-6 h-6 rounded"
             />
+
             <span className="text-sm text-white light:text-slate-900">
               {llm.name}
             </span>

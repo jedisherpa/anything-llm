@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
-import { House, MagnifyingGlass } from "@phosphor-icons/react";
+import { House } from "@phosphor-icons/react/dist/csr/House";
+import { MagnifyingGlass } from "@phosphor-icons/react/dist/csr/MagnifyingGlass";
 
 export default function NotFound() {
   return (

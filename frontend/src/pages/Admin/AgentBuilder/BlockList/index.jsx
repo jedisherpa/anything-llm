@@ -1,15 +1,14 @@
 import React from "react";
-import {
-  X,
-  CaretUp,
-  CaretDown,
-  Globe,
-  Browser,
-  Brain,
-  Flag,
-  Info,
-  BracketsCurly,
-} from "@phosphor-icons/react";
+import { X } from "@phosphor-icons/react/dist/csr/X";
+import { CaretUp } from "@phosphor-icons/react/dist/csr/CaretUp";
+import { CaretDown } from "@phosphor-icons/react/dist/csr/CaretDown";
+import { Globe } from "@phosphor-icons/react/dist/csr/Globe";
+import { Browser } from "@phosphor-icons/react/dist/csr/Browser";
+import { Brain } from "@phosphor-icons/react/dist/csr/Brain";
+import { Flag } from "@phosphor-icons/react/dist/csr/Flag";
+import { Info } from "@phosphor-icons/react/dist/csr/Info";
+import { BracketsCurly } from "@phosphor-icons/react/dist/csr/BracketsCurly";
+
 import { Tooltip } from "react-tooltip";
 import Toggle from "@/components/lib/Toggle";
 import StartNode from "../nodes/StartNode";
@@ -268,6 +267,7 @@ export default function BlockList({
                           <CaretUp className="w-3.5 h-3.5" />
                         </button>
                       )}
+
                       {index < blocks.length - 2 && (
                         <button
                           onClick={(e) => {
@@ -281,6 +281,7 @@ export default function BlockList({
                           <CaretDown className="w-3.5 h-3.5" />
                         </button>
                       )}
+
                       <button
                         onClick={(e) => {
                           e.stopPropagation();

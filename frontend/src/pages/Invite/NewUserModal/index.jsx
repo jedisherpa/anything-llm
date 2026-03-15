@@ -39,7 +39,7 @@ export default function NewUserModal() {
 
   return (
     <div className="relative w-full max-w-2xl max-h-full">
-      <div className="relative w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border">
+      <div className="relative w-full max-w-2xl metacanon-modal-panel bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border">
         <div className="flex items-start justify-between p-4 border-b rounded-t border-theme-modal-border">
           <h3 className="text-xl font-semibold text-theme-text-primary">
             Create a new account

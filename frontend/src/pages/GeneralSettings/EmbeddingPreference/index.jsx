@@ -36,7 +36,10 @@ import MistralAiOptions from "@/components/EmbeddingSelection/MistralAiOptions";
 import LemonadeOptions from "@/components/EmbeddingSelection/LemonadeOptions";
 
 import EmbedderItem from "@/components/EmbeddingSelection/EmbedderItem";
-import { CaretUpDown, MagnifyingGlass, X } from "@phosphor-icons/react";
+import { CaretUpDown } from "@phosphor-icons/react/dist/csr/CaretUpDown";
+import { MagnifyingGlass } from "@phosphor-icons/react/dist/csr/MagnifyingGlass";
+import { X } from "@phosphor-icons/react/dist/csr/X";
+
 import { useModal } from "@/hooks/useModal";
 import ModalWrapper from "@/components/ModalWrapper";
 import CTAButton from "@/components/lib/CTAButton";
@@ -144,6 +147,7 @@ const EMBEDDERS = [
     options: (settings) => (
       <GenericOpenAiEmbeddingOptions settings={settings} />
     ),
+
     description: "Run embedding models from any OpenAI compatible API service.",
   },
 ];
@@ -248,12 +252,12 @@ export default function GeneralEmbeddingPreference() {
   );
 
   return (
-    <div className="w-screen h-screen overflow-hidden bg-theme-bg-container flex">
+    <div className="metacanon-page-shell w-screen h-screen overflow-hidden bg-theme-bg-container flex">
       <Sidebar />
       {loading ? (
         <div
           style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
-          className="relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
+          className="metacanon-page-frame relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
         >
           <div className="w-full h-full flex justify-center items-center">
             <PreLoader />
@@ -262,7 +266,7 @@ export default function GeneralEmbeddingPreference() {
       ) : (
         <div
           style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
-          className="relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
+          className="metacanon-page-frame relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
         >
           <form
             id="embedding-form"
@@ -302,6 +306,7 @@ export default function GeneralEmbeddingPreference() {
                     onClick={() => setSearchMenuOpen(false)}
                   />
                 )}
+
                 {searchMenuOpen ? (
                   <div className="absolute top-0 left-0 w-full max-w-[640px] max-h-[310px] min-h-[64px] bg-theme-settings-input-bg rounded-lg flex flex-col justify-between cursor-pointer border-2 border-primary-button z-20">
                     <div className="w-full flex flex-col gap-y-1">
@@ -311,6 +316,7 @@ export default function GeneralEmbeddingPreference() {
                           weight="bold"
                           className="absolute left-4 z-30 text-theme-text-primary -ml-4 my-2"
                         />
+
                         <input
                           type="text"
                           name="embedder-search"
@@ -323,6 +329,7 @@ export default function GeneralEmbeddingPreference() {
                             if (e.key === "Enter") e.preventDefault();
                           }}
                         />
+
                         <X
                           size={20}
                           weight="bold"
@@ -357,6 +364,7 @@ export default function GeneralEmbeddingPreference() {
                         alt={`${selectedEmbedderObject.name} logo`}
                         className="w-10 h-10 rounded-md"
                       />
+
                       <div className="flex flex-col text-left">
                         <div className="text-sm font-semibold text-white">
                           {selectedEmbedderObject.name}
@@ -387,6 +395,7 @@ export default function GeneralEmbeddingPreference() {
           </form>
         </div>
       )}
+
       <ModalWrapper isOpen={isOpen}>
         <ChangeWarningModal
           warningText="Switching the embedding model will reset all previously embedded documents in all workspaces.\n\nConfirming will clear all embeddings from your vector database and remove all documents from your workspaces. Your uploaded documents will not be deleted, they will be available for re-embedding."

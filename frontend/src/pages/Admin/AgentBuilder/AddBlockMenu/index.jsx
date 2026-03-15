@@ -1,5 +1,7 @@
 import React, { useRef, useEffect } from "react";
-import { Plus, CaretDown } from "@phosphor-icons/react";
+import { Plus } from "@phosphor-icons/react/dist/csr/Plus";
+import { CaretDown } from "@phosphor-icons/react/dist/csr/CaretDown";
+
 import { BLOCK_TYPES, BLOCK_INFO } from "../BlockList";
 
 /**

@@ -7,13 +7,16 @@ import ManageWorkspace, {
 } from "../../Modals/ManageWorkspace";
 import paths from "@/utils/paths";
 import { useParams, useNavigate, useMatch } from "react-router-dom";
-import { GearSix, UploadSimple, DotsSixVertical } from "@phosphor-icons/react";
+import { GearSix } from "@phosphor-icons/react/dist/csr/GearSix";
+import { UploadSimple } from "@phosphor-icons/react/dist/csr/UploadSimple";
+
 import useUser from "@/hooks/useUser";
 import ThreadContainer from "./ThreadContainer";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import showToast from "@/utils/toast";
 import { LAST_VISITED_WORKSPACE } from "@/utils/constants";
 import { safeJsonParse } from "@/utils/request";
+import PrismHoverTarget from "@/components/PrismHoverTarget";
 
 export default function ActiveWorkspaces() {
   const navigate = useNavigate();
@@ -117,92 +120,86 @@ export default function ActiveWorkspaces() {
                       role="listitem"
                     >
                       <div className="flex gap-x-2 items-center justify-between">
-                        <a
-                          href={
-                            isActive
-                              ? null
-                              : paths.workspace.chat(workspace.slug)
-                          }
-                          data-tooltip-id="workspace-name"
-                          data-tooltip-content={workspace.name}
-                          aria-current={isActive ? "page" : ""}
-                          className={`
-                            transition-all duration-[200ms]
-                            flex flex-grow w-[75%] gap-x-2 py-[6px] pl-[4px] pr-[6px] rounded-[4px] text-white justify-start items-center
-                            bg-theme-sidebar-item-default
-                            ${isActive ? "light:bg-blue-200 font-bold" : "hover:bg-theme-sidebar-subitem-hover light:hover:bg-slate-300"}
-                          `}
+                        <PrismHoverTarget
+                          targetId={`workspace-row-${workspace.id}`}
                         >
-                          <div className="flex flex-row justify-between w-full items-center">
-                            <div
-                              {...provided.dragHandleProps}
-                              className="cursor-grab mr-[3px]"
-                            >
-                              <DotsSixVertical
-                                size={20}
-                                className={`${isActive ? "text-white light:text-blue-800" : ""}`}
-                                weight="bold"
-                              />
-                            </div>
-                            <div className="flex items-center space-x-2 overflow-hidden flex-grow">
-                              <div className="w-[130px] overflow-hidden">
-                                <p
-                                  className={`
-                                  text-[14px] leading-loose whitespace-nowrap overflow-hidden
-                                  ${isActive ? "font-bold text-white light:text-blue-900" : "font-medium "} truncate
-                                  w-full group-hover:w-[130px] group-hover:duration-200
-                                `}
-                                >
-                                  {workspace.name}
-                                </p>
-                              </div>
-                            </div>
-                            {user?.role !== "default" && (
+                          <a
+                            href={
+                              isActive
+                                ? null
+                                : paths.workspace.chat(workspace.slug)
+                            }
+                            data-tooltip-id="workspace-name"
+                            data-tooltip-content={workspace.name}
+                            aria-current={isActive ? "page" : ""}
+                            className="metacanon-workspace-row flex w-full flex-grow items-center justify-start gap-x-2 rounded-[15px] py-[8px] pl-[10px] pr-[8px] text-theme-text-primary transition-all duration-200"
+                            data-active={isActive ? "true" : "false"}
+                          >
+                            <div className="flex flex-row justify-between w-full items-center">
                               <div
-                                className={`flex items-center gap-x-[2px] transition-opacity duration-200 ${isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
+                                {...provided.dragHandleProps}
+                                className="mr-[6px] flex h-5 w-5 cursor-grab items-center justify-center"
                               >
-                                <button
-                                  type="button"
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    setSelectedWs(workspace);
-                                    showModal();
-                                  }}
-                                  className={`group/upload border-none rounded-md flex items-center justify-center ml-auto p-[2px] ${isActive ? "hover:bg-zinc-500 light:hover:bg-sky-800/30" : "hover:bg-zinc-500 light:hover:bg-slate-400"}`}
-                                >
-                                  <UploadSimple
-                                    className={`h-[20px] w-[20px] ${isActive ? "text-zinc-400 hover:text-white light:text-blue-700 light:group-hover/upload:text-blue-900" : "text-zinc-400 hover:text-white light:text-slate-600 light:group-hover/upload:text-slate-950"}`}
-                                  />
-                                </button>
-                                <button
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    navigate(
-                                      isInWorkspaceSettings
-                                        ? paths.workspace.chat(workspace.slug)
-                                        : paths.workspace.settings.generalAppearance(
-                                            workspace.slug
-                                          )
-                                    );
-                                  }}
-                                  className={`group/gear rounded-md flex items-center justify-center ml-auto p-[2px] ${isActive ? "hover:bg-zinc-500 light:hover:bg-sky-800/30" : "hover:bg-zinc-500 light:hover:bg-slate-400"}`}
-                                  aria-label="General appearance settings"
-                                >
-                                  <GearSix
-                                    color={
-                                      isInWorkspaceSettings &&
-                                      workspace.slug === slug
-                                        ? "#46C8FF"
-                                        : undefined
-                                    }
-                                    className={`h-[20px] w-[20px] ${isActive ? "text-zinc-400 hover:text-white light:text-blue-700 light:group-hover/gear:text-blue-900" : "text-zinc-400 hover:text-white light:text-slate-600 light:group-hover/gear:text-slate-950"}`}
-                                  />
-                                </button>
+                                <span className="metacanon-workspace-dot h-[9px] w-[9px] rounded-full" />
                               </div>
-                            )}
-                          </div>
-                        </a>
+                              <div className="flex items-center space-x-2 overflow-hidden flex-grow">
+                                <div className="w-[174px] overflow-hidden">
+                                  <p
+                                    className={`w-full truncate whitespace-nowrap overflow-hidden text-[14px] leading-loose ${
+                                      isActive
+                                        ? "font-semibold text-theme-text-primary"
+                                        : "font-medium text-theme-text-primary"
+                                    }`}
+                                  >
+                                    {workspace.name}
+                                  </p>
+                                </div>
+                              </div>
+                              {user?.role !== "default" && (
+                                <div
+                                  className={`flex items-center gap-x-[2px] transition-opacity duration-200 ${isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
+                                >
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      setSelectedWs(workspace);
+                                      showModal();
+                                    }}
+                                    className="metacanon-sidebar-icon-button group/upload ml-auto flex items-center justify-center rounded-md border-none p-[2px]"
+                                  >
+                                    <UploadSimple className="h-[18px] w-[18px]" />
+                                  </button>
+                                  <button
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      navigate(
+                                        isInWorkspaceSettings
+                                          ? paths.workspace.chat(workspace.slug)
+                                          : paths.workspace.settings.generalAppearance(
+                                              workspace.slug
+                                            )
+                                      );
+                                    }}
+                                    className="metacanon-sidebar-icon-button group/gear ml-auto flex items-center justify-center rounded-md p-[2px]"
+                                    aria-label="General appearance settings"
+                                  >
+                                    <GearSix
+                                      color={
+                                        isInWorkspaceSettings &&
+                                        workspace.slug === slug
+                                          ? "#46C8FF"
+                                          : undefined
+                                      }
+                                      className="h-[18px] w-[18px]"
+                                    />
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          </a>
+                        </PrismHoverTarget>
                       </div>
                       {isActive && (
                         <ThreadContainer

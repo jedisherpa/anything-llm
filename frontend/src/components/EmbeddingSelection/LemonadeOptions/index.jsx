@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import System from "@/models/system";
 import { LEMONADE_COMMON_URLS } from "@/utils/constants";
-import { CaretDown, CaretUp, Info, CircleNotch } from "@phosphor-icons/react";
+import { CaretDown } from "@phosphor-icons/react/dist/csr/CaretDown";
+import { CaretUp } from "@phosphor-icons/react/dist/csr/CaretUp";
+import { Info } from "@phosphor-icons/react/dist/csr/Info";
+import { CircleNotch } from "@phosphor-icons/react/dist/csr/CircleNotch";
+
 import { Tooltip } from "react-tooltip";
 import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
 import { cleanBasePath } from "@/components/LLMSelection/LemonadeOptions";
@@ -45,6 +49,7 @@ export default function LemonadeEmbeddingOptions({ settings }) {
               size={16}
               className="text-theme-text-secondary cursor-pointer"
             />
+
             <Tooltip id="max-embedding-chunk-length-tooltip">
               Maximum length of text chunks, in characters, for embedding.
             </Tooltip>
@@ -94,6 +99,7 @@ export default function LemonadeEmbeddingOptions({ settings }) {
                   data-tooltip-id="lemonade-base-url"
                   data-tooltip-content="Enter the URL where Lemonade is running."
                 />
+
                 <Tooltip
                   id="lemonade-base-url"
                   place="top"

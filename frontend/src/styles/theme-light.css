@@ -1,0 +1,46 @@
+[data-theme="light"] {
+  /* Metacanon shell tokens - Light (The Atelier) */
+  --bg: #fafaf7;
+  --sidebar-bg: #f5f3ee;
+  --sidebar-bg-end: #fafaf7;
+  --sidebar-glow-color: rgba(218, 165, 32, 0.03);
+  --sidebar-border: rgba(184, 134, 11, 0.1);
+  --subtle-border: rgba(0, 0, 0, 0.04);
+  --text-1: #1a1a1a;
+  --text-2: rgba(60, 55, 45, 0.55);
+  --text-3: rgba(60, 55, 45, 0.35);
+  --text-placeholder: rgba(60, 55, 45, 0.4);
+  --gold: #b8860b;
+  --gold-glow: rgba(184, 134, 11, 0.3);
+  --gold-text: #b8860b;
+  --gold-bg: rgba(184, 134, 11, 0.08);
+  --gold-border: rgba(184, 134, 11, 0.15);
+  --active-bg: rgba(184, 134, 11, 0.05);
+  --active-border: rgba(184, 134, 11, 0.1);
+  --chip-border: rgba(184, 134, 11, 0.12);
+  --chip-text: rgba(60, 55, 45, 0.5);
+  --comp-bg: rgba(255, 255, 255, 0.8);
+  --comp-border: rgba(184, 134, 11, 0.1);
+  --send-bg: #b8860b;
+  --send-border: #a0750a;
+  --send-icon: #ffffff;
+  --mc-text: #ffffff;
+  --mc-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --thread-active: #b8860b;
+  --inscription: rgba(184, 134, 11, 0.15);
+  --logo-filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.1));
+  --prism-filter: drop-shadow(0 2px 12px rgba(184, 134, 11, 0.15));
+  --prism-btn-filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.1));
+  --halo-border: rgba(184, 134, 11, 0.06);
+  --halo-shadow: none;
+  --cross-h: rgba(184, 134, 11, 0.06);
+  --cross-v: rgba(184, 134, 11, 0.04);
+  --display-font: "Cormorant Garamond", serif;
+  --display-weight: 400;
+  --help-grad: linear-gradient(135deg, #b8860b, #9a7209, #daa520);
+  --tagline-color: rgba(184, 134, 11, 0.35);
+  --status-label: "PRISM IDLE";
+  --placeholder-text: "Send a message";
+  --inscription-text: "crafted with care";
+  --tagline-text: "Structure & Soul";
+}

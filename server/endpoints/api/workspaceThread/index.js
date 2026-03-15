@@ -389,6 +389,8 @@ function apiWorkspaceThreadEndpoints(app) {
           userId,
           attachments = [],
           reset = false,
+          promptHandling = null,
+          precisionMode = false,
         } = reqBody(request);
         const workspace = await Workspace.get({ slug });
         const thread = await WorkspaceThread.get({
@@ -431,6 +433,8 @@ function apiWorkspaceThreadEndpoints(app) {
           thread,
           attachments,
           reset,
+          promptHandling,
+          precisionMode,
         });
         await Telemetry.sendTelemetry("sent_chat", {
           LLMSelection: process.env.LLM_PROVIDER || "openai",
@@ -557,6 +561,8 @@ function apiWorkspaceThreadEndpoints(app) {
           userId,
           attachments = [],
           reset = false,
+          promptHandling = null,
+          precisionMode = false,
         } = reqBody(request);
         const workspace = await Workspace.get({ slug });
         const thread = await WorkspaceThread.get({
@@ -607,6 +613,8 @@ function apiWorkspaceThreadEndpoints(app) {
           thread,
           attachments,
           reset,
+          promptHandling,
+          precisionMode,
         });
         await Telemetry.sendTelemetry("sent_chat", {
           LLMSelection: process.env.LLM_PROVIDER || "openai",

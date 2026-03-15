@@ -1,6 +1,8 @@
 /* eslint-disable react-hooks/refs */
 import React, { useRef, useState } from "react";
-import { Plus, X, CaretDown } from "@phosphor-icons/react";
+import { Plus } from "@phosphor-icons/react/dist/csr/Plus";
+import { X } from "@phosphor-icons/react/dist/csr/X";
+import { CaretDown } from "@phosphor-icons/react/dist/csr/CaretDown";
 
 export default function ApiCallNode({
   config,
@@ -72,6 +74,7 @@ export default function ApiCallNode({
             autoComplete="off"
             spellCheck={false}
           />
+
           <div className="relative">
             <button
               ref={varButtonRef}
@@ -144,6 +147,7 @@ export default function ApiCallNode({
                 autoComplete="off"
                 spellCheck={false}
               />
+
               <input
                 type="text"
                 placeholder="Value"
@@ -155,6 +159,7 @@ export default function ApiCallNode({
                 autoComplete="off"
                 spellCheck={false}
               />
+
               <button
                 onClick={() => removeHeader(index)}
                 className="p-2.5 rounded-lg border-none bg-theme-settings-input-bg text-theme-text-primary hover:text-red-500 hover:border-red-500/20 hover:bg-red-500/10 transition-colors duration-300"
@@ -224,6 +229,7 @@ export default function ApiCallNode({
                       autoComplete="off"
                       spellCheck={false}
                     />
+
                     <input
                       type="text"
                       placeholder="Value"
@@ -237,6 +243,7 @@ export default function ApiCallNode({
                       autoComplete="off"
                       spellCheck={false}
                     />
+
                     <button
                       onClick={() => {
                         const newFormData = [...(config.formData || [])].filter(
@@ -257,6 +264,7 @@ export default function ApiCallNode({
                       ...(config.formData || []),
                       { key: "", value: "" },
                     ];
+
                     onConfigChange({ formData: newFormData });
                   }}
                   className="w-full p-2.5 rounded-lg border-none bg-theme-settings-input-bg text-theme-text-primary hover:bg-theme-action-menu-item-hover transition-colors duration-300 text-sm"

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { CaretDown } from "@phosphor-icons/react";
+import { CaretDown } from "@phosphor-icons/react/dist/csr/CaretDown";
 
 import AgentAnimation from "@/media/animations/agent-animation.webm";
 import AgentStatic from "@/media/animations/agent-static.png";
@@ -68,6 +68,7 @@ export default function StatusResponse({ messages = [], isThinking = false }) {
                 />
               </button>
             )}
+
             <div
               className={`ml-[28px] mr-[26px] transition-[max-height] duration-300 ease-in-out origin-top ${isExpanded ? "" : "overflow-hidden max-h-[18px]"}`}
             >

@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import showToast from "@/utils/toast";
-import { CaretDown, Gear } from "@phosphor-icons/react";
+import { CaretDown } from "@phosphor-icons/react/dist/csr/CaretDown";
+import { Gear } from "@phosphor-icons/react/dist/csr/Gear";
+
 import MCPLogo from "@/media/agents/mcp-logo.svg";
 import { titleCase } from "text-case";
 import truncate from "truncate";

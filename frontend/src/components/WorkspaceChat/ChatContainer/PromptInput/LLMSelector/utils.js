@@ -1,4 +1,4 @@
-import { AVAILABLE_LLM_PROVIDERS } from "@/pages/GeneralSettings/LLMPreference";
+import { AVAILABLE_LLM_PROVIDERS } from "@/constants/llmProviders";
 import { DISABLED_PROVIDERS } from "@/hooks/useGetProvidersModels";
 
 export function autoScrollToSelectedLLMProvider(

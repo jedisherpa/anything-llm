@@ -1,6 +1,6 @@
 import CTAButton from "@/components/lib/CTAButton";
 import CommunityHubImportItemSteps from "../..";
-import { Warning } from "@phosphor-icons/react";
+import { Warning } from "@phosphor-icons/react/dist/csr/Warning";
 
 export default function UnknownItem({ item, setSettings, setStep }) {
   return (

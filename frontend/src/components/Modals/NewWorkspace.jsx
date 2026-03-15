@@ -1,9 +1,11 @@
 import React, { useRef, useState } from "react";
-import { X } from "@phosphor-icons/react";
+import { X } from "@phosphor-icons/react/dist/csr/X";
+
 import Workspace from "@/models/workspace";
 import paths from "@/utils/paths";
 import { useTranslation } from "react-i18next";
 import ModalWrapper from "@/components/ModalWrapper";
+import PrismHoverTarget from "@/components/PrismHoverTarget";
 
 const noop = () => false;
 export default function NewWorkspaceModal({ hideModal = noop }) {
@@ -25,20 +27,22 @@ export default function NewWorkspaceModal({ hideModal = noop }) {
 
   return (
     <ModalWrapper isOpen={true}>
-      <div className="w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border overflow-hidden">
+      <div className="w-full max-w-2xl metacanon-modal-panel bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border overflow-hidden">
         <div className="relative p-6 border-b rounded-t border-theme-modal-border">
           <div className="w-full flex gap-x-2 items-center">
             <h3 className="text-xl font-semibold text-white overflow-hidden overflow-ellipsis whitespace-nowrap">
               {t("new-workspace.title")}
             </h3>
           </div>
-          <button
-            onClick={hideModal}
-            type="button"
-            className="absolute top-4 right-4 transition-all duration-300 bg-transparent rounded-lg text-sm p-1 inline-flex items-center hover:bg-theme-modal-border hover:border-theme-modal-border hover:border-opacity-50 border-transparent border"
-          >
-            <X size={24} weight="bold" className="text-white" />
-          </button>
+          <PrismHoverTarget targetId="modal-new-workspace-close">
+            <button
+              onClick={hideModal}
+              type="button"
+              className="absolute top-4 right-4 transition-all duration-300 bg-transparent rounded-lg text-sm p-1 inline-flex items-center hover:bg-theme-modal-border hover:border-theme-modal-border hover:border-opacity-50 border-transparent border"
+            >
+              <X size={24} weight="bold" className="text-white" />
+            </button>
+          </PrismHoverTarget>
         </div>
         <div
           className="h-full w-full overflow-y-auto"
@@ -71,12 +75,14 @@ export default function NewWorkspaceModal({ hideModal = noop }) {
               </div>
             </div>
             <div className="flex w-full justify-end items-center p-6 space-x-2 border-t border-theme-modal-border rounded-b">
-              <button
-                type="submit"
-                className="transition-all duration-300 bg-white text-black hover:opacity-60 px-4 py-2 rounded-lg text-sm"
-              >
-                Save
-              </button>
+              <PrismHoverTarget targetId="modal-new-workspace-submit">
+                <button
+                  type="submit"
+                  className="transition-all duration-300 bg-white text-black hover:opacity-60 px-4 py-2 rounded-lg text-sm"
+                >
+                  Save
+                </button>
+              </PrismHoverTarget>
             </div>
           </form>
         </div>

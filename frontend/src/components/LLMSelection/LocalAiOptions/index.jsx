@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Info, CaretDown, CaretUp } from "@phosphor-icons/react";
+import { Info } from "@phosphor-icons/react/dist/csr/Info";
+import { CaretDown } from "@phosphor-icons/react/dist/csr/CaretDown";
+import { CaretUp } from "@phosphor-icons/react/dist/csr/CaretUp";
+
 import paths from "@/utils/paths";
 import System from "@/models/system";
 import PreLoader from "@/components/Preloader";
@@ -41,6 +44,7 @@ export default function LocalAiOptions({ settings, showAlert = false }) {
           </a>
         </div>
       )}
+
       <div className="w-full flex items-center gap-[36px] mt-1.5">
         {!settings?.credentialsOnly && (
           <>
@@ -49,6 +53,7 @@ export default function LocalAiOptions({ settings, showAlert = false }) {
               basePath={basePath.value}
               apiKey={apiKey}
             />
+
             <div className="flex flex-col w-60">
               <label className="text-white text-sm font-semibold block mb-2">
                 Model context window
@@ -67,6 +72,7 @@ export default function LocalAiOptions({ settings, showAlert = false }) {
             </div>
           </>
         )}
+
         <div className="flex flex-col w-60">
           <div className="flex flex-col gap-y-1 mb-2">
             <label className="text-white text-sm font-semibold flex items-center gap-x-2">

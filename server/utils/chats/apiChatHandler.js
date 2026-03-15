@@ -2,6 +2,7 @@ const { v4: uuidv4 } = require("uuid");
 const { DocumentManager } = require("../DocumentManager");
 const { WorkspaceChats } = require("../../models/workspaceChats");
 const { getVectorDbClass, getLLMProvider } = require("../helpers");
+const { buildMessagesWithPromptHandling, fillSourceWindow } = require("../helpers/chat");
 const { writeResponseChunk } = require("../helpers/chat/responses");
 const {
   chatPrompt,
@@ -106,6 +107,8 @@ async function processDocumentAttachments(attachments = []) {
  *  sessionId: string|null,
  *  attachments: { name: string; mime: string; contentString: string }[],
  *  reset: boolean,
+ *  promptHandling: "compress"|"precision"|null,
+ *  precisionMode: boolean,
  * }} parameters
  * @returns {Promise<ResponseObject>}
  */
@@ -118,6 +121,8 @@ async function chatSync({
   sessionId = null,
   attachments = [],
   reset = false,
+  promptHandling = null,
+  precisionMode = false,
 }) {
   const uuid = uuidv4();
   const chatMode = mode ?? "chat";
@@ -322,7 +327,6 @@ async function chatSync({
     };
   }
 
-  const { fillSourceWindow } = require("../helpers/chat");
   const filledSources = fillSourceWindow({
     nDocs: workspace?.topN || 4,
     searchResults: vectorSearchResults.sources,
@@ -374,18 +378,33 @@ async function chatSync({
     };
   }
 
-  // Compress & Assemble message to ensure prompt passes token limit with room for response
-  // and build system messages based on inputs and history.
-  const messages = await LLMConnector.compressMessages(
-    {
+  const messagePreparation = await buildMessagesWithPromptHandling({
+    llm: LLMConnector,
+    promptArgs: {
       systemPrompt: await chatPrompt(workspace, user),
       userPrompt: message,
       contextTexts,
       chatHistory,
       attachments,
     },
-    rawHistory
-  );
+    rawHistory,
+    promptHandling,
+    precisionMode,
+  });
+
+  if (messagePreparation.abort) {
+    return {
+      id: uuid,
+      type: "abort",
+      textResponse: null,
+      sources: [],
+      close: true,
+      error: messagePreparation.abort.error,
+      metrics: messagePreparation.abort.metrics,
+    };
+  }
+
+  const messages = messagePreparation.messages;
 
   // Send the text completion.
   const { textResponse, metrics: performanceMetrics } =
@@ -445,6 +464,8 @@ async function chatSync({
  *  sessionId: string|null,
  *  attachments: { name: string; mime: string; contentString: string }[],
  *  reset: boolean,
+ *  promptHandling: "compress"|"precision"|null,
+ *  precisionMode: boolean,
  * }} parameters
  * @returns {Promise<VoidFunction>}
  */
@@ -458,6 +479,8 @@ async function streamChat({
   sessionId = null,
   attachments = [],
   reset = false,
+  promptHandling = null,
+  precisionMode = false,
 }) {
   const uuid = uuidv4();
   const chatMode = mode ?? "chat";
@@ -675,7 +698,6 @@ async function streamChat({
     return;
   }
 
-  const { fillSourceWindow } = require("../helpers/chat");
   const filledSources = fillSourceWindow({
     nDocs: workspace?.topN || 4,
     searchResults: vectorSearchResults.sources,
@@ -727,18 +749,34 @@ async function streamChat({
     return;
   }
 
-  // Compress & Assemble message to ensure prompt passes token limit with room for response
-  // and build system messages based on inputs and history.
-  const messages = await LLMConnector.compressMessages(
-    {
+  const messagePreparation = await buildMessagesWithPromptHandling({
+    llm: LLMConnector,
+    promptArgs: {
       systemPrompt: await chatPrompt(workspace, user),
       userPrompt: message,
       contextTexts,
       chatHistory,
       attachments,
     },
-    rawHistory
-  );
+    rawHistory,
+    promptHandling,
+    precisionMode,
+  });
+
+  if (messagePreparation.abort) {
+    writeResponseChunk(response, {
+      id: uuid,
+      type: "abort",
+      textResponse: null,
+      sources: [],
+      close: true,
+      error: messagePreparation.abort.error,
+      metrics: messagePreparation.abort.metrics,
+    });
+    return;
+  }
+
+  const messages = messagePreparation.messages;
 
   // If streaming is not explicitly enabled for connector
   // we do regular waiting of a response and send a single chunk.

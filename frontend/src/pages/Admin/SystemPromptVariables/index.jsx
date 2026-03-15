@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
-import { Plus } from "@phosphor-icons/react";
+import { Plus } from "@phosphor-icons/react/dist/csr/Plus";
+
 import Sidebar from "@/components/SettingsSidebar";
 import { isMobile } from "react-device-detect";
 import CTAButton from "@/components/lib/CTAButton";
@@ -35,11 +36,11 @@ export default function SystemPromptVariables() {
   };
 
   return (
-    <div className="w-screen h-screen overflow-hidden bg-theme-bg-container flex">
+    <div className="metacanon-page-shell w-screen h-screen overflow-hidden bg-theme-bg-container flex">
       <Sidebar />
       <div
         style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
-        className="relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
+        className="metacanon-page-frame relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
       >
         <div className="flex flex-col w-full px-1 md:pl-6 md:pr-[50px] md:py-6 py-16">
           <div className="w-full flex flex-col gap-y-1 pb-6 border-white/10 border-b-2">
@@ -76,11 +77,11 @@ export default function SystemPromptVariables() {
                 containerClassName="flex w-full"
               />
             ) : variables.length === 0 ? (
-              <div className="text-center py-4 text-theme-text-secondary">
+              <div className="prism-empty-state prism-empty-state--compact">
                 No variables found
               </div>
             ) : (
-              <table className="w-full text-sm text-left rounded-lg min-w-[640px] border-spacing-0">
+              <table className="prism-data-table w-full text-sm text-left rounded-lg min-w-[640px] border-spacing-0">
                 <thead className="text-theme-text-secondary text-xs leading-[18px] font-bold uppercase border-white/10 border-b">
                   <tr>
                     <th scope="col" className="px-4 py-2 rounded-tl-lg">

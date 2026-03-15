@@ -6,7 +6,8 @@ import paths from "@/utils/paths";
 import ModalWrapper from "../ModalWrapper";
 import { useParams } from "react-router-dom";
 import { DnDFileUploaderProvider } from "./ChatContainer/DnDWrapper";
-import { WarningCircle } from "@phosphor-icons/react";
+import { WarningCircle } from "@phosphor-icons/react/dist/csr/WarningCircle";
+
 import {
   TTSProvider,
   useWatchForAutoPlayAssistantTTSResponse,
@@ -41,7 +42,7 @@ export default function WorkspaceChat({ loading, workspace }) {
   if (loadingHistory) {
     if (hasPendingMessage) {
       return (
-        <div className="transition-all duration-500 relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full" />
+        <div className="workspace-prism-frame metacanon-page-frame transition-all duration-500 relative w-full h-full" />
       );
     }
     return <LoadingChat />;
@@ -51,13 +52,14 @@ export default function WorkspaceChat({ loading, workspace }) {
       <>
         {loading === false && !workspace && (
           <ModalWrapper isOpen={true}>
-            <div className="w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border overflow-hidden">
+            <div className="w-full max-w-2xl metacanon-modal-panel bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border overflow-hidden">
               <div className="relative p-6 border-b rounded-t border-theme-modal-border">
                 <div className="w-full flex gap-x-2 items-center">
                   <WarningCircle
                     className="text-red-500 w-6 h-6"
                     weight="fill"
                   />
+
                   <h3 className="text-xl font-semibold text-red-500 overflow-hidden overflow-ellipsis whitespace-nowrap">
                     Workspace not found
                   </h3>
@@ -80,6 +82,7 @@ export default function WorkspaceChat({ loading, workspace }) {
             </div>
           </ModalWrapper>
         )}
+
         <LoadingChat />
       </>
     );

@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import { X } from "@phosphor-icons/react";
+import { X } from "@phosphor-icons/react/dist/csr/X";
+
+import ModalWrapper from "@/components/ModalWrapper";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
 
@@ -32,8 +34,8 @@ export default function EditVariableModal({ variable, closeModal, onRefresh }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="relative w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border">
+    <ModalWrapper isOpen={true}>
+      <div className="relative w-full max-w-2xl metacanon-modal-panel bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border">
         <div className="relative p-6 border-b rounded-t border-theme-modal-border">
           <div className="w-full flex gap-x-2 items-center">
             <h3 className="text-xl font-semibold text-white overflow-hidden overflow-ellipsis whitespace-nowrap">
@@ -70,6 +72,7 @@ export default function EditVariableModal({ variable, closeModal, onRefresh }) {
                   autoComplete="off"
                   pattern="^[a-zA-Z0-9_]+$"
                 />
+
                 <p className="mt-2 text-xs text-white/60">
                   Key must be unique and will be used in prompts as {"{key}"}.
                   Only letters, numbers and underscores are allowed.
@@ -128,6 +131,6 @@ export default function EditVariableModal({ variable, closeModal, onRefresh }) {
           </form>
         </div>
       </div>
-    </div>
+    </ModalWrapper>
   );
 }

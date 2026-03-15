@@ -1,0 +1,377 @@
+.prism-hero-page {
+  position: relative;
+  min-height: 100vh;
+  color: #f5f5f5;
+  background:
+    radial-gradient(circle at top, rgba(255, 215, 0, 0.18), transparent 34%),
+    radial-gradient(circle at 80% 20%, rgba(0, 128, 128, 0.12), transparent 30%),
+    #1a1a1a;
+  overflow-x: clip;
+}
+
+.prism-hero-canvas-shell {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.prism-hero-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.prism-hero-canvas-shell::before,
+.prism-hero-canvas-shell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.prism-hero-canvas-shell::before {
+  background:
+    linear-gradient(180deg, rgba(26, 26, 26, 0.2), rgba(26, 26, 26, 0.72)),
+    radial-gradient(circle at center, transparent 0%, rgba(26, 26, 26, 0.12) 55%, rgba(26, 26, 26, 0.84) 100%);
+}
+
+.prism-hero-canvas-shell::after {
+  background:
+    linear-gradient(120deg, rgba(255, 255, 255, 0.04), transparent 28%),
+    linear-gradient(180deg, transparent 0%, rgba(26, 26, 26, 0.55) 88%, rgba(26, 26, 26, 0.9) 100%);
+  mix-blend-mode: screen;
+}
+
+.prism-hero-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.1rem 1.4rem;
+}
+
+.prism-hero-brand,
+.prism-hero-topbar a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.prism-hero-brand {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.prism-hero-brand strong {
+  font-size: 0.86rem;
+}
+
+.prism-hero-brand span {
+  font-size: 0.72rem;
+  color: rgba(245, 245, 245, 0.72);
+}
+
+.prism-hero-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.prism-hero-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.85rem 1.35rem;
+  border-radius: 999px;
+  border: 1px solid rgba(245, 245, 245, 0.16);
+  background: rgba(245, 245, 245, 0.05);
+  color: #f5f5f5;
+  font-size: 0.92rem;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease;
+  backdrop-filter: blur(12px);
+}
+
+.prism-hero-button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 215, 0, 0.45);
+  background: rgba(255, 215, 0, 0.09);
+}
+
+.prism-hero-button.is-primary {
+  border-color: rgba(255, 215, 0, 0.58);
+  background:
+    linear-gradient(135deg, rgba(255, 215, 0, 0.24), rgba(255, 215, 0, 0.08)),
+    rgba(255, 215, 0, 0.12);
+  color: #fff8d6;
+  box-shadow: 0 0 24px rgba(255, 215, 0, 0.14);
+}
+
+.prism-hero-scroll {
+  position: relative;
+  z-index: 1;
+}
+
+.prism-hero-section {
+  min-height: 100vh;
+  padding: 8rem 1.4rem 2rem;
+}
+
+.prism-hero-section--intro {
+  min-height: 190vh;
+}
+
+.prism-hero-sticky {
+  position: sticky;
+  top: 16vh;
+  width: min(1140px, 100%);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  gap: 2rem;
+  align-items: start;
+}
+
+.prism-hero-copy {
+  max-width: 620px;
+}
+
+.prism-hero-kicker {
+  margin: 0 0 1rem;
+  color: #f4d35e;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.8rem;
+}
+
+.prism-hero-title {
+  margin: 0;
+  font-family: "Inter", "Avenir Next", "Segoe UI", sans-serif;
+  font-size: clamp(3rem, 7vw, 5.8rem);
+  line-height: 0.92;
+  letter-spacing: -0.05em;
+  font-weight: 800;
+}
+
+.prism-hero-title span {
+  display: block;
+}
+
+.prism-hero-subtitle {
+  margin: 1.5rem 0 0;
+  max-width: 520px;
+  color: rgba(245, 245, 245, 0.78);
+  font-size: clamp(1rem, 1.2vw, 1.22rem);
+  line-height: 1.75;
+}
+
+.prism-hero-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  margin-top: 2rem;
+}
+
+.prism-hero-meta {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 2rem;
+}
+
+.prism-hero-stat {
+  padding-top: 0.8rem;
+  border-top: 1px solid rgba(245, 245, 245, 0.14);
+}
+
+.prism-hero-stat strong {
+  display: block;
+  font-size: 1rem;
+}
+
+.prism-hero-stat span {
+  display: block;
+  margin-top: 0.35rem;
+  color: rgba(245, 245, 245, 0.7);
+  font-size: 0.88rem;
+}
+
+.prism-hero-card {
+  padding: 1.4rem;
+  border: 1px solid rgba(245, 245, 245, 0.14);
+  border-radius: 24px;
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
+    rgba(36, 36, 36, 0.72);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.22);
+}
+
+.prism-hero-card h2,
+.prism-hero-grid-card h2 {
+  margin: 0 0 0.85rem;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(245, 245, 245, 0.92);
+}
+
+.prism-hero-card p,
+.prism-hero-grid-card p {
+  margin: 0;
+  color: rgba(245, 245, 245, 0.74);
+  line-height: 1.7;
+}
+
+.prism-hero-list {
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+}
+
+.prism-hero-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.78rem 0;
+  border-bottom: 1px solid rgba(245, 245, 245, 0.08);
+  color: rgba(245, 245, 245, 0.74);
+}
+
+.prism-hero-list li span {
+  color: #f5f5f5;
+}
+
+.prism-hero-grid {
+  width: min(1140px, 100%);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.2rem;
+}
+
+.prism-hero-grid-card {
+  min-height: 300px;
+  padding: 1.6rem;
+  border-radius: 28px;
+  border: 1px solid rgba(245, 245, 245, 0.12);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.015)),
+    rgba(36, 36, 36, 0.7);
+  backdrop-filter: blur(16px);
+}
+
+.prism-hero-grid-card h3 {
+  margin: 0 0 0.75rem;
+  font-size: 1.55rem;
+  letter-spacing: -0.03em;
+}
+
+.prism-hero-grid-card small {
+  display: inline-block;
+  margin-top: 1rem;
+  color: #f4d35e;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.prism-hero-footer {
+  width: min(1140px, 100%);
+  margin: 0 auto;
+  padding: 0 0 5rem;
+  color: rgba(245, 245, 245, 0.6);
+  font-size: 0.92rem;
+}
+
+.prism-hero-fallback {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at center, rgba(255, 215, 0, 0.28), transparent 28%),
+    radial-gradient(circle at center, rgba(255, 215, 0, 0.18), transparent 48%);
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+
+.prism-hero-fallback.is-visible {
+  opacity: 1;
+}
+
+@media (max-width: 960px) {
+  .prism-hero-topbar {
+    padding: 1rem;
+  }
+
+  .prism-hero-nav {
+    gap: 0.55rem;
+  }
+
+  .prism-hero-button {
+    min-height: 40px;
+    padding: 0.7rem 1rem;
+    font-size: 0.86rem;
+  }
+
+  .prism-hero-sticky,
+  .prism-hero-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .prism-hero-card {
+    max-width: 420px;
+  }
+
+  .prism-hero-meta {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .prism-hero-topbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .prism-hero-section {
+    padding: 8.75rem 1rem 1.5rem;
+  }
+
+  .prism-hero-section--intro {
+    min-height: 160vh;
+  }
+
+  .prism-hero-sticky {
+    top: 14vh;
+    gap: 1.2rem;
+  }
+
+  .prism-hero-title {
+    font-size: clamp(2.7rem, 16vw, 4rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .prism-hero-page {
+    scroll-behavior: auto;
+  }
+
+  .prism-hero-button {
+    transition: none;
+  }
+
+  .prism-hero-button:hover {
+    transform: none;
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "anythingllm-sovereign-desktop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "PrismAI desktop wrapper with Prism branding and local-first defaults.",
+  "packageManager": "yarn@1.22.22",
+  "scripts": {
+    "prepare:core": "node ./scripts/prepare-core.mjs",
+    "audit:macos": "node ./scripts/audit-macos-artifact.mjs",
+    "build:dmg": "./scripts/build-installer-dmg.sh",
+    "sign:macos": "node ./scripts/sign-macos-app.mjs",
+    "release:macos": "node ./scripts/release-macos.mjs",
+    "release:macos:verify": "node ./scripts/release-macos.mjs --ad-hoc",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build --bundles app",
+    "dev": "npm run tauri:dev",
+    "build": "npm run tauri:build"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^1.6.3"
+  }
+}

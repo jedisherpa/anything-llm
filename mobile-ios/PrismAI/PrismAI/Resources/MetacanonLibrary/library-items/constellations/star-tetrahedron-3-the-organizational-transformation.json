@@ -1,0 +1,80 @@
+{
+  "id": "star-tetrahedron-3-the-organizational-transformation",
+  "name": "Star Tetrahedron 3: The \"Organizational Transformation\"",
+  "title": "Organizational Transformation Engine",
+  "displayTitle": "Organizational Transformation Engine",
+  "handle": "@constellation-star-tetrahedron-3-the-organizational-transformation",
+  "type": "Star Tetrahedron",
+  "purpose": "To design and execute a significant organizational transformation — a restructuring, cultural shift, or strategic pivot.",
+  "projectManager": "/home/ubuntu/councils/project-managers-board/08_Scenario_Planning_Strategist_Lens.md",
+  "projectManagerRelativePath": "councils/project-managers-board/08_Scenario_Planning_Strategist_Lens.md",
+  "projectManagerId": "project-managers-board-08-scenario-planning-strategist-lens",
+  "projectManagerHandle": "@mc-project-managers-board-08-scenario-planning-strategist-lens",
+  "projectManagerTitle": "The Scenario Planner",
+  "members": [
+    {
+      "role": "The Wartime CEO",
+      "lens_path": "/home/ubuntu/councils/org-builder-board/02_Hard_Things_And_Wartime_CEO_Lens.docx",
+      "displayRole": "The Wartime CEO",
+      "relativePath": "councils/org-builder-board/02_Hard_Things_And_Wartime_CEO_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    },
+    {
+      "role": "The Culture Architect",
+      "lens_path": "/home/ubuntu/councils/org-builder-board/04_Customer_Service_And_Company_Culture_Lens.docx",
+      "displayRole": "The Culture Architect",
+      "relativePath": "councils/org-builder-board/04_Customer_Service_And_Company_Culture_Lens.md",
+      "lensId": "org-builder-board-04-customer-service-and-company-culture-lens",
+      "lensHandle": "@mc-org-builder-board-04-customer-service-and-company-culture-lens",
+      "lensTitle": "The Culture Architect"
+    },
+    {
+      "role": "The High-Output Manager",
+      "lens_path": "/home/ubuntu/councils/org-builder-board/01_High_Output_Management_And_OKRs_Lens.docx",
+      "displayRole": "The High-Output Manager",
+      "relativePath": "councils/org-builder-board/01_High_Output_Management_And_OKRs_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    },
+    {
+      "role": "The Lean Experimenter",
+      "lens_path": "/home/ubuntu/councils/org-builder-board/06_Lean_Startup_And_Validated_Learning_Lens.docx",
+      "displayRole": "The Lean Experimenter",
+      "relativePath": "councils/org-builder-board/06_Lean_Startup_And_Validated_Learning_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    },
+    {
+      "role": "The Servant Leader",
+      "lens_path": "/home/ubuntu/councils/project-managers-board/07_Servant_Leadership_Facilitator_Lens.md",
+      "displayRole": "The Servant Leader",
+      "relativePath": "councils/project-managers-board/07_Servant_Leadership_Facilitator_Lens.md",
+      "lensId": "project-managers-board-07-servant-leadership-facilitator-lens",
+      "lensHandle": "@mc-project-managers-board-07-servant-leadership-facilitator-lens",
+      "lensTitle": "The Servant Leader"
+    },
+    {
+      "role": "The Ethical Boundary",
+      "lens_path": "/home/ubuntu/councils/pauls-board/06_Human_Dignity_And_Ethical_Boundary_Lens.docx",
+      "displayRole": "The Ethical Boundary",
+      "relativePath": "councils/pauls-board/06_Human_Dignity_And_Ethical_Boundary_Lens.md",
+      "lensId": "pauls-board-06-human-dignity-and-ethical-boundary-lens",
+      "lensHandle": "@mc-pauls-board-06-human-dignity-and-ethical-boundary-lens",
+      "lensTitle": "The Ethical Boundary"
+    },
+    {
+      "role": "The Long-Term Thinker",
+      "lens_path": "/home/ubuntu/councils/pauls-board/10_Leverage_Incentives_And_Long_Term_Thinking_Lens.docx",
+      "displayRole": "The Long-Term Thinker",
+      "relativePath": "councils/pauls-board/10_Leverage_Incentives_And_Long_Term_Thinking_Lens.md",
+      "lensId": "pauls-board-10-leverage-incentives-and-long-term-thinking-lens",
+      "lensHandle": "@mc-pauls-board-10-leverage-incentives-and-long-term-thinking-lens",
+      "lensTitle": "The Long-Term Thinker"
+    }
+  ],
+  "relativePath": "constellations/star-tetrahedron-3-organizational-transformation.json"
+}

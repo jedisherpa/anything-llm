@@ -1,6 +1,8 @@
 import React, { useState, useEffect, memo } from "react";
 import truncate from "truncate";
-import { CheckCircle, XCircle } from "@phosphor-icons/react";
+import { CheckCircle } from "@phosphor-icons/react/dist/csr/CheckCircle";
+import { XCircle } from "@phosphor-icons/react/dist/csr/XCircle";
+
 import Workspace from "../../../../../../models/workspace";
 import { humanFileSize, milliToHms } from "../../../../../../utils/numbers";
 import PreLoader from "../../../../../Preloader";

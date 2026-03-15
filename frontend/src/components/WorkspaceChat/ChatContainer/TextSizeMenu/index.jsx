@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useMemo } from "react";
-import { SlidersHorizontal } from "@phosphor-icons/react";
+import { SlidersHorizontal } from "@phosphor-icons/react/dist/csr/SlidersHorizontal";
+
 import useLoginMode from "@/hooks/useLoginMode";
 import { useTranslation } from "react-i18next";
 

@@ -8,7 +8,8 @@
 import { useState } from "react";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
-import { Warning } from "@phosphor-icons/react";
+import { Warning } from "@phosphor-icons/react/dist/csr/Warning";
+
 import { Tooltip } from "react-tooltip";
 
 export default function DrupalWikiOptions() {
@@ -130,6 +131,7 @@ export default function DrupalWikiOptions() {
                       data-tooltip-id="access-token-tooltip"
                       data-tooltip-place="right"
                     />
+
                     <Tooltip
                       delayHide={300}
                       id="access-token-tooltip"

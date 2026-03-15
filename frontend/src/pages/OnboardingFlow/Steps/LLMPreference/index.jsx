@@ -1,4 +1,4 @@
-import { MagnifyingGlass } from "@phosphor-icons/react";
+import { MagnifyingGlass } from "@phosphor-icons/react/dist/csr/MagnifyingGlass";
 import { useEffect, useState, useRef } from "react";
 import OpenAiLogo from "@/media/llmprovider/openai.png";
 import GenericOpenAiLogo from "@/media/llmprovider/generic-openai.png";
@@ -425,6 +425,7 @@ export default function LLMPreference({
                 weight="bold"
                 className="absolute left-4 z-30 text-theme-text-primary"
               />
+
               <input
                 type="text"
                 placeholder="Search LLM providers"

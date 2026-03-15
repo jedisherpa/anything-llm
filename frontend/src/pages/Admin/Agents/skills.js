@@ -2,13 +2,12 @@ import AgentWebSearchSelection from "./WebSearchSelection";
 import AgentSQLConnectorSelection from "./SQLConnectorSelection";
 import GenericSkillPanel from "./GenericSkillPanel";
 import DefaultSkillPanel from "./DefaultSkillPanel";
-import {
-  Brain,
-  File,
-  Browser,
-  ChartBar,
-  FileMagnifyingGlass,
-} from "@phosphor-icons/react";
+import { Brain } from "@phosphor-icons/react/dist/csr/Brain";
+import { File } from "@phosphor-icons/react/dist/csr/File";
+import { Browser } from "@phosphor-icons/react/dist/csr/Browser";
+import { ChartBar } from "@phosphor-icons/react/dist/csr/ChartBar";
+import { FileMagnifyingGlass } from "@phosphor-icons/react/dist/csr/FileMagnifyingGlass";
+
 import RAGImage from "@/media/agents/rag-memory.png";
 import SummarizeImage from "@/media/agents/view-summarize.png";
 import ScrapeWebsitesImage from "@/media/agents/scrape-websites.png";

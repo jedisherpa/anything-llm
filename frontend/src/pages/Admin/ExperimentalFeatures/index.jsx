@@ -3,7 +3,9 @@ import Sidebar from "@/components/SettingsSidebar";
 import { isMobile } from "react-device-detect";
 import Admin from "@/models/admin";
 import { FullScreenLoader } from "@/components/Preloader";
-import { CaretRight, Flask } from "@phosphor-icons/react";
+import { CaretRight } from "@phosphor-icons/react/dist/csr/CaretRight";
+import { Flask } from "@phosphor-icons/react/dist/csr/Flask";
+
 import { configurableFeatures } from "./features";
 import ModalWrapper from "@/components/ModalWrapper";
 import paths from "@/utils/paths";
@@ -108,7 +110,7 @@ function FeatureLayout({ children }) {
   return (
     <div
       id="workspace-feature-settings-container"
-      className="w-screen h-screen overflow-hidden bg-theme-bg-container flex md:mt-0 mt-6"
+      className="metacanon-page-shell w-screen h-screen overflow-hidden bg-theme-bg-container flex md:mt-0 mt-6"
     >
       <Sidebar />
       <div
@@ -200,7 +202,7 @@ function FeatureVerification({ children }) {
     return (
       <>
         <ModalWrapper isOpen={true}>
-          <div className="w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border overflow-hidden">
+          <div className="w-full max-w-2xl metacanon-modal-panel bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border overflow-hidden">
             <div className="relative p-6 border-b rounded-t border-theme-modal-border">
               <div className="flex items-center gap-2">
                 <Flask size={24} className="text-theme-text-primary" />

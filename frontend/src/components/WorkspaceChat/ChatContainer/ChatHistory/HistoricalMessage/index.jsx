@@ -1,5 +1,7 @@
 import React, { memo, useEffect, useRef, useState } from "react";
-import { Info, Warning } from "@phosphor-icons/react";
+import { Info } from "@phosphor-icons/react/dist/csr/Info";
+import { Warning } from "@phosphor-icons/react/dist/csr/Warning";
+
 import Actions from "./Actions";
 import renderMarkdown from "@/utils/chat/markdown";
 import Citations from "../Citation";
@@ -100,6 +102,7 @@ const HistoricalMessage = ({
                 message={message}
                 messageId={uuid}
               />
+
               <ChatAttachments attachments={attachments} />
             </TruncatableContent>
           </div>
@@ -155,15 +158,18 @@ const HistoricalMessage = ({
                 </div>
               </Link>
             )}
+
             <ChatAttachments attachments={attachments} />
           </div>
         )}
+
         <div className="flex items-start md:items-center gap-x-1">
           <TTSMessage
             slug={workspace?.slug}
             chatId={chatId}
             message={message}
           />
+
           <Actions
             message={message}
             feedbackScore={feedbackScore}
@@ -246,6 +252,7 @@ function TruncatableContent({ children }) {
                   "linear-gradient(180deg, rgba(39, 39, 42, 0.00) 0%, rgba(39, 39, 42, 0.65) 50%, #27272A 100%)",
               }}
             />
+
             <div
               className="absolute bottom-0 left-0 right-0 h-[36px] hidden light:block pointer-events-none"
               style={{
@@ -281,6 +288,7 @@ const RenderChatContent = memo(
           }}
         />
       );
+
     let thoughtChain = null;
     let msgToRender = message;
     if (!message) return null;
@@ -308,6 +316,7 @@ const RenderChatContent = memo(
         {thoughtChain && (
           <ThoughtChainComponent content={thoughtChain} messageId={messageId} />
         )}
+
         <span
           className="flex flex-col gap-y-1 text-white light:text-slate-900"
           dangerouslySetInnerHTML={{

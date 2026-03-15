@@ -1,10 +1,21 @@
 import { toast } from "react-toastify";
+import { signalPrismError } from "@/utils/prism/events";
+
+const LIGHT_THEMES = new Set(["light"]);
 
 // Additional Configs (opts)
 // You can also pass valid ReactToast params to override the defaults.
 // clear: false, // Will dismiss all visible toasts before rendering next toast
 const showToast = (message, type = "default", opts = {}) => {
-  const theme = localStorage?.getItem("theme") || "default";
+  const storedTheme = localStorage?.getItem("theme") || "dark";
+  const resolvedTheme =
+    storedTheme === "system"
+      ? window?.matchMedia?.("(prefers-color-scheme: light)")?.matches
+        ? "light"
+        : "dark"
+      : storedTheme === "sanctuary"
+        ? "light"
+        : storedTheme;
   const options = {
     position: "bottom-center",
     autoClose: 5000,
@@ -12,7 +23,7 @@ const showToast = (message, type = "default", opts = {}) => {
     closeOnClick: true,
     pauseOnHover: true,
     draggable: true,
-    theme: theme === "default" ? "dark" : "light",
+    theme: LIGHT_THEMES.has(resolvedTheme) ? "light" : "dark",
     ...opts,
   };
 
@@ -23,6 +34,7 @@ const showToast = (message, type = "default", opts = {}) => {
       toast.success(message, options);
       break;
     case "error":
+      signalPrismError({ source: "toast", message });
       toast.error(message, options);
       break;
     case "info":

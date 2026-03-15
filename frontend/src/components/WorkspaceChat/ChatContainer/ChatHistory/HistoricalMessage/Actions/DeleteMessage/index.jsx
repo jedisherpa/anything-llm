@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Trash } from "@phosphor-icons/react";
+import { Trash } from "@phosphor-icons/react/dist/csr/Trash";
+
 import Workspace from "@/models/workspace";
 
 const DELETE_EVENT = "delete-message";

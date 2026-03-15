@@ -4,7 +4,10 @@ import System from "@/models/system";
 import Appearance from "@/models/appearance";
 import { AUTH_USER } from "@/utils/constants";
 import showToast from "@/utils/toast";
-import { Info, Plus, X } from "@phosphor-icons/react";
+import { Info } from "@phosphor-icons/react/dist/csr/Info";
+import { Plus } from "@phosphor-icons/react/dist/csr/Plus";
+import { X } from "@phosphor-icons/react/dist/csr/X";
+
 import ModalWrapper from "@/components/ModalWrapper";
 import { useTheme } from "@/hooks/useTheme";
 import { useTranslation } from "react-i18next";
@@ -77,7 +80,7 @@ export default function AccountModal({ user, hideModal }) {
   };
   return (
     <ModalWrapper isOpen={true}>
-      <div className="w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border overflow-hidden">
+      <div className="w-full max-w-2xl metacanon-modal-panel bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border overflow-hidden">
         <div className="relative p-6 border-b rounded-t border-theme-modal-border">
           <div className="w-full flex gap-x-2 items-center">
             <h3 className="text-xl font-semibold text-white overflow-hidden overflow-ellipsis whitespace-nowrap">
@@ -107,6 +110,7 @@ export default function AccountModal({ user, hideModal }) {
                     className="hidden"
                     onChange={handleFileUpload}
                   />
+
                   {pfp ? (
                     <img
                       src={pfp}
@@ -156,6 +160,7 @@ export default function AccountModal({ user, hideModal }) {
                   required
                   autoComplete="off"
                 />
+
                 <p className="mt-2 text-xs text-white/60">
                   {t("common.username_requirements")}
                 </p>
@@ -174,6 +179,7 @@ export default function AccountModal({ user, hideModal }) {
                   placeholder={`${user.username}'s new password`}
                   minLength={8}
                 />
+
                 <p className="mt-2 text-xs text-white/60">
                   {t("profile_settings.password_description")}
                 </p>
@@ -367,6 +373,7 @@ function AutoSpeakPreference() {
         enabled={autoPlayAssistantTtsResponse}
         onChange={handleChange}
       />
+
       <Tooltip
         id="auto-speak-info"
         place="bottom"

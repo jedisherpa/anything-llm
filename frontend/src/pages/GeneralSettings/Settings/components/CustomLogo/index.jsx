@@ -2,7 +2,8 @@ import useLogo from "@/hooks/useLogo";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
 import { useEffect, useRef, useState } from "react";
-import { Plus } from "@phosphor-icons/react";
+import { Plus } from "@phosphor-icons/react/dist/csr/Plus";
+
 import { useTranslation } from "react-i18next";
 
 export default function CustomLogo() {
@@ -90,6 +91,7 @@ export default function CustomLogo() {
                 className="hidden"
                 onChange={handleFileUpload}
               />
+
               <div
                 className="w-80 py-4 bg-theme-settings-input-bg rounded-2xl border-2 border-dashed border-theme-text-secondary border-opacity-60 justify-center items-center inline-flex cursor-pointer"
                 htmlFor="logo-upload"
@@ -134,6 +136,7 @@ export default function CustomLogo() {
                 onChange={handleFileUpload}
                 ref={fileInputRef}
               />
+
               <button
                 onClick={handleRemoveLogo}
                 className="text-[#FFFFFF] text-base font-medium hover:text-opacity-60 mx-2"

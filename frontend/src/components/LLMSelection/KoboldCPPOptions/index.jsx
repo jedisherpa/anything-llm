@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import System from "@/models/system";
 import PreLoader from "@/components/Preloader";
 import { KOBOLDCPP_COMMON_URLS } from "@/utils/constants";
-import { CaretDown, CaretUp } from "@phosphor-icons/react";
+import { CaretDown } from "@phosphor-icons/react/dist/csr/CaretDown";
+import { CaretUp } from "@phosphor-icons/react/dist/csr/CaretUp";
+
 import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
 
 export default function KoboldCPPOptions({ settings }) {
@@ -41,6 +43,7 @@ export default function KoboldCPPOptions({ settings }) {
           settings={settings}
           basePath={basePath.value}
         />
+
         <div className="flex flex-col w-60">
           <label className="text-white text-sm font-semibold block mb-2">
             Model context window
@@ -57,6 +60,7 @@ export default function KoboldCPPOptions({ settings }) {
             required={true}
             autoComplete="off"
           />
+
           <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
             Maximum number of tokens for context and response.
           </p>
@@ -77,6 +81,7 @@ export default function KoboldCPPOptions({ settings }) {
             required={true}
             autoComplete="off"
           />
+
           <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
             Maximum number of tokens for the response.
           </p>
@@ -133,6 +138,7 @@ export default function KoboldCPPOptions({ settings }) {
               onChange={basePath.onChange}
               onBlur={basePath.onBlur}
             />
+
             <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
               Enter the URL where KoboldCPP is running.
             </p>

@@ -6,7 +6,22 @@ const {
 const { User } = require("../../models/user");
 const { WorkspaceChats } = require("../../models/workspaceChats");
 const { safeJsonParse } = require("../http");
-const { USER_AGENT, WORKSPACE_AGENT } = require("./defaults");
+const {
+    USER_AGENT,
+    WORKSPACE_AGENT,
+    getLensAgentDefinitions,
+    getImportedLensDefinition,
+  } = require("./defaults");
+const {
+  LENS_DELIBERATION_OVERVIEW,
+} = require("./aibitat/prompts/lensAgents");
+const {
+    METACANON_COUNCIL_HANDLE,
+    getConstellationByHandle,
+    getConstellationExecutionPlan,
+    getImportedLensByHandle,
+    parseCouncilPackPrompt,
+  } = require("./metacanon/library");
 const ImportedPlugin = require("./imported");
 const { AgentFlows } = require("../agentFlows");
 const MCPCompatibilityLayer = require("../MCP");
@@ -19,6 +34,7 @@ class AgentHandler {
   channel = null;
   provider = null;
   model = null;
+  sharedFunctions = [];
 
   constructor({ uuid }) {
     this.#invocationUUID = uuid;
@@ -431,6 +447,309 @@ class AgentHandler {
     return callOpts;
   }
 
+  resolveFunctionName(pluginName = "") {
+    if (!pluginName.includes("#") && !pluginName.startsWith("@@"))
+      return pluginName;
+    if (pluginName.startsWith("@@")) return pluginName.replace("@@", "");
+    return pluginName.split("#")[1];
+  }
+
+  agentFunctionsForConfig(config = {}) {
+    return config.functions
+      ?.map((name) => this.aibitat.functions.get(this.resolveFunctionName(name)))
+      .filter((fn) => !!fn);
+  }
+
+  /**
+   * Replace a placeholder function reference with one or many resolved names
+   * across all loaded agents that include the placeholder.
+   * @param {string} oldName
+   * @param {string|string[]} replacementNames
+   */
+  replaceAgentFunctionReference(oldName = "", replacementNames = []) {
+    if (!oldName || !this.aibitat) return;
+    const replacements = Array.isArray(replacementNames)
+      ? replacementNames
+      : [replacementNames];
+
+    this.aibitat.agents.forEach((config, agentName) => {
+      if (!Array.isArray(config?.functions)) return;
+      if (!config.functions.includes(oldName)) return;
+
+      const nextFunctions = config.functions.filter((fn) => fn !== oldName);
+      replacements.forEach((fn) => {
+        if (!fn || nextFunctions.includes(fn)) return;
+        nextFunctions.push(fn);
+      });
+
+      this.aibitat.agents.set(agentName, {
+        ...config,
+        functions: nextFunctions,
+      });
+    });
+  }
+
+  /**
+   * If a specific preloaded lens handle is present in the invocation prompt,
+   * route the initial turn directly to that lens agent.
+   * @param {string} prompt
+   */
+  setInitialChannelFromPrompt(prompt = "") {
+    const agentHandles = WorkspaceAgentInvocation.parseAgents(prompt);
+    const explicitHandle = agentHandles.find((handle) => handle !== WORKSPACE_AGENT.name);
+    if (!explicitHandle || !this.aibitat?.agents?.get(explicitHandle)) {
+      this.channel = null;
+      return;
+    }
+
+    this.channel = explicitHandle;
+    this.log(`Routing agent session directly to ${explicitHandle}`);
+  }
+
+  stripInvocationHandles(prompt = "") {
+    const tokens = String(prompt || "")
+      .trim()
+      .split(/\s+/);
+    while (tokens.length && tokens[0].startsWith("@")) tokens.shift();
+    return tokens.join(" ").trim();
+  }
+
+  shouldRunLensDeliberation(prompt = "") {
+    const handles = WorkspaceAgentInvocation.parseAgents(prompt);
+    return handles.length === 1 && handles[0] === WORKSPACE_AGENT.name;
+  }
+
+  shouldRunMetacanonConstellation(prompt = "") {
+    const handles = WorkspaceAgentInvocation.parseAgents(prompt);
+    return handles.length > 0 && !!getConstellationByHandle(handles[0]);
+  }
+
+  shouldRunCouncilPack(prompt = "") {
+    const handles = WorkspaceAgentInvocation.parseAgents(prompt);
+    return handles.length > 0 && handles[0] === METACANON_COUNCIL_HANDLE;
+  }
+
+  ensureImportedLensAgentLoaded(handle = "") {
+    const normalizedHandle = String(handle || "").toLowerCase();
+    if (!normalizedHandle || this.aibitat?.agents?.has(normalizedHandle)) return;
+
+    const definition = getImportedLensDefinition(
+      normalizedHandle,
+      this.sharedFunctions
+    );
+    if (!definition) return;
+    this.aibitat.agent(definition.name, definition.definition);
+  }
+
+  ensurePromptHandlesLoaded(prompt = "") {
+    const handles = WorkspaceAgentInvocation.parseAgents(prompt).filter((handle) =>
+      Boolean(getImportedLensByHandle(handle))
+    );
+    handles.forEach((handle) => this.ensureImportedLensAgentLoaded(handle));
+  }
+
+  async executeLensAgent(handle = "", input = "") {
+    this.ensureImportedLensAgentLoaded(handle);
+    const agentConfig = this.aibitat.getAgentConfig(handle);
+    if (!agentConfig) throw new Error(`Lens ${handle} is not available.`);
+    const provider = this.aibitat.getProviderForConfig({
+      ...this.aibitat.defaultProvider,
+      ...agentConfig,
+    });
+    provider.attachHandlerProps(this.aibitat.handlerProps);
+    const functions = this.agentFunctionsForConfig(agentConfig);
+    const messages = [
+      { role: "system", content: agentConfig.role },
+      { role: "user", content: input },
+    ];
+    return await this.aibitat.handleExecution(
+      provider,
+      messages,
+      functions,
+      handle
+    );
+  }
+
+  async runMetacanonConstellation(prompt = "") {
+    const handles = WorkspaceAgentInvocation.parseAgents(prompt);
+    const constellationHandle = handles[0];
+    const executionPlan = getConstellationExecutionPlan(constellationHandle);
+    const userQuery = this.stripInvocationHandles(prompt) || prompt;
+
+    if (!executionPlan) {
+      throw new Error(`Constellation ${constellationHandle} could not be resolved.`);
+    }
+
+    const { constellation, projectManager, members } = executionPlan;
+    executionPlan.handles.forEach((handle) =>
+      this.ensureImportedLensAgentLoaded(handle)
+    );
+
+    this.aibitat.newMessage({
+      from: USER_AGENT.name,
+      to: WORKSPACE_AGENT.name,
+      content: prompt,
+    });
+
+    this.aibitat.introspect?.(
+      `Metacanon constellation engaged: ${constellation.name}.`
+    );
+    this.aibitat.introspect?.(
+      `Purpose: ${constellation.purpose || "Run a coordinated multi-lens analysis."}`
+    );
+
+    let orchestrationBrief = "";
+    if (projectManager?.handle) {
+      this.aibitat.introspect?.(
+        `Project manager briefing: ${projectManager.title}.`
+      );
+      orchestrationBrief = await this.executeLensAgent(
+        projectManager.handle,
+        `Constellation: ${constellation.name}\nPurpose: ${constellation.purpose}\nUser query:\n${userQuery}\n\nTask: As the project manager, create a concise orchestration brief for this constellation. Specify the key tensions to examine, the most important questions to answer, and what a strong final output should contain.`
+      );
+    }
+
+    const memberOutputs = [];
+    for (const member of members) {
+      this.aibitat.introspect?.(`Running ${member.role}.`);
+      const result = await this.executeLensAgent(
+        member.lens.handle,
+        `Constellation: ${constellation.name}\nPurpose: ${constellation.purpose}\nAssigned role: ${member.role}\nUser query:\n${userQuery}\n\nProject manager brief:\n${orchestrationBrief || "No explicit orchestration brief provided."}\n\nTask: Respond from this lens with a concise analysis, recommendations, blind spots, and 1-3 clarification questions.`
+      );
+      memberOutputs.push({
+        role: member.role,
+        handle: member.lens.handle,
+        title: member.lens.title,
+        content: result,
+      });
+    }
+
+    const finalHandle = projectManager?.handle || "@prism";
+    const finalLabel = projectManager?.title || "Prism";
+    this.aibitat.introspect?.(`Synthesizing via ${finalLabel}.`);
+    const finalResponse = await this.executeLensAgent(
+      finalHandle,
+      `Constellation: ${constellation.name}\nPurpose: ${constellation.purpose}\nUser query:\n${userQuery}\n\nProject manager brief:\n${orchestrationBrief || "No explicit orchestration brief provided."}\n\nMember outputs:\n${memberOutputs
+        .map(
+          (output) =>
+            `[${output.role} | ${output.title}]\n${output.content}`
+        )
+        .join("\n\n")}\n\nTask: Produce the final response for the user. Integrate the constellation's perspectives into one coherent answer with practical guidance, meaningful blind spots, and end with human clarification questions.`
+    );
+
+    this.aibitat.newMessage({
+      from: finalHandle,
+      to: USER_AGENT.name,
+      content: finalResponse,
+    });
+    this.aibitat.terminate(USER_AGENT.name);
+    return this.aibitat;
+  }
+
+  async runCouncilPack(prompt = "") {
+    const { packName, handles, userQuery } = parseCouncilPackPrompt(prompt);
+    handles.forEach((handle) => this.ensureImportedLensAgentLoaded(handle));
+    const resolvedHandles = handles.filter((handle) =>
+      this.aibitat?.agents?.has(handle)
+    );
+
+    if (resolvedHandles.length === 0) {
+      throw new Error("Council pack did not include any valid lens handles.");
+    }
+
+    this.aibitat.newMessage({
+      from: USER_AGENT.name,
+      to: WORKSPACE_AGENT.name,
+      content: prompt,
+    });
+
+    this.aibitat.introspect?.(`Council pack engaged: ${packName}.`);
+    const councilOutputs = [];
+
+    for (const handle of resolvedHandles) {
+      const lens = this.aibitat.getAgentConfig(handle);
+      const label = lens?.lensTitle || handle;
+      this.aibitat.introspect?.(`Running ${label}.`);
+      const result = await this.executeLensAgent(
+        handle,
+        `Council pack: ${packName}\nUser query:\n${userQuery || this.stripInvocationHandles(prompt)}\n\nPrior council outputs:\n${councilOutputs
+          .map((output) => `[${output.label}]\n${output.content}`)
+          .join("\n\n") || "None yet."}\n\nTask: Contribute this lens's perspective concisely. Include analysis, recommendations, blind spots, and 1-3 clarification questions.`
+      );
+      councilOutputs.push({ handle, label, content: result });
+    }
+
+    const synthesisHandle = resolvedHandles.includes("@prism")
+      ? "@prism"
+      : "@prism";
+    this.aibitat.introspect?.("Synthesizing council pack output.");
+    const finalResponse = await this.executeLensAgent(
+      synthesisHandle,
+      `Council pack: ${packName}\nUser query:\n${userQuery || this.stripInvocationHandles(prompt)}\n\nCouncil outputs:\n${councilOutputs
+        .map((output) => `[${output.label}]\n${output.content}`)
+        .join("\n\n")}\n\nTask: Produce one unified final response for the user. Keep it structured, practical, and end with human clarification questions.`
+    );
+
+    this.aibitat.newMessage({
+      from: synthesisHandle,
+      to: USER_AGENT.name,
+      content: finalResponse,
+    });
+    this.aibitat.terminate(USER_AGENT.name);
+    return this.aibitat;
+  }
+
+  async runLensDeliberation(prompt = "") {
+    const userQuery = this.stripInvocationHandles(prompt) || prompt;
+
+    // Preserve the original invocation as the user message in chat history.
+    this.aibitat.newMessage({
+      from: USER_AGENT.name,
+      to: WORKSPACE_AGENT.name,
+      content: prompt,
+    });
+
+    this.aibitat.introspect?.("Lens deliberation engine engaged.");
+    this.aibitat.introspect?.(LENS_DELIBERATION_OVERVIEW);
+    this.aibitat.introspect?.("Running Watcher scan.");
+    const watcher = await this.executeLensAgent(
+      "@watcher",
+      `User query:\n${userQuery}\n\nTask: Provide a concise vigilance report covering risk patterns, safety/compliance concerns, likely blind spots, and 1-3 clarification questions.`
+    );
+
+    this.aibitat.introspect?.("Running Auditor review.");
+    const auditor = await this.executeLensAgent(
+      "@auditor",
+      `User query:\n${userQuery}\n\nWatcher report:\n${watcher}\n\nTask: Audit for integrity, alignment, policy boundaries, and material-impact flags. Provide calibrated findings, blind spots, and 1-3 clarification questions.`
+    );
+
+    this.aibitat.introspect?.("Running Synthesizer expansion.");
+    const synthesizer = await this.executeLensAgent(
+      "@synthesizer",
+      `User query:\n${userQuery}\n\nWatcher report:\n${watcher}\n\nAuditor report:\n${auditor}\n\nTask: Generate concise, context-aware options and second-order consequences. Include blind spots and 1-3 clarification questions.`
+    );
+
+    this.aibitat.introspect?.("Running Torus integration.");
+    const torus = await this.executeLensAgent(
+      "@torus",
+      `User query:\n${userQuery}\n\nCouncil inputs:\n[Watcher]\n${watcher}\n\n[Auditor]\n${auditor}\n\n[Synthesizer]\n${synthesizer}\n\nTask: Integrate these analyses topologically into a coherent synthesis with variance-aware confidence statements, blind spots, and 1-3 clarification questions.`
+    );
+
+    this.aibitat.introspect?.("Running Prism unification.");
+    const prism = await this.executeLensAgent(
+      "@prism",
+      `User query:\n${userQuery}\n\nIntegrated inputs:\n[Watcher]\n${watcher}\n\n[Auditor]\n${auditor}\n\n[Synthesizer]\n${synthesizer}\n\n[Torus]\n${torus}\n\nTask: Produce one clear final response in a unified voice. Keep it concise but thorough. Include: integrated view, options, blind spots, and end with human clarification questions.`
+    );
+
+    this.aibitat.newMessage({
+      from: "@prism",
+      to: USER_AGENT.name,
+      content: prism,
+    });
+    this.aibitat.terminate(USER_AGENT.name);
+    return this.aibitat;
+  }
+
   async #attachPlugins(args) {
     for (const name of this.#funcsToLoad) {
       // Load child plugin
@@ -478,10 +797,7 @@ class AgentHandler {
           continue;
         }
 
-        this.aibitat.agents.get("@agent").functions = this.aibitat.agents
-          .get("@agent")
-          .functions.filter((f) => f !== name);
-        this.aibitat.agents.get("@agent").functions.push(plugin.name);
+        this.replaceAgentFunctionReference(name, plugin.name);
 
         this.aibitat.use(plugin.plugin());
         this.log(
@@ -510,13 +826,10 @@ class AgentHandler {
           continue;
         }
 
-        // Remove the old function from the agent functions directly
-        // and push the new ones onto the end of the array so that they are loaded properly.
-        this.aibitat.agents.get("@agent").functions = this.aibitat.agents
-          .get("@agent")
-          .functions.filter((f) => f.name !== name);
-        for (const plugin of plugins)
-          this.aibitat.agents.get("@agent").functions.push(plugin.name);
+        this.replaceAgentFunctionReference(
+          name,
+          plugins.map((plugin) => plugin.name)
+        );
 
         plugins.forEach((plugin) => {
           this.aibitat.use(plugin.plugin());
@@ -578,12 +891,17 @@ class AgentHandler {
       this.invocation.workspace,
       user
     );
+    const sharedFunctions = [...(workspaceAgentDef?.functions || [])];
+    this.sharedFunctions = sharedFunctions;
 
     this.aibitat.agent(USER_AGENT.name, userAgentDef);
     this.aibitat.agent(WORKSPACE_AGENT.name, workspaceAgentDef);
+    getLensAgentDefinitions(sharedFunctions).forEach(({ name, definition }) => {
+      this.aibitat.agent(name, definition);
+    });
+
     this.#funcsToLoad = [
-      ...(userAgentDef?.functions || []),
-      ...(workspaceAgentDef?.functions || []),
+      ...new Set([...(userAgentDef?.functions || []), ...sharedFunctions]),
     ];
   }
 
@@ -626,12 +944,64 @@ class AgentHandler {
 
     // Load required agents (Default + custom)
     await this.#loadAgents();
+    this.setInitialChannelFromPrompt(this.invocation.prompt);
+    this.ensurePromptHandlesLoaded(this.invocation.prompt);
 
     // Attach all required plugins for functions to operate.
     await this.#attachPlugins(args);
   }
 
   startAgentCluster() {
+    if (this.shouldRunMetacanonConstellation(this.invocation.prompt)) {
+      return this.runMetacanonConstellation(this.invocation.prompt).catch(
+        (error) => {
+          this.log(
+            `Constellation execution failed (${error.message}). Falling back to standard flow.`
+          );
+          this.aibitat.introspect?.(
+            "Constellation fallback: continuing with standard routing."
+          );
+          return this.aibitat.start({
+            from: USER_AGENT.name,
+            to: this.channel ?? WORKSPACE_AGENT.name,
+            content: this.invocation.prompt,
+          });
+        }
+      );
+    }
+
+    if (this.shouldRunCouncilPack(this.invocation.prompt)) {
+      return this.runCouncilPack(this.invocation.prompt).catch((error) => {
+        this.log(
+          `Council pack execution failed (${error.message}). Falling back to standard flow.`
+        );
+        this.aibitat.introspect?.(
+          "Council pack fallback: continuing with standard routing."
+        );
+        return this.aibitat.start({
+          from: USER_AGENT.name,
+          to: this.channel ?? WORKSPACE_AGENT.name,
+          content: this.invocation.prompt,
+        });
+      });
+    }
+
+    if (this.shouldRunLensDeliberation(this.invocation.prompt)) {
+      return this.runLensDeliberation(this.invocation.prompt).catch((error) => {
+        this.log(
+          `Lens deliberation failed (${error.message}). Falling back to standard @agent flow.`
+        );
+        this.aibitat.introspect?.(
+          "Lens deliberation fallback: continuing with standard @agent flow."
+        );
+        return this.aibitat.start({
+          from: USER_AGENT.name,
+          to: this.channel ?? WORKSPACE_AGENT.name,
+          content: this.invocation.prompt,
+        });
+      });
+    }
+
     return this.aibitat.start({
       from: USER_AGENT.name,
       to: this.channel ?? WORKSPACE_AGENT.name,

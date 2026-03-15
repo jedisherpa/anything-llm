@@ -3,7 +3,8 @@ import Sidebar from "@/components/SettingsSidebar";
 import { isMobile } from "react-device-detect";
 import * as Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { UserPlus } from "@phosphor-icons/react";
+import { UserPlus } from "@phosphor-icons/react/dist/csr/UserPlus";
+
 import Admin from "@/models/admin";
 import UserRow from "./UserRow";
 import useUser from "@/hooks/useUser";
@@ -17,11 +18,11 @@ export default function AdminUsers() {
   const { isOpen, openModal, closeModal } = useModal();
 
   return (
-    <div className="w-screen h-screen overflow-hidden bg-theme-bg-container flex">
+    <div className="metacanon-page-shell w-screen h-screen overflow-hidden bg-theme-bg-container flex">
       <Sidebar />
       <div
         style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
-        className="relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
+        className="metacanon-page-frame relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
       >
         <div className="flex flex-col w-full px-1 md:pl-6 md:pr-[50px] md:py-6 py-16">
           <div className="w-full flex flex-col gap-y-1 pb-6 border-white/10 border-b-2">
@@ -85,7 +86,7 @@ function UsersContainer() {
   }
 
   return (
-    <table className="w-full text-xs text-left rounded-lg min-w-[640px] border-spacing-0">
+    <table className="prism-data-table w-full text-xs text-left rounded-lg min-w-[640px] border-spacing-0">
       <thead className="text-theme-text-secondary text-xs leading-[18px] font-bold uppercase border-white/10 border-b">
         <tr>
           <th scope="col" className="px-6 py-3 rounded-tl-lg">
@@ -116,11 +117,13 @@ const ROLE_HINT = {
     "Can only send chats with workspaces they are added to by admin or managers.",
     "Cannot modify any settings at all.",
   ],
+
   manager: [
     "Can view, create, and delete any workspaces and modify workspace-specific settings.",
     "Can create, update and invite new users to the instance.",
     "Cannot modify LLM, vectorDB, embedding, or other connections.",
   ],
+
   admin: [
     "Highest user level privilege.",
     "Can see and do everything across the system.",
@@ -161,6 +164,7 @@ export function MessageLimitInput({ enabled, limit, updateState, role }) {
           }));
         }}
       />
+
       {enabled && (
         <div className="mt-4">
           <label className="text-white text-sm font-semibold block mb-4">

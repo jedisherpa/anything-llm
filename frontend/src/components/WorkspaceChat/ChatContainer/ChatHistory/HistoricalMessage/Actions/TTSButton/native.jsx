@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { SpeakerHigh, PauseCircle } from "@phosphor-icons/react";
+import { SpeakerHigh } from "@phosphor-icons/react/dist/csr/SpeakerHigh";
+import { PauseCircle } from "@phosphor-icons/react/dist/csr/PauseCircle";
 
 export default function NativeTTSMessage({ chatId, message }) {
   const [speaking, setSpeaking] = useState(false);

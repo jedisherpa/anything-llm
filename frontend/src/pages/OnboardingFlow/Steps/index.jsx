@@ -1,4 +1,5 @@
-import { ArrowLeft, ArrowRight } from "@phosphor-icons/react";
+import { ArrowLeft } from "@phosphor-icons/react/dist/csr/ArrowLeft";
+import { ArrowRight } from "@phosphor-icons/react/dist/csr/ArrowRight";
 import { useState } from "react";
 import { isMobile } from "react-device-detect";
 import useRedirectToHomeOnOnboardingComplete from "@/hooks/useOnboardingComplete";
@@ -39,10 +40,10 @@ export function OnboardingLayout({ children }) {
     return (
       <div
         data-layout="onboarding"
-        className="w-screen h-screen overflow-y-auto bg-theme-bg-primary overflow-hidden"
+        className="prism-onboarding-shell w-screen h-screen overflow-y-auto bg-theme-bg-primary overflow-hidden"
       >
         <div className="flex flex-col">
-          <div className="w-full relative py-10 px-2">
+          <div className="prism-onboarding-panel w-full relative py-10 px-2">
             <div className="flex flex-col w-fit mx-auto gap-y-1 mb-[55px]">
               <h1 className="text-theme-text-primary font-semibold text-center text-2xl">
                 {header.title}
@@ -92,9 +93,9 @@ export function OnboardingLayout({ children }) {
   return (
     <div
       data-layout="onboarding"
-      className="w-screen overflow-y-auto bg-theme-bg-primary flex justify-center overflow-hidden"
+      className="prism-onboarding-shell w-screen overflow-y-auto bg-theme-bg-primary flex justify-center overflow-hidden"
     >
-      <div className="flex w-1/5 h-screen justify-center items-center">
+      <div className="prism-onboarding-rail flex w-1/5 h-screen justify-center items-center">
         {backBtn.showing && (
           <button
             disabled={backBtn.disabled}
@@ -110,7 +111,7 @@ export function OnboardingLayout({ children }) {
         )}
       </div>
 
-      <div className="w-full md:w-3/5 relative h-full py-10">
+      <div className="prism-onboarding-panel w-full md:w-3/5 relative h-full py-10">
         <div className="flex flex-col w-fit mx-auto gap-y-1 mb-[55px]">
           <h1 className="text-theme-text-primary font-semibold text-center text-2xl">
             {header.title}
@@ -122,7 +123,7 @@ export function OnboardingLayout({ children }) {
         {children(setHeader, setBackBtn, setForwardBtn)}
       </div>
 
-      <div className="flex w-1/5 h-screen justify-center items-center">
+      <div className="prism-onboarding-rail flex w-1/5 h-screen justify-center items-center">
         {forwardBtn.showing && (
           <button
             disabled={forwardBtn.disabled}

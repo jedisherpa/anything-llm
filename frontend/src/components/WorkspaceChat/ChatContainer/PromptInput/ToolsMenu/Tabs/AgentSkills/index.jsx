@@ -11,7 +11,8 @@ import {
 } from "@/pages/Admin/Agents/skills";
 import useToolsMenuItems from "../../useToolsMenuItems";
 import SkillRow from "./SkillRow";
-import { Wrench } from "@phosphor-icons/react";
+import { Wrench } from "@phosphor-icons/react/dist/csr/Wrench";
+
 import { useIsAgentSessionActive } from "@/utils/chat/agent";
 
 export default function AgentSkillsTab({
@@ -152,6 +153,7 @@ export default function AgentSkillsTab({
           {t("chat_window.use_agent_session_to_use_tools")}
         </p>
       )}
+
       {items.map((item, index) => (
         <SkillRow
           key={item.id}

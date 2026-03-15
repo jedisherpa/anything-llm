@@ -2,7 +2,10 @@ import React, { useEffect, useState } from "react";
 import System from "@/models/system";
 import PreLoader from "@/components/Preloader";
 import { OLLAMA_COMMON_URLS } from "@/utils/constants";
-import { CaretDown, CaretUp, Info } from "@phosphor-icons/react";
+import { CaretDown } from "@phosphor-icons/react/dist/csr/CaretDown";
+import { CaretUp } from "@phosphor-icons/react/dist/csr/CaretUp";
+import { Info } from "@phosphor-icons/react/dist/csr/Info";
+
 import { Tooltip } from "react-tooltip";
 import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
 
@@ -44,6 +47,7 @@ export default function OllamaEmbeddingOptions({ settings }) {
           settings={settings}
           basePath={basePath.value}
         />
+
         <div className="flex flex-col w-60">
           <div
             data-tooltip-place="top"
@@ -57,6 +61,7 @@ export default function OllamaEmbeddingOptions({ settings }) {
               size={16}
               className="text-theme-text-secondary cursor-pointer"
             />
+
             <Tooltip id="max-embedding-chunk-length-tooltip">
               Maximum length of text chunks, in characters, for embedding.
             </Tooltip>
@@ -126,6 +131,7 @@ export default function OllamaEmbeddingOptions({ settings }) {
               onChange={basePath.onChange}
               onBlur={basePath.onBlur}
             />
+
             <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
               Enter the URL where Ollama is running.
             </p>
@@ -143,6 +149,7 @@ export default function OllamaEmbeddingOptions({ settings }) {
                 size={16}
                 className="text-theme-text-secondary cursor-pointer"
               />
+
               <Tooltip id="ollama-batch-size-tooltip">
                 Number of text chunks to embed in parallel. Higher values
                 improve speed but use more memory. Default is 1.
@@ -160,6 +167,7 @@ export default function OllamaEmbeddingOptions({ settings }) {
               required={true}
               autoComplete="off"
             />
+
             <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
               Increase this value to process multiple chunks simultaneously for
               faster embedding.
@@ -182,6 +190,7 @@ export default function OllamaEmbeddingOptions({ settings }) {
               autoComplete="off"
               spellCheck={false}
             />
+
             <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
               Enter a <code>Bearer</code> Auth Token for interacting with your
               Ollama server.

@@ -1,7 +1,8 @@
 import { createContext, useContext, useState } from "react";
 import { isMobile } from "react-device-detect";
 import { useTranslation } from "react-i18next";
-import { X } from "@phosphor-icons/react";
+import { X } from "@phosphor-icons/react/dist/csr/X";
+
 import {
   combineLikeSources,
   CitationDetailModal,

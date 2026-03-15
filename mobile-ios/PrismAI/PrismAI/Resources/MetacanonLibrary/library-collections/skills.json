@@ -1,0 +1,25 @@
+{
+  "items": [
+    {
+      "id": "constellation-designer",
+      "name": "constellation-designer",
+      "description": "List, show details of, and get recommendations for pre-designed agent councils (Constellations) for structured deliberation. Use this skill to explore and select the right council for a problem before running it with the constitutional-orchestrator.",
+      "relativePath": "skills/constellation-designer/SKILL.md",
+      "detailPath": "skills/constellation-designer.json"
+    },
+    {
+      "id": "constitutional-orchestrator",
+      "name": "constitutional-orchestrator",
+      "description": "Runs a structured, multi-agent deliberation with a named Constellation or a custom list of agents, governed by the Metacanon Constitution. Use to execute a deliberation after a council has been chosen with the constellation-designer skill.",
+      "relativePath": "skills/constitutional-orchestrator/SKILL.md",
+      "detailPath": "skills/constitutional-orchestrator.json"
+    },
+    {
+      "id": "council-pack-creator",
+      "name": "council-pack-creator",
+      "description": "A utility skill to create and manage reusable",
+      "relativePath": "skills/council-pack-creator/SKILL.md",
+      "detailPath": "skills/council-pack-creator.json"
+    }
+  ]
+}

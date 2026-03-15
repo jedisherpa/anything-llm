@@ -1,15 +1,14 @@
-import {
-  CircleNotch,
-  FileCode,
-  FileCsv,
-  FileDoc,
-  FileHtml,
-  FileText,
-  FileImage,
-  FilePdf,
-  WarningOctagon,
-  X,
-} from "@phosphor-icons/react";
+import { CircleNotch } from "@phosphor-icons/react/dist/csr/CircleNotch";
+import { FileCode } from "@phosphor-icons/react/dist/csr/FileCode";
+import { FileCsv } from "@phosphor-icons/react/dist/csr/FileCsv";
+import { FileDoc } from "@phosphor-icons/react/dist/csr/FileDoc";
+import { FileHtml } from "@phosphor-icons/react/dist/csr/FileHtml";
+import { FileText } from "@phosphor-icons/react/dist/csr/FileText";
+import { FileImage } from "@phosphor-icons/react/dist/csr/FileImage";
+import { FilePdf } from "@phosphor-icons/react/dist/csr/FilePdf";
+import { WarningOctagon } from "@phosphor-icons/react/dist/csr/WarningOctagon";
+import { X } from "@phosphor-icons/react/dist/csr/X";
+
 import { REMOVE_ATTACHMENT_EVENT } from "../../DnDWrapper";
 
 /**

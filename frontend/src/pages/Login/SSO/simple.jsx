@@ -39,11 +39,13 @@ export default function SimpleSSOPassthrough() {
 
   if (error)
     return (
-      <div className="w-screen h-screen overflow-hidden bg-theme-bg-primary flex items-center justify-center flex-col gap-4">
-        <p className="text-theme-text-primary font-mono text-lg">{error}</p>
-        <p className="text-theme-text-secondary font-mono text-sm">
-          Please contact the system administrator about this error.
-        </p>
+      <div className="prism-sso-shell w-screen h-screen overflow-hidden">
+        <div className="prism-sso-panel flex items-center justify-center flex-col gap-4 text-center">
+          <p className="text-theme-text-primary font-mono text-lg">{error}</p>
+          <p className="text-theme-text-secondary font-mono text-sm">
+            Please contact the system administrator about this error.
+          </p>
+        </div>
       </div>
     );
   if (ready) return window.location.replace(redirectPath);

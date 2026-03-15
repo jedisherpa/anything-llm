@@ -8,7 +8,8 @@ import {
   useCallback,
 } from "react";
 import renderMarkdown from "@/utils/chat/markdown";
-import { CaretDown } from "@phosphor-icons/react";
+import { CaretDown } from "@phosphor-icons/react/dist/csr/CaretDown";
+
 import DOMPurify from "dompurify";
 import { isMobile } from "react-device-detect";
 import ThinkingAnimation from "@/media/animations/thinking-animation.webm";
@@ -194,6 +195,7 @@ export const ThoughtChainComponent = forwardRef(
                   />
                 </button>
               )}
+
               <div
                 className={`ml-[28px] mr-[26px] transition-[max-height] duration-300 ease-in-out origin-top ${isExpanded ? "" : "overflow-hidden max-h-[18px]"}`}
               >

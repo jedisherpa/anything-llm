@@ -1,6 +1,7 @@
 import { ICON_COMPONENTS } from "@/components/Footer";
 import React, { useEffect, useRef, useState } from "react";
-import { Plus, X } from "@phosphor-icons/react";
+import { Plus } from "@phosphor-icons/react/dist/csr/Plus";
+import { X } from "@phosphor-icons/react/dist/csr/X";
 
 export default function NewIconForm({ icon, url, onSave, onRemove }) {
   const [selectedIcon, setSelectedIcon] = useState(icon || "Plus");
@@ -92,6 +93,7 @@ export default function NewIconForm({ icon, url, onSave, onRemove }) {
         className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-md p-2.5 w-[300px] h-[32px] focus:outline-primary-button active:outline-primary-button outline-none"
         required
       />
+
       {selectedIcon !== "Plus" && (
         <>
           {isEdited ? (

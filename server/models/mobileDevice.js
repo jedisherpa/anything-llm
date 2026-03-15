@@ -20,7 +20,7 @@ const TemporaryMobileDeviceRequests = new Map();
 
 const MobileDevice = {
   platform: "server",
-  validDeviceOs: ["android"],
+  validDeviceOs: ["android", "ios"],
   tablename: "desktop_mobile_devices",
   writable: ["approved"],
   validators: {

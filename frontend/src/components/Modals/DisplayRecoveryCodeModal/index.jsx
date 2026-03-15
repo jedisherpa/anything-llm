@@ -1,5 +1,7 @@
 import showToast from "@/utils/toast";
-import { DownloadSimple, Key } from "@phosphor-icons/react";
+import { DownloadSimple } from "@phosphor-icons/react/dist/csr/DownloadSimple";
+import { Key } from "@phosphor-icons/react/dist/csr/Key";
+
 import { saveAs } from "file-saver";
 import { useState } from "react";
 import ModalWrapper from "@/components/ModalWrapper";
@@ -34,7 +36,7 @@ export default function RecoveryCodeModal({
 
   return (
     <ModalWrapper isOpen={true}>
-      <div className="w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border overflow-hidden">
+      <div className="w-full max-w-2xl metacanon-modal-panel bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border overflow-hidden">
         <div className="relative p-6 border-b rounded-t border-theme-modal-border">
           <div className="w-full flex gap-x-2 items-center">
             <Key size={24} className="text-white" weight="bold" />

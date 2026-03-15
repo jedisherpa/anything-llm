@@ -3,7 +3,9 @@ import { useTranslation } from "react-i18next";
 import CommunityHub from "@/models/communityHub";
 import showToast from "@/utils/toast";
 import paths from "@/utils/paths";
-import { X, CaretRight } from "@phosphor-icons/react";
+import { X } from "@phosphor-icons/react/dist/csr/X";
+import { CaretRight } from "@phosphor-icons/react/dist/csr/CaretRight";
+
 import { BLOCK_INFO } from "@/pages/Admin/AgentBuilder/BlockList";
 import { Link } from "react-router-dom";
 
@@ -219,6 +221,7 @@ export default function AgentFlows({ entity }) {
                             {summary}
                           </span>
                         )}
+
                         <span
                           className={`ml-2 text-theme-text-secondary transition-transform duration-200 ${isExpanded ? "rotate-90" : ""}`}
                         >

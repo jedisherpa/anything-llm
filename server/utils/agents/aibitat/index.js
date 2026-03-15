@@ -4,6 +4,7 @@ const { APIError } = require("./error.js");
 const Providers = require("./providers/index.js");
 const { Telemetry } = require("../../../models/telemetry.js");
 const { v4 } = require("uuid");
+const { withAiOnlyLens } = require("./prompts/aiOnlyLens");
 
 /**
  * AIbitat is a class that manages the conversation between agents.
@@ -117,7 +118,7 @@ class AIbitat {
       throw new Error(`Agent configuration "${agent}" not found`);
     }
     return {
-      role: "You are a helpful AI assistant.",
+      role: withAiOnlyLens("You are a helpful AI assistant."),
       //       role: `You are a helpful AI assistant.
       // Solve tasks using your coding and language skills.
       // In the following cases, suggest typescript code (in a typescript coding block) or shell script (in a sh coding block) for the user to execute.

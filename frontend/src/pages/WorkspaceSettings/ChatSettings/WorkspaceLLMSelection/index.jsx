@@ -1,8 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import AnythingLLMIcon from "@/media/logo/anything-llm-icon.png";
 import WorkspaceLLMItem from "./WorkspaceLLMItem";
-import { AVAILABLE_LLM_PROVIDERS } from "@/pages/GeneralSettings/LLMPreference";
-import { CaretUpDown, MagnifyingGlass, X } from "@phosphor-icons/react";
+import { AVAILABLE_LLM_PROVIDERS } from "@/constants/llmProviders";
+import { CaretUpDown } from "@phosphor-icons/react/dist/csr/CaretUpDown";
+import { MagnifyingGlass } from "@phosphor-icons/react/dist/csr/MagnifyingGlass";
+import { X } from "@phosphor-icons/react/dist/csr/X";
+
 import ChatModelSelection from "./ChatModelSelection";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -89,6 +92,7 @@ export default function WorkspaceLLMSelection({
             onClick={() => setSearchMenuOpen(false)}
           />
         )}
+
         {searchMenuOpen ? (
           <div className="absolute top-0 left-0 w-full max-w-[640px] max-h-[310px] min-h-[64px] bg-theme-settings-input-bg rounded-lg flex flex-col justify-between cursor-pointer border-2 border-primary-button z-20">
             <div className="w-full flex flex-col gap-y-1">
@@ -98,6 +102,7 @@ export default function WorkspaceLLMSelection({
                   weight="bold"
                   className="absolute left-4 z-30 text-theme-text-primary -ml-4 my-2"
                 />
+
                 <input
                   type="text"
                   name="llm-search"
@@ -110,6 +115,7 @@ export default function WorkspaceLLMSelection({
                     if (e.key === "Enter") e.preventDefault();
                   }}
                 />
+
                 <X
                   size={20}
                   weight="bold"
@@ -145,6 +151,7 @@ export default function WorkspaceLLMSelection({
                 alt={`${selectedLLMObject.name} logo`}
                 className="w-10 h-10 rounded-md"
               />
+
               <div className="flex flex-col text-left">
                 <div className="text-sm font-semibold text-white">
                   {selectedLLMObject.name}

@@ -1,5 +1,8 @@
 import React, { useState } from "react";
-import { CaretDown, CaretUp, Info } from "@phosphor-icons/react";
+import { CaretDown } from "@phosphor-icons/react/dist/csr/CaretDown";
+import { CaretUp } from "@phosphor-icons/react/dist/csr/CaretUp";
+import { Info } from "@phosphor-icons/react/dist/csr/Info";
+
 import { Tooltip } from "react-tooltip";
 
 export default function GenericOpenAiEmbeddingOptions({ settings }) {
@@ -47,6 +50,7 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
               size={16}
               className="text-theme-text-secondary cursor-pointer"
             />
+
             <label className="text-white text-sm font-semibold block">
               Max embedding chunk length
             </label>

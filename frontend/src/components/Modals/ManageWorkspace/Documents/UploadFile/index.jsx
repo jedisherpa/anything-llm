@@ -1,4 +1,4 @@
-import { CloudArrowUp } from "@phosphor-icons/react";
+import { CloudArrowUp } from "@phosphor-icons/react/dist/csr/CloudArrowUp";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import showToast from "../../../../../utils/toast";
@@ -142,6 +142,7 @@ export default function UploadFile({
           placeholder={t("connectors.upload.placeholder-link")}
           autoComplete="off"
         />
+
         <button
           disabled={fetchingUrl}
           type="submit"

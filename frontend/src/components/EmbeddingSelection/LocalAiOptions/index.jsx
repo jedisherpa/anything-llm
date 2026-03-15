@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { CaretDown, CaretUp, Info } from "@phosphor-icons/react";
+import { CaretDown } from "@phosphor-icons/react/dist/csr/CaretDown";
+import { CaretUp } from "@phosphor-icons/react/dist/csr/CaretUp";
+import { Info } from "@phosphor-icons/react/dist/csr/Info";
+
 import System from "@/models/system";
 import PreLoader from "@/components/Preloader";
 import { LOCALAI_COMMON_URLS } from "@/utils/constants";
@@ -30,6 +33,7 @@ export default function LocalAiOptions({ settings }) {
           apiKey={apiKey}
           basePath={basePath.value}
         />
+
         <div className="flex flex-col w-60">
           <div className="flex flex-col gap-y-1 mb-2">
             <div className="flex gap-x-1 items-center">
@@ -41,6 +45,7 @@ export default function LocalAiOptions({ settings }) {
                 data-tooltip-id="localai-api-key-tooltip"
                 className="text-theme-text-secondary cursor-pointer"
               />
+
               <Tooltip
                 id="localai-api-key-tooltip"
                 place="top"
@@ -83,6 +88,7 @@ export default function LocalAiOptions({ settings }) {
               size={16}
               className="text-theme-text-secondary cursor-pointer"
             />
+
             <Tooltip
               id="max-embedding-chunk-length-tooltip"
               place="top"
@@ -122,6 +128,7 @@ export default function LocalAiOptions({ settings }) {
               size={16}
               className="text-theme-text-secondary cursor-pointer"
             />
+
             <Tooltip
               id="embedding-output-dimensions-tooltip"
               place="top"

@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import System from "@/models/system";
 import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
-import { CircleNotch, Info } from "@phosphor-icons/react";
+import { CircleNotch } from "@phosphor-icons/react/dist/csr/CircleNotch";
+import { Info } from "@phosphor-icons/react/dist/csr/Info";
+
 import strDistance from "js-levenshtein";
-import { LLM_PREFERENCE_CHANGED_EVENT } from "@/pages/GeneralSettings/LLMPreference";
+import { LLM_PREFERENCE_CHANGED_EVENT } from "@/constants/llmProviders";
 import { DOCKER_MODEL_RUNNER_COMMON_URLS } from "@/utils/constants";
 import { Tooltip } from "react-tooltip";
 import { Link } from "react-router-dom";
@@ -354,17 +356,20 @@ function DockerModelRunnerModelSelection({
         place="top"
         className="tooltip !text-xs !opacity-100 z-99"
       />
+
       <input
         type="hidden"
         name="DockerModelRunnerModelPref"
         id="DockerModelRunnerModelPref"
         value={selectedModelId}
       />
+
       {loading ? (
         <ModelTableLoadingSkeleton />
       ) : filteredModels.length === 0 ? (
-        <div className="flex flex-col w-full gap-y-2 mt-4">
-          <p className="text-theme-text-secondary text-sm">No models found!</p>
+        <div className="prism-empty-state prism-empty-state--compact mt-4">
+          No models available yet. Start or install a Docker Model Runner model
+          to continue.
         </div>
       ) : (
         Object.entries(groupedModels).map(([alias, models]) => (

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Info } from "@phosphor-icons/react";
+import { Info } from "@phosphor-icons/react/dist/csr/Info";
+
 import { Tooltip } from "react-tooltip";
 import System from "@/models/system";
 import { Link } from "react-router-dom";
@@ -49,6 +50,7 @@ export default function PrivateModeOptions({ settings }) {
               className="text-theme-text-secondary cursor-pointer"
               data-tooltip-id="private-mode-base-url"
             />
+
             <Tooltip
               id="private-mode-base-url"
               place="top"
@@ -117,10 +119,17 @@ export default function PrivateModeOptions({ settings }) {
                 </>
               ) : (
                 <option disabled value="">
-                  No models found
+                  No models available
                 </option>
               )}
             </select>
+          )}
+
+          {!loading && !!basePath && models.length === 0 && (
+            <div className="prism-empty-state prism-empty-state--compact mt-2 text-xs">
+              Prism couldn&apos;t find any Private Mode models yet. Check the
+              proxy URL and confirm the provider has at least one loaded model.
+            </div>
           )}
         </div>
       </div>

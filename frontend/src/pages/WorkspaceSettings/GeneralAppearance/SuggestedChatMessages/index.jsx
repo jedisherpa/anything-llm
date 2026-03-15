@@ -2,7 +2,9 @@ import PreLoader from "@/components/Preloader";
 import Workspace from "@/models/workspace";
 import showToast from "@/utils/toast";
 import { useEffect, useState } from "react";
-import { Plus, X } from "@phosphor-icons/react";
+import { Plus } from "@phosphor-icons/react/dist/csr/Plus";
+import { X } from "@phosphor-icons/react/dist/csr/X";
+
 import { useTranslation } from "react-i18next";
 
 export default function SuggestedChatMessages({ slug }) {
@@ -118,6 +120,7 @@ export default function SuggestedChatMessages({ slug }) {
         </div>
       </div>
     );
+
   return (
     <div className="w-full mt-6">
       <div className="flex flex-col">
@@ -173,6 +176,7 @@ export default function SuggestedChatMessages({ slug }) {
           </div>
         </div>
       )}
+
       {suggestedMessages.length < 4 && (
         <button
           type="button"

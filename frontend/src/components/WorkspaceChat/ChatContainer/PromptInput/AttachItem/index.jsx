@@ -1,4 +1,4 @@
-import { Plus } from "@phosphor-icons/react";
+import { Plus } from "@phosphor-icons/react/dist/csr/Plus";
 import { Tooltip } from "react-tooltip";
 import { useTranslation } from "react-i18next";
 import { useRef, useState, useEffect } from "react";
@@ -20,7 +20,7 @@ export default function AttachItem({
   workspaceThreadSlug = null,
 }) {
   const { t } = useTranslation();
-  const { theme } = useTheme();
+  const { isLightTheme } = useTheme();
   const params = useParams();
   const slug = workspaceSlug || params.slug;
   const threadSlug = workspaceThreadSlug ?? params.threadSlug ?? null;
@@ -106,6 +106,7 @@ export default function AttachItem({
             className="pointer-events-none text-zinc-300 light:text-slate-600 group-hover:text-white light:group-hover:text-slate-600 shrink-0"
             weight="bold"
           />
+
           {files.length > 0 && (
             <div className="absolute -top-2.5 -right-2 bg-white text-black light:invert text-[8px] rounded-full px-1 flex items-center justify-center">
               {files.length}
@@ -123,7 +124,7 @@ export default function AttachItem({
           delayShow={300}
           delayHide={isEmbedding ? 999999 : 800} // Prevent tooltip from hiding during embedding
           arrowColor={
-            theme === "light"
+            isLightTheme
               ? "var(--theme-modal-border)"
               : "var(--theme-bg-primary)"
           }
