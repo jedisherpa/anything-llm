@@ -13,6 +13,7 @@ PRODUCT_NAME="$4"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 LOGO_PATH="$ROOT_DIR/desktop-tauri/app/prism-dodeca.png"
+DS_STORE_TEMPLATE="$ROOT_DIR/desktop-tauri/packaging/installer-template.DS_Store"
 BACKGROUND_TMP="$(mktemp /tmp/prismai-installer-background.XXXXXX.png)"
 STAGE_DIR="$(mktemp -d /tmp/prismai-dmg-stage.XXXXXX)"
 RW_DMG="$(mktemp /tmp/prismai-installer.XXXXXX.dmg)"
@@ -78,6 +79,16 @@ persist_finder_layout() {
   exit 1
 }
 
+apply_layout_template() {
+  if [[ ! -f "$DS_STORE_TEMPLATE" ]]; then
+    return 1
+  fi
+
+  cp "$DS_STORE_TEMPLATE" "$MOUNT_POINT/.DS_Store"
+  sync
+  [[ -f "$MOUNT_POINT/.DS_Store" ]]
+}
+
 rm -f "$OUTPUT_DMG"
 rm -f "$RW_DMG" "$CONVERT_BASE" "${CONVERT_BASE}.dmg"
 mkdir -p "$STAGE_DIR/.background"
@@ -106,7 +117,9 @@ if [[ -z "$DEVICE" || -z "$MOUNT_POINT" ]]; then
   exit 1
 fi
 
-persist_finder_layout
+if ! apply_layout_template; then
+  persist_finder_layout
+fi
 
 bless --folder "$MOUNT_POINT" --openfolder "$MOUNT_POINT" >/dev/null 2>&1 || true
 sync

@@ -11,6 +11,7 @@ import System from "@/models/system";
 import showToast from "@/utils/toast";
 import { useEffect, useState } from "react";
 import PrismHoverTarget from "@/components/PrismHoverTarget";
+import renderProviderOptions from "@/components/LLMSelection/renderProviderOptions";
 
 const NO_SETTINGS_NEEDED = ["default"];
 export default function WorkspaceLLM({
@@ -161,7 +162,9 @@ function SetupProvider({
                 it up first.
               </p>
               <div>
-                {LLMOption.options(settings, { credentialsOnly: true })}
+                {renderProviderOptions(LLMOption, settings, {
+                  credentialsOnly: true,
+                })}
               </div>
             </div>
           </div>

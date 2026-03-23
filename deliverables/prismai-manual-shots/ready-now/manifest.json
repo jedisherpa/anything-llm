@@ -1,0 +1,62 @@
+[
+  {
+    "file": "01-forge-overview-dark.png",
+    "route": "http://127.0.0.1:3001/workspace/prism-preview",
+    "theme": "dark",
+    "viewport": { "width": 1440, "height": 900, "mobile": false }
+  },
+  {
+    "file": "02-three-modes-dark.png",
+    "route": "http://127.0.0.1:3001/workspace/prism-preview",
+    "theme": "dark",
+    "viewport": { "width": 1440, "height": 900, "mobile": false }
+  },
+  {
+    "file": "03-three-modes-light.png",
+    "route": "http://127.0.0.1:3001/workspace/prism-preview",
+    "theme": "light",
+    "viewport": { "width": 1440, "height": 900, "mobile": false }
+  },
+  {
+    "file": "04-three-modes-cathedral.png",
+    "route": "http://127.0.0.1:3001/workspace/prism-preview",
+    "theme": "cathedral",
+    "viewport": { "width": 1440, "height": 900, "mobile": false }
+  },
+  {
+    "file": "05-library-dashboard.png",
+    "route": "http://localhost:4182/metacanonai/library",
+    "theme": "dark",
+    "viewport": { "width": 1440, "height": 1100, "mobile": false }
+  },
+  {
+    "file": "06-building-a-constellation.png",
+    "route": "http://localhost:4182/metacanonai/library",
+    "theme": "dark",
+    "viewport": { "width": 1440, "height": 1100, "mobile": false }
+  },
+  {
+    "file": "07-provider-matrix.png",
+    "route": "http://localhost:4182/settings/llm-preference",
+    "theme": "dark",
+    "viewport": { "width": 1440, "height": 1200, "mobile": false }
+  },
+  {
+    "file": "08-giving-prism-a-voice-transcription.png",
+    "route": "http://localhost:4182/settings/transcription-preference",
+    "theme": "dark",
+    "viewport": { "width": 1440, "height": 1200, "mobile": false }
+  },
+  {
+    "file": "09-giving-prism-a-voice-audio.png",
+    "route": "http://localhost:4182/settings/audio-preference",
+    "theme": "dark",
+    "viewport": { "width": 1440, "height": 1400, "mobile": false }
+  },
+  {
+    "file": "10-feeding-prism.png",
+    "route": "http://127.0.0.1:3001/workspace/prism-preview",
+    "theme": "dark",
+    "viewport": { "width": 1440, "height": 900, "mobile": false }
+  }
+]

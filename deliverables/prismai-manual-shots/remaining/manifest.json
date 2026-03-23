@@ -1,0 +1,72 @@
+[
+  {
+    "file": "11-threshold-onboarding.png",
+    "route": "http://127.0.0.1:4182/onboarding?preview=1",
+    "theme": "dark",
+    "viewport": {
+      "width": 430,
+      "height": 932,
+      "mobile": true
+    }
+  },
+  {
+    "file": "12-scrying-glass-mobile-idle.png",
+    "route": "http://127.0.0.1:4182/workspace/prism-preview",
+    "theme": "dark",
+    "viewport": {
+      "width": 430,
+      "height": 932,
+      "mobile": true
+    }
+  },
+  {
+    "file": "13-alignment-menu-mobile.png",
+    "route": "http://127.0.0.1:4182/workspace/prism-preview",
+    "theme": "dark",
+    "viewport": {
+      "width": 430,
+      "height": 932,
+      "mobile": true
+    }
+  },
+  {
+    "file": "14-decorated-sidebar.png",
+    "route": "http://127.0.0.1:4182/workspace/prism-preview",
+    "theme": "dark",
+    "viewport": {
+      "width": 1440,
+      "height": 1280,
+      "mobile": false
+    }
+  },
+  {
+    "file": "15-chat-vs-query-mode.png",
+    "route": "http://127.0.0.1:4182/workspace/prism-preview",
+    "theme": "dark",
+    "viewport": {
+      "width": 1440,
+      "height": 960,
+      "mobile": false
+    }
+  },
+  {
+    "file": "16-prism-in-motion.png",
+    "route": "http://127.0.0.1:4182/metacanonai/manual-previews",
+    "theme": "dark",
+    "viewport": {
+      "width": 1600,
+      "height": 1080,
+      "mobile": false
+    }
+  },
+  {
+    "file": "17-sub-sphere-in-action.png",
+    "route": "http://127.0.0.1:4182/metacanonai/manual-previews",
+    "theme": "dark",
+    "viewport": {
+      "width": 1600,
+      "height": 1200,
+      "mobile": false
+    }
+  }
+]

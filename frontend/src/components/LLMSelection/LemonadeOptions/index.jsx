@@ -5,7 +5,7 @@ import { CircleNotch } from "@phosphor-icons/react/dist/csr/CircleNotch";
 import { Info } from "@phosphor-icons/react/dist/csr/Info";
 
 import strDistance from "js-levenshtein";
-import { LLM_PREFERENCE_CHANGED_EVENT } from "@/constants/llmProviders";
+import { LLM_PREFERENCE_CHANGED_EVENT } from "@/constants/llmPreferenceEvents";
 import { LEMONADE_COMMON_URLS } from "@/utils/constants";
 import { Tooltip } from "react-tooltip";
 import { Link } from "react-router-dom";

@@ -219,16 +219,6 @@ export default defineConfig({
           }
 
           if (
-            id.includes("/recharts/") ||
-            id.includes("/recharts-scale/") ||
-            id.includes("/victory-vendor/") ||
-            id.includes("/react-smooth/") ||
-            id.includes("/eventemitter3/")
-          ) {
-            return "charts-vendor";
-          }
-
-          if (
             id.includes("/react-transition-group/") ||
             id.includes("/dom-helpers/") ||
             id.includes("/prop-types/") ||
@@ -244,13 +234,6 @@ export default defineConfig({
             id.includes("/decimal.js-light/")
           ) {
             return "d3-vendor";
-          }
-
-          if (
-            id.includes("/html2canvas/") ||
-            id.includes("/recharts-to-png/")
-          ) {
-            return "charts-export-vendor";
           }
 
           if (

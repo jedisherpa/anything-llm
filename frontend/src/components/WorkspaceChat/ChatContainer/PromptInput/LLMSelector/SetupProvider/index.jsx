@@ -1,6 +1,7 @@
 import ModalWrapper from "@/components/ModalWrapper";
 import { X } from "@phosphor-icons/react/dist/csr/X";
 import { WarningCircle } from "@phosphor-icons/react/dist/csr/WarningCircle";
+import renderProviderOptions from "@/components/LLMSelection/renderProviderOptions";
 
 import System from "@/models/system";
 import showToast from "@/utils/toast";
@@ -59,9 +60,7 @@ export default function SetupProvider({
                 To use {llmProvider.name} as this workspace's LLM you need to
                 set it up first.
               </p>
-              <div>
-                {llmProvider.options(settings, { credentialsOnly: true })}
-              </div>
+              <div>{renderProviderOptions(llmProvider, settings, { credentialsOnly: true })}</div>
             </div>
           </div>
           <div className="flex justify-between items-center mt-6 pt-6 border-t border-theme-modal-border px-7 pb-6">

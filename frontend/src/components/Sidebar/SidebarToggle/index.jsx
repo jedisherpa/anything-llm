@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { SidebarSimple } from "@phosphor-icons/react/dist/csr/SidebarSimple";
+import { useLocation } from "react-router-dom";
 
 import paths from "@/utils/paths";
 import { Tooltip } from "react-tooltip";
@@ -20,12 +21,13 @@ function previousSidebarState() {
 }
 
 export function useSidebarToggle() {
+  const location = useLocation();
   const [showSidebar, setShowSidebar] = useState(previousSidebarState());
   const [canToggleSidebar, setCanToggleSidebar] = useState(true);
 
   useEffect(() => {
     function checkPath() {
-      const currentPath = window.location.pathname;
+      const currentPath = location.pathname;
       const isVisible =
         currentPath === paths.home() ||
         /^\/workspace\/[^\/]+$/.test(currentPath) ||
@@ -33,7 +35,7 @@ export function useSidebarToggle() {
       setCanToggleSidebar(isVisible);
     }
     checkPath();
-  }, [window.location.pathname]);
+  }, [location.pathname]);
 
   useEffect(() => {
     function toggleSidebar(e) {
@@ -82,7 +84,11 @@ export function ToggleSidebarButton({ showSidebar, setShowSidebar }) {
     <>
       <button
         type="button"
-        className={`hidden md:block border-none bg-transparent outline-none ring-0 absolute transition-all duration-500 z-10 ${showSidebar ? "top-[18px] left-[248px]" : "top-[20px] left-[30px]"}`}
+        className={`hidden md:block border-none bg-transparent outline-none ring-0 transition-all duration-500 z-30 ${
+          showSidebar
+            ? "absolute top-[18px] left-[248px]"
+            : "fixed top-[20px] left-[30px]"
+        }`}
         onClick={() => setShowSidebar((prev) => !prev)}
         data-tooltip-id="sidebar-toggle"
         data-tooltip-content={

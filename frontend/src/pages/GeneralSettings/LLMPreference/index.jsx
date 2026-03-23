@@ -16,8 +16,8 @@ import paths from "@/utils/paths";
 import { Link } from "react-router-dom";
 import {
   AVAILABLE_LLM_PROVIDERS,
-  LLM_PREFERENCE_CHANGED_EVENT,
 } from "@/constants/llmProviders";
+import { LLM_PREFERENCE_CHANGED_EVENT } from "@/constants/llmPreferenceEvents";
 import { PROVIDER_OPTIONS_COMPONENTS } from "@/components/LLMSelection/providerOptions";
 
 export default function GeneralLLMPreference() {
