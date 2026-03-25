@@ -1,0 +1,101 @@
+{
+  "id": "category-creation-engine",
+  "title": "Category Creation Engine",
+  "displayTitle": "Category Creation Engine",
+  "handle": "@constellation-category-creation-engine",
+  "type": "Decagon",
+  "purpose": "To not just enter a market, but to fundamentally redefine it and create a new category of product or service.",
+  "projectManagerTitle": "The Complexity Navigator",
+  "projectManagerHandle": "@mc-project-managers-board-complexity-navigator",
+  "members": [
+    {
+      "role": "The Category Designer",
+      "lens_path": "/home/ubuntu/councils/org-builder-board/09_Cloud_Pioneering_And_Stakeholder_Capitalism_Lens.docx",
+      "displayRole": "The Category Designer",
+      "relativePath": "councils/org-builder-board/09_Cloud_Pioneering_And_Stakeholder_Capitalism_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    },
+    {
+      "role": "The Contrarian",
+      "lens_path": "/home/ubuntu/councils/millennial-founders-board/03_Contrarian_Infrastructure_Builder_Lens.docx",
+      "displayRole": "The Contrarian Builder",
+      "relativePath": "councils/millennial-founders-board/03_Contrarian_Infrastructure_Builder_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    },
+    {
+      "role": "The Brand Theorist",
+      "lens_path": "/home/ubuntu/councils/marketing-branding-board/06_Brand_Gap_And_Zag_Lens.docx",
+      "displayRole": "The Brand Theorist",
+      "relativePath": "councils/marketing-branding-board/06_Brand_Gap_And_Zag_Lens.md",
+      "lensId": "marketing-branding-board-brand-theorist",
+      "lensHandle": "@mc-marketing-branding-board-brand-theorist",
+      "lensTitle": "The Brand Theorist"
+    },
+    {
+      "role": "The Perception Shaper",
+      "lens_path": "/home/ubuntu/councils/pauls-board/09_Perception_Signaling_And_Narrative_Lens.docx",
+      "displayRole": "The Perception Shaper",
+      "relativePath": "councils/pauls-board/09_Perception_Signaling_And_Narrative_Lens.md",
+      "lensId": "pauls-board-perception-shaper",
+      "lensHandle": "@mc-pauls-board-perception-shaper",
+      "lensTitle": "The Perception Shaper"
+    },
+    {
+      "role": "The World Builder",
+      "lens_path": "/home/ubuntu/councils/visual-branding-board/06_The_World_Builder_Lens.md",
+      "displayRole": "The World Builder",
+      "relativePath": "councils/visual-branding-board/06_The_World_Builder_Lens.md",
+      "lensId": "visual-branding-board-world-builder",
+      "lensHandle": "@mc-visual-branding-board-world-builder",
+      "lensTitle": "The World Builder"
+    },
+    {
+      "role": "The First-Principles Engineer",
+      "lens_path": "/home/ubuntu/councils/pauls-board/01_First_Principles_Engineer_Lens.docx",
+      "displayRole": "The First-Principles Engineer",
+      "relativePath": "councils/pauls-board/01_First_Principles_Engineer_Lens.md",
+      "lensId": "pauls-board-first-principles-engineer",
+      "lensHandle": "@mc-pauls-board-first-principles-engineer",
+      "lensTitle": "The First-Principles Engineer"
+    },
+    {
+      "role": "The Interaction Designer",
+      "lens_path": "/home/ubuntu/councils/pauls-board/08_Human_Comprehension_And_Interaction_Lens.docx",
+      "displayRole": "The Interaction Designer",
+      "relativePath": "councils/pauls-board/08_Human_Comprehension_And_Interaction_Lens.md",
+      "lensId": "pauls-board-interaction-designer",
+      "lensHandle": "@mc-pauls-board-interaction-designer",
+      "lensTitle": "The Interaction Designer"
+    },
+    {
+      "role": "The Hardcore Persuader",
+      "lens_path": "/home/ubuntu/councils/direct-response-board/03_Hardcore_Direct_Response_And_Accountability_Lens.md",
+      "displayRole": "The Hardcore Persuader",
+      "relativePath": "councils/direct-response-board/03_Hardcore_Direct_Response_And_Accountability_Lens.md",
+      "lensId": "direct-response-board-hardcore-persuader",
+      "lensHandle": "@mc-direct-response-board-hardcore-persuader",
+      "lensTitle": "The Hardcore Persuader"
+    },
+    {
+      "role": "The Ethical Boundary",
+      "lens_path": "/home/ubuntu/councils/pauls-board/06_Human_Dignity_And_Ethical_Boundary_Lens.docx",
+      "displayRole": "The Ethical Boundary",
+      "relativePath": "councils/pauls-board/06_Human_Dignity_And_Ethical_Boundary_Lens.md",
+      "lensId": "pauls-board-ethical-boundary",
+      "lensHandle": "@mc-pauls-board-ethical-boundary",
+      "lensTitle": "The Ethical Boundary"
+    }
+  ],
+  "relativePath": "constellations/decagon-1-category-creation.json",
+  "detailPath": "constellations/category-creation-engine.json",
+  "name": "Decagon 1: The \"Category Creation\" Council",
+  "projectManager": "/home/ubuntu/councils/project-managers-board/10_Complexity_Navigator_Lens.md",
+  "projectManagerRelativePath": "councils/project-managers-board/10_Complexity_Navigator_Lens.md",
+  "projectManagerId": "project-managers-board-complexity-navigator",
+  "legacyId": "decagon-1-the-category-creation-council",
+  "legacyHandle": "@constellation-decagon-1-the-category-creation-council"
+}

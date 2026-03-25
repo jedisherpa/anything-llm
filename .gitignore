@@ -11,3 +11,5 @@ package-lock.json
 frontend/vite.config.js.timestamp-*.mjs
 *.bak
 .idea
+*.xcuserstate
+**/xcuserdata/

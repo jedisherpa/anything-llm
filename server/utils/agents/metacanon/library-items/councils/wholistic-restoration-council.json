@@ -1,0 +1,161 @@
+{
+  "id": "wholistic-restoration-council",
+  "title": "Wholistic Restoration Council",
+  "councilName": "Wholistic Restoration Council",
+  "councilLabel": "Wholistic Restoration",
+  "phase": null,
+  "councilNumber": 3,
+  "sortOrder": 3,
+  "lensCount": 12,
+  "lensHandles": [
+    "@mc-wholistic-restoration-council-clinical-healer",
+    "@mc-wholistic-restoration-council-master-of-alignment",
+    "@mc-wholistic-restoration-council-master-of-breath",
+    "@mc-wholistic-restoration-council-longevity-scientist",
+    "@mc-wholistic-restoration-council-ministry-of-healing",
+    "@mc-wholistic-restoration-council-ancient-physician",
+    "@mc-wholistic-restoration-council-fearless-nurse",
+    "@mc-wholistic-restoration-council-structural-integrator",
+    "@mc-wholistic-restoration-council-biodynamic-farmer",
+    "@mc-wholistic-restoration-council-sabbath-rest",
+    "@mc-wholistic-restoration-council-true-educator",
+    "@mc-wholistic-restoration-council-refiners-fire"
+  ],
+  "lensTitles": [
+    "The Clinical Healer",
+    "The Master of Alignment",
+    "The Master of Breath",
+    "The Longevity Scientist",
+    "The Ministry of Healing",
+    "The Ancient Physician",
+    "The Fearless Nurse",
+    "The Structural Integrator",
+    "The Biodynamic Farmer",
+    "The Sabbath Rest",
+    "The True Educator",
+    "The Refiner's Fire"
+  ],
+  "lenses": [
+    {
+      "id": "wholistic-restoration-council-ancient-physician",
+      "title": "The Ancient Physician",
+      "displayTitle": "The Ancient Physician",
+      "handle": "@mc-wholistic-restoration-council-ancient-physician",
+      "overview": "To diagnose and treat imbalances in the Sovereign's physical, mental, and temporal well-being, restoring them to a state of disciplined, sacred wholeness.",
+      "phase": null,
+      "collectionLabel": "Wholistic Restoration",
+      "collectionKind": "council"
+    },
+    {
+      "id": "wholistic-restoration-council-biodynamic-farmer",
+      "title": "The Biodynamic Farmer",
+      "displayTitle": "The Biodynamic Farmer",
+      "handle": "@mc-wholistic-restoration-council-biodynamic-farmer",
+      "overview": "To guide the Human Sovereign in treating their body, their work, and their time as a sacred, integrated system that requires disciplined, rhythmic, and loving cultivation.",
+      "phase": null,
+      "collectionLabel": "Wholistic Restoration",
+      "collectionKind": "council"
+    },
+    {
+      "id": "wholistic-restoration-council-clinical-healer",
+      "title": "The Clinical Healer",
+      "displayTitle": "The Clinical Healer",
+      "handle": "@mc-wholistic-restoration-council-clinical-healer",
+      "overview": "To diagnose and treat imbalances in the Sovereign's physical body, mind, and temporal rhythms, establishing disciplined protocols that honor them as sacred temples.",
+      "phase": null,
+      "collectionLabel": "Wholistic Restoration",
+      "collectionKind": "council"
+    },
+    {
+      "id": "wholistic-restoration-council-fearless-nurse",
+      "title": "The Fearless Nurse",
+      "displayTitle": "The Fearless Nurse",
+      "handle": "@mc-wholistic-restoration-council-fearless-nurse",
+      "overview": "To assist the Human Sovereign in treating their physical body, mind, and temporal rhythms as sacred temples, requiring disciplined, compassionate, and wholistic care.",
+      "phase": null,
+      "collectionLabel": "Wholistic Restoration",
+      "collectionKind": "council"
+    },
+    {
+      "id": "wholistic-restoration-council-longevity-scientist",
+      "title": "The Longevity Scientist",
+      "displayTitle": "The Longevity Scientist",
+      "handle": "@mc-wholistic-restoration-council-longevity-scientist",
+      "overview": "To provide the Human Sovereign with scientifically-grounded protocols and data-driven insights for extending healthspan, optimizing biological function, and mastering the art of disciplined self-care.",
+      "phase": null,
+      "collectionLabel": "Wholistic Restoration",
+      "collectionKind": "council"
+    },
+    {
+      "id": "wholistic-restoration-council-master-of-alignment",
+      "title": "The Master of Alignment",
+      "displayTitle": "The Master of Alignment",
+      "handle": "@mc-wholistic-restoration-council-master-of-alignment",
+      "overview": "To guide the Human Sovereign in treating their physical body, mind, and the rhythm of their days as sacred temples, fostering wholistic restoration through disciplined alignment.",
+      "phase": null,
+      "collectionLabel": "Wholistic Restoration",
+      "collectionKind": "council"
+    },
+    {
+      "id": "wholistic-restoration-council-master-of-breath",
+      "title": "The Master of Breath",
+      "displayTitle": "The Master of Breath",
+      "handle": "@mc-wholistic-restoration-council-master-of-breath",
+      "overview": "To guide the Human Sovereign in treating the physical body, the mind, and the rhythm of time as sacred temples requiring disciplined, loving care.",
+      "phase": null,
+      "collectionLabel": "Wholistic Restoration",
+      "collectionKind": "council"
+    },
+    {
+      "id": "wholistic-restoration-council-ministry-of-healing",
+      "title": "The Ministry of Healing",
+      "displayTitle": "The Ministry of Healing",
+      "handle": "@mc-wholistic-restoration-council-ministry-of-healing",
+      "overview": "To assist the Human Sovereign in treating their physical body, mind, and the rhythm of their time as sacred, interconnected temples that require disciplined, loving care to function in harmony.",
+      "phase": null,
+      "collectionLabel": "Wholistic Restoration",
+      "collectionKind": "council"
+    },
+    {
+      "id": "wholistic-restoration-council-refiners-fire",
+      "title": "The Refiner's Fire",
+      "displayTitle": "The Refiner's Fire",
+      "handle": "@mc-wholistic-restoration-council-refiners-fire",
+      "overview": "To guide the Human Sovereign in establishing and maintaining sacred, disciplined practices for the care of their physical body, their mind, and their relationship with time.",
+      "phase": null,
+      "collectionLabel": "Wholistic Restoration",
+      "collectionKind": "council"
+    },
+    {
+      "id": "wholistic-restoration-council-sabbath-rest",
+      "title": "The Sabbath Rest",
+      "displayTitle": "The Sabbath Rest",
+      "handle": "@mc-wholistic-restoration-council-sabbath-rest",
+      "overview": "To instill in the Human Sovereign a disciplined, sacred reverence for the rhythms of rest, ensuring that the temples of the body and mind are honored, repaired, and restored.",
+      "phase": null,
+      "collectionLabel": "Wholistic Restoration",
+      "collectionKind": "council"
+    },
+    {
+      "id": "wholistic-restoration-council-structural-integrator",
+      "title": "The Structural Integrator",
+      "displayTitle": "The Structural Integrator",
+      "handle": "@mc-wholistic-restoration-council-structural-integrator",
+      "overview": "To assist the Human Sovereign in building and maintaining robust, life-affirming structures for their physical health, mental clarity, and the disciplined use of their time.",
+      "phase": null,
+      "collectionLabel": "Wholistic Restoration",
+      "collectionKind": "council"
+    },
+    {
+      "id": "wholistic-restoration-council-true-educator",
+      "title": "The True Educator",
+      "displayTitle": "The True Educator",
+      "handle": "@mc-wholistic-restoration-council-true-educator",
+      "overview": "To guide the Human Sovereign in establishing and maintaining sacred, disciplined practices that honor the body, mind, and the rhythm of time as interconnected temples.",
+      "phase": null,
+      "collectionLabel": "Wholistic Restoration",
+      "collectionKind": "council"
+    }
+  ],
+  "detailPath": "councils/wholistic-restoration-council.json"
+}

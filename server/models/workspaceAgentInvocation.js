@@ -15,22 +15,96 @@ function supportedAgentHandles() {
   ]);
 }
 
+function normalizeAgentToken(token = "") {
+  return String(token || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9@_-]/g, "");
+}
+
+function normalizeInvocationPrompt(promptString) {
+  const rawPrompt = String(promptString || "").trim();
+  if (!rawPrompt.startsWith("/")) return rawPrompt;
+
+  const supportedHandles = supportedAgentHandles();
+
+  if (/^\/agent(?:\s|$)/i.test(rawPrompt)) {
+    const query = rawPrompt.replace(/^\/agent\b/i, "").trim();
+    return ["@agent", query].filter(Boolean).join(" ").trim();
+  }
+
+  if (/^\/lens(?:\s|$)/i.test(rawPrompt)) {
+    const remainder = rawPrompt.replace(/^\/lens\b/i, "").trim();
+    const [rawHandle, ...queryParts] = remainder.split(/\s+/);
+    const handle = normalizeAgentToken(rawHandle);
+    if (!supportedHandles.has(handle)) return rawPrompt;
+    return [handle, queryParts.join(" ").trim()].filter(Boolean).join(" ");
+  }
+
+  if (/^\/constellation(?:\s|$)/i.test(rawPrompt)) {
+    const remainder = rawPrompt.replace(/^\/constellation\b/i, "").trim();
+    const [rawHandle, ...queryParts] = remainder.split(/\s+/);
+    const handle = normalizeAgentToken(rawHandle);
+    if (!supportedHandles.has(handle)) return rawPrompt;
+    return [handle, queryParts.join(" ").trim()].filter(Boolean).join(" ");
+  }
+
+  if (/^\/council(?:\s|$)/i.test(rawPrompt)) {
+    const remainder = rawPrompt.replace(/^\/council\b/i, "").trim();
+    const separatorIndex = remainder.indexOf("--");
+    const handlesPart =
+      separatorIndex >= 0 ? remainder.slice(0, separatorIndex) : remainder;
+    const query =
+      separatorIndex >= 0 ? remainder.slice(separatorIndex + 2).trim() : "";
+    const handles = handlesPart
+      .split(/[,\s]+/)
+      .map(normalizeAgentToken)
+      .filter((token) => supportedHandles.has(token) && token !== "@council");
+
+    if (handles.length === 0) return rawPrompt;
+
+    return [
+      "@council",
+      "pack: Ad Hoc Council Pack",
+      `lenses: ${handles.join(" ")}`,
+      query ? `user query: ${query}` : null,
+    ]
+      .filter(Boolean)
+      .join("\n");
+  }
+
+  return rawPrompt;
+}
+
 const WorkspaceAgentInvocation = {
   // returns array of normalized @handles present in the prompt when the
   // prompt starts with a supported agent handle.
   parseAgents: function (promptString) {
     if (!promptString || typeof promptString !== "string") return [];
-    const normalized = promptString.trim().toLowerCase();
+    const normalized = normalizeInvocationPrompt(promptString)
+      .trim()
+      .toLowerCase();
     const tokens = normalized
       .split(/\s+/)
       .map((token) => token.replace(/[^a-z0-9@_-]/g, ""));
     if (tokens.length === 0) return [];
 
-    const firstToken = tokens[0];
-    if (!supportedAgentHandles().has(firstToken)) return [];
+    const supportedHandles = supportedAgentHandles();
+    const parsedHandles = [];
 
-    return tokens.filter((token) => token.startsWith("@"));
+    for (const token of tokens) {
+      if (!token.startsWith("@")) break;
+      if (!supportedHandles.has(token)) {
+        if (parsedHandles.length === 0) return [];
+        break;
+      }
+      parsedHandles.push(token);
+    }
+
+    return [...new Set(parsedHandles)];
   },
+
+  normalizeInvocationPrompt,
 
   close: async function (uuid) {
     if (!uuid) return;

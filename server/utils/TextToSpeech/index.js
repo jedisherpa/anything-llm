@@ -1,6 +1,9 @@
 function getTTSProvider() {
-  const provider = process.env.TTS_PROVIDER || "openai";
+  const provider = process.env.TTS_PROVIDER || "piper_local";
   switch (provider) {
+    case "piper_local":
+      const { PiperLocalTTS } = require("./piperLocal");
+      return new PiperLocalTTS();
     case "openai":
       const { OpenAiTTS } = require("./openAi");
       return new OpenAiTTS();

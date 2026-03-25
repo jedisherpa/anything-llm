@@ -1,0 +1,83 @@
+{
+  "id": "go-to-market-engine",
+  "title": "Go-to-Market Engine",
+  "displayTitle": "Go-to-Market Engine",
+  "handle": "@constellation-go-to-market-engine",
+  "type": "Star Tetrahedron",
+  "purpose": "To design a complete, end-to-end go-to-market strategy that is both strategically sound and operationally executable.",
+  "projectManagerTitle": "The Ownership Operator",
+  "projectManagerHandle": "@mc-project-managers-board-ownership-operator",
+  "members": [
+    {
+      "role": "The Positioning Expert",
+      "lens_path": "/home/ubuntu/councils/marketing-branding-board/05_Positioning_And_Battle_For_Your_Mind_Lens.docx",
+      "displayRole": "The Market Positioner",
+      "relativePath": "councils/marketing-branding-board/05_Positioning_And_Battle_For_Your_Mind_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    },
+    {
+      "role": "The Offer Architect",
+      "lens_path": "/home/ubuntu/councils/pauls-board/04_Direct_Response_And_Offer_Creation_Lens.docx",
+      "displayRole": "The Offer Architect",
+      "relativePath": "councils/pauls-board/04_Direct_Response_And_Offer_Creation_Lens.md",
+      "lensId": "pauls-board-offer-architect",
+      "lensHandle": "@mc-pauls-board-offer-architect",
+      "lensTitle": "The Offer Architect"
+    },
+    {
+      "role": "The Evangelist",
+      "lens_path": "/home/ubuntu/councils/org-builder-board/08_Evangelism_Marketing_And_Enchantment_Lens.docx",
+      "displayRole": "The Evangelist",
+      "relativePath": "councils/org-builder-board/08_Evangelism_Marketing_And_Enchantment_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    },
+    {
+      "role": "The Blitzscaling Strategist",
+      "lens_path": "/home/ubuntu/councils/org-builder-board/03_Blitzscaling_And_Network_Effects_Lens.docx",
+      "displayRole": "The Blitzscaling Strategist",
+      "relativePath": "councils/org-builder-board/03_Blitzscaling_And_Network_Effects_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    },
+    {
+      "role": "The Customer Champion",
+      "lens_path": "/home/ubuntu/councils/org-builder-board/05_Customer_Development_And_Lean_Startup_Lens.docx",
+      "displayRole": "The Customer Champion",
+      "relativePath": "councils/org-builder-board/05_Customer_Development_And_Lean_Startup_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    },
+    {
+      "role": "The Financial Analyst",
+      "lens_path": "/home/ubuntu/councils/pauls-board/10_Leverage_Incentives_And_Long_Term_Thinking_Lens.docx",
+      "displayRole": "The Long-Term Thinker",
+      "relativePath": "councils/pauls-board/10_Leverage_Incentives_And_Long_Term_Thinking_Lens.md",
+      "lensId": "pauls-board-long-term-thinker",
+      "lensHandle": "@mc-pauls-board-long-term-thinker",
+      "lensTitle": "The Long-Term Thinker"
+    },
+    {
+      "role": "The Calm Operator",
+      "lens_path": "/home/ubuntu/councils/org-builder-board/07_Calm_Company_And_Remote_Work_Lens.docx",
+      "displayRole": "The Calm Operator",
+      "relativePath": "councils/org-builder-board/07_Calm_Company_And_Remote_Work_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    }
+  ],
+  "relativePath": "constellations/star-tetrahedron-1-go-to-market.json",
+  "detailPath": "constellations/go-to-market-engine.json",
+  "name": "Star Tetrahedron 1: The \"Go-to-Market Engine\"",
+  "projectManager": "/home/ubuntu/councils/project-managers-board/06_Extreme_Ownership_Operator_Lens.md",
+  "projectManagerRelativePath": "councils/project-managers-board/06_Extreme_Ownership_Operator_Lens.md",
+  "projectManagerId": "project-managers-board-ownership-operator",
+  "legacyId": "star-tetrahedron-1-the-go-to-market-engine",
+  "legacyHandle": "@constellation-star-tetrahedron-1-the-go-to-market-engine"
+}

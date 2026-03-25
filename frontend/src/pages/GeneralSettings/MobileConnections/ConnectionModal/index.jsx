@@ -14,7 +14,7 @@ export default function MobileConnectModal({ isOpen, onClose }) {
   return (
     <ModalWrapper isOpen={isOpen}>
       <div
-        className="relative w-full rounded-lg shadow"
+        className="prism-settings-modal-card relative w-full"
         style={{
           minHeight: "60vh",
           maxWidth: "70vw",
@@ -26,7 +26,7 @@ export default function MobileConnectModal({ isOpen, onClose }) {
         <button
           onClick={onClose}
           type="button"
-          className="absolute top-4 right-4 transition-all duration-300 bg-transparent rounded-lg text-sm p-1 inline-flex items-center hover:bg-theme-modal-border hover:border-theme-modal-border hover:border-opacity-50 border-transparent border"
+          className="absolute top-4 right-4 transition-all duration-300 bg-transparent rounded-full text-sm p-1 inline-flex items-center hover:bg-theme-modal-border hover:border-theme-modal-border hover:border-opacity-50 border-transparent border"
         >
           <X size={24} weight="bold" className="text-[#FFF]" />
         </button>
@@ -59,7 +59,7 @@ export default function MobileConnectModal({ isOpen, onClose }) {
 
           {/* right column */}
           <div className="flex flex-col items-center justify-center shrink-0 w-1/2 gap-y-[16px]">
-            <div className="bg-white/10 rounded-lg p-[40px] w-[300px] h-[300px] flex flex-col gap-y-[16px] items-center justify-center">
+            <div className="prism-settings-modal-qr p-[40px] w-[300px] h-[300px] flex flex-col gap-y-[16px] items-center justify-center">
               <ConnectionQrCode isOpen={isOpen} />
             </div>
             <p className="text-[#FFF] text-sm w-[300px] text-center">

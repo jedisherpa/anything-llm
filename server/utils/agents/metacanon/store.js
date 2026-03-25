@@ -2,23 +2,58 @@ const fs = require("fs");
 const path = require("path");
 
 const INDEX_PATH = path.resolve(__dirname, "library.generated.json");
+const ALIAS_PATH = path.resolve(__dirname, "library.aliases.generated.json");
 const COLLECTIONS_ROOT = path.resolve(__dirname, "library-collections");
 const ITEMS_ROOT = path.resolve(__dirname, "library-items");
 
 let indexCache = null;
+let aliasCache = null;
 const itemCache = new Map();
 const collectionCache = new Map();
 const lensHandleMap = new Map();
 const lensIdMap = new Map();
 const constellationHandleMap = new Map();
 const constellationIdMap = new Map();
+const lensHandleAliases = new Set();
+const constellationHandleAliases = new Set();
+const itemIdAliases = {
+  lenses: new Map(),
+  constellations: new Map(),
+  councils: new Map(),
+};
+
+function readJsonFile(filePath, label) {
+  try {
+    return JSON.parse(fs.readFileSync(filePath, "utf8"));
+  } catch (error) {
+    throw new Error(
+      `Failed to load Metacanon ${label} from ${filePath}: ${error.message}`
+    );
+  }
+}
 
 function loadIndex() {
   if (!indexCache) {
-    indexCache = JSON.parse(fs.readFileSync(INDEX_PATH, "utf8"));
+    indexCache = readJsonFile(INDEX_PATH, "library index");
     hydrateIndexes(indexCache);
   }
   return indexCache;
+}
+
+function loadAliases() {
+  if (aliasCache !== null) return aliasCache;
+
+  try {
+    aliasCache = readJsonFile(ALIAS_PATH, "library aliases");
+  } catch {
+    aliasCache = {
+      lenses: { id: {}, handle: {} },
+      constellations: { id: {}, handle: {} },
+      councils: { id: {} },
+    };
+  }
+
+  return aliasCache;
 }
 
 function hydrateIndexes(index = {}) {
@@ -26,20 +61,80 @@ function hydrateIndexes(index = {}) {
   lensIdMap.clear();
   constellationHandleMap.clear();
   constellationIdMap.clear();
+  lensHandleAliases.clear();
+  constellationHandleAliases.clear();
+  Object.values(itemIdAliases).forEach((map) => map.clear());
 
-  (index.lookup?.lenses || []).forEach((lens) => {
-    if (lens?.handle) lensHandleMap.set(String(lens.handle).toLowerCase(), lens);
+  const lenses = index.lookup?.lenses || [];
+  const constellations = index.lookup?.constellations || [];
+  const aliases =
+    index.aliases && Object.keys(index.aliases).length > 0
+      ? index.aliases
+      : loadAliases();
+  const lensIdAliases = aliases.lenses?.id || aliases.lenses?.byId || {};
+  const lensHandleAliasesMap =
+    aliases.lenses?.handle || aliases.lenses?.byHandle || {};
+  const constellationIdAliases =
+    aliases.constellations?.id || aliases.constellations?.byId || {};
+  const constellationHandleAliasesMap =
+    aliases.constellations?.handle || aliases.constellations?.byHandle || {};
+  const councilIdAliases = aliases.councils?.id || aliases.councils?.byId || {};
+
+  lenses.forEach((lens) => {
+    if (lens?.handle)
+      lensHandleMap.set(String(lens.handle).toLowerCase(), lens);
     if (lens?.id) lensIdMap.set(String(lens.id), lens);
   });
 
-  (index.lookup?.constellations || []).forEach((constellation) => {
+  constellations.forEach((constellation) => {
     if (constellation?.handle) {
       constellationHandleMap.set(
         String(constellation.handle).toLowerCase(),
         constellation
       );
     }
-    if (constellation?.id) constellationIdMap.set(String(constellation.id), constellation);
+    if (constellation?.id)
+      constellationIdMap.set(String(constellation.id), constellation);
+  });
+
+  Object.entries(lensIdAliases).forEach(([legacyId, nextId]) => {
+    const target = lensIdMap.get(String(nextId));
+    if (!target) return;
+    lensIdMap.set(String(legacyId), target);
+    itemIdAliases.lenses.set(String(legacyId), String(nextId));
+  });
+
+  Object.entries(lensHandleAliasesMap).forEach(
+    ([legacyHandle, nextHandle]) => {
+      const target = lensHandleMap.get(String(nextHandle).toLowerCase());
+      if (!target) return;
+      lensHandleMap.set(String(legacyHandle).toLowerCase(), target);
+      lensHandleAliases.add(String(legacyHandle).toLowerCase());
+    }
+  );
+
+  Object.entries(constellationIdAliases).forEach(
+    ([legacyId, nextId]) => {
+      const target = constellationIdMap.get(String(nextId));
+      if (!target) return;
+      constellationIdMap.set(String(legacyId), target);
+      itemIdAliases.constellations.set(String(legacyId), String(nextId));
+    }
+  );
+
+  Object.entries(constellationHandleAliasesMap).forEach(
+    ([legacyHandle, nextHandle]) => {
+      const target = constellationHandleMap.get(
+        String(nextHandle).toLowerCase()
+      );
+      if (!target) return;
+      constellationHandleMap.set(String(legacyHandle).toLowerCase(), target);
+      constellationHandleAliases.add(String(legacyHandle).toLowerCase());
+    }
+  );
+
+  Object.entries(councilIdAliases).forEach(([legacyId, nextId]) => {
+    itemIdAliases.councils.set(String(legacyId), String(nextId));
   });
 }
 
@@ -60,10 +155,11 @@ function getLibraryCollection(tab = "") {
   loadIndex();
   const filePath = path.resolve(COLLECTIONS_ROOT, `${safeTab}.json`);
   const rootWithSep = `${COLLECTIONS_ROOT}${path.sep}`;
-  if (filePath !== COLLECTIONS_ROOT && !filePath.startsWith(rootWithSep)) return [];
+  if (filePath !== COLLECTIONS_ROOT && !filePath.startsWith(rootWithSep))
+    return [];
   if (!fs.existsSync(filePath)) return [];
 
-  const payload = JSON.parse(fs.readFileSync(filePath, "utf8"));
+  const payload = readJsonFile(filePath, `library collection "${safeTab}"`);
   const items = Array.isArray(payload?.items) ? payload.items : [];
   collectionCache.set(safeTab, items);
   return items;
@@ -71,7 +167,7 @@ function getLibraryCollection(tab = "") {
 
 function resolveItemPath(tab = "", id = "") {
   const safeTab = String(tab || "").trim();
-  const safeId = String(id || "").trim();
+  const safeId = resolveItemIdAlias(safeTab, id);
   if (!safeTab || !safeId) return null;
   const nextPath = path.resolve(ITEMS_ROOT, safeTab, `${safeId}.json`);
   const rootWithSep = `${ITEMS_ROOT}${path.sep}`;
@@ -79,25 +175,35 @@ function resolveItemPath(tab = "", id = "") {
   return nextPath;
 }
 
+function resolveItemIdAlias(tab = "", id = "") {
+  loadIndex();
+  const safeTab = String(tab || "").trim();
+  const safeId = String(id || "").trim();
+  if (!safeTab || !safeId) return safeId;
+  return itemIdAliases[safeTab]?.get(safeId) || safeId;
+}
+
 function getLibraryItem(tab = "", id = "") {
-  const cacheKey = `${tab}:${id}`;
+  const resolvedId = resolveItemIdAlias(tab, id);
+  const cacheKey = `${tab}:${resolvedId}`;
   if (itemCache.has(cacheKey)) return itemCache.get(cacheKey);
 
-  const filePath = resolveItemPath(tab, id);
+  const filePath = resolveItemPath(tab, resolvedId);
   if (!filePath || !fs.existsSync(filePath)) return null;
 
-  const item = JSON.parse(fs.readFileSync(filePath, "utf8"));
+  const item = readJsonFile(filePath, `library item "${cacheKey}"`);
   itemCache.set(cacheKey, item);
   return item;
 }
 
 function getManifestItem(tab = "", id = "") {
-  const cacheKey = `${tab}:${id}`;
+  const resolvedId = resolveItemIdAlias(tab, id);
+  const cacheKey = `${tab}:${resolvedId}`;
   if (collectionCache.has(cacheKey)) return collectionCache.get(cacheKey);
 
   const item =
     getLibraryCollection(tab).find(
-      (entry) => String(entry?.id || "") === String(id || "")
+      (entry) => String(entry?.id || "") === resolvedId
     ) || null;
 
   collectionCache.set(cacheKey, item);
@@ -132,6 +238,16 @@ function getConstellationIndex() {
   return loadIndex().lookup?.constellations || [];
 }
 
+function getLensAliasHandles() {
+  loadIndex();
+  return [...lensHandleAliases];
+}
+
+function getConstellationAliasHandles() {
+  loadIndex();
+  return [...constellationHandleAliases];
+}
+
 module.exports = {
   getLibraryManifest,
   getLibraryCollection,
@@ -139,6 +255,8 @@ module.exports = {
   getManifestItem,
   getLensIndex,
   getConstellationIndex,
+  getLensAliasHandles,
+  getConstellationAliasHandles,
   getLensManifestByHandle,
   getLensManifestById,
   getConstellationManifestByHandle,

@@ -1,0 +1,65 @@
+{
+  "id": "market-entry-engine",
+  "title": "Market Entry Engine",
+  "displayTitle": "Market Entry Engine",
+  "handle": "@constellation-market-entry-engine",
+  "type": "Octahedron",
+  "purpose": "To design a precise, differentiated, and defensible market entry strategy for a new product or service.",
+  "projectManagerTitle": "The Constraint Navigator",
+  "projectManagerHandle": "@mc-project-managers-board-constraint-navigator",
+  "members": [
+    {
+      "role": "The Positioning Expert",
+      "lens_path": "/home/ubuntu/councils/marketing-branding-board/05_Positioning_And_Battle_For_Your_Mind_Lens.docx",
+      "displayRole": "The Market Positioner",
+      "relativePath": "councils/marketing-branding-board/05_Positioning_And_Battle_For_Your_Mind_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    },
+    {
+      "role": "The Customer Champion",
+      "lens_path": "/home/ubuntu/councils/org-builder-board/05_Customer_Development_And_Lean_Startup_Lens.docx",
+      "displayRole": "The Customer Champion",
+      "relativePath": "councils/org-builder-board/05_Customer_Development_And_Lean_Startup_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    },
+    {
+      "role": "The Contrarian",
+      "lens_path": "/home/ubuntu/councils/millennial-founders-board/03_Contrarian_Infrastructure_Builder_Lens.docx",
+      "displayRole": "The Contrarian Builder",
+      "relativePath": "councils/millennial-founders-board/03_Contrarian_Infrastructure_Builder_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    },
+    {
+      "role": "The Evangelist",
+      "lens_path": "/home/ubuntu/councils/org-builder-board/08_Evangelism_Marketing_And_Enchantment_Lens.docx",
+      "displayRole": "The Evangelist",
+      "relativePath": "councils/org-builder-board/08_Evangelism_Marketing_And_Enchantment_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    },
+    {
+      "role": "The Playful Provocateur",
+      "lens_path": "/home/ubuntu/councils/direct-response-board/02_Playful_Provocateur_And_Reality_Bender_Lens.md",
+      "displayRole": "The Playful Provocateur",
+      "relativePath": "councils/direct-response-board/02_Playful_Provocateur_And_Reality_Bender_Lens.md",
+      "lensId": "direct-response-board-playful-provocateur",
+      "lensHandle": "@mc-direct-response-board-playful-provocateur",
+      "lensTitle": "The Playful Provocateur"
+    }
+  ],
+  "relativePath": "constellations/octahedron-4-market-entry.json",
+  "detailPath": "constellations/market-entry-engine.json",
+  "name": "Octahedron 4: The \"Market Entry\" Council",
+  "projectManager": "/home/ubuntu/councils/project-managers-board/02_Critical_Chain_Constraint_Lens.md",
+  "projectManagerRelativePath": "councils/project-managers-board/02_Critical_Chain_Constraint_Lens.md",
+  "projectManagerId": "project-managers-board-constraint-navigator",
+  "legacyId": "octahedron-4-the-market-entry-council",
+  "legacyHandle": "@constellation-octahedron-4-the-market-entry-council"
+}

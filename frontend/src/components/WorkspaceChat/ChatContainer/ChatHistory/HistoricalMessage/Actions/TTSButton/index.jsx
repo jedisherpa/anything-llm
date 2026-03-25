@@ -12,22 +12,22 @@ export default function TTSMessage({ slug, chatId, message }) {
   if (!chatId || loading) return null;
 
   switch (provider) {
+    case "piper_local":
+      return (
+        <WrapTTS>
+          <PiperTTSMessage
+            chatId={chatId}
+            message={message}
+            voiceId={settings?.TTSPiperTTSVoiceModel}
+          />
+        </WrapTTS>
+      );
     case "openai":
     case "generic-openai":
     case "elevenlabs":
       return (
         <WrapTTS>
           <AsyncTTSMessage chatId={chatId} slug={slug} />
-        </WrapTTS>
-      );
-    case "piper_local":
-      return (
-        <WrapTTS>
-          <PiperTTSMessage
-            chatId={chatId}
-            voiceId={settings?.TTSPiperTTSVoiceModel}
-            message={message}
-          />
         </WrapTTS>
       );
     default:

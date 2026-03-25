@@ -604,6 +604,10 @@ const KEY_MAPPING = {
   },
 
   // TTS/STT Integration ENVS
+  SpeechToTextProvider: {
+    envKey: "STT_PROVIDER",
+    checks: [supportedSTTProvider],
+  },
   TextToSpeechProvider: {
     envKey: "TTS_PROVIDER",
     checks: [supportedTTSProvider],
@@ -900,6 +904,11 @@ function supportedTTSProvider(input = "") {
     "generic-openai",
   ].includes(input);
   return validSelection ? null : `${input} is not a valid TTS provider.`;
+}
+
+function supportedSTTProvider(input = "") {
+  const validSelection = ["native", "whisper"].includes(input);
+  return validSelection ? null : `${input} is not a valid STT provider.`;
 }
 
 function validLocalWhisper(input = "") {
@@ -1252,6 +1261,7 @@ async function logChangesToEventLog(newValues = {}, userId = null) {
 function dumpENV() {
   const fs = require("fs");
   const path = require("path");
+  const { resolveRuntimeEnvPath } = require("../loadEnv");
 
   const frozenEnvs = {};
   const protectedKeys = [
@@ -1337,7 +1347,9 @@ function dumpENV() {
     .map(([key, value]) => `${key}='${sanitizeValue(value)}'`)
     .join("\n");
 
-  const envPath = path.join(__dirname, "../../.env");
+  const runtimeEnvPath = resolveRuntimeEnvPath();
+  const envPath = runtimeEnvPath || path.join(__dirname, "../../.env");
+  fs.mkdirSync(path.dirname(envPath), { recursive: true });
   fs.writeFileSync(envPath, envResult, { encoding: "utf8", flag: "w" });
   return true;
 }

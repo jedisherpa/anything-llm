@@ -1476,18 +1476,11 @@ does not extend the close button beyond the viewport. */
 
 .metacanon-page-frame {
   position: relative;
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--sidebar-bg) 84%, transparent) 0%,
-      color-mix(in srgb, var(--bg) 90%, transparent) 100%
-    );
-  border: 1px solid var(--sidebar-border);
-  box-shadow:
-    0 28px 64px rgba(0, 0, 0, 0.22),
-    inset 0 1px 0 var(--subtle-border);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 .metacanon-page-frame::before {
@@ -1496,9 +1489,8 @@ does not extend the close button beyond the viewport. */
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--gold) 6%, transparent) 0%, transparent 18%);
-  opacity: 0.9;
+  background: none;
+  opacity: 0;
 }
 
 .metacanon-modal-backdrop {
@@ -1525,36 +1517,89 @@ does not extend the close button beyond the viewport. */
 
 .metacanon-sidebar-panel {
   background:
-    radial-gradient(circle at 12% 6%, var(--sidebar-glow-color), transparent 26%),
+    radial-gradient(circle at 12% 5%, color-mix(in srgb, var(--sidebar-glow-color) 34%, transparent), transparent 22%),
     linear-gradient(180deg, var(--sidebar-bg) 0%, var(--sidebar-bg-end) 100%);
-  box-shadow: inset 0 0 0 1px var(--sidebar-border);
+  box-shadow: none;
+}
+
+.metacanon-sidebar-scroll {
+  scrollbar-width: none;
+}
+
+.metacanon-sidebar-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.metacanon-sidebar-search-rail {
+  margin-inline: -2px;
+  padding: 0 2px 14px;
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--sidebar-bg) 98%, transparent) 0%,
+      color-mix(in srgb, var(--sidebar-bg) 94%, transparent) 78%,
+      color-mix(in srgb, var(--sidebar-bg) 36%, transparent) 100%
+    );
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.metacanon-sidebar-search-rail::after {
+  content: "";
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  bottom: 0;
+  height: 1px;
+  background: color-mix(in srgb, var(--sidebar-border) 84%, transparent);
+  opacity: 0.86;
 }
 
 .metacanon-sidebar-search {
-  background: var(--comp-bg);
-  box-shadow: inset 0 0 0 1px var(--comp-border);
+  background: color-mix(in srgb, var(--comp-bg) 94%, transparent);
+  border: 1px solid color-mix(in srgb, var(--comp-border) 88%, transparent);
+  color: var(--theme-settings-input-text);
+  -webkit-text-fill-color: var(--theme-settings-input-text);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, white 6%, transparent),
+    0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.metacanon-sidebar-search::placeholder {
+  color: var(--theme-settings-input-placeholder);
+  -webkit-text-fill-color: var(--theme-settings-input-placeholder);
+}
+
+.metacanon-sidebar-search option {
+  color: #111111;
 }
 
 .metacanon-sidebar-section-label {
   color: var(--gold-text);
+  font-size: 11.5px;
+  letter-spacing: 0.14em;
+  line-height: 1.15;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .metacanon-workspace-row {
-  background: var(--theme-sidebar-item-default);
-  border: 1px solid transparent;
-  box-shadow: inset 0 1px 0 transparent;
+  background: color-mix(in srgb, var(--theme-sidebar-item-default) 92%, transparent);
+  border: 1px solid color-mix(in srgb, var(--sidebar-border) 54%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, white 4%, transparent);
 }
 
 .metacanon-workspace-row:hover {
-  background: color-mix(in srgb, var(--theme-sidebar-item-default) 68%, var(--gold-bg) 32%);
-  border-color: color-mix(in srgb, var(--gold-border) 72%, transparent);
+  background: color-mix(in srgb, var(--theme-sidebar-item-default) 76%, var(--gold-bg) 24%);
+  border-color: color-mix(in srgb, var(--gold-border) 60%, transparent);
 }
 
 .metacanon-workspace-row[data-active="true"] {
   background: color-mix(in srgb, var(--active-bg) 72%, var(--theme-sidebar-item-default) 28%);
   border-color: var(--active-border);
   box-shadow:
-    0 16px 28px rgba(0, 0, 0, 0.12),
+    0 2px 6px rgba(0, 0, 0, 0.03),
     inset 0 1px 0 var(--subtle-border);
 }
 
@@ -1565,10 +1610,21 @@ does not extend the close button beyond the viewport. */
 
 .metacanon-sidebar-icon-button {
   color: var(--text-2);
+  border: 1px solid color-mix(in srgb, var(--sidebar-border) 58%, transparent);
+  background: color-mix(in srgb, var(--theme-sidebar-item-default) 88%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, white 8%, transparent),
+    0 6px 14px rgba(0, 0, 0, 0.05);
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    box-shadow 180ms ease;
 }
 
 .metacanon-sidebar-icon-button:hover {
-  background: var(--gold-bg);
+  background: color-mix(in srgb, var(--gold-bg) 62%, transparent);
+  border-color: color-mix(in srgb, var(--gold-border) 56%, transparent);
   color: var(--text-1);
 }
 
@@ -1665,11 +1721,64 @@ does not extend the close button beyond the viewport. */
 }
 
 .metacanon-home-surface {
-  background: transparent;
+  background:
+    radial-gradient(circle at 10% 6%, color-mix(in srgb, var(--gold) 4%, transparent) 0%, transparent 18%),
+    linear-gradient(180deg, color-mix(in srgb, var(--bg) 96%, transparent) 0%, var(--bg) 100%);
 }
 
 .metacanon-home-stage {
   background: transparent;
+}
+
+.metacanon-home-stage::before,
+.metacanon-home-stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+[data-theme="dark"] .metacanon-home-stage::before {
+  background:
+    radial-gradient(circle at 50% 28%, rgba(218, 165, 32, 0.09) 0%, rgba(218, 165, 32, 0.03) 20%, transparent 46%),
+    radial-gradient(circle at 18% 78%, rgba(218, 165, 32, 0.03) 0%, transparent 34%),
+    radial-gradient(circle at 82% 22%, rgba(139, 90, 43, 0.04) 0%, transparent 30%);
+}
+
+[data-theme="dark"] .metacanon-home-stage::after {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.015) 0%, transparent 22%),
+    radial-gradient(circle at 50% 64%, rgba(218, 165, 32, 0.02) 0%, transparent 42%);
+}
+
+[data-theme="light"] .metacanon-home-stage::before,
+[data-theme="sanctuary"] .metacanon-home-stage::before {
+  background:
+    radial-gradient(circle at 50% 24%, rgba(184, 134, 11, 0.06) 0%, rgba(184, 134, 11, 0.025) 18%, transparent 42%),
+    radial-gradient(circle at 18% 82%, rgba(184, 134, 11, 0.025) 0%, transparent 28%),
+    radial-gradient(circle at 82% 18%, rgba(184, 134, 11, 0.02) 0%, transparent 24%);
+}
+
+[data-theme="light"] .metacanon-home-stage::after,
+[data-theme="sanctuary"] .metacanon-home-stage::after {
+  background:
+    linear-gradient(180deg, rgba(184, 134, 11, 0.03) 0%, transparent 18%),
+    linear-gradient(0deg, rgba(184, 134, 11, 0.02) 0%, transparent 16%);
+}
+
+[data-theme="cathedral"] .metacanon-home-stage::before {
+  background:
+    radial-gradient(circle at 50% 24%, rgba(218, 165, 32, 0.14) 0%, rgba(218, 165, 32, 0.06) 18%, transparent 44%),
+    radial-gradient(circle at 50% 28%, rgba(0, 128, 128, 0.08) 0%, transparent 36%),
+    radial-gradient(circle at 14% 78%, rgba(0, 128, 128, 0.05) 0%, transparent 28%),
+    radial-gradient(circle at 86% 16%, rgba(218, 165, 32, 0.05) 0%, transparent 24%);
+}
+
+[data-theme="cathedral"] .metacanon-home-stage::after {
+  background:
+    linear-gradient(180deg, rgba(218, 165, 32, 0.05) 0%, rgba(0, 128, 128, 0.02) 18%, transparent 42%),
+    radial-gradient(circle at 50% 34%, rgba(255, 255, 255, 0.02) 0%, transparent 34%);
 }
 
 .metacanon-cathedral-backform {
@@ -1705,25 +1814,61 @@ does not extend the close button beyond the viewport. */
   filter: drop-shadow(0 0 34px rgba(218, 165, 32, 0.12));
 }
 
-.metacanon-cathedral-backform__outer,
-.metacanon-cathedral-backform__inner,
-.metacanon-cathedral-backform__edge {
-  stroke: rgba(218, 165, 32, 0.32);
-  stroke-width: 2.8;
+.metacanon-cathedral-backform__core {
+  transform-origin: 50% 50%;
+}
+
+.metacanon-cathedral-backform__line {
+  fill: none;
+  stroke: rgba(218, 165, 32, 0.3);
+  stroke-width: 2.4;
   stroke-linecap: round;
   stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
 }
 
-.metacanon-cathedral-backform__inner {
-  stroke: rgba(218, 165, 32, 0.24);
+.metacanon-cathedral-backform__line--far {
+  stroke: rgba(0, 128, 128, 0.18);
+  stroke-width: 2;
+  opacity: 0.7;
 }
 
-.metacanon-cathedral-backform__edge {
-  stroke: rgba(218, 165, 32, 0.2);
+.metacanon-cathedral-backform__line--mid {
+  stroke: rgba(218, 165, 32, 0.3);
+  opacity: 0.84;
+}
+
+.metacanon-cathedral-backform__line--near {
+  stroke: rgba(218, 165, 32, 0.46);
+  stroke-width: 2.8;
+  opacity: 0.96;
 }
 
 [data-theme="cathedral"] .metacanon-cathedral-backform__svg {
-  opacity: 0.42;
+  opacity: 0.6;
+  transform: translateY(72px) scale(1.03);
+  filter:
+    drop-shadow(0 0 36px rgba(218, 165, 32, 0.18))
+    drop-shadow(0 0 74px rgba(0, 128, 128, 0.1));
+}
+
+[data-theme="cathedral"] .metacanon-cathedral-backform::before {
+  width: min(128vw, 1660px);
+  background:
+    radial-gradient(circle, rgba(218, 165, 32, 0.2) 0%, rgba(218, 165, 32, 0.08) 26%, rgba(0, 128, 128, 0.04) 44%, transparent 76%);
+  filter: blur(28px);
+}
+
+[data-theme="cathedral"] .metacanon-cathedral-backform__line--far {
+  stroke: rgba(71, 146, 144, 0.32);
+}
+
+[data-theme="cathedral"] .metacanon-cathedral-backform__line--mid {
+  stroke: rgba(201, 171, 96, 0.4);
+}
+
+[data-theme="cathedral"] .metacanon-cathedral-backform__line--near {
+  stroke: rgba(224, 195, 118, 0.62);
 }
 
 .metacanon-home-title {
@@ -1740,19 +1885,29 @@ does not extend the close button beyond the viewport. */
 
 .metacanon-home-manifesto {
   display: block;
-  margin-top: 140px;
   color: var(--inscription);
   font-family: var(--display-font);
   font-size: 12px;
   font-style: italic;
-  letter-spacing: 0.42em;
+  letter-spacing: 0.34em;
   text-transform: uppercase;
   text-align: center;
+}
+
+[data-theme="cathedral"] .metacanon-home-subtitle {
+  letter-spacing: 0.28em;
+}
+
+[data-theme="cathedral"] .metacanon-home-manifesto {
+  letter-spacing: 0.28em;
 }
 
 .metacanon-alignment-chip {
   background: color-mix(in srgb, var(--lens-color) 10%, var(--comp-bg) 90%);
   border: 1px solid color-mix(in srgb, var(--lens-color) 22%, var(--comp-border) 78%);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, white 5%, transparent),
+    0 8px 22px rgba(0, 0, 0, 0.12);
 }
 
 .metacanon-alignment-chip__clear {
@@ -1766,14 +1921,28 @@ does not extend the close button beyond the viewport. */
 }
 
 .metacanon-chat-mode-shell {
-  background: color-mix(in srgb, var(--comp-bg) 92%, transparent);
-  border: 1px solid color-mix(in srgb, var(--comp-border) 88%, transparent);
-  box-shadow: inset 0 1px 0 var(--subtle-border);
+  background: color-mix(in srgb, var(--bg) 94%, var(--sidebar-bg) 6%);
+  border: 1px solid color-mix(in srgb, var(--comp-border) 48%, transparent);
+  box-shadow: none;
+}
+
+.metacanon-chat-mode-shell--centered {
+  background: transparent;
+  border-color: transparent;
+}
+
+.metacanon-chat-mode-shell--workspace {
+  background: transparent;
+  border-color: transparent;
 }
 
 .metacanon-chat-mode-toggle {
-  border: 1px solid color-mix(in srgb, var(--comp-border) 88%, transparent);
-  background: color-mix(in srgb, var(--theme-sidebar-item-default) 84%, transparent);
+  border: 1px solid color-mix(in srgb, var(--comp-border) 70%, transparent);
+  background: color-mix(in srgb, var(--theme-sidebar-item-default) 62%, transparent);
+}
+
+.metacanon-chat-mode-copy {
+  letter-spacing: 0.02em;
 }
 
 .metacanon-chat-mode-toggle__button {
@@ -1787,17 +1956,15 @@ does not extend the close button beyond the viewport. */
 }
 
 .metacanon-chat-mode-toggle__button[data-active="true"] {
-  background: color-mix(in srgb, var(--gold-bg) 88%, transparent);
-  border-color: color-mix(in srgb, var(--gold-border) 74%, transparent);
+  background: color-mix(in srgb, var(--gold-bg) 34%, var(--bg) 66%);
+  border-color: color-mix(in srgb, var(--gold-border) 28%, transparent);
   color: var(--text-1);
-  box-shadow:
-    0 8px 22px rgba(0, 0, 0, 0.14),
-    inset 0 1px 0 var(--subtle-border);
+  box-shadow: none;
 }
 
 .metacanon-chat-mode-toggle__button:not([data-active="true"]):hover:not(:disabled) {
   color: var(--text-1);
-  background: color-mix(in srgb, var(--gold-bg) 46%, transparent);
+  background: color-mix(in srgb, var(--gold-bg) 28%, transparent);
 }
 
 .metacanon-starter-sheet {
@@ -1871,31 +2038,17 @@ does not extend the close button beyond the viewport. */
 .metacanon-hero-glyph {
   position: relative;
   isolation: isolate;
-  filter: var(--prism-filter);
   transition: transform 220ms ease, filter 220ms ease;
 }
 
-.metacanon-hero-glyph::before {
-  content: "";
-  position: absolute;
-  inset: -26px;
-  border-radius: 999px;
-  border: 1px solid var(--halo-border);
-  box-shadow: var(--halo-shadow);
-  background:
-    radial-gradient(circle, color-mix(in srgb, var(--gold) 10%, transparent) 0%, transparent 68%);
-  z-index: -1;
+.metacanon-hero-glyph .prism-presence__orb {
+  width: 168px;
+  height: 168px;
 }
 
-.metacanon-hero-glyph::after {
-  content: "";
-  position: absolute;
-  inset: -54px;
-  border-radius: 999px;
-  background:
-    radial-gradient(circle, color-mix(in srgb, var(--gold) 6%, transparent) 0%, transparent 64%);
-  z-index: -2;
-  opacity: 0.85;
+.metacanon-hero-glyph .prism-presence__image {
+  width: 112px;
+  height: 112px;
 }
 
 .metacanon-hero-glyph-thinking {
@@ -1904,14 +2057,56 @@ does not extend the close button beyond the viewport. */
 }
 
 .metacanon-composer-shell {
-  background: var(--comp-bg);
+  background: color-mix(in srgb, var(--bg) 95%, var(--sidebar-bg) 5%);
   border: 1px solid var(--comp-border);
-  box-shadow:
-    0 28px 72px rgba(0, 0, 0, 0.18),
-    inset 0 1px 0 var(--subtle-border);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   border-radius: 24px;
+}
+
+.metacanon-composer-shell--centered {
+  background: color-mix(in srgb, var(--bg) 96%, var(--sidebar-bg) 4%);
+}
+
+.metacanon-composer-input-shell--workspace {
+  border: none;
+  background: transparent;
+  border-radius: 0;
+  padding-inline: 0;
+  box-shadow: none;
+}
+
+.metacanon-composer-shell--workspace {
+  background: color-mix(in srgb, var(--bg) 96%, var(--sidebar-bg) 4%);
+  border-color: color-mix(in srgb, var(--comp-border) 44%, transparent);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.workspace-prism-chat-rail {
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.workspace-prism-chat-rail__toggle {
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  border: 1px solid color-mix(in srgb, var(--comp-border) 38%, transparent);
+  background: color-mix(in srgb, var(--theme-sidebar-item-default) 42%, transparent);
+  box-shadow: none;
+}
+
+.workspace-prism-chat-rail__toggle:hover,
+.workspace-prism-chat-rail__toggle:focus-visible {
+  background: color-mix(in srgb, var(--gold-bg) 30%, transparent);
+  border-color: color-mix(in srgb, var(--gold-border) 28%, transparent);
+}
+
+.workspace-prism-chat-rail__menu {
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);
 }
 
 .metacanon-composer-shell textarea::placeholder {
@@ -1920,21 +2115,101 @@ does not extend the close button beyond the viewport. */
   font-style: italic;
 }
 
+.metacanon-composer-shell textarea,
+.metacanon-composer-shell textarea:focus {
+  border: none !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.metacanon-composer-footer {
+  border-top: 1px solid color-mix(in srgb, var(--comp-border) 62%, transparent);
+  margin-top: 8px;
+}
+
 .metacanon-composer-toolbar-button {
-  border: 1px solid transparent;
-  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--comp-border) 34%, transparent);
+  background: color-mix(in srgb, var(--theme-sidebar-item-default) 44%, transparent);
   color: var(--text-2);
+  min-height: 28px;
+  padding-inline: 8px;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
 }
 
 .metacanon-composer-toolbar-button:hover,
 .metacanon-composer-toolbar-button[data-open="true"] {
-  background: color-mix(in srgb, var(--gold-bg) 88%, transparent);
-  border-color: color-mix(in srgb, var(--gold-border) 72%, transparent);
+  background: color-mix(in srgb, var(--gold-bg) 58%, transparent);
+  border-color: color-mix(in srgb, var(--gold-border) 48%, transparent);
   color: var(--text-1);
+  transform: none;
 }
 
 .metacanon-composer-toolbar-label {
   color: currentColor;
+}
+
+.metacanon-theme-switcher__button {
+  min-width: 44px;
+  justify-content: center;
+}
+
+.metacanon-theme-switcher__button--active {
+  background: color-mix(in srgb, white 80%, var(--gold) 20%) !important;
+  border-color: color-mix(in srgb, var(--gold-border) 22%, transparent) !important;
+  box-shadow: inset 0 1px 0 color-mix(in srgb, white 24%, transparent) !important;
+}
+
+[data-theme="dark"] .metacanon-theme-switcher__button--active {
+  color: #2b2213 !important;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(249, 241, 219, 0.98) 0%,
+      rgba(235, 219, 179, 0.96) 100%
+    ) !important;
+  border-color: rgba(227, 189, 99, 0.38) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    0 6px 16px rgba(0, 0, 0, 0.18) !important;
+}
+
+[data-theme="cathedral"] .metacanon-theme-switcher__button {
+  color: rgba(246, 241, 222, 0.72) !important;
+  background: rgba(197, 165, 90, 0.06) !important;
+  border-color: rgba(197, 165, 90, 0.18) !important;
+}
+
+[data-theme="cathedral"] .metacanon-theme-switcher__button:hover {
+  color: rgba(246, 241, 222, 0.92) !important;
+  background: rgba(197, 165, 90, 0.12) !important;
+  border-color: rgba(218, 165, 32, 0.28) !important;
+}
+
+[data-theme="cathedral"] .metacanon-theme-switcher__button--active {
+  color: #2b2213 !important;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(247, 237, 206, 0.98) 0%,
+      rgba(233, 214, 166, 0.96) 100%
+    ) !important;
+  border-color: rgba(227, 189, 99, 0.42) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 6px 16px rgba(0, 0, 0, 0.18) !important;
+}
+
+[data-theme="light"] .metacanon-theme-switcher__button--active,
+[data-theme="sanctuary"] .metacanon-theme-switcher__button--active {
+  background: color-mix(in srgb, white 92%, var(--gold) 8%) !important;
+  border-color: color-mix(in srgb, var(--gold-border) 18%, transparent) !important;
+  box-shadow: inset 0 1px 0 color-mix(in srgb, white 54%, transparent) !important;
 }
 
 .metacanon-action-chip {
@@ -1949,22 +2224,85 @@ does not extend the close button beyond the viewport. */
   color: var(--text-2);
 }
 
-.metacanon-footer-dock {
-  background: var(--comp-bg);
-  border-color: var(--sidebar-border);
+.metacanon-home-quick-action {
+  min-height: 42px;
+  min-width: 158px;
+  justify-content: center;
+  background: color-mix(in srgb, var(--theme-sidebar-item-default) 48%, transparent);
+  border-color: color-mix(in srgb, var(--comp-border) 38%, transparent);
+  color: var(--text-1);
   box-shadow:
-    0 18px 38px rgba(0, 0, 0, 0.14),
-    inset 0 1px 0 var(--subtle-border);
+    inset 0 1px 0 color-mix(in srgb, white 4%, transparent),
+    0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.metacanon-home-quick-action:hover {
+  background: color-mix(in srgb, var(--gold-bg) 58%, transparent);
+  border-color: color-mix(in srgb, var(--gold-border) 48%, transparent);
+  color: var(--text-1);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, white 6%, transparent),
+    0 8px 18px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="cathedral"] .metacanon-home-quick-action {
+  color: rgba(246, 241, 222, 0.82);
+  background: rgba(197, 165, 90, 0.06);
+  border-color: rgba(197, 165, 90, 0.2);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.03),
+    0 6px 16px rgba(0, 0, 0, 0.14);
+}
+
+[data-theme="cathedral"] .metacanon-home-quick-action:hover {
+  color: rgba(246, 241, 222, 0.96);
+  background: rgba(197, 165, 90, 0.12);
+  border-color: rgba(218, 165, 32, 0.3);
+}
+
+.metacanon-footer-dock {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.metacanon-sidebar-footer-tray {
+  background: transparent;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 -12px 24px rgba(0, 0, 0, 0.04);
 }
 
 .metacanon-footer-button {
   background: var(--theme-sidebar-footer-icon);
   color: var(--theme-sidebar-footer-icon-fill);
+  border: 1px solid color-mix(in srgb, var(--sidebar-border) 56%, transparent);
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 color-mix(in srgb, white 18%, transparent);
 }
 
 .metacanon-footer-button:hover {
   background: var(--theme-sidebar-footer-icon-hover);
   color: var(--text-1);
+  border-color: color-mix(in srgb, var(--gold-border) 52%, transparent);
+}
+
+.metacanon-sidebar-brand-mark-wrap {
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+.metacanon-sidebar-brand-mark {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.12));
+}
+
+.metacanon-sidebar-brand-mark--light {
+  filter:
+    saturate(1.12)
+    contrast(1.06)
+    drop-shadow(0 3px 6px rgba(125, 92, 31, 0.18));
 }
 
 .metacanon-btc-glyph {
@@ -2052,6 +2390,179 @@ does not extend the close button beyond the viewport. */
   transform: translateY(-1px);
 }
 
+[data-theme="light"] .metacanon-composer-shell {
+  background: color-mix(in srgb, white 86%, var(--sidebar-bg) 14%);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+[data-theme="dark"] .metacanon-composer-shell {
+  background: rgba(12, 14, 22, 0.94);
+  border-color: rgba(218, 165, 32, 0.12);
+}
+
+[data-theme="dark"] .metacanon-composer-input-shell--workspace {
+  background: transparent;
+  border-color: transparent;
+}
+
+[data-theme="dark"] .metacanon-chat-mode-shell {
+  background: rgba(19, 21, 31, 0.66);
+  border-color: rgba(218, 165, 32, 0.14);
+}
+
+[data-theme="dark"] .metacanon-chat-mode-shell--workspace {
+  background: transparent;
+  border-color: transparent;
+}
+
+[data-theme="cathedral"] .metacanon-composer-shell {
+  background:
+    radial-gradient(circle at top left, rgba(218, 165, 32, 0.08) 0%, transparent 22%),
+    radial-gradient(circle at bottom left, rgba(0, 128, 128, 0.04) 0%, transparent 28%),
+    linear-gradient(
+      180deg,
+      rgba(24, 20, 19, 0.94) 0%,
+      rgba(12, 12, 16, 0.97) 100%
+    );
+  border-color: rgba(218, 165, 32, 0.18);
+  box-shadow: none;
+}
+
+[data-theme="cathedral"] .metacanon-composer-input-shell--workspace {
+  background: transparent;
+  border-color: transparent;
+}
+
+[data-theme="cathedral"] .metacanon-chat-mode-shell {
+  background: rgba(31, 26, 24, 0.68);
+  border-color: rgba(218, 165, 32, 0.18);
+}
+
+[data-theme="cathedral"] .metacanon-chat-mode-shell--workspace {
+  background: transparent;
+  border-color: transparent;
+}
+
+
+[data-theme="light"] .metacanon-chat-mode-shell {
+  background: color-mix(in srgb, white 82%, var(--sidebar-bg) 18%);
+  border-color: color-mix(in srgb, var(--comp-border) 44%, transparent);
+}
+
+[data-theme="dark"] .workspace-prism-chat-rail__toggle {
+  background: rgba(18, 20, 29, 0.76);
+  border-color: rgba(218, 165, 32, 0.16);
+}
+
+[data-theme="dark"] .workspace-prism-chat-rail__toggle:hover,
+[data-theme="dark"] .workspace-prism-chat-rail__toggle:focus-visible {
+  background: rgba(37, 31, 23, 0.78);
+  border-color: rgba(218, 165, 32, 0.24);
+}
+
+[data-theme="cathedral"] .workspace-prism-chat-rail__toggle {
+  background: rgba(31, 26, 24, 0.76);
+  border-color: rgba(218, 165, 32, 0.18);
+}
+
+[data-theme="cathedral"] .workspace-prism-chat-rail__toggle:hover,
+[data-theme="cathedral"] .workspace-prism-chat-rail__toggle:focus-visible {
+  background: rgba(56, 43, 30, 0.82);
+  border-color: rgba(218, 165, 32, 0.26);
+}
+
+[data-theme="light"] .workspace-prism-chat-rail__toggle,
+[data-theme="sanctuary"] .workspace-prism-chat-rail__toggle {
+  background: color-mix(in srgb, white 84%, var(--sidebar-bg) 16%);
+  border-color: color-mix(in srgb, var(--comp-border) 30%, transparent);
+}
+
+[data-theme="light"] .metacanon-composer-input-shell--workspace {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+[data-theme="light"] .metacanon-composer-toolbar-button {
+  background: color-mix(in srgb, white 72%, var(--sidebar-bg) 28%);
+  border-color: color-mix(in srgb, var(--comp-border) 28%, transparent);
+}
+
+[data-theme="light"] .metacanon-composer-toolbar-button:hover,
+[data-theme="light"] .metacanon-composer-toolbar-button[data-open="true"] {
+  background: color-mix(in srgb, white 58%, var(--gold) 42%);
+  border-color: color-mix(in srgb, var(--gold-border) 34%, transparent);
+}
+
+[data-theme="light"] .metacanon-composer-shell--workspace {
+  background: color-mix(in srgb, white 94%, var(--sidebar-bg) 6%);
+  box-shadow: none;
+}
+
+[data-theme="light"] .metacanon-composer-footer {
+  border-top-color: color-mix(in srgb, var(--comp-border) 44%, transparent);
+}
+
+[data-theme="light"] .metacanon-composer-toolbar-button {
+  background: transparent;
+  color: color-mix(in srgb, var(--text-2) 88%, var(--text-1) 12%);
+}
+
+[data-theme="light"] .metacanon-composer-toolbar-button:hover,
+[data-theme="light"] .metacanon-composer-toolbar-button[data-open="true"] {
+  background: color-mix(in srgb, white 76%, var(--gold) 24%);
+  border-color: color-mix(in srgb, var(--gold-border) 48%, transparent);
+  color: var(--text-1);
+  transform: none;
+}
+
+[data-theme="light"] .metacanon-action-chip {
+  background: color-mix(in srgb, white 82%, var(--sidebar-bg) 18%);
+}
+
+[data-theme="light"] .metacanon-footer-dock {
+  background: transparent;
+  box-shadow: none;
+}
+
+[data-theme="light"] .metacanon-sidebar-footer-tray {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, transparent 0%, white 100%) 0%,
+    color-mix(in srgb, white 78%, var(--sidebar-bg) 22%) 38%
+  );
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+[data-theme="light"] .metacanon-footer-button {
+  background: color-mix(in srgb, white 86%, var(--sidebar-bg) 14%);
+  border-color: color-mix(in srgb, var(--sidebar-border) 44%, transparent);
+  box-shadow:
+    0 8px 18px rgba(93, 75, 37, 0.08),
+    inset 0 1px 0 color-mix(in srgb, white 44%, transparent);
+}
+
+[data-theme="light"] .metacanon-footer-button:hover {
+  background: color-mix(in srgb, white 68%, var(--gold) 32%);
+}
+
+[data-theme="light"] .metacanon-support-popover {
+  background: color-mix(in srgb, white 92%, var(--sidebar-bg) 8%);
+  box-shadow: 0 16px 28px rgba(93, 75, 37, 0.12);
+  backdrop-filter: none;
+}
+
+[data-theme="light"] .metacanon-support-popover::after {
+  border-color: color-mix(in srgb, white 92%, var(--sidebar-bg) 8%)
+    transparent transparent transparent;
+}
+
+[data-theme="light"] .metacanon-cta-button {
+  box-shadow: 0 8px 18px rgba(93, 75, 37, 0.1);
+}
+
 .metacanon-cta-button:disabled {
   opacity: 0.7;
 }
@@ -2076,6 +2587,7 @@ does not extend the close button beyond the viewport. */
   border: 1px solid transparent;
   background: transparent;
   color: var(--text-2);
+  box-shadow: none;
 }
 
 .metacanon-settings-option:hover {
@@ -2103,6 +2615,34 @@ does not extend the close button beyond the viewport. */
 
 .metacanon-settings-option-label {
   color: currentColor;
+}
+
+.prism-settings-home-button {
+  border: 1px solid color-mix(in srgb, var(--theme-sidebar-border) 72%, transparent);
+  background: color-mix(in srgb, var(--theme-bg-sidebar) 30%, transparent);
+  color: var(--theme-text-secondary);
+  transition:
+    color 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease;
+}
+
+.prism-settings-home-button:hover {
+  color: var(--theme-text-primary);
+  border-color: color-mix(in srgb, var(--theme-home-border) 72%, transparent);
+  background: color-mix(in srgb, var(--theme-sidebar-item-hover) 72%, transparent);
+}
+
+.prism-settings-sidebar-label {
+  color: color-mix(in srgb, var(--theme-text-secondary) 88%, transparent);
+}
+
+.metacanon-theme-switcher {
+  align-items: stretch;
+}
+
+.prism-settings-mobile-brand-copy {
+  max-width: 190px;
 }
 
 .metacanon-setup-note {
@@ -2142,25 +2682,62 @@ does not extend the close button beyond the viewport. */
 }
 
 .metacanon-model-picker-button {
-  border: 1px solid transparent;
-  background: transparent;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid color-mix(in srgb, var(--comp-border) 34%, transparent);
+  background: color-mix(in srgb, var(--bg) 92%, var(--sidebar-bg) 8%);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 .metacanon-model-picker-button:hover,
 .metacanon-model-picker-button[data-open="true"] {
-  background: color-mix(in srgb, var(--gold-bg) 88%, transparent);
-  border-color: color-mix(in srgb, var(--gold-border) 76%, transparent);
+  background: color-mix(in srgb, var(--gold-bg) 58%, transparent);
+  border-color: color-mix(in srgb, var(--gold-border) 48%, transparent);
 }
 
 .metacanon-model-picker-button__text {
-  color: var(--text-2);
+  color: var(--text-1);
 }
 
-.metacanon-model-picker-button:hover .metacanon-model-picker-button__text,
-.metacanon-model-picker-button[data-open="true"] .metacanon-model-picker-button__text {
-  color: var(--text-1);
+.metacanon-model-picker-button--compact {
+  border-color: color-mix(in srgb, var(--sidebar-border) 48%, transparent);
+  background: color-mix(in srgb, var(--bg) 94%, var(--sidebar-bg) 6%);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, white 6%, transparent),
+    0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dark"] .metacanon-model-picker-button,
+[data-theme="dark"] .metacanon-model-picker-button--compact {
+  background: rgba(18, 20, 31, 0.94);
+  border-color: rgba(255, 215, 0, 0.14);
+}
+
+[data-theme="dark"] .metacanon-model-picker-button:hover,
+[data-theme="dark"] .metacanon-model-picker-button[data-open="true"] {
+  background: rgba(255, 215, 0, 0.12);
+  border-color: rgba(255, 215, 0, 0.3);
+}
+
+[data-theme="cathedral"] .metacanon-model-picker-button,
+[data-theme="cathedral"] .metacanon-model-picker-button--compact {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(29, 25, 22, 0.92) 0%,
+      rgba(15, 14, 17, 0.95) 100%
+    );
+  border-color: rgba(218, 165, 32, 0.18);
+}
+
+[data-theme="cathedral"] .metacanon-model-picker-button:hover,
+[data-theme="cathedral"] .metacanon-model-picker-button[data-open="true"] {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(70, 55, 33, 0.86) 0%,
+      rgba(34, 28, 24, 0.92) 100%
+    );
+  border-color: rgba(218, 165, 32, 0.3);
 }
 
 .metacanon-model-picker-panel {
@@ -2194,28 +2771,158 @@ does not extend the close button beyond the viewport. */
 }
 
 .metacanon-search-create-button {
-  background: var(--comp-bg);
-  border: 1px solid var(--comp-border);
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
+  background: color-mix(in srgb, var(--theme-sidebar-item-default) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--sidebar-border) 58%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, white 10%, transparent),
+    0 2px 6px rgba(0, 0, 0, 0.03);
 }
 
 .metacanon-search-create-button:hover {
-  background: var(--gold-bg);
-  border-color: var(--gold-border);
+  background: color-mix(in srgb, var(--gold-bg) 62%, transparent);
+  border-color: color-mix(in srgb, var(--gold-border) 56%, transparent);
 }
 
 .metacanon-search-create-button svg {
   color: var(--gold-text);
 }
 
+[data-theme="dark"] .metacanon-sidebar-search-rail {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(12, 13, 22, 0.98) 0%,
+      rgba(12, 13, 22, 0.96) 76%,
+      rgba(12, 13, 22, 0.7) 100%
+    );
+}
+
+[data-theme="dark"] .metacanon-sidebar-search-rail::after {
+  background: rgba(255, 215, 0, 0.18);
+  opacity: 1;
+}
+
+[data-theme="dark"] .metacanon-sidebar-search {
+  background: rgba(20, 22, 35, 0.94);
+  border-color: rgba(255, 215, 0, 0.16);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 6px 14px rgba(0, 0, 0, 0.14);
+}
+
+[data-theme="dark"] .metacanon-search-create-button {
+  background: rgba(255, 215, 0, 0.06);
+  border-color: rgba(255, 215, 0, 0.18);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 6px 14px rgba(0, 0, 0, 0.16);
+}
+
+[data-theme="dark"] .metacanon-search-create-button:hover {
+  background: rgba(255, 215, 0, 0.13);
+  border-color: rgba(255, 215, 0, 0.32);
+}
+
+[data-theme="dark"] .metacanon-sidebar-toggle-button {
+  border-radius: 999px;
+  background: rgba(255, 215, 0, 0.05);
+  border: 1px solid rgba(255, 215, 0, 0.14);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 6px 14px rgba(0, 0, 0, 0.16);
+}
+
+[data-theme="dark"] .metacanon-sidebar-toggle-button:hover {
+  background: rgba(255, 215, 0, 0.11);
+  border-color: rgba(255, 215, 0, 0.28);
+}
+
+[data-theme="dark"] .metacanon-sidebar-brand-copy {
+  color: rgba(245, 245, 245, 0.68);
+}
+
+.metacanon-home-footer {
+  min-height: 30px;
+  padding-top: 4px;
+  padding-bottom: 2px;
+  margin-top: 0;
+}
+
+.metacanon-home-footer__model {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex: 1 1 0;
+}
+
 .metacanon-send-button {
   border: 1px solid var(--send-border);
   background: var(--send-bg);
   box-shadow: var(--prism-btn-filter);
+  transition:
+    transform 180ms ease,
+    filter 180ms ease,
+    opacity 180ms ease,
+    background 180ms ease;
 }
 
 .metacanon-send-button-icon {
   color: var(--send-icon);
+}
+
+.metacanon-send-button:hover:not(.metacanon-send-button--disabled) {
+  transform: translateY(-1px);
+}
+
+.metacanon-user-bubble {
+  background:
+    radial-gradient(circle at top left, rgba(209, 163, 33, 0.08) 0%, transparent 32%),
+    linear-gradient(180deg, rgba(39, 39, 42, 0.96) 0%, rgba(24, 24, 27, 0.98) 100%);
+  border: 1px solid rgba(214, 180, 107, 0.18);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 14px 32px rgba(0, 0, 0, 0.16);
+}
+
+.light .metacanon-user-bubble {
+  background:
+    radial-gradient(circle at top left, rgba(209, 163, 33, 0.08) 0%, transparent 30%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(241, 245, 249, 0.98) 100%);
+  border-color: rgba(148, 163, 184, 0.28);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 12px 26px rgba(15, 23, 42, 0.08);
+}
+
+.metacanon-assistant-message {
+  max-width: 690px;
+  padding: 14px 18px;
+  border-radius: 20px;
+  border: 1px solid color-mix(in srgb, var(--sidebar-border) 76%, transparent);
+  background:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--gold) 5%, transparent) 0%, transparent 26%),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--sidebar-bg) 72%, transparent) 0%,
+      color-mix(in srgb, var(--bg) 92%, transparent) 100%
+    );
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, white 4%, transparent),
+    0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+.metacanon-status-thought {
+  border: 1px solid color-mix(in srgb, var(--sidebar-border) 80%, transparent);
+  background:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--gold) 6%, transparent) 0%, transparent 24%),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--theme-sidebar-item-default) 88%, transparent) 0%,
+      color-mix(in srgb, var(--bg) 94%, transparent) 100%
+    );
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, white 5%, transparent),
+    0 10px 24px rgba(0, 0, 0, 0.14);
 }
 
 .metacanon-send-button--disabled {

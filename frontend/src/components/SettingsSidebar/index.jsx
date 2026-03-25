@@ -25,6 +25,7 @@ import useAppVersion from "@/hooks/useAppVersion";
 import PrismHoverTarget from "@/components/PrismHoverTarget";
 import PrismPresence from "@/components/PrismPresence";
 import MetacanonThemeSwitcher from "@/components/Metacanon/ThemeSwitcher";
+import { MetacanonSidebarBrand } from "@/components/Metacanon/Branding";
 
 export default function SettingsSidebar() {
   const { t } = useTranslation();
@@ -98,12 +99,17 @@ export default function SettingsSidebar() {
                     align="left"
                   />
 
-                  <img
-                    src={logo}
-                    alt="Logo"
-                    className="rounded w-auto max-h-[68px] max-w-[308px]"
-                    style={{ objectFit: "contain" }}
-                  />
+                  <div className="prism-settings-mobile-brand-copy flex min-w-0 flex-col">
+                    <div className="text-[16px] font-semibold leading-[1.05] tracking-[0.035em] text-theme-text-primary">
+                      Prism AI Tool
+                    </div>
+                    <div className="mt-1 text-[10.5px] leading-[1.15] text-theme-text-secondary">
+                      <span className="block">Built on AnythingLLM</span>
+                      <span className="block whitespace-nowrap">
+                        by Transformation Agency
+                      </span>
+                    </div>
+                  </div>
                 </div>
                 <div className="flex gap-x-2 items-center text-slate-500 shrink-0">
                   <PrismHoverTarget targetId="settings-sidebar-home">
@@ -118,13 +124,13 @@ export default function SettingsSidebar() {
               </div>
 
               {/* Primary Body */}
-              <div className="h-full flex flex-col w-full justify-between pt-4 overflow-y-scroll no-scroll">
+              <div className="h-full flex flex-col w-full justify-between pt-4 overflow-y-auto prism-sidebar-scroll-region">
                 <div className="h-auto md:sidebar-items">
-                  <div className="flex flex-col gap-y-4 pb-[60px] overflow-y-scroll no-scroll">
+                  <div className="flex flex-col gap-y-4 pb-[60px] overflow-y-auto prism-sidebar-scroll-region">
                     <div className="px-3">
                       <MetacanonThemeSwitcher
-                        showLabel={false}
-                        className="w-full justify-between"
+                        showLabel={true}
+                        className="mx-auto w-auto max-w-full"
                       />
                     </div>
                     <SidebarOptions user={user} t={t} />
@@ -157,45 +163,38 @@ export default function SettingsSidebar() {
 
   return (
     <>
-      <div className="h-full flex flex-col">
-        <div className="flex shrink-0 items-center justify-start gap-1 mx-[20.5px] mb-[12px] mt-[10px]">
-          <PrismPresence
-            surface="settings-sidebar"
-            size="xs"
-            label="Prism"
-            caption="Standby"
-            align="left"
-          />
-
-          <Link
-            to={paths.home()}
-            className="flex shrink-0 max-w-[228px] items-center justify-start"
-          >
-            <img
-              src={logo}
-              alt="Logo"
-              className="rounded max-h-[44px] max-w-[228px]"
-              style={{ objectFit: "contain" }}
+      <div className="prism-settings-sidebar-shell h-full flex flex-col">
+        <div className="prism-settings-sidebar-brand flex shrink-0 flex-col gap-3 px-[14px] pb-[8px] pt-[14px]">
+          <div className="flex items-start justify-between gap-3">
+            <MetacanonSidebarBrand />
+            <PrismHoverTarget targetId="settings-sidebar-home-desktop">
+              <Link
+                to={paths.home()}
+                className="prism-settings-home-button flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-full"
+              >
+                <House className="h-4 w-4" />
+              </Link>
+            </PrismHoverTarget>
+          </div>
+          <div className="prism-settings-sidebar-divider" />
+          <div className="px-2">
+            <MetacanonThemeSwitcher
+              showLabel={true}
+              className="w-full justify-between"
             />
-          </Link>
+          </div>
         </div>
         <div
           ref={sidebarRef}
-          className="metacanon-sidebar-panel transition-all duration-500 relative m-[16px] mt-0 flex-1 min-h-0 rounded-[16px] bg-theme-bg-sidebar border-[2px] border-theme-sidebar-border light:border-none min-w-[250px] p-[10px]"
+          className="metacanon-sidebar-panel transition-all duration-500 relative flex-1 min-h-0 min-w-[250px]"
         >
           <div className="w-full h-full flex flex-col overflow-x-hidden items-between min-w-[235px]">
-            <div className="text-theme-text-secondary text-sm font-medium uppercase mt-[4px] mb-0 ml-2">
+            <div className="prism-settings-sidebar-label text-theme-text-secondary text-[11px] font-semibold uppercase tracking-[0.18em] mt-[4px] mb-0 ml-2">
               {t("settings.title")}
             </div>
             <div className="relative flex-1 min-h-0 flex flex-col w-full pt-[10px]">
               <div className="h-auto sidebar-items">
-                <div className="flex flex-col gap-y-2 pb-[86px] overflow-y-scroll no-scroll">
-                  <div className="px-2 pb-1">
-                    <MetacanonThemeSwitcher
-                      showLabel={false}
-                      className="w-full justify-between"
-                    />
-                  </div>
+                <div className="flex flex-col gap-y-2 pb-[86px] overflow-y-auto prism-sidebar-scroll-region">
                   <SidebarOptions user={user} t={t} />
                   <div className="h-[1.5px] bg-[#3D4147] mx-3 mt-[14px]" />
                   <SupportEmail />

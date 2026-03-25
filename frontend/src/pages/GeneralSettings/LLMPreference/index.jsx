@@ -105,12 +105,12 @@ export default function GeneralLLMPreference() {
   const SelectedOptionsComponent =
     selectedLLM && PROVIDER_OPTIONS_COMPONENTS[selectedLLM];
   return (
-    <div className="metacanon-page-shell w-screen h-screen overflow-hidden bg-theme-bg-container flex">
+    <div className="metacanon-page-shell prism-settings-route w-screen h-screen overflow-hidden bg-theme-bg-container flex">
       <Sidebar />
       {loading ? (
         <div
           style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
-          className="metacanon-page-frame relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
+          className="metacanon-page-frame prism-settings-route__frame relative md:mx-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
         >
           <div className="w-full h-full flex justify-center items-center">
             <PreLoader />
@@ -119,17 +119,14 @@ export default function GeneralLLMPreference() {
       ) : (
         <div
           style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
-          className="metacanon-page-frame relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
+          className="metacanon-page-frame prism-settings-route__frame relative md:mx-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
         >
           <form onSubmit={handleSubmit} className="flex w-full">
-            <div className="flex flex-col w-full px-1 md:pl-6 md:pr-[50px] md:py-6 py-16">
-              <div className="w-full flex flex-col gap-y-1 pb-6 border-white light:border-theme-sidebar-border border-b-2 border-opacity-10">
-                <div className="flex gap-x-4 items-center">
-                  <p className="text-lg leading-6 font-bold text-white">
-                    {t("llm.title")}
-                  </p>
-                </div>
-                <p className="text-xs leading-[18px] font-base text-white text-opacity-60">
+            <div className="prism-settings-content prism-settings-content--wide flex flex-col w-full px-1 md:pl-6 md:pr-[50px] md:py-6 py-16">
+              <div className="prism-settings-page-header">
+                <div className="prism-page-section-label">Transformation Agency</div>
+                <p className="prism-settings-page-title">{t("llm.title")}</p>
+                <p className="prism-settings-page-description">
                   {t("llm.description")}
                 </p>
               </div>
@@ -155,20 +152,17 @@ export default function GeneralLLMPreference() {
                   </Link>
                 </div>
               </div>
-              <div className="w-full justify-end flex">
+              <div className="prism-settings-savebar w-full">
                 {hasChanges && (
-                  <CTAButton
-                    onClick={() => handleSubmit()}
-                    className="mt-3 mr-0 -mb-14 z-10"
-                  >
+                  <CTAButton className="mt-3 mr-0 z-10">
                     {saving ? "Saving..." : "Save changes"}
                   </CTAButton>
                 )}
               </div>
-              <div className="text-base font-bold text-white mt-6 mb-4">
+              <div className="prism-settings-block-title">
                 {t("llm.provider")}
               </div>
-              <div className="relative">
+              <div className="prism-settings-provider-wrap relative">
                 {searchMenuOpen && (
                   <div
                     className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-70 backdrop-blur-sm z-10"
@@ -177,13 +171,13 @@ export default function GeneralLLMPreference() {
                 )}
 
                 {searchMenuOpen ? (
-                  <div className="absolute top-0 left-0 w-full max-w-[640px] max-h-[310px] min-h-[64px] bg-theme-settings-input-bg rounded-lg flex flex-col justify-between cursor-pointer border-2 border-primary-button z-20">
+                  <div className="prism-settings-provider-menu cursor-pointer">
                     <div className="w-full flex flex-col gap-y-1">
-                      <div className="flex items-center sticky top-0 z-10 border-b border-[#9CA3AF] mx-4 bg-theme-settings-input-bg">
+                      <div className="prism-settings-provider-search">
                         <MagnifyingGlass
                           size={20}
                           weight="bold"
-                          className="absolute left-4 z-30 text-theme-text-primary -ml-4 my-2"
+                          className="text-theme-text-primary"
                         />
 
                         <input
@@ -191,7 +185,7 @@ export default function GeneralLLMPreference() {
                           name="llm-search"
                           autoComplete="off"
                           placeholder="Search all LLM providers"
-                          className="border-none -ml-4 my-2 bg-transparent z-20 pl-12 h-[38px] w-full px-4 py-1 text-sm outline-none text-theme-text-primary placeholder:text-theme-text-primary placeholder:font-medium"
+                          className="prism-settings-provider-search-input text-sm outline-none text-theme-text-primary placeholder:text-theme-text-primary placeholder:font-medium"
                           onChange={(e) => setSearchQuery(e.target.value)}
                           ref={searchInputRef}
                           onKeyDown={(e) => {
@@ -202,11 +196,11 @@ export default function GeneralLLMPreference() {
                         <X
                           size={20}
                           weight="bold"
-                          className="cursor-pointer text-white hover:text-x-button"
+                          className="prism-settings-provider-close cursor-pointer hover:text-x-button"
                           onClick={handleXButton}
                         />
                       </div>
-                      <div className="flex-1 pl-4 pr-2 flex flex-col gap-y-1 overflow-y-auto white-scrollbar pb-4 max-h-[245px]">
+                      <div className="prism-settings-provider-list white-scrollbar">
                         {filteredLLMs.map((llm) => {
                           return (
                             <LLMItem
@@ -225,22 +219,22 @@ export default function GeneralLLMPreference() {
                   </div>
                 ) : (
                   <button
-                    className="w-full max-w-[640px] h-[64px] bg-theme-settings-input-bg rounded-lg flex items-center p-[14px] justify-between cursor-pointer border-2 border-transparent hover:border-primary-button transition-all duration-300"
+                    className="prism-settings-provider-trigger"
                     type="button"
                     onClick={() => setSearchMenuOpen(true)}
                   >
-                    <div className="flex gap-x-4 items-center">
+                    <div className="prism-settings-provider-copy">
                       <img
                         src={selectedLLMObject?.logo || AnythingLLMIcon}
                         alt={`${selectedLLMObject?.name} logo`}
                         className="w-10 h-10 rounded-md"
                       />
 
-                      <div className="flex flex-col text-left">
-                        <div className="text-sm font-semibold text-white">
+                      <div className="prism-settings-provider-meta">
+                        <div className="prism-settings-provider-title">
                           {selectedLLMObject?.name || "None selected"}
                         </div>
-                        <div className="mt-1 text-xs text-description">
+                        <div className="prism-settings-provider-description">
                           {selectedLLMObject?.description ||
                             "You need to select an LLM"}
                         </div>
@@ -249,14 +243,14 @@ export default function GeneralLLMPreference() {
                     <CaretUpDown
                       size={24}
                       weight="bold"
-                      className="text-white"
+                      className="prism-settings-provider-caret"
                     />
                   </button>
                 )}
               </div>
               <div
                 onChange={() => setHasChanges(true)}
-                className="mt-4 flex flex-col gap-y-1"
+                className="prism-settings-provider-content mt-4 flex flex-col gap-y-1"
               >
                 {SelectedOptionsComponent ? (
                   <SelectedOptionsComponent settings={settings} />

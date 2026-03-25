@@ -24,7 +24,7 @@ export default function StatusResponse({ messages = [], isThinking = false }) {
               transition: "all 0.1s ease-in-out",
               borderRadius: "16px",
             }}
-            className="relative bg-zinc-800 light:bg-slate-100 p-4"
+            className="metacanon-status-thought relative p-4"
           >
             <div className="absolute top-4 left-4 w-[18px] h-[18px]">
               {isThinking ? (
@@ -72,7 +72,7 @@ export default function StatusResponse({ messages = [], isThinking = false }) {
             <div
               className={`ml-[28px] mr-[26px] transition-[max-height] duration-300 ease-in-out origin-top ${isExpanded ? "" : "overflow-hidden max-h-[18px]"}`}
             >
-              <div className="text-zinc-200 light:text-slate-800 font-mono text-sm leading-[18px]">
+              <div className="font-mono text-sm leading-[18px] text-zinc-200 light:text-slate-800">
                 {!isExpanded ? (
                   <span className="block w-full truncate">
                     {currentThought.content}

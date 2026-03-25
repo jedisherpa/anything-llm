@@ -547,7 +547,7 @@ export default function MetacanonAIRepoPage() {
       {!isMobile ? <Sidebar /> : <SidebarMobileHeader />}
       <div
         style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
-        className="relative h-full w-full overflow-y-scroll bg-theme-bg-secondary p-4 md:my-[16px] md:ml-[2px] md:mr-[16px] md:rounded-[16px] md:p-0"
+        className="relative h-full w-full overflow-y-scroll bg-theme-bg-secondary p-4 md:my-[16px] md:mx-[16px] md:rounded-[16px] md:p-0"
       >
         <div className="flex w-full flex-col gap-6 px-1 py-20 md:px-6 md:py-6">
           <section className="rounded-[24px] border border-theme-sidebar-border bg-theme-bg-sidebar px-6 py-6 shadow-[0_16px_48px_rgba(0,0,0,0.18)]">

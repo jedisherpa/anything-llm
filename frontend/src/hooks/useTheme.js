@@ -1,5 +1,7 @@
 import { REFETCH_LOGO_EVENT } from "@/LogoContext";
-import { useState, useEffect } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
+
+const THEME_CHANGED_EVENT = "prism-theme-changed";
 
 const availableThemes = {
   dark: "Prism Dark",
@@ -8,6 +10,15 @@ const availableThemes = {
 };
 
 const LIGHT_THEMES = new Set(["light"]);
+
+function applyThemeToDocument(nextTheme) {
+  const resolvedTheme = nextTheme;
+  const isLightTheme = LIGHT_THEMES.has(resolvedTheme);
+  document.documentElement.setAttribute("data-theme", resolvedTheme);
+  document.body.classList.toggle("light", isLightTheme);
+  localStorage.setItem("theme", nextTheme);
+  window.dispatchEvent(new Event(REFETCH_LOGO_EVENT));
+}
 
 function getInitialTheme() {
   const stored = localStorage.getItem("theme");
@@ -36,12 +47,32 @@ export function useTheme() {
   const resolvedTheme = theme;
   const isLightTheme = LIGHT_THEMES.has(resolvedTheme);
 
+  useLayoutEffect(() => {
+    applyThemeToDocument(theme);
+  }, [theme]);
+
   useEffect(() => {
-    document.documentElement.setAttribute("data-theme", resolvedTheme);
-    document.body.classList.toggle("light", isLightTheme);
-    localStorage.setItem("theme", theme);
-    window.dispatchEvent(new Event(REFETCH_LOGO_EVENT));
-  }, [resolvedTheme, theme, isLightTheme]);
+    function syncTheme(nextTheme) {
+      if (!nextTheme) return;
+      _setTheme((prev) => (prev === nextTheme ? prev : nextTheme));
+    }
+
+    function handleThemeChanged(event) {
+      syncTheme(event?.detail?.theme);
+    }
+
+    function handleStorage(event) {
+      if (event.key !== "theme") return;
+      syncTheme(getInitialTheme());
+    }
+
+    window.addEventListener(THEME_CHANGED_EVENT, handleThemeChanged);
+    window.addEventListener("storage", handleStorage);
+    return () => {
+      window.removeEventListener(THEME_CHANGED_EVENT, handleThemeChanged);
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, []);
 
   // In development, attach keybind combinations to toggle theme
   useEffect(() => {
@@ -68,7 +99,14 @@ export function useTheme() {
    * @param {string} newTheme The new theme to set
    */
   function setTheme(newTheme) {
+    if (!newTheme || newTheme === theme) return;
+    applyThemeToDocument(newTheme);
     _setTheme(newTheme);
+    window.dispatchEvent(
+      new CustomEvent(THEME_CHANGED_EVENT, {
+        detail: { theme: newTheme },
+      })
+    );
   }
 
   return { theme, resolvedTheme, isLightTheme, setTheme, availableThemes };

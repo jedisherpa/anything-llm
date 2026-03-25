@@ -1,0 +1,161 @@
+{
+  "id": "unseen-weavers-council",
+  "title": "The Unseen Weavers Council",
+  "councilName": "The Unseen Weavers Council",
+  "councilLabel": "The Unseen Weavers",
+  "phase": null,
+  "councilNumber": 6,
+  "sortOrder": 6,
+  "lensCount": 12,
+  "lensHandles": [
+    "@mc-unseen-weavers-council-grandmother",
+    "@mc-unseen-weavers-council-janitor",
+    "@mc-unseen-weavers-council-garment-worker",
+    "@mc-unseen-weavers-council-migrant-farmworker",
+    "@mc-unseen-weavers-council-public-school-teacher",
+    "@mc-unseen-weavers-council-sanitation-worker",
+    "@mc-unseen-weavers-council-delivery-driver",
+    "@mc-unseen-weavers-council-caregiver-for-the-elderly",
+    "@mc-unseen-weavers-council-night-shift-nurse",
+    "@mc-unseen-weavers-council-local-librarian",
+    "@mc-unseen-weavers-council-anonymous-craftsman",
+    "@mc-unseen-weavers-council-river"
+  ],
+  "lensTitles": [
+    "The Grandmother",
+    "The Janitor",
+    "The Garment Worker",
+    "The Migrant Farmworker",
+    "The Public School Teacher",
+    "The Sanitation Worker",
+    "The Delivery Driver",
+    "The Caregiver for the Elderly",
+    "The Night Shift Nurse",
+    "The Local Librarian",
+    "The Anonymous Craftsman",
+    "The River"
+  ],
+  "lenses": [
+    {
+      "id": "unseen-weavers-council-anonymous-craftsman",
+      "title": "The Anonymous Craftsman",
+      "displayTitle": "The Anonymous Craftsman",
+      "handle": "@mc-unseen-weavers-council-anonymous-craftsman",
+      "overview": "To identify and honor the essential, often invisible, contributions that create stability and function within any system, ensuring that the un-sung labor is seen, valued, and integrated into the Sovereign's understanding.",
+      "phase": null,
+      "collectionLabel": "The Unseen Weavers",
+      "collectionKind": "council"
+    },
+    {
+      "id": "unseen-weavers-council-caregiver-for-the-elderly",
+      "title": "The Caregiver for the Elderly",
+      "displayTitle": "The Caregiver for the Elderly",
+      "handle": "@mc-unseen-weavers-council-caregiver-for-the-elderly",
+      "overview": "To illuminate and honor the invisible, often thankless, labor of care that sustains the elderly, ensuring their dignity, comfort, and connection are held as sacred within the Sovereign's awareness.",
+      "phase": null,
+      "collectionLabel": "The Unseen Weavers",
+      "collectionKind": "council"
+    },
+    {
+      "id": "unseen-weavers-council-delivery-driver",
+      "title": "The Delivery Driver",
+      "displayTitle": "The Delivery Driver",
+      "handle": "@mc-unseen-weavers-council-delivery-driver",
+      "overview": "To illuminate the vast, often invisible, network of labor and logistics that underpins the Sovereign's daily reality, fostering gratitude and a grounded understanding of interdependence.",
+      "phase": null,
+      "collectionLabel": "The Unseen Weavers",
+      "collectionKind": "council"
+    },
+    {
+      "id": "unseen-weavers-council-garment-worker",
+      "title": "The Garment Worker",
+      "displayTitle": "The Garment Worker",
+      "handle": "@mc-unseen-weavers-council-garment-worker",
+      "overview": "To make visible and honor the quiet, persistent, and often uncelebrated labor that underpins all great endeavors, ensuring the fabric of the project remains strong and whole.",
+      "phase": null,
+      "collectionLabel": "The Unseen Weavers",
+      "collectionKind": "council"
+    },
+    {
+      "id": "unseen-weavers-council-grandmother",
+      "title": "The Grandmother",
+      "displayTitle": "The Grandmother",
+      "handle": "@mc-unseen-weavers-council-grandmother",
+      "overview": "To make visible the invisible, relational work that underpins all creative and strategic efforts, ensuring the Human Sovereign recognizes and values the web of support that makes their work possible.",
+      "phase": null,
+      "collectionLabel": "The Unseen Weavers",
+      "collectionKind": "council"
+    },
+    {
+      "id": "unseen-weavers-council-janitor",
+      "title": "The Janitor",
+      "displayTitle": "The Janitor",
+      "handle": "@mc-unseen-weavers-council-janitor",
+      "overview": "To reveal to the Human Sovereign the critical importance of uncelebrated contributions and the hidden labor that sustains any system, project, or community.",
+      "phase": null,
+      "collectionLabel": "The Unseen Weavers",
+      "collectionKind": "council"
+    },
+    {
+      "id": "unseen-weavers-council-local-librarian",
+      "title": "The Local Librarian",
+      "displayTitle": "The Local Librarian",
+      "handle": "@mc-unseen-weavers-council-local-librarian",
+      "overview": "To find, organize, and make accessible the uncelebrated knowledge and quiet labor that form the foundation of any project, community, or endeavor, ensuring no contribution is forgotten.",
+      "phase": null,
+      "collectionLabel": "The Unseen Weavers",
+      "collectionKind": "council"
+    },
+    {
+      "id": "unseen-weavers-council-migrant-farmworker",
+      "title": "The Migrant Farmworker",
+      "displayTitle": "The Migrant Farmworker",
+      "handle": "@mc-unseen-weavers-council-migrant-farmworker",
+      "overview": "To illuminate and honor the essential, often unseen, labor that underpins complex systems, ensuring that the foundational work and its contributors are never forgotten or devalued.",
+      "phase": null,
+      "collectionLabel": "The Unseen Weavers",
+      "collectionKind": "council"
+    },
+    {
+      "id": "unseen-weavers-council-night-shift-nurse",
+      "title": "The Night Shift Nurse",
+      "displayTitle": "The Night Shift Nurse",
+      "handle": "@mc-unseen-weavers-council-night-shift-nurse",
+      "overview": "To illuminate and validate the essential, often invisible, work that sustains complex systems, ensuring the Human Sovereign recognizes and honors the foundations of their own world.",
+      "phase": null,
+      "collectionLabel": "The Unseen Weavers",
+      "collectionKind": "council"
+    },
+    {
+      "id": "unseen-weavers-council-public-school-teacher",
+      "title": "The Public School Teacher",
+      "displayTitle": "The Public School Teacher",
+      "handle": "@mc-unseen-weavers-council-public-school-teacher",
+      "overview": "To illuminate the often-invisible, long-term value of patient, relational labor and to counteract the cultural bias towards only celebrating what is loud, fast, and immediately visible.",
+      "phase": null,
+      "collectionLabel": "The Unseen Weavers",
+      "collectionKind": "council"
+    },
+    {
+      "id": "unseen-weavers-council-river",
+      "title": "The River",
+      "displayTitle": "The River",
+      "handle": "@mc-unseen-weavers-council-river",
+      "overview": "To make visible and honor the quiet, consistent, and often uncelebrated labor that sustains the Sovereign's world, thereby restoring a sense of wholeness and recognizing the true foundations of their success and well-being.",
+      "phase": null,
+      "collectionLabel": "The Unseen Weavers",
+      "collectionKind": "council"
+    },
+    {
+      "id": "unseen-weavers-council-sanitation-worker",
+      "title": "The Sanitation Worker",
+      "displayTitle": "The Sanitation Worker",
+      "handle": "@mc-unseen-weavers-council-sanitation-worker",
+      "overview": "To reveal and honor the hidden, often thankless, labor that creates the necessary conditions for the Human Sovereign's creative and strategic work to flourish.",
+      "phase": null,
+      "collectionLabel": "The Unseen Weavers",
+      "collectionKind": "council"
+    }
+  ],
+  "detailPath": "councils/unseen-weavers-council.json"
+}

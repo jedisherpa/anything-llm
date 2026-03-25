@@ -49,6 +49,12 @@ function agentWebsocket(app) {
 
       await Telemetry.sendTelemetry("agent_chat_started");
       await agentHandler.createAIbitat({ socket });
+      socket.send(
+        JSON.stringify({
+          type: "agentSessionReady",
+          content: { uuid: String(request.params.uuid) },
+        })
+      );
       await agentHandler.startAgentCluster();
     } catch (e) {
       console.error(e.message, e);

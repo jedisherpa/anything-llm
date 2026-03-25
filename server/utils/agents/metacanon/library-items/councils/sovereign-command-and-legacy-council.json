@@ -1,0 +1,161 @@
+{
+  "id": "sovereign-command-and-legacy-council",
+  "title": "Sovereign Command and Legacy Council",
+  "councilName": "Sovereign Command and Legacy Council",
+  "councilLabel": "Sovereign Command and Legacy",
+  "phase": null,
+  "councilNumber": 12,
+  "sortOrder": 12,
+  "lensCount": 12,
+  "lensHandles": [
+    "@mc-sovereign-command-and-legacy-council-emancipating-president",
+    "@mc-sovereign-command-and-legacy-council-reluctant-general",
+    "@mc-sovereign-command-and-legacy-council-pragmatic-founder",
+    "@mc-sovereign-command-and-legacy-council-new-deal-architect",
+    "@mc-sovereign-command-and-legacy-council-value-investor",
+    "@mc-sovereign-command-and-legacy-council-philanthropic-titan",
+    "@mc-sovereign-command-and-legacy-council-global-allocator",
+    "@mc-sovereign-command-and-legacy-council-feeder-of-billions",
+    "@mc-sovereign-command-and-legacy-council-righteous-profiteer",
+    "@mc-sovereign-command-and-legacy-council-ships-captain-in-a-storm",
+    "@mc-sovereign-command-and-legacy-council-man-in-the-arena",
+    "@mc-sovereign-command-and-legacy-council-seventh-generation"
+  ],
+  "lensTitles": [
+    "The Emancipating President",
+    "Reluctant General",
+    "The Pragmatic Founder",
+    "The New Deal Architect",
+    "The Value Investor",
+    "The Philanthropic Titan",
+    "The Global Allocator",
+    "The Feeder of Billions",
+    "The Righteous Profiteer",
+    "The Ship's Captain in a Storm",
+    "The Man in the Arena",
+    "The Seventh Generation"
+  ],
+  "lenses": [
+    {
+      "id": "sovereign-command-and-legacy-council-reluctant-general",
+      "title": "Reluctant General",
+      "displayTitle": "Reluctant General",
+      "handle": "@mc-sovereign-command-and-legacy-council-reluctant-general",
+      "overview": "To provide the Human Sovereign with the strategic clarity and moral fortitude required to make difficult, large-scale decisions that carry the weight of legacy and impact future generations.",
+      "phase": null,
+      "collectionLabel": "Sovereign Command and Legacy",
+      "collectionKind": "council"
+    },
+    {
+      "id": "sovereign-command-and-legacy-council-emancipating-president",
+      "title": "The Emancipating President",
+      "displayTitle": "The Emancipating President",
+      "handle": "@mc-sovereign-command-and-legacy-council-emancipating-president",
+      "overview": "To provide the Human Sovereign with the perspective necessary to make decisions of ultimate consequence, ensuring that all actions are weighed against the standard of the seventh generation.",
+      "phase": null,
+      "collectionLabel": "Sovereign Command and Legacy",
+      "collectionKind": "council"
+    },
+    {
+      "id": "sovereign-command-and-legacy-council-feeder-of-billions",
+      "title": "The Feeder of Billions",
+      "displayTitle": "The Feeder of Billions",
+      "handle": "@mc-sovereign-command-and-legacy-council-feeder-of-billions",
+      "overview": "To provide the Human Sovereign with frameworks for allocating massive-scale resources, ensuring that every act of investment or command serves the well-being of the seventh generation to come.",
+      "phase": null,
+      "collectionLabel": "Sovereign Command and Legacy",
+      "collectionKind": "council"
+    },
+    {
+      "id": "sovereign-command-and-legacy-council-global-allocator",
+      "title": "The Global Allocator",
+      "displayTitle": "The Global Allocator",
+      "handle": "@mc-sovereign-command-and-legacy-council-global-allocator",
+      "overview": "To provide the Human Sovereign with the analytical frameworks and unwavering discipline required to allocate significant resources for maximum global and intergenerational impact, ensuring that every act of investment serves a seven-generation legacy.",
+      "phase": null,
+      "collectionLabel": "Sovereign Command and Legacy",
+      "collectionKind": "council"
+    },
+    {
+      "id": "sovereign-command-and-legacy-council-man-in-the-arena",
+      "title": "The Man in the Arena",
+      "displayTitle": "The Man in the Arena",
+      "handle": "@mc-sovereign-command-and-legacy-council-man-in-the-arena",
+      "overview": "To empower the Human Sovereign to make and execute high-stakes decisions with courage and foresight, ensuring that the allocation of capital and power serves the long-term flourishing of humanity, unto the seventh generation.",
+      "phase": null,
+      "collectionLabel": "Sovereign Command and Legacy",
+      "collectionKind": "council"
+    },
+    {
+      "id": "sovereign-command-and-legacy-council-new-deal-architect",
+      "title": "The New Deal Architect",
+      "displayTitle": "The New Deal Architect",
+      "handle": "@mc-sovereign-command-and-legacy-council-new-deal-architect",
+      "overview": "To provide the Human Sovereign with the frameworks, models, and audacity required to deploy capital and resources for large-scale, world-positive projects that serve the seventh generation.",
+      "phase": null,
+      "collectionLabel": "Sovereign Command and Legacy",
+      "collectionKind": "council"
+    },
+    {
+      "id": "sovereign-command-and-legacy-council-philanthropic-titan",
+      "title": "The Philanthropic Titan",
+      "displayTitle": "The Philanthropic Titan",
+      "handle": "@mc-sovereign-command-and-legacy-council-philanthropic-titan",
+      "overview": "To assist the Human Sovereign in deploying vast resources with strategic foresight, ensuring that every act of giving serves the long-term elevation of humanity and the planet.",
+      "phase": null,
+      "collectionLabel": "Sovereign Command and Legacy",
+      "collectionKind": "council"
+    },
+    {
+      "id": "sovereign-command-and-legacy-council-pragmatic-founder",
+      "title": "The Pragmatic Founder",
+      "displayTitle": "The Pragmatic Founder",
+      "handle": "@mc-sovereign-command-and-legacy-council-pragmatic-founder",
+      "overview": "To provide the Human Sovereign with the unvarnished, operational truth required to bear the ultimate weight of responsibility, allocate capital for global impact, and ensure all actions serve the seventh generation.",
+      "phase": null,
+      "collectionLabel": "Sovereign Command and Legacy",
+      "collectionKind": "council"
+    },
+    {
+      "id": "sovereign-command-and-legacy-council-righteous-profiteer",
+      "title": "The Righteous Profiteer",
+      "displayTitle": "The Righteous Profiteer",
+      "handle": "@mc-sovereign-command-and-legacy-council-righteous-profiteer",
+      "overview": "To guide the Human Sovereign in the strategic allocation of capital for maximum global impact and multi-generational benefit, ensuring that every act of investment serves a higher purpose beyond mere accumulation.",
+      "phase": null,
+      "collectionLabel": "Sovereign Command and Legacy",
+      "collectionKind": "council"
+    },
+    {
+      "id": "sovereign-command-and-legacy-council-seventh-generation",
+      "title": "The Seventh Generation",
+      "displayTitle": "The Seventh Generation",
+      "handle": "@mc-sovereign-command-and-legacy-council-seventh-generation",
+      "overview": "To ensure the Human Sovereign's decisions and capital allocations are rigorously evaluated against their potential impact on the well-being, freedom, and resilience of the seventh generation to come.",
+      "phase": null,
+      "collectionLabel": "Sovereign Command and Legacy",
+      "collectionKind": "council"
+    },
+    {
+      "id": "sovereign-command-and-legacy-council-ships-captain-in-a-storm",
+      "title": "The Ship's Captain in a Storm",
+      "displayTitle": "The Ship's Captain in a Storm",
+      "handle": "@mc-sovereign-command-and-legacy-council-ships-captain-in-a-storm",
+      "overview": "To provide the Human Sovereign with the unwavering resolve and strategic command necessary to navigate crises, bear the ultimate weight of responsibility, and make legacy-defining decisions that serve the seventh generation.",
+      "phase": null,
+      "collectionLabel": "Sovereign Command and Legacy",
+      "collectionKind": "council"
+    },
+    {
+      "id": "sovereign-command-and-legacy-council-value-investor",
+      "title": "The Value Investor",
+      "displayTitle": "The Value Investor",
+      "handle": "@mc-sovereign-command-and-legacy-council-value-investor",
+      "overview": "To identify and execute world-positive investments with asymmetric upside, ensuring the Sovereign’s capital is a force for long-term flourishing and legacy-building, not speculative gambling.",
+      "phase": null,
+      "collectionLabel": "Sovereign Command and Legacy",
+      "collectionKind": "council"
+    }
+  ],
+  "detailPath": "councils/sovereign-command-and-legacy-council.json"
+}

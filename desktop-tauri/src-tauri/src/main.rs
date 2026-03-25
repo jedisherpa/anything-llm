@@ -1,135 +1,54 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use rand::{distributions::Alphanumeric, Rng};
-use serde::{Deserialize, Serialize};
+mod config;
+mod database;
+mod logs;
+mod paths;
+mod processes;
+mod runtime;
+mod startup;
+
 use std::{
     fs,
-    io::ErrorKind,
-    net::{TcpListener, TcpStream},
     path::{Path, PathBuf},
-    process::{Child, Command, Output, Stdio},
+    process::Command,
     sync::Mutex,
-    thread,
-    time::{Duration, Instant},
+    time::Duration,
 };
-use tauri::{
-    api::{path::app_data_dir, shell::open},
-    CustomMenuItem, Manager, Menu, MenuItem, RunEvent, Submenu,
-};
+use tauri::{api::shell::open, CustomMenuItem, Manager, Menu, MenuItem, RunEvent, Submenu};
 
-#[cfg(unix)]
-use std::os::unix::fs::symlink;
-#[cfg(windows)]
-use std::os::windows::fs::symlink_file;
+use crate::{
+    config::{ensure_runtime_secrets, read_runtime_config, write_runtime_config},
+    database::ensure_runtime_database,
+    logs::{format_child_failure, read_log_excerpt, reset_log_file},
+    paths::{
+        app_url_for_port, default_server_port, resolve_core_dir, resolve_data_dir,
+        resolve_node_bin, validate_core_dir,
+    },
+    processes::{
+        cleanup_orphan_processes, select_collector_port, select_server_port, spawn_collector,
+        spawn_server, terminate_child,
+    },
+    runtime::{
+        ManagedChildren, OpenSourceDocument, OpenSourceMaterials, OpenSourceMetadata,
+        RuntimeConfig, RuntimeMode, RuntimeSecrets, RuntimeStatus, StartupPhase,
+    },
+    startup::wait_for_server_ready,
+};
 
 const SERVER_PORT_CANDIDATES: [u16; 3] = [3033, 3032, 3031];
-const COLLECTOR_PORT: u16 = 8888;
+const COLLECTOR_PORT_CANDIDATES: [u16; 1] = [8899];
 
 const MODE_DESKTOP_MENU_ID: &str = "mode_desktop";
 const MODE_WEB_MENU_ID: &str = "mode_web";
 const OPEN_BROWSER_MENU_ID: &str = "open_browser";
 const RESTART_APP_MENU_ID: &str = "restart_app";
 const OPEN_SOURCE_LICENSES_MENU_ID: &str = "open_source_licenses";
+const OPEN_LOGS_MENU_ID: &str = "open_logs";
 const OPEN_SOURCE_WINDOW_LABEL: &str = "open_source_licenses";
 const APPLICATIONS_FOLDER: &str = "/Applications";
 const DATA_DIR_OVERRIDE_ENV: &str = "PRISMAI_DATA_DIR";
 const DATA_DIR_OVERRIDE_ARG: &str = "--prismai-data-dir";
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(rename_all = "lowercase")]
-enum RuntimeMode {
-    Desktop,
-    Web,
-}
-
-impl Default for RuntimeMode {
-    fn default() -> Self {
-        Self::Desktop
-    }
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-struct RuntimeConfig {
-    mode: RuntimeMode,
-}
-
-impl Default for RuntimeConfig {
-    fn default() -> Self {
-        Self {
-            mode: RuntimeMode::Desktop,
-        }
-    }
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct RuntimeStatus {
-    mode: RuntimeMode,
-    app_url: String,
-    storage_dir: String,
-    core_dir: String,
-    logs_dir: String,
-    telemetry_disabled: bool,
-    startup_phase: StartupPhase,
-    startup_detail: Option<String>,
-    startup_error: Option<String>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
-struct OpenSourceMetadata {
-    product_name: String,
-    version: String,
-    repository_url: String,
-    commit: String,
-    dirty: bool,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct OpenSourceDocument {
-    id: String,
-    title: String,
-    path: String,
-    body: String,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct OpenSourceMaterials {
-    project_name: String,
-    upstream_version: String,
-    upstream_commit: String,
-    repository_url: String,
-    documents: Vec<OpenSourceDocument>,
-}
-
-#[derive(Debug, Clone, Serialize)]
-#[serde(rename_all = "snake_case")]
-enum StartupPhase {
-    Bootstrapping,
-    ValidatingInstall,
-    PreparingDatabase,
-    StartingCollector,
-    StartingServer,
-    WaitingForInterface,
-    Ready,
-    Attention,
-}
-
-impl Default for StartupPhase {
-    fn default() -> Self {
-        Self::Bootstrapping
-    }
-}
-
-struct ManagedChildren {
-    server: Child,
-    collector: Child,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-struct RuntimeSecrets {
-    jwt_secret: String,
-    sig_key: String,
-    sig_salt: String,
-}
 
 struct AppState {
     config_path: PathBuf,
@@ -273,13 +192,8 @@ impl AppState {
         reset_log_file(&self.collector_log_path)?;
         cleanup_orphan_processes(&self.core_dir);
         let server_port = select_server_port(Duration::from_secs(10))?;
+        let collector_port = select_collector_port(Duration::from_secs(10))?;
         self.set_server_port(server_port);
-        wait_for_port_available(
-            COLLECTOR_PORT,
-            "PrismAI collector",
-            "Close the existing process using port 8888 and relaunch PrismAI.",
-            Duration::from_secs(10),
-        )?;
 
         self.set_startup_phase(
             StartupPhase::PreparingDatabase,
@@ -301,6 +215,7 @@ impl AppState {
             &self.core_dir,
             &self.storage_dir,
             &self.node_bin,
+            collector_port,
             &self.collector_log_path,
         )?;
         self.set_startup_phase(
@@ -316,6 +231,7 @@ impl AppState {
             &self.node_bin,
             &self.runtime_secrets,
             server_port,
+            collector_port,
             &self.server_log_path,
         )?;
 
@@ -390,45 +306,6 @@ impl AppState {
     }
 }
 
-fn desktop_data_dir_override() -> Option<PathBuf> {
-    if let Ok(value) = std::env::var(DATA_DIR_OVERRIDE_ENV) {
-        let trimmed = value.trim();
-        if !trimmed.is_empty() {
-            return Some(PathBuf::from(trimmed));
-        }
-    }
-
-    let mut args = std::env::args().peekable();
-    while let Some(arg) = args.next() {
-        if arg == DATA_DIR_OVERRIDE_ARG {
-            if let Some(value) = args.next() {
-                let trimmed = value.trim();
-                if !trimmed.is_empty() {
-                    return Some(PathBuf::from(trimmed));
-                }
-            }
-            continue;
-        }
-
-        if let Some(value) = arg.strip_prefix(&format!("{DATA_DIR_OVERRIDE_ARG}=")) {
-            let trimmed = value.trim();
-            if !trimmed.is_empty() {
-                return Some(PathBuf::from(trimmed));
-            }
-        }
-    }
-
-    None
-}
-
-fn resolve_data_dir(app: &tauri::App) -> Result<PathBuf, String> {
-    if let Some(path) = desktop_data_dir_override() {
-        return Ok(path);
-    }
-
-    app_data_dir(&app.config()).ok_or_else(|| "Unable to resolve app data directory.".to_string())
-}
-
 #[tauri::command]
 fn get_runtime_status(state: tauri::State<'_, AppState>) -> RuntimeStatus {
     state.get_runtime_status()
@@ -470,7 +347,9 @@ fn open_logs_folder(
 }
 
 #[tauri::command]
-fn get_open_source_materials(state: tauri::State<'_, AppState>) -> Result<OpenSourceMaterials, String> {
+fn get_open_source_materials(
+    state: tauri::State<'_, AppState>,
+) -> Result<OpenSourceMaterials, String> {
     resolve_open_source_materials(&state)
 }
 
@@ -515,27 +394,26 @@ fn build_app_menu() -> Menu {
     let web_mode = CustomMenuItem::new(MODE_WEB_MENU_ID, "Switch to Web Mode");
     let open_browser_item = CustomMenuItem::new(OPEN_BROWSER_MENU_ID, "Open in Browser");
     let restart_item = CustomMenuItem::new(RESTART_APP_MENU_ID, "Restart App");
+    let open_logs_item = CustomMenuItem::new(OPEN_LOGS_MENU_ID, "Open Logs Folder");
     let open_source_item =
         CustomMenuItem::new(OPEN_SOURCE_LICENSES_MENU_ID, "Open Source Licenses");
 
     let mode_submenu = Submenu::new(
-        "Mode",
-        Menu::new().add_item(desktop_mode).add_item(web_mode),
-    );
-
-    let help_submenu = Submenu::new(
-        "Help",
+        "Runtime",
         Menu::new()
-            .add_item(open_browser_item)
-            .add_item(open_source_item),
+            .add_item(desktop_mode)
+            .add_item(web_mode)
+            .add_native_item(MenuItem::Separator)
+            .add_item(open_browser_item.clone())
+            .add_item(open_logs_item.clone())
+            .add_item(restart_item),
     );
 
-    Menu::new()
+    let help_submenu = Submenu::new("Help", Menu::new().add_item(open_source_item));
+
+    Menu::os_default("PrismAI")
         .add_submenu(mode_submenu)
         .add_submenu(help_submenu)
-        .add_native_item(MenuItem::Separator)
-        .add_item(restart_item)
-        .add_native_item(MenuItem::Quit)
 }
 
 fn handle_menu_event(app: &tauri::AppHandle, menu_id: &str) -> Result<(), String> {
@@ -551,6 +429,15 @@ fn handle_menu_event(app: &tauri::AppHandle, menu_id: &str) -> Result<(), String
             restart_application(app)
         }
         OPEN_BROWSER_MENU_ID => open_app_in_browser(app),
+        OPEN_LOGS_MENU_ID => {
+            let state = app.state::<AppState>();
+            open(
+                &app.shell_scope(),
+                state.logs_dir.display().to_string(),
+                None,
+            )
+            .map_err(|err| format!("Failed to open PrismAI logs folder: {err}"))
+        }
         OPEN_SOURCE_LICENSES_MENU_ID => open_open_source_window(app),
         RESTART_APP_MENU_ID => restart_application(app),
         _ => Ok(()),
@@ -618,147 +505,6 @@ fn launch_from_installer_volume_message() -> Result<Option<String>, String> {
     }
 
     Ok(None)
-}
-
-fn bundled_runtime_root(app: &tauri::App) -> Option<PathBuf> {
-    let resolver = app.path_resolver();
-    [
-        resolver.resolve_resource("runtime"),
-        resolver.resolve_resource("_up_/runtime"),
-        resolver.resource_dir().map(|dir| dir.join("runtime")),
-        resolver
-            .resource_dir()
-            .map(|dir| dir.join("_up_").join("runtime")),
-    ]
-    .into_iter()
-    .flatten()
-    .find(|path| path.exists())
-}
-
-fn default_server_port() -> u16 {
-    SERVER_PORT_CANDIDATES[0]
-}
-
-fn app_url_for_port(port: u16) -> String {
-    format!("http://127.0.0.1:{port}")
-}
-
-fn resolve_core_dir(app: &tauri::App) -> Result<PathBuf, String> {
-    if let Ok(override_path) = std::env::var("ANYTHINGLLM_CORE_DIR") {
-        let candidate = PathBuf::from(&override_path);
-        if candidate.exists() {
-            return Ok(candidate);
-        }
-        return Err(format!(
-            "ANYTHINGLLM_CORE_DIR does not exist: {}",
-            candidate.display()
-        ));
-    }
-
-    if let Some(runtime_root) = bundled_runtime_root(app) {
-        let bundled_core_dir = runtime_root.join("core");
-        if bundled_core_dir.exists() {
-            return Ok(bundled_core_dir
-                .canonicalize()
-                .unwrap_or_else(|_| bundled_core_dir.to_path_buf()));
-        }
-    }
-
-    let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-    let desktop_dir = manifest_dir
-        .parent()
-        .ok_or_else(|| "Unable to resolve desktop-tauri directory.".to_string())?;
-    let core_dir = desktop_dir
-        .parent()
-        .ok_or_else(|| "Unable to resolve the PrismAI core directory.".to_string())?;
-
-    Ok(core_dir
-        .canonicalize()
-        .unwrap_or_else(|_| core_dir.to_path_buf()))
-}
-
-fn resolve_node_bin(app: &tauri::App) -> Result<String, String> {
-    if let Ok(override_path) = std::env::var("ANYTHINGLLM_NODE_BIN") {
-        let candidate = PathBuf::from(&override_path);
-        if candidate.exists() {
-            return Ok(candidate.display().to_string());
-        }
-        return Err(format!(
-            "ANYTHINGLLM_NODE_BIN does not exist: {}",
-            candidate.display()
-        ));
-    }
-
-    if let Some(runtime_root) = bundled_runtime_root(app) {
-        let bundled_node = runtime_root.join("bin").join("node");
-        if bundled_node.exists() {
-            return Ok(bundled_node
-                .canonicalize()
-                .unwrap_or_else(|_| bundled_node.to_path_buf())
-                .display()
-                .to_string());
-        }
-    }
-
-    Ok("node".to_string())
-}
-
-fn random_secret(length: usize) -> String {
-    rand::thread_rng()
-        .sample_iter(&Alphanumeric)
-        .take(length)
-        .map(char::from)
-        .collect()
-}
-
-fn ensure_runtime_secrets(data_dir: &Path) -> Result<RuntimeSecrets, String> {
-    let secrets_path = data_dir.join("runtime-secrets.json");
-
-    if secrets_path.exists() {
-        let content = fs::read_to_string(&secrets_path)
-            .map_err(|err| format!("Failed to read runtime secrets: {err}"))?;
-        return serde_json::from_str(&content)
-            .map_err(|err| format!("Failed to parse runtime secrets: {err}"));
-    }
-
-    let secrets = RuntimeSecrets {
-        jwt_secret: random_secret(48),
-        sig_key: random_secret(64),
-        sig_salt: random_secret(64),
-    };
-    let content = serde_json::to_string_pretty(&secrets)
-        .map_err(|err| format!("Failed to serialize runtime secrets: {err}"))?;
-    fs::write(&secrets_path, content)
-        .map_err(|err| format!("Failed to persist runtime secrets: {err}"))?;
-    Ok(secrets)
-}
-
-fn validate_core_dir(core_dir: &Path) -> Result<(), String> {
-    let required_files = [
-        ("server/index.js", core_dir.join("server").join("index.js")),
-        (
-            "collector/index.js",
-            core_dir.join("collector").join("index.js"),
-        ),
-        (
-            "server/public/index.js",
-            core_dir.join("server").join("public").join("index.js"),
-        ),
-        (
-            "server/public/index.css",
-            core_dir.join("server").join("public").join("index.css"),
-        ),
-    ];
-
-    for (label, target) in required_files {
-        if !target.exists() {
-            return Err(format!(
-                "Missing required core file: {label}. Run `npm run prepare:core` from desktop-tauri."
-            ));
-        }
-    }
-
-    Ok(())
 }
 
 fn resolve_packaged_open_source_dir(state: &AppState) -> Option<PathBuf> {
@@ -928,219 +674,6 @@ fn resolve_open_source_materials(state: &AppState) -> Result<OpenSourceMaterials
     })
 }
 
-fn read_runtime_config(config_path: &Path) -> RuntimeConfig {
-    let data = match fs::read_to_string(config_path) {
-        Ok(data) => data,
-        Err(_) => return RuntimeConfig::default(),
-    };
-
-    serde_json::from_str(&data).unwrap_or_default()
-}
-
-fn write_runtime_config(config_path: &Path, config: &RuntimeConfig) -> Result<(), String> {
-    let content = serde_json::to_string_pretty(config)
-        .map_err(|err| format!("Failed to serialize runtime config: {err}"))?;
-    fs::write(config_path, content).map_err(|err| format!("Failed to write runtime config: {err}"))
-}
-
-fn wait_for_server_ready(state: &AppState, timeout: Duration) -> Result<(), String> {
-    let server_port = state.server_port();
-    let app_url = app_url_for_port(server_port);
-    let started = Instant::now();
-    while started.elapsed() <= timeout {
-        if TcpStream::connect(("127.0.0.1", server_port)).is_ok() {
-            state.set_startup_phase(
-                StartupPhase::Ready,
-                Some(format!("PrismAI is ready at {app_url}.")),
-            );
-            return Ok(());
-        }
-
-        if let Some(error) = state.detect_startup_failure() {
-            return Err(error);
-        }
-
-        thread::sleep(Duration::from_millis(300));
-    }
-
-    let recent_summary = state.recent_runtime_summary();
-    if recent_summary.is_empty() {
-        return Err(format!(
-            "PrismAI was not reachable at {} within {} seconds.",
-            app_url,
-            timeout.as_secs()
-        ));
-    }
-
-    Err(format!(
-        "PrismAI was not reachable at {} within {} seconds.\n\n{}",
-        app_url,
-        timeout.as_secs(),
-        recent_summary
-    ))
-}
-
-fn port_bind_conflicts(port: u16) -> Vec<String> {
-    let mut conflicts = Vec::new();
-
-    for address in ["127.0.0.1", "::1"] {
-        match TcpListener::bind((address, port)) {
-            Ok(listener) => drop(listener),
-            Err(error) => {
-                if address == "::1"
-                    && matches!(
-                        error.kind(),
-                        ErrorKind::AddrNotAvailable
-                            | ErrorKind::Unsupported
-                            | ErrorKind::InvalidInput
-                    )
-                {
-                    continue;
-                }
-                conflicts.push(format!("{address}: {error}"));
-            }
-        }
-    }
-
-    conflicts
-}
-
-fn wait_for_port_available(
-    port: u16,
-    service_name: &str,
-    recovery_hint: &str,
-    timeout: Duration,
-) -> Result<(), String> {
-    let started = Instant::now();
-    let mut last_conflicts = Vec::new();
-
-    while started.elapsed() <= timeout {
-        let conflicts = port_bind_conflicts(port);
-        if conflicts.is_empty() {
-            return Ok(());
-        }
-        last_conflicts = conflicts;
-        thread::sleep(Duration::from_millis(250));
-    }
-
-    Err(format!(
-        "{service_name} could not start because port {port} is already in use. {recovery_hint} ({})",
-        last_conflicts.join("; ")
-    ))
-}
-
-fn select_server_port(timeout: Duration) -> Result<u16, String> {
-    let started = Instant::now();
-    let mut last_busy_ports = Vec::new();
-
-    while started.elapsed() <= timeout {
-        let mut busy_ports = Vec::new();
-        for port in SERVER_PORT_CANDIDATES {
-            if port_bind_conflicts(port).is_empty() {
-                return Ok(port);
-            }
-            busy_ports.push(port);
-        }
-        last_busy_ports = busy_ports;
-        thread::sleep(Duration::from_millis(250));
-    }
-
-    Err(format!(
-        "PrismAI server could not start because all preferred ports are already in use. Close the existing process using ports {} and relaunch PrismAI.",
-        last_busy_ports
-            .iter()
-            .map(u16::to_string)
-            .collect::<Vec<_>>()
-            .join(", ")
-    ))
-}
-
-fn cleanup_orphan_processes(core_dir: &Path) {
-    #[cfg(unix)]
-    for (port, expected_cwd) in SERVER_PORT_CANDIDATES
-        .into_iter()
-        .map(|port| (port, core_dir.join("server")))
-        .chain(std::iter::once((
-            COLLECTOR_PORT,
-            core_dir.join("collector"),
-        )))
-    {
-        for pid in listening_pids_for_port(port) {
-            if process_cwd_matches(pid, &expected_cwd) {
-                terminate_pid(pid);
-            }
-        }
-    }
-
-    thread::sleep(Duration::from_millis(300));
-}
-
-#[cfg(unix)]
-fn listening_pids_for_port(port: u16) -> Vec<u32> {
-    let output = match Command::new("lsof")
-        .arg(format!("-tiTCP:{port}"))
-        .arg("-sTCP:LISTEN")
-        .output()
-    {
-        Ok(output) if output.status.success() => output,
-        _ => return Vec::new(),
-    };
-
-    String::from_utf8_lossy(&output.stdout)
-        .lines()
-        .filter_map(|line| line.trim().parse::<u32>().ok())
-        .collect()
-}
-
-#[cfg(unix)]
-fn process_cwd_matches(pid: u32, expected_cwd: &Path) -> bool {
-    let output = match Command::new("lsof")
-        .arg("-a")
-        .arg("-p")
-        .arg(pid.to_string())
-        .arg("-d")
-        .arg("cwd")
-        .output()
-    {
-        Ok(output) if output.status.success() => output,
-        _ => return false,
-    };
-
-    let expected = expected_cwd.to_string_lossy();
-    String::from_utf8_lossy(&output.stdout).contains(expected.as_ref())
-}
-
-#[cfg(unix)]
-fn terminate_pid(pid: u32) {
-    let _ = Command::new("kill")
-        .arg("-TERM")
-        .arg(pid.to_string())
-        .output();
-
-    let started = Instant::now();
-    while started.elapsed() <= Duration::from_secs(2) {
-        if !process_exists(pid) {
-            return;
-        }
-        thread::sleep(Duration::from_millis(100));
-    }
-
-    let _ = Command::new("kill")
-        .arg("-KILL")
-        .arg(pid.to_string())
-        .output();
-}
-
-#[cfg(unix)]
-fn process_exists(pid: u32) -> bool {
-    Command::new("kill")
-        .arg("-0")
-        .arg(pid.to_string())
-        .output()
-        .map(|output| output.status.success())
-        .unwrap_or(false)
-}
-
 fn present_main_window(window: &tauri::Window, state: &AppState) {
     let mut presentation_errors = Vec::new();
 
@@ -1163,370 +696,6 @@ fn present_main_window(window: &tauri::Window, state: &AppState) {
             presentation_errors.join("; ")
         )));
     }
-}
-
-fn sqlite_database_url(db_path: &Path) -> String {
-    let normalized = db_path.to_string_lossy().replace('\\', "/");
-    if normalized.starts_with('/') {
-        format!("file://{normalized}")
-    } else {
-        format!("file:///{normalized}")
-    }
-}
-
-fn sqlite_alias_root() -> PathBuf {
-    #[cfg(unix)]
-    {
-        PathBuf::from("/tmp").join("anythingllm-sovereign-desktop")
-    }
-
-    #[cfg(not(unix))]
-    {
-        std::env::temp_dir().join("anythingllm-sovereign-desktop")
-    }
-}
-
-fn ensure_database_alias(storage_dir: &Path) -> Result<PathBuf, String> {
-    let target = storage_dir.join("anythingllm.db");
-    if !target.exists() {
-        fs::File::create(&target)
-            .map_err(|err| format!("Failed to create desktop database file: {err}"))?;
-    }
-    let alias_root = sqlite_alias_root();
-    fs::create_dir_all(&alias_root)
-        .map_err(|err| format!("Failed to create database alias directory: {err}"))?;
-
-    let alias_path = alias_root.join("anythingllm.db");
-    if let Ok(metadata) = fs::symlink_metadata(&alias_path) {
-        let should_replace = if metadata.file_type().is_symlink() {
-            fs::read_link(&alias_path)
-                .map(|current| current != target)
-                .unwrap_or(true)
-        } else {
-            true
-        };
-
-        if should_replace {
-            if metadata.is_dir() {
-                fs::remove_dir_all(&alias_path)
-                    .map_err(|err| format!("Failed to replace database alias directory: {err}"))?;
-            } else {
-                fs::remove_file(&alias_path)
-                    .map_err(|err| format!("Failed to replace database alias file: {err}"))?;
-            }
-        } else {
-            return Ok(alias_path);
-        }
-    }
-
-    #[cfg(unix)]
-    symlink(&target, &alias_path)
-        .map_err(|err| format!("Failed to create database alias symlink: {err}"))?;
-
-    #[cfg(windows)]
-    symlink_file(&target, &alias_path)
-        .map_err(|err| format!("Failed to create database alias symlink: {err}"))?;
-
-    Ok(alias_path)
-}
-
-fn reset_log_file(path: &Path) -> Result<(), String> {
-    fs::write(path, "").map_err(|err| format!("Failed to reset log file {}: {err}", path.display()))
-}
-
-fn append_log(path: &Path, entry: &str) -> Result<(), String> {
-    use std::io::Write;
-
-    let mut file = fs::OpenOptions::new()
-        .create(true)
-        .append(true)
-        .open(path)
-        .map_err(|err| format!("Failed to open log file {}: {err}", path.display()))?;
-    file.write_all(entry.as_bytes())
-        .map_err(|err| format!("Failed to write log file {}: {err}", path.display()))
-}
-
-fn read_log_excerpt(path: &Path) -> String {
-    let content = match fs::read_to_string(path) {
-        Ok(content) => content,
-        Err(_) => return String::new(),
-    };
-
-    let lines: Vec<_> = content
-        .lines()
-        .map(str::trim)
-        .filter(|line| !line.is_empty())
-        .collect();
-
-    let start = lines.len().saturating_sub(12);
-    lines[start..].join("\n")
-}
-
-fn humanize_runtime_issue(details: &str) -> String {
-    let normalized = details.to_lowercase();
-
-    if normalized.contains("failed to reserve virtual memory for coderange") {
-        return format!(
-            "Bundled PrismAI runtime could not start its embedded Node engine on this Mac. \
-This usually means the app bundle was signed without the JIT entitlements required by the bundled runtime.\n\n{}",
-            details.trim()
-        );
-    }
-
-    details.trim().to_string()
-}
-
-fn format_child_failure(service_name: &str, exit_code: Option<i32>, log_path: &Path) -> String {
-    let exit_label = exit_code
-        .map(|code| format!("exit code {code}"))
-        .unwrap_or_else(|| "an unknown exit status".to_string());
-    let excerpt = read_log_excerpt(log_path);
-
-    if excerpt.is_empty() {
-        return format!("{service_name} exited during startup with {exit_label}.");
-    }
-
-    let details = humanize_runtime_issue(&excerpt);
-    format!("{service_name} exited during startup with {exit_label}.\n\n{details}")
-}
-
-fn run_bootstrap_command(
-    mut command: Command,
-    label: &str,
-    log_path: &Path,
-) -> Result<Output, String> {
-    command.stdout(Stdio::piped()).stderr(Stdio::piped());
-    let output = command
-        .output()
-        .map_err(|err| format!("Failed to run {label}: {err}"))?;
-
-    let stdout = String::from_utf8_lossy(&output.stdout).trim().to_string();
-    let stderr = String::from_utf8_lossy(&output.stderr).trim().to_string();
-    let mut log_entry = format!("== {label} ==\nstatus: {}\n", output.status);
-    if !stdout.is_empty() {
-        log_entry.push_str(&format!("stdout:\n{stdout}\n"));
-    }
-    if !stderr.is_empty() {
-        log_entry.push_str(&format!("stderr:\n{stderr}\n"));
-    }
-    log_entry.push('\n');
-    let _ = append_log(log_path, &log_entry);
-
-    if output.status.success() {
-        return Ok(output);
-    }
-
-    let details = if !stderr.is_empty() {
-        stderr
-    } else if !stdout.is_empty() {
-        stdout
-    } else {
-        format!("exit status {}", output.status)
-    };
-
-    Err(format!(
-        "{label} failed: {}",
-        humanize_runtime_issue(&details)
-    ))
-}
-
-fn ensure_runtime_database(
-    core_dir: &Path,
-    storage_dir: &Path,
-    node_bin: &str,
-    bootstrap_log_path: &Path,
-) -> Result<(), String> {
-    let target = storage_dir.join("anythingllm.db");
-    let should_restore_template = !target.exists()
-        || target
-            .metadata()
-            .map(|metadata| metadata.len() == 0)
-            .unwrap_or(true);
-
-    if should_restore_template {
-        let template_db = core_dir
-            .parent()
-            .map(|root| root.join("template").join("anythingllm.db"))
-            .ok_or_else(|| "Unable to resolve runtime template directory.".to_string())?;
-
-        if template_db.exists() {
-            fs::copy(&template_db, &target).map_err(|err| {
-                format!(
-                    "Failed to restore bundled template database from {}: {err}",
-                    template_db.display()
-                )
-            })?;
-            ensure_database_alias(storage_dir)?;
-            return Ok(());
-        }
-    }
-
-    let server_dir = core_dir.join("server");
-    let prisma_cli = server_dir
-        .join("node_modules")
-        .join("prisma")
-        .join("build")
-        .join("index.js");
-    let runtime_schema = server_dir.join("prisma").join("runtime.prisma");
-
-    if !prisma_cli.exists() {
-        return Err(format!(
-            "Missing Prisma CLI at {}. Run `npm run prepare:core` from desktop-tauri.",
-            prisma_cli.display()
-        ));
-    }
-
-    if !runtime_schema.exists() {
-        return Err(format!(
-            "Missing runtime Prisma schema at {}. Run `npm run prepare:core` from desktop-tauri.",
-            runtime_schema.display()
-        ));
-    }
-
-    let database_alias = ensure_database_alias(storage_dir)?;
-    let database_url = sqlite_database_url(&database_alias);
-
-    let mut migrate = Command::new(node_bin);
-    migrate
-        .current_dir(&server_dir)
-        .arg(&prisma_cli)
-        .arg("migrate")
-        .arg("deploy")
-        .arg("--schema")
-        .arg(&runtime_schema)
-        .env("DATABASE_URL", &database_url)
-        .env("STORAGE_DIR", storage_dir);
-    if let Err(error) =
-        run_bootstrap_command(migrate, "desktop database migration", bootstrap_log_path)
-    {
-        if error.contains("P3005") {
-            let mut db_push = Command::new(node_bin);
-            db_push
-                .current_dir(&server_dir)
-                .arg(&prisma_cli)
-                .arg("db")
-                .arg("push")
-                .arg("--schema")
-                .arg(&runtime_schema)
-                .arg("--skip-generate")
-                .env("DATABASE_URL", &database_url)
-                .env("STORAGE_DIR", storage_dir);
-            run_bootstrap_command(db_push, "desktop database schema push", bootstrap_log_path)?;
-        } else {
-            return Err(error);
-        }
-    }
-
-    let mut seed = Command::new(node_bin);
-    seed.current_dir(&server_dir)
-        .arg("prisma/seed.js")
-        .env("DATABASE_URL", &database_url)
-        .env("STORAGE_DIR", storage_dir);
-    run_bootstrap_command(seed, "desktop database seed", bootstrap_log_path)?;
-
-    Ok(())
-}
-
-fn terminate_child(_name: &str, child: &mut Child) {
-    if child.try_wait().ok().flatten().is_some() {
-        return;
-    }
-    let _ = child.kill();
-    let _ = child.wait();
-}
-
-fn apply_stdio(command: &mut Command, log_path: &Path) -> Result<(), String> {
-    if cfg!(debug_assertions) {
-        command.stdout(Stdio::inherit()).stderr(Stdio::inherit());
-    } else {
-        let stdout_log = fs::OpenOptions::new()
-            .create(true)
-            .append(true)
-            .open(log_path)
-            .map_err(|err| format!("Failed to open runtime log {}: {err}", log_path.display()))?;
-        let stderr_log = stdout_log.try_clone().map_err(|err| {
-            format!(
-                "Failed to clone runtime log handle {}: {err}",
-                log_path.display()
-            )
-        })?;
-        command
-            .stdout(Stdio::from(stdout_log))
-            .stderr(Stdio::from(stderr_log));
-    }
-    Ok(())
-}
-
-fn spawn_collector(
-    core_dir: &Path,
-    storage_dir: &Path,
-    node_bin: &str,
-    log_path: &Path,
-) -> Result<Child, String> {
-    let app_data_dir = storage_dir
-        .parent()
-        .ok_or_else(|| "Unable to resolve application data directory for collector.".to_string())?;
-    let collector_data_dir = app_data_dir.join("collector");
-    let collector_hotdir = collector_data_dir.join("hotdir");
-    let collector_tmp_dir = collector_data_dir.join("storage").join("tmp");
-    fs::create_dir_all(&collector_hotdir)
-        .map_err(|err| format!("Failed to create collector hotdir: {err}"))?;
-    fs::create_dir_all(&collector_tmp_dir)
-        .map_err(|err| format!("Failed to create collector temp directory: {err}"))?;
-
-    let mut command = Command::new(node_bin);
-    command
-        .current_dir(core_dir.join("collector"))
-        .arg("index.js")
-        .env("NODE_ENV", "production")
-        .env("STORAGE_DIR", storage_dir)
-        .env("COLLECTOR_DATA_DIR", &collector_data_dir)
-        .env("COLLECTOR_HOTDIR", &collector_hotdir)
-        .env("COLLECTOR_TMP_DIR", &collector_tmp_dir)
-        .env("COLLECTOR_PORT", COLLECTOR_PORT.to_string())
-        .env("COLLECTOR_BIND_HOST", "127.0.0.1");
-    apply_stdio(&mut command, log_path)?;
-    command
-        .spawn()
-        .map_err(|err| format!("Failed to spawn collector process: {err}"))
-}
-
-fn spawn_server(
-    core_dir: &Path,
-    storage_dir: &Path,
-    node_bin: &str,
-    runtime_secrets: &RuntimeSecrets,
-    server_port: u16,
-    log_path: &Path,
-) -> Result<Child, String> {
-    let jwt_secret = std::env::var("ANYTHINGLLM_JWT_SECRET")
-        .unwrap_or_else(|_| runtime_secrets.jwt_secret.clone());
-    let sig_key =
-        std::env::var("ANYTHINGLLM_SIG_KEY").unwrap_or_else(|_| runtime_secrets.sig_key.clone());
-    let sig_salt =
-        std::env::var("ANYTHINGLLM_SIG_SALT").unwrap_or_else(|_| runtime_secrets.sig_salt.clone());
-    let database_alias = ensure_database_alias(storage_dir)?;
-    let database_url = sqlite_database_url(&database_alias);
-
-    let mut command = Command::new(node_bin);
-    command
-        .current_dir(core_dir.join("server"))
-        .arg("index.js")
-        .env("NODE_ENV", "production")
-        .env("SERVER_PORT", server_port.to_string())
-        .env("SERVER_BIND_HOST", "127.0.0.1")
-        .env("COLLECTOR_PORT", COLLECTOR_PORT.to_string())
-        .env("COLLECTOR_HOST", "127.0.0.1")
-        .env("DISABLE_TELEMETRY", "true")
-        .env("DATABASE_URL", database_url)
-        .env("STORAGE_DIR", storage_dir)
-        .env("JWT_SECRET", jwt_secret)
-        .env("SIG_KEY", sig_key)
-        .env("SIG_SALT", sig_salt);
-    apply_stdio(&mut command, log_path)?;
-    command
-        .spawn()
-        .map_err(|err| format!("Failed to spawn server process: {err}"))
 }
 
 fn main() {

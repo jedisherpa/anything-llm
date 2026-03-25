@@ -1,0 +1,47 @@
+{
+  "id": "lean-validation-loop",
+  "title": "Lean Validation Loop",
+  "displayTitle": "Lean Validation Loop",
+  "handle": "@constellation-lean-validation-loop",
+  "type": "Tetrahedron",
+  "purpose": "To rapidly validate or invalidate a product hypothesis with the minimum possible investment.",
+  "projectManagerTitle": "The Agile Orchestrator",
+  "projectManagerHandle": "@mc-project-managers-board-agile-orchestrator",
+  "members": [
+    {
+      "role": "The Customer Champion",
+      "lens_path": "/home/ubuntu/councils/org-builder-board/05_Customer_Development_And_Lean_Startup_Lens.docx",
+      "displayRole": "The Customer Champion",
+      "relativePath": "councils/org-builder-board/05_Customer_Development_And_Lean_Startup_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    },
+    {
+      "role": "The Lean Experimenter",
+      "lens_path": "/home/ubuntu/councils/org-builder-board/06_Lean_Startup_And_Validated_Learning_Lens.docx",
+      "displayRole": "The Lean Experimenter",
+      "relativePath": "councils/org-builder-board/06_Lean_Startup_And_Validated_Learning_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    },
+    {
+      "role": "The Pragmatic Systems Thinker",
+      "lens_path": "/home/ubuntu/councils/millennial-founders-board/02_Pragmatic_Systems_Entrepreneur_Lens.docx",
+      "displayRole": "The Pragmatic Systems Thinker",
+      "relativePath": "councils/millennial-founders-board/02_Pragmatic_Systems_Entrepreneur_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    }
+  ],
+  "relativePath": "constellations/tetrahedron-3-lean-validation.json",
+  "detailPath": "constellations/lean-validation-loop.json",
+  "name": "Tetrahedron 3: The \"Lean Validation\" Quad",
+  "projectManager": "/home/ubuntu/councils/project-managers-board/04_Agile_Adaptive_Delivery_Lens.md",
+  "projectManagerRelativePath": "councils/project-managers-board/04_Agile_Adaptive_Delivery_Lens.md",
+  "projectManagerId": "project-managers-board-agile-orchestrator",
+  "legacyId": "tetrahedron-3-the-lean-validation-quad",
+  "legacyHandle": "@constellation-tetrahedron-3-the-lean-validation-quad"
+}

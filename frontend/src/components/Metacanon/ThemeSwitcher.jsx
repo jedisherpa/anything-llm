@@ -15,14 +15,14 @@ export default function MetacanonThemeSwitcher({
 
   return (
     <div
-      className={`inline-flex items-center gap-3 rounded-full border border-[var(--comp-border)] bg-[color:var(--comp-bg)] px-2 py-2 shadow-[0_18px_42px_rgba(0,0,0,0.18)] backdrop-blur-xl ${className}`}
+      className={`metacanon-theme-switcher inline-flex flex-col items-center gap-1 rounded-[15px] border border-[color:color-mix(in_srgb,var(--comp-border)_44%,transparent)] bg-[color:color-mix(in_srgb,var(--comp-bg)_68%,transparent)] px-2 py-1.5 ${className}`}
     >
       {showLabel ? (
-        <span className="pl-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--text-2)]">
-          Mode
+        <span className="w-full text-center text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--text-2)]">
+          Sanctuary
         </span>
       ) : null}
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-[6px]">
         {themes.map((themeKey) => {
           const isActive = theme === themeKey;
           return (
@@ -30,10 +30,11 @@ export default function MetacanonThemeSwitcher({
               key={themeKey}
               type="button"
               onClick={() => setTheme(themeKey)}
-              className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-all duration-200 ${
+              data-open={isActive ? "true" : "false"}
+              className={`metacanon-composer-toolbar-button metacanon-theme-switcher__button rounded-full px-[9px] py-[5px] text-[10.5px] font-semibold ${
                 isActive
-                  ? "border-[var(--gold-border)] bg-[var(--gold-bg)] text-[var(--text-1)]"
-                  : "border-transparent bg-transparent text-[var(--text-2)] hover:border-[var(--comp-border)] hover:bg-[var(--gold-bg)] hover:text-[var(--text-1)]"
+                  ? "metacanon-theme-switcher__button--active text-[var(--text-1)]"
+                  : "text-[var(--text-2)]"
               }`}
             >
               {THEME_LABELS[themeKey] || themeKey}

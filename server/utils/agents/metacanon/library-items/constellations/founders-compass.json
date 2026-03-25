@@ -1,0 +1,65 @@
+{
+  "id": "founders-compass",
+  "title": "Founder's Compass",
+  "displayTitle": "Founder's Compass",
+  "handle": "@constellation-founders-compass",
+  "type": "Octahedron",
+  "purpose": "To provide a founder with a rigorous, multi-perspectival assessment of their current strategic position and the most important next move.",
+  "projectManagerTitle": "The Radical Transparency Operator",
+  "projectManagerHandle": "@mc-project-managers-board-radical-transparency-operator",
+  "members": [
+    {
+      "role": "The Founder Realist",
+      "lens_path": "/home/ubuntu/councils/pauls-board/07_Founder_Reality_And_Taste_Lens.docx",
+      "displayRole": "The Founder Realist",
+      "relativePath": "councils/pauls-board/07_Founder_Reality_And_Taste_Lens.md",
+      "lensId": "pauls-board-founder-realist",
+      "lensHandle": "@mc-pauls-board-founder-realist",
+      "lensTitle": "The Founder Realist"
+    },
+    {
+      "role": "The First-Principles Engineer",
+      "lens_path": "/home/ubuntu/councils/pauls-board/01_First_Principles_Engineer_Lens.docx",
+      "displayRole": "The First-Principles Engineer",
+      "relativePath": "councils/pauls-board/01_First_Principles_Engineer_Lens.md",
+      "lensId": "pauls-board-first-principles-engineer",
+      "lensHandle": "@mc-pauls-board-first-principles-engineer",
+      "lensTitle": "The First-Principles Engineer"
+    },
+    {
+      "role": "The Mission-Driven Builder",
+      "lens_path": "/home/ubuntu/councils/millennial-founders-board/04_Mission_Driven_Underdog_Builder_Lens.docx",
+      "displayRole": "The Mission-Driven Builder",
+      "relativePath": "councils/millennial-founders-board/04_Mission_Driven_Underdog_Builder_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    },
+    {
+      "role": "The Recursive Founder",
+      "lens_path": "/home/ubuntu/councils/millennial-founders-board/01_Recursive_Relationship_Centered_Founder_Lens.docx",
+      "displayRole": "The Recursive Founder",
+      "relativePath": "councils/millennial-founders-board/01_Recursive_Relationship_Centered_Founder_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    },
+    {
+      "role": "The Keystone Problem Solver",
+      "lens_path": "/home/ubuntu/councils/millennial-founders-board/06_Keystone_Problem_AI_Builders_Lens.docx",
+      "displayRole": "The Keystone Problem Solver",
+      "relativePath": "councils/millennial-founders-board/06_Keystone_Problem_AI_Builders_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    }
+  ],
+  "relativePath": "constellations/octahedron-6-founders-compass.json",
+  "detailPath": "constellations/founders-compass.json",
+  "name": "Octahedron 6: The \"Founder's Compass\" Council",
+  "projectManager": "/home/ubuntu/councils/project-managers-board/09_Radical_Transparency_Operator_Lens.md",
+  "projectManagerRelativePath": "councils/project-managers-board/09_Radical_Transparency_Operator_Lens.md",
+  "projectManagerId": "project-managers-board-radical-transparency-operator",
+  "legacyId": "octahedron-6-the-founder-s-compass-council",
+  "legacyHandle": "@constellation-octahedron-6-the-founder-s-compass-council"
+}

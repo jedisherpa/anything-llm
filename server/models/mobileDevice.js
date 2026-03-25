@@ -119,13 +119,14 @@ const MobileDevice = {
     try {
       if (!deviceOs || !deviceName)
         return { device: null, error: "Device OS and name are required" };
-      if (!this.validDeviceOs.includes(deviceOs))
+      const normalizedDeviceOs = String(deviceOs).trim().toLowerCase();
+      if (!this.validDeviceOs.includes(normalizedDeviceOs))
         return { device: null, error: `Invalid device OS - ${deviceOs}` };
 
       const device = await prisma.desktop_mobile_devices.create({
         data: {
           deviceName: String(deviceName),
-          deviceOs: String(deviceOs).toLowerCase(),
+          deviceOs: normalizedDeviceOs,
           token: uuidv4(),
           userId: userId ? Number(userId) : null,
         },
@@ -178,7 +179,7 @@ const MobileDevice = {
       return device;
     } catch (error) {
       console.error("FAILED TO GET MOBILE DEVICE.", error);
-      return [];
+      return null;
     }
   },
 

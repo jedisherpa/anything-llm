@@ -1,18 +1,26 @@
 import { X } from "@phosphor-icons/react/dist/csr/X";
 import { STARTER_PACKS } from "@/utils/metacanonStarterPacks";
 import { setActiveMetacanonAlignment } from "@/utils/metacanonAlignment";
+import showToast from "@/utils/toast";
 
 export default function StarterPackSheet({ open = false, onClose = () => {} }) {
   if (!open) return null;
 
   function handleSelect(pack) {
-    setActiveMetacanonAlignment({
+    const next = setActiveMetacanonAlignment({
       id: `starter-pack-${pack.id}`,
       title: pack.title,
+      kind: pack.kind,
       handle: pack.handle,
+      lensHandles: pack.lensHandles,
+      lensTitles: pack.lensTitles,
       collectionLabel: pack.collectionLabel,
       colorHex: pack.colorHex,
     });
+    if (!next) {
+      showToast("This starter pack is not ready to run yet.", "warning");
+      return;
+    }
     onClose();
   }
 

@@ -14,7 +14,6 @@ import { v4 } from "uuid";
 import handleSocketResponse, {
   websocketURI,
   AGENT_SESSION_END,
-  AGENT_SESSION_START,
   setAgentSessionActive,
 } from "@/utils/chat/agent";
 import DnDFileUploaderWrapper from "./DnDWrapper";
@@ -30,7 +29,6 @@ import { safeJsonParse } from "@/utils/request";
 import { useTranslation } from "react-i18next";
 import paths from "@/utils/paths";
 import TextSizeMenu from "./TextSizeMenu";
-import WorkspaceModelPicker from "./WorkspaceModelPicker";
 import SourcesSidebar, { SourcesSidebarProvider } from "./SourcesSidebar";
 import PrismPresence from "@/components/PrismPresence";
 import MetacanonHomeStage from "@/components/Metacanon/HomeStage";
@@ -43,7 +41,7 @@ import {
 import showToast from "@/utils/toast";
 
 const AGENT_HANDLE_PATTERN =
-  /^\s*@(?:agent|torus|watcher|auditor|synthesizer|prism)\b/i;
+  /^\s*(?:\/(?:agent|lens|constellation|council)\b|@(?:agent|council|constellation-[a-z0-9_-]+|[a-z0-9_-]+))\b/i;
 
 export default function ChatContainer({ workspace, knownHistory = [] }) {
   const navigate = useNavigate();
@@ -346,8 +344,44 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
           `${websocketURI()}/api/agent-invocation/${socketId}`
         );
         socket.supportsAgentStreaming = false;
+        socket.agentSessionReady = false;
+        socket.agentSessionFailed = false;
+        socket.agentSessionHadActivity = false;
+        socket.agentSessionInitTimeout = window.setTimeout(() => {
+          if (socket?.agentSessionReady || socket?.agentSessionFailed) return;
+          socket.agentSessionFailed = true;
+          signalPrismError({
+            source: "agent-socket",
+            message:
+              "Agent session did not finish initializing. Please try again.",
+          });
+          setChatHistory((prev) => [
+            ...prev.filter((msg) => !!msg.content),
+            {
+              uuid: v4(),
+              type: "abort",
+              content:
+                "Agent session did not finish initializing. Please try again.",
+              role: "assistant",
+              sources: [],
+              closed: true,
+              error:
+                "Agent session did not finish initializing. Please try again.",
+              animate: false,
+              pending: false,
+            },
+          ]);
+          setLoadingResponse(false);
+          setAgentSessionActive(false);
+          window.dispatchEvent(new CustomEvent(AGENT_SESSION_END));
+          socket?.close();
+        }, 8000);
 
         window.addEventListener(ABORT_STREAM_EVENT, () => {
+          if (socket?.agentSessionInitTimeout) {
+            window.clearTimeout(socket.agentSessionInitTimeout);
+            socket.agentSessionInitTimeout = null;
+          }
           setAgentSessionActive(false);
           window.dispatchEvent(new CustomEvent(AGENT_SESSION_END));
           socket?.close();
@@ -367,29 +401,33 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
         });
 
         socket.addEventListener("close", (_event) => {
+          if (socket?.agentSessionInitTimeout) {
+            window.clearTimeout(socket.agentSessionInitTimeout);
+            socket.agentSessionInitTimeout = null;
+          }
           setAgentSessionActive(false);
           window.dispatchEvent(new CustomEvent(AGENT_SESSION_END));
-          setChatHistory((prev) => [
-            ...prev.filter((msg) => !!msg.content),
-            {
-              uuid: v4(),
-              type: "statusResponse",
-              content: "Agent session complete.",
-              role: "assistant",
-              sources: [],
-              closed: true,
-              error: null,
-              animate: false,
-              pending: false,
-            },
-          ]);
+          if (socket?.agentSessionReady && !socket?.agentSessionFailed) {
+            setChatHistory((prev) => [
+              ...prev.filter((msg) => !!msg.content),
+              {
+                uuid: v4(),
+                type: "statusResponse",
+                content: "Agent session complete.",
+                role: "assistant",
+                sources: [],
+                closed: true,
+                error: null,
+                animate: false,
+                pending: false,
+              },
+            ]);
+          }
           setLoadingResponse(false);
           setWebsocket(null);
           setSocketId(null);
         });
         setWebsocket(socket);
-        setAgentSessionActive(true);
-        window.dispatchEvent(new CustomEvent(AGENT_SESSION_START));
         window.dispatchEvent(new CustomEvent(CLEAR_ATTACHMENTS_EVENT));
       } catch (e) {
         signalPrismError({ source: "agent-socket", message: e.message });
@@ -416,6 +454,10 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
 
     return () => {
       if (socket) {
+        if (socket.agentSessionInitTimeout) {
+          window.clearTimeout(socket.agentSessionInitTimeout);
+          socket.agentSessionInitTimeout = null;
+        }
         setAgentSessionActive(false);
         window.dispatchEvent(new CustomEvent(AGENT_SESSION_END));
         socket.close();
@@ -429,12 +471,11 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
   if (isEmpty) {
     return (
       <div
-        style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
-        className="metacanon-home-surface transition-all duration-500 relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] w-full h-full overflow-hidden border-none light:border-solid light:border light:border-theme-modal-border"
+        style={{ height: "100%" }}
+        className="metacanon-home-surface transition-all duration-500 relative flex-1 min-w-0 h-full overflow-hidden border-none"
       >
         {isMobile && <SidebarMobileHeader />}
         <TextSizeMenu />
-        <WorkspaceModelPicker workspaceSlug={workspace.slug} />
         <DnDFileUploaderWrapper>
           <MetacanonHomeStage
             submit={handleSubmit}
@@ -465,23 +506,26 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
 
   return (
     <SourcesSidebarProvider>
-      <div
-        style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
-        className="relative flex md:ml-[2px] md:mr-[16px] md:my-[16px] w-full h-full z-[2]"
-      >
-        <TextSizeMenu />
-        <div className="workspace-prism-chat-panel flex-1 min-w-0 transition-all duration-500 relative md:rounded-[16px] text-white light:text-slate-900 h-full overflow-hidden">
-          <div className="absolute top-5 right-5 z-10 hidden md:block">
+      <div style={{ height: "100%" }} className="relative flex flex-1 min-w-0 h-full z-[2]">
+        <div className="workspace-prism-chat-panel flex-1 min-w-0 transition-all duration-500 relative text-white light:text-slate-900 h-full overflow-hidden">
+          <div className="absolute top-3 right-4 md:right-6 z-30 hidden md:block">
+            <TextSizeMenu
+              floating={false}
+              className="absolute top-0 right-0"
+              buttonClassName="workspace-prism-chat-rail__toggle"
+              panelClassName="workspace-prism-chat-rail__menu"
+            />
+          </div>
+          <div className="absolute top-[52px] right-4 md:right-6 z-20 hidden md:block">
             <PrismPresence
-              surface="chat"
-              size="md"
+              surface="chat-corner"
+              size="sm"
               label="Prism"
               caption="Listening"
-              align="left"
+              align="center"
             />
           </div>
           {isMobile && <SidebarMobileHeader />}
-          <WorkspaceModelPicker workspaceSlug={workspace.slug} />
           <DnDFileUploaderWrapper>
             <div className="flex flex-col h-full w-full pb-20 md:pb-0">
               <div className="contents">
@@ -501,6 +545,8 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
                   sendCommand={sendCommand}
                   attachments={files}
                   centered={false}
+                  workspaceSlug={workspace.slug}
+                  threadSlug={threadSlug}
                   chatMode={chatMode}
                   onChatModeChange={handleChatModeChange}
                 />

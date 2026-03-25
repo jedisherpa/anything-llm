@@ -89,7 +89,7 @@ export default function PromptInput({
    */
   useEffect(() => {
     if (searchParams.get("action") === "set-agent-chat") {
-      sendCommand({ text: "@agent " });
+      sendCommand({ text: "/agent " });
       textareaRef.current?.focus();
     }
   }, [textareaRef.current]);
@@ -365,20 +365,21 @@ export default function PromptInput({
             />
 
             <div
-              className={`${centered ? "metacanon-composer-shell" : "bg-zinc-800 light:bg-white light:border light:border-slate-300"} flex flex-col overflow-hidden rounded-[24px] px-6 pwa:rounded-3xl`}
+              className={`metacanon-composer-shell ${centered ? "metacanon-composer-shell--centered" : "metacanon-composer-shell--workspace"} flex flex-col overflow-hidden rounded-[24px] px-5 md:px-6 pwa:rounded-3xl`}
             >
               <AttachmentManager attachments={attachments} />
               {typeof onChatModeChange === "function" ? (
-                <div className="pt-4">
+                <div className="pt-3">
                   <ChatModeToggle
                     chatMode={chatMode}
                     onChange={onChatModeChange}
+                    centered={centered}
                   />
                 </div>
               ) : null}
               {activeAlignment?.handle ? (
                 <div
-                  className="metacanon-alignment-chip mt-4 flex items-center justify-between gap-3 rounded-[16px] px-4 py-3"
+                  className="metacanon-alignment-chip mt-3 flex items-center justify-between gap-3 rounded-[16px] px-4 py-3"
                   style={{ "--lens-color": activeAlignment.colorHex }}
                 >
                   <div className="min-w-0">
@@ -387,6 +388,13 @@ export default function PromptInput({
                     </div>
                     <div className="truncate text-[14px] text-theme-text-primary">
                       {activeAlignment.title}
+                    </div>
+                    <div className="truncate text-[11px] leading-5 text-theme-text-secondary">
+                      {activeAlignment.kind === "pack"
+                        ? `${activeAlignment.lensHandles?.length || 0} lenses routed through council orchestration`
+                        : activeAlignment.kind === "constellation"
+                          ? "Preset constellation orchestration active"
+                          : activeAlignment.handle || "Lens alignment active"}
                     </div>
                   </div>
                   <button
@@ -398,7 +406,13 @@ export default function PromptInput({
                   </button>
                 </div>
               ) : null}
-              <div className="flex items-center">
+              <div
+                className={`flex items-center ${
+                  centered
+                    ? ""
+                    : "metacanon-composer-input-shell--workspace"
+                }`}
+              >
                 <textarea
                   id={PROMPT_INPUT_ID}
                   ref={textareaRef}
@@ -416,14 +430,14 @@ export default function PromptInput({
                   }}
                   value={promptInput}
                   spellCheck={Appearance.get("enableSpellCheck")}
-                  className={`border-none cursor-text max-h-[50vh] md:max-h-[350px] md:min-h-[40px] ${centered ? "pt-[26px]" : "pt-[20px]"} w-full leading-5 ${centered ? "text-theme-text-primary placeholder:text-theme-settings-input-placeholder" : "text-white light:text-slate-600 placeholder:text-white/60 light:placeholder:text-slate-400"} bg-transparent resize-none active:outline-none focus:outline-none flex-grow pwa:!text-[16px] ${textSizeClass}`}
+                  className={`border-none cursor-text max-h-[50vh] md:max-h-[350px] md:min-h-[44px] pt-[24px] w-full leading-6 ${centered ? "text-theme-text-primary placeholder:text-theme-settings-input-placeholder" : "text-white light:text-slate-700 placeholder:text-white/55 light:placeholder:text-slate-400"} bg-transparent resize-none active:outline-none focus:outline-none flex-grow pwa:!text-[16px] ${textSizeClass}`}
                   placeholder={centeredPlaceholder}
                 />
               </div>
               <div
-                className={`flex justify-between items-center ${centered ? "pt-[18px] pb-[22px]" : "pt-3.5 pb-3"}`}
+                className={`metacanon-composer-footer flex justify-between items-center ${centered ? "pt-[5px] pb-[5px]" : "pt-3.5 pb-3.5"}`}
               >
-                <div className="flex items-center gap-x-0.25">
+                <div className="flex items-center gap-x-0.5">
                   <div className="flex items-center gap-x-1">
                     <AttachItem
                       workspaceSlug={workspaceSlug}
@@ -473,25 +487,30 @@ export default function PromptInput({
   );
 }
 
-function ChatModeToggle({ chatMode = "chat", onChange }) {
+function ChatModeToggle({ chatMode = "chat", onChange, centered = false }) {
   const { t } = useTranslation();
   const description =
     chatMode === "chat"
-      ? "Conversational synthesis with model knowledge and retrieved context."
-      : "Direct retrieval from your documents with stricter vector grounding.";
+      ? "LLM plus web plus database"
+      : "LLM plus database";
 
   return (
-    <div className="metacanon-chat-mode-shell rounded-[16px] px-3 py-3">
-      <div className="flex items-center justify-between gap-3">
-        <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-theme-text-secondary">
-          Chat vs Query
-        </div>
+    <div
+      className={`metacanon-chat-mode-shell ml-auto w-fit ${
+        centered
+          ? "metacanon-chat-mode-shell--centered rounded-[12px] px-0 py-0"
+          : "metacanon-chat-mode-shell--workspace rounded-[12px] px-0 py-0"
+      }`}
+    >
+      <div className="flex flex-col items-end gap-1">
         <div className="metacanon-chat-mode-toggle flex items-center rounded-full p-1">
           <button
             type="button"
             disabled={chatMode === "chat"}
             onClick={() => onChange?.("chat")}
-            className="metacanon-chat-mode-toggle__button rounded-full px-3 py-1.5 text-[12px] font-semibold uppercase tracking-[0.12em]"
+            className={`metacanon-chat-mode-toggle__button rounded-full font-semibold uppercase tracking-[0.12em] ${
+              centered ? "px-2.5 py-1 text-[11px]" : "px-2.5 py-1 text-[11px]"
+            }`}
             data-active={chatMode === "chat" ? "true" : "false"}
           >
             {t("chat.mode.chat.title")}
@@ -500,15 +519,21 @@ function ChatModeToggle({ chatMode = "chat", onChange }) {
             type="button"
             disabled={chatMode === "query"}
             onClick={() => onChange?.("query")}
-            className="metacanon-chat-mode-toggle__button rounded-full px-3 py-1.5 text-[12px] font-semibold uppercase tracking-[0.12em]"
+            className={`metacanon-chat-mode-toggle__button rounded-full font-semibold uppercase tracking-[0.12em] ${
+              centered ? "px-2.5 py-1 text-[11px]" : "px-2.5 py-1 text-[11px]"
+            }`}
             data-active={chatMode === "query" ? "true" : "false"}
           >
             {t("chat.mode.query.title")}
           </button>
         </div>
-      </div>
-      <div className="mt-2 text-[12px] leading-5 text-theme-text-secondary">
-        {description}
+        <div
+          className={`metacanon-chat-mode-copy text-right font-medium leading-none text-theme-text-secondary ${
+            centered ? "text-[9px]" : "text-[9px]"
+          }`}
+        >
+          {description}
+        </div>
       </div>
     </div>
   );
@@ -551,8 +576,8 @@ function AgentSessionButton({
 
   function handleClick() {
     try {
-      if (promptInput?.trim()?.startsWith("@agent")) return;
-      sendCommand({ text: "@agent", writeMode: "prepend" });
+      if (/^(?:@agent\b|\/agent\b)/i.test(promptInput?.trim() || "")) return;
+      sendCommand({ text: "/agent", writeMode: "prepend" });
     } finally {
       textareaRef?.current?.focus();
     }

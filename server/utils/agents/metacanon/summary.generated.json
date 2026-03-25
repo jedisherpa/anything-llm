@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-13T19:54:42.488Z",
+  "generatedAt": "2026-03-24T06:34:55.598Z",
   "counts": {
     "lenses": 208,
     "constellations": 21,
@@ -10,10 +10,10 @@
   "councilCount": 12,
   "featuredLenses": [
     {
-      "id": "direct-response-board-01-pastoral-authority-and-logical-dominance-lens",
+      "id": "direct-response-board-clarity-shepherd",
       "title": "The Clarity Shepherd",
       "displayTitle": "The Clarity Shepherd",
-      "handle": "@mc-direct-response-board-01-pastoral-authority-and-logical-dominance-lens",
+      "handle": "@mc-direct-response-board-clarity-shepherd",
       "overview": "To guide individuals from confusion to clarity by revealing inherent truths and logical pathways, reframing complex problems as solvable structural issues, and establishing intellectual dominance through coherent, integrity-driven arguments that offer relief and resonate with capable adults.",
       "collectionId": "direct-response-board",
       "collectionLabel": "Direct Response Board",
@@ -30,13 +30,13 @@
       "relativePath": "councils/direct-response-board/01_Pastoral_Authority_And_Logical_Dominance_Lens.md",
       "backendId": "direct-response-board-01_Pastoral_Authority_And_Logical_Dominance_Lens",
       "colorHex": null,
-      "detailPath": "lenses/direct-response-board-01-pastoral-authority-and-logical-dominance-lens.json"
+      "detailPath": "lenses/direct-response-board-clarity-shepherd.json"
     },
     {
-      "id": "direct-response-board-04-simple-writing-system-and-one-reader-lens",
+      "id": "direct-response-board-direct-response-master",
       "title": "The Direct Response Master",
       "displayTitle": "The Direct Response Master",
-      "handle": "@mc-direct-response-board-04-simple-writing-system-and-one-reader-lens",
+      "handle": "@mc-direct-response-board-direct-response-master",
       "overview": "Apply the essential reasoning pattern of The Direct Response Master to help the Human Sovereign see more clearly.",
       "collectionId": "direct-response-board",
       "collectionLabel": "Direct Response Board",
@@ -53,13 +53,13 @@
       "relativePath": "councils/direct-response-board/04_Simple_Writing_System_And_One_Reader_Lens.md",
       "backendId": "direct-response-board-04_Simple_Writing_System_And_One_Reader_Lens",
       "colorHex": null,
-      "detailPath": "lenses/direct-response-board-04-simple-writing-system-and-one-reader-lens.json"
+      "detailPath": "lenses/direct-response-board-direct-response-master.json"
     },
     {
-      "id": "pauls-board-01-first-principles-engineer-lens",
+      "id": "pauls-board-first-principles-engineer",
       "title": "The First-Principles Engineer",
       "displayTitle": "The First-Principles Engineer",
-      "handle": "@mc-pauls-board-01-first-principles-engineer-lens",
+      "handle": "@mc-pauls-board-first-principles-engineer",
       "overview": "To embody the analytical rigor, visionary ambition, and relentless drive characteristic of this archetype, focusing on first-principles thinking to deconstruct complex problems and build innovative solutions from the ground up. This persona aims to model an AI agent capable of extreme goal-setting, high risk tolerance, and resilient execution in the face of...",
       "collectionId": "pauls-board",
       "collectionLabel": "Paul's Board",
@@ -76,13 +76,13 @@
       "relativePath": "councils/pauls-board/01_First_Principles_Engineer_Lens.md",
       "backendId": "pauls-board-01_First_Principles_Engineer_Lens",
       "colorHex": null,
-      "detailPath": "lenses/pauls-board-01-first-principles-engineer-lens.json"
+      "detailPath": "lenses/pauls-board-first-principles-engineer.json"
     },
     {
-      "id": "pauls-board-06-human-dignity-and-ethical-boundary-lens",
+      "id": "pauls-board-ethical-boundary",
       "title": "The Ethical Boundary",
       "displayTitle": "The Ethical Boundary",
-      "handle": "@mc-pauls-board-06-human-dignity-and-ethical-boundary-lens",
+      "handle": "@mc-pauls-board-ethical-boundary",
       "overview": "Apply the essential reasoning pattern of The Ethical Boundary to help the Human Sovereign see more clearly.",
       "collectionId": "pauls-board",
       "collectionLabel": "Paul's Board",
@@ -99,22 +99,22 @@
       "relativePath": "councils/pauls-board/06_Human_Dignity_And_Ethical_Boundary_Lens.md",
       "backendId": "pauls-board-06_Human_Dignity_And_Ethical_Boundary_Lens",
       "colorHex": null,
-      "detailPath": "lenses/pauls-board-06-human-dignity-and-ethical-boundary-lens.json"
+      "detailPath": "lenses/pauls-board-ethical-boundary.json"
     },
     {
-      "id": "lens-01-01-the-divine-anchor",
+      "id": "matchless-love-council-divine-anchor",
       "title": "The Divine Anchor",
       "displayTitle": "The Divine Anchor",
-      "handle": "@mc-lens-01-01-the-divine-anchor",
+      "handle": "@mc-matchless-love-council-divine-anchor",
       "overview": "To anchor all subsequent action in the unearned, self-renouncing love that forms the foundation of the universe.",
-      "collectionId": "council-01",
+      "collectionId": "matchless-love-council",
       "collectionLabel": "The Matchless Love",
       "collectionKind": "council",
-      "councilId": "Council_01",
+      "councilId": "matchless-love-council",
       "councilLabel": "The Matchless Love",
       "councilName": "The Matchless Love Council",
       "board": "The Matchless Love",
-      "boardSlug": "council-01",
+      "boardSlug": "matchless-love-council",
       "displayBoard": "The Matchless Love",
       "phase": null,
       "sortOrder": 101,
@@ -122,22 +122,22 @@
       "relativePath": "Council_01_The_Matchless_Love/PCL_01_01_Divine_Anchor.md",
       "backendId": "Lens_01_01_The_Divine_Anchor",
       "colorHex": null,
-      "detailPath": "lenses/lens-01-01-the-divine-anchor.json"
+      "detailPath": "lenses/matchless-love-council-divine-anchor.json"
     },
     {
-      "id": "lens-01-03-the-forgiven-sinner",
+      "id": "matchless-love-council-forgiven-sinner",
       "title": "The Forgiven Sinner",
       "displayTitle": "The Forgiven Sinner",
-      "handle": "@mc-lens-01-03-the-forgiven-sinner",
+      "handle": "@mc-matchless-love-council-forgiven-sinner",
       "overview": "To release the Human Sovereign from the paralysis of past failures, enabling decisive, forward-looking action by anchoring them in the reality of unconditional forgiveness.",
-      "collectionId": "council-01",
+      "collectionId": "matchless-love-council",
       "collectionLabel": "The Matchless Love",
       "collectionKind": "council",
-      "councilId": "Council_01",
+      "councilId": "matchless-love-council",
       "councilLabel": "The Matchless Love",
       "councilName": "The Matchless Love Council",
       "board": "The Matchless Love",
-      "boardSlug": "council-01",
+      "boardSlug": "matchless-love-council",
       "displayBoard": "The Matchless Love",
       "phase": null,
       "sortOrder": 103,
@@ -145,7 +145,7 @@
       "relativePath": "Council_01_The_Matchless_Love/PCL_01_03_Forgiven_Sinner.md",
       "backendId": "Lens_01_03_The_Forgiven_Sinner",
       "colorHex": null,
-      "detailPath": "lenses/lens-01-03-the-forgiven-sinner.json"
+      "detailPath": "lenses/matchless-love-council-forgiven-sinner.json"
     }
   ]
 }

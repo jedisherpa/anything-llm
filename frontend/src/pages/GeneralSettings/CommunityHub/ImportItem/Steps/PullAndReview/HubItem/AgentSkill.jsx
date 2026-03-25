@@ -35,17 +35,16 @@ export default function AgentSkill({ item, settings, setStep }) {
   }, []);
 
   return (
-    <div className="flex flex-col mt-4 gap-y-4">
-      <div className="border border-white/10 light:border-orange-500/20 my-2 flex flex-col md:flex-row md:items-center gap-x-2 text-theme-text-primary light:text-orange-600 mb-4 bg-orange-800/30 light:bg-orange-500/10 rounded-lg px-4 py-2">
-        <div className="flex flex-col gap-y-2">
-          <div className="gap-x-2 flex items-center">
+    <div className="flex flex-col gap-5">
+      <div className="prism-community-import-callout prism-community-import-callout--warning">
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center gap-2">
             <Warning size={25} />
-            <h1 className="text-lg font-semibold">
-              {" "}
-              Only import agent skills you trust{" "}
+            <h1 className="text-lg font-semibold text-theme-text-primary">
+              Only import agent skills you trust
             </h1>
           </div>
-          <p className="text-sm">
+          <p className="text-sm leading-7 text-theme-text-secondary">
             Agent skills can execute code on your AnythingLLM instance, so only
             import agent skills from sources you trust. You should also review
             the code before importing. If you are unsure about what a skill does
@@ -54,17 +53,17 @@ export default function AgentSkill({ item, settings, setStep }) {
         </div>
       </div>
 
-      <div className="flex flex-col gap-y-1">
-        <h2 className="text-base text-theme-text-primary font-semibold">
+      <div className="flex flex-col gap-2">
+        <h2 className="text-xl font-semibold text-theme-text-primary">
           Review Agent Skill "{item.name}"
         </h2>
         {item.creatorUsername && (
-          <p className="text-white/60 light:text-theme-text-secondary text-xs font-mono">
+          <p className="text-xs font-mono text-theme-text-secondary">
             Created by{" "}
             <a
               href={paths.communityHub.profile(item.creatorUsername)}
               target="_blank"
-              className="hover:text-blue-500 hover:underline"
+              className="font-semibold text-theme-primary-button transition-colors duration-200 hover:text-theme-text-primary hover:underline"
               rel="noreferrer"
             >
               @{item.creatorUsername}
@@ -72,11 +71,11 @@ export default function AgentSkill({ item, settings, setStep }) {
           </p>
         )}
 
-        <div className="flex gap-x-1">
+        <div className="flex flex-wrap items-center gap-2">
           {item.verified ? (
-            <p className="text-green-500 text-xs font-mono">Verified code</p>
+            <p className="text-xs font-mono text-green-500">Verified code</p>
           ) : (
-            <p className="text-red-500 text-xs font-mono">
+            <p className="text-xs font-mono text-red-500">
               This skill is not verified.
             </p>
           )}
@@ -84,32 +83,36 @@ export default function AgentSkill({ item, settings, setStep }) {
           <a
             href="https://docs.anythingllm.com/community-hub/faq#verification"
             target="_blank"
-            className="text-xs font-mono text-blue-500 hover:underline"
+            className="text-xs font-mono text-theme-primary-button transition-colors duration-200 hover:text-theme-text-primary hover:underline"
             rel="noreferrer"
           >
             Learn more &rarr;
           </a>
         </div>
       </div>
-      <div className="flex flex-col gap-y-[25px] text-white/80 light:text-theme-text-secondary text-sm">
+
+      <div className="prism-community-import-summary text-sm leading-7 text-theme-text-secondary">
         <p>
           Agent skills unlock new capabilities for your AnythingLLM workspace
           via{" "}
-          <code className="font-mono bg-zinc-900 light:bg-slate-200 px-1 py-0.5 rounded-md text-sm">
+          <code className="rounded-md bg-theme-settings-input-bg px-2 py-1 font-mono text-theme-text-primary">
             @agent
           </code>{" "}
           skills that can do specific tasks when invoked.
         </p>
       </div>
       <FileReview item={item} />
-      <CTAButton
-        disabled={loading}
-        className="text-dark-text w-full mt-[18px] h-[34px] hover:bg-accent"
-        onClick={importAgentSkill}
-      >
-        {loading ? <CircleNotch size={16} className="animate-spin" /> : null}
-        {loading ? "Importing..." : "Import agent skill"}
-      </CTAButton>
+      <div className="flex justify-end">
+        <CTAButton
+          type="button"
+          disabled={loading}
+          className="!mr-0 h-11 w-full rounded-[14px] text-dark-text md:w-auto md:min-w-[220px]"
+          onClick={importAgentSkill}
+        >
+          {loading ? <CircleNotch size={16} className="animate-spin" /> : null}
+          {loading ? "Importing..." : "Import agent skill"}
+        </CTAButton>
+      </div>
     </div>
   );
 }
@@ -146,46 +149,46 @@ function FileReview({ item }) {
 
   if (!file) return null;
   return (
-    <div className="flex flex-col gap-y-2">
-      <div className="flex flex-col gap-y-2">
-        <div className="flex justify-between items-center">
-          <button
-            type="button"
-            className={`border-none bg-black/70 light:bg-slate-200 rounded-md p-1 text-white/60 light:text-theme-text-secondary text-xs font-mono ${
-              index === 0 ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-            onClick={handlePrevious}
-          >
-            <CaretLeft size={16} />
-          </button>
-          <p className="text-white/60 light:text-theme-text-secondary text-xs font-mono">
-            {file.name} ({index + 1} of {files.length} files)
-          </p>
-          <button
-            type="button"
-            className={`border-none bg-black/70 light:bg-slate-200 rounded-md p-1 text-white/60 light:text-theme-text-secondary text-xs font-mono ${
-              index === files.length - 1 ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-            onClick={handleNext}
-          >
-            <CaretRight size={16} />
-          </button>
-        </div>
-        <span
-          className="whitespace-pre-line flex flex-col gap-y-1 text-sm leading-[20px] max-h-[500px] overflow-y-auto hljs text-theme-text-primary"
-          dangerouslySetInnerHTML={{
-            __html: DOMPurify.sanitize(
-              renderMarkdown(
-                `\`\`\`${fileMarkup(file)}\n${
-                  fileMarkup(file) === "markdown"
-                    ? file.content.replace(/```/g, "~~~") // Escape triple backticks in markdown
-                    : file.content
-                }\n\`\`\``
-              )
-            ),
-          }}
-        />
+    <div className="prism-community-import-code">
+      <div className="prism-community-import-code__header">
+        <button
+          type="button"
+          className={`rounded-full border border-theme-sidebar-border p-1 text-theme-text-secondary transition-colors duration-200 hover:text-theme-text-primary ${
+            index === 0 ? "cursor-not-allowed opacity-50" : ""
+          }`}
+          onClick={handlePrevious}
+          disabled={index === 0}
+        >
+          <CaretLeft size={16} />
+        </button>
+        <p className="min-w-0 truncate text-xs font-mono">
+          {file.name} ({index + 1} of {files.length} files)
+        </p>
+        <button
+          type="button"
+          className={`rounded-full border border-theme-sidebar-border p-1 text-theme-text-secondary transition-colors duration-200 hover:text-theme-text-primary ${
+            index === files.length - 1 ? "cursor-not-allowed opacity-50" : ""
+          }`}
+          onClick={handleNext}
+          disabled={index === files.length - 1}
+        >
+          <CaretRight size={16} />
+        </button>
       </div>
+      <span
+        className="hljs flex flex-col gap-y-1 whitespace-pre-line text-sm leading-[20px] text-theme-text-primary"
+        dangerouslySetInnerHTML={{
+          __html: DOMPurify.sanitize(
+            renderMarkdown(
+              `\`\`\`${fileMarkup(file)}\n${
+                fileMarkup(file) === "markdown"
+                  ? file.content.replace(/```/g, "~~~") // Escape triple backticks in markdown
+                  : file.content
+              }\n\`\`\``
+            )
+          ),
+        }}
+      />
     </div>
   );
 }

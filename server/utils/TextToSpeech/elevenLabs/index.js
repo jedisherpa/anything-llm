@@ -1,4 +1,5 @@
 const { ElevenLabsClient } = require("elevenlabs");
+const { ttsBufferFromChunks } = require("../utils");
 
 class ElevenLabsTTS {
   constructor() {
@@ -36,12 +37,14 @@ class ElevenLabsTTS {
 
   async ttsBuffer(textInput) {
     try {
-      const audio = await this.elevenLabs.generate({
-        voice: this.voiceId,
-        text: textInput,
-        model_id: "eleven_multilingual_v2",
+      return await ttsBufferFromChunks(textInput, async (chunk) => {
+        const audio = await this.elevenLabs.generate({
+          voice: this.voiceId,
+          text: chunk,
+          model_id: "eleven_multilingual_v2",
+        });
+        return Buffer.from(await this.#stream2buffer(audio));
       });
-      return Buffer.from(await this.#stream2buffer(audio));
     } catch (e) {
       console.error(e);
     }

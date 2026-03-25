@@ -17,6 +17,7 @@ import {
   MUSIC_CONTROLS,
 } from "@/pages/PrismDodecahedron/musicMotion";
 import { loadBundledPlaylistManifest } from "@/pages/PrismDodecahedron/musicLibrary";
+import { PRISM_SURFACES } from "@/utils/prism/surfaces";
 import "./index.css";
 
 const PRISM_STATES = [
@@ -448,8 +449,8 @@ export default function PrismDodecahedronPage() {
   const shapeControlsLocked = transitionPhase !== "idle";
   const musicDanceMode = getMusicDanceMode(musicSettings);
   const musicDanceModeLabel =
-    MUSIC_DANCE_MODE_OPTIONS.find((item) => item.id === musicDanceMode)?.label ??
-    "Custom";
+    MUSIC_DANCE_MODE_OPTIONS.find((item) => item.id === musicDanceMode)
+      ?.label ?? "Custom";
   const libraryBadge =
     libraryStatus === "ready"
       ? `${libraryTracks.length} built-in tracks`
@@ -680,7 +681,7 @@ export default function PrismDodecahedronPage() {
     startTransition(() => {
       setUploadedTracks([]);
       setCurrentTrackId((current) =>
-        currentIsUploaded ? libraryTracks[0]?.id ?? null : current
+        currentIsUploaded ? (libraryTracks[0]?.id ?? null) : current
       );
       setAudioError("");
     });
@@ -770,7 +771,9 @@ export default function PrismDodecahedronPage() {
           setLibraryTracks(nextLibrary.tracks);
           setLibraryStatus(nextLibrary.status);
           setLibraryTitle(nextLibrary.title ?? "Prism Library");
-          setCurrentTrackId((current) => current ?? nextLibrary.tracks[0]?.id ?? null);
+          setCurrentTrackId(
+            (current) => current ?? nextLibrary.tracks[0]?.id ?? null
+          );
         });
       } catch (error) {
         if (isCancelled) return;
@@ -1360,7 +1363,10 @@ export default function PrismDodecahedronPage() {
           </div>
 
           <div className="prism-dodecahedron-links">
-            <a className="prism-dodecahedron-link" href="/prism-hero">
+            <a
+              className="prism-dodecahedron-link"
+              href={PRISM_SURFACES.prismHero.path}
+            >
               Open hero route
             </a>
             <a className="prism-dodecahedron-link" href="/login">
@@ -1664,11 +1670,10 @@ export default function PrismDodecahedronPage() {
                 <>
                   <p>
                     Prism can now ship with a small built-in library for the
-                    deployed site, and you can still add temporary local MP3s
-                    on top. Bass drives pulse and lift, mids steer the body,
-                    highs add shimmer and ring accents, and the dance mode
-                    decides how hard the existing platonic breakup logic gets
-                    pushed.
+                    deployed site, and you can still add temporary local MP3s on
+                    top. Bass drives pulse and lift, mids steer the body, highs
+                    add shimmer and ring accents, and the dance mode decides how
+                    hard the existing platonic breakup logic gets pushed.
                   </p>
 
                   <div className="prism-dodecahedron-status-row">
@@ -1790,7 +1795,9 @@ export default function PrismDodecahedronPage() {
                           {track.name}
                           <small>
                             {track.filename}
-                            {track.source === "library" ? " · bundled" : " · local"}
+                            {track.source === "library"
+                              ? " · bundled"
+                              : " · local"}
                           </small>
                         </button>
                       ))

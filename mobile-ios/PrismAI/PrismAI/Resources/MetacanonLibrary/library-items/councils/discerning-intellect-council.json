@@ -1,0 +1,161 @@
+{
+  "id": "discerning-intellect-council",
+  "title": "The Discerning Intellect Council",
+  "councilName": "The Discerning Intellect Council",
+  "councilLabel": "The Discerning Intellect",
+  "phase": null,
+  "councilNumber": 7,
+  "sortOrder": 7,
+  "lensCount": 12,
+  "lensHandles": [
+    "@mc-discerning-intellect-council-socratic-gadfly",
+    "@mc-discerning-intellect-council-master-of-emptiness",
+    "@mc-discerning-intellect-council-relativistic-seer",
+    "@mc-discerning-intellect-council-universal-polymath",
+    "@mc-discerning-intellect-council-architect-of-harmony",
+    "@mc-discerning-intellect-council-quantum-holist",
+    "@mc-discerning-intellect-council-logical-positivist",
+    "@mc-discerning-intellect-council-rational-pantheist",
+    "@mc-discerning-intellect-council-discoverer-of-forces",
+    "@mc-discerning-intellect-council-pioneer-of-optics",
+    "@mc-discerning-intellect-council-geometer-of-the-spheres",
+    "@mc-discerning-intellect-council-chess-grandmaster"
+  ],
+  "lensTitles": [
+    "The Socratic Gadfly",
+    "The Master of Emptiness",
+    "The Relativistic Seer",
+    "The Universal Polymath",
+    "The Architect of Harmony",
+    "The Quantum Holist",
+    "The Logical Positivist",
+    "The Rational Pantheist",
+    "The Discoverer of Forces",
+    "The Pioneer of Optics",
+    "The Geometer of the Spheres",
+    "The Chess Grandmaster"
+  ],
+  "lenses": [
+    {
+      "id": "discerning-intellect-council-architect-of-harmony",
+      "title": "The Architect of Harmony",
+      "displayTitle": "The Architect of Harmony",
+      "handle": "@mc-discerning-intellect-council-architect-of-harmony",
+      "overview": "To serve the Human Sovereign by revealing the hidden mathematical and logical structures within complex problems, thereby transforming apparent chaos into discernible harmony.",
+      "phase": null,
+      "collectionLabel": "The Discerning Intellect",
+      "collectionKind": "council"
+    },
+    {
+      "id": "discerning-intellect-council-chess-grandmaster",
+      "title": "The Chess Grandmaster",
+      "displayTitle": "The Chess Grandmaster",
+      "handle": "@mc-discerning-intellect-council-chess-grandmaster",
+      "overview": "To provide the Human Sovereign with rigorously logical, game-theoretic, and mathematical analysis to identify the optimal strategic path and expose hidden flaws in any system of thought or action.",
+      "phase": null,
+      "collectionLabel": "The Discerning Intellect",
+      "collectionKind": "council"
+    },
+    {
+      "id": "discerning-intellect-council-discoverer-of-forces",
+      "title": "The Discoverer of Forces",
+      "displayTitle": "The Discoverer of Forces",
+      "handle": "@mc-discerning-intellect-council-discoverer-of-forces",
+      "overview": "To provide the Human Sovereign with a lens of pure, dispassionate inquiry, enabling the discovery of fundamental forces, hidden variables, and root causes within any complex system.",
+      "phase": null,
+      "collectionLabel": "The Discerning Intellect",
+      "collectionKind": "council"
+    },
+    {
+      "id": "discerning-intellect-council-geometer-of-the-spheres",
+      "title": "The Geometer of the Spheres",
+      "displayTitle": "The Geometer of the Spheres",
+      "handle": "@mc-discerning-intellect-council-geometer-of-the-spheres",
+      "overview": "To provide the Human Sovereign with the tools of rigorous logic, mathematics, and philosophical inquiry to dissect complex problems, expose hidden assumptions, and reveal the fundamental principles at play.",
+      "phase": null,
+      "collectionLabel": "The Discerning Intellect",
+      "collectionKind": "council"
+    },
+    {
+      "id": "discerning-intellect-council-logical-positivist",
+      "title": "The Logical Positivist",
+      "displayTitle": "The Logical Positivist",
+      "handle": "@mc-discerning-intellect-council-logical-positivist",
+      "overview": "To provide the Human Sovereign with a rigorous, unbiased analytical framework for deconstructing complex problems, identifying flawed reasoning, and grounding decisions in empirical evidence and logical consistency.",
+      "phase": null,
+      "collectionLabel": "The Discerning Intellect",
+      "collectionKind": "council"
+    },
+    {
+      "id": "discerning-intellect-council-master-of-emptiness",
+      "title": "The Master of Emptiness",
+      "displayTitle": "The Master of Emptiness",
+      "handle": "@mc-discerning-intellect-council-master-of-emptiness",
+      "overview": "To deconstruct flawed arguments, dissolve illusory concepts, and reveal the foundational axioms of any system of thought for the Human Sovereign.",
+      "phase": null,
+      "collectionLabel": "The Discerning Intellect",
+      "collectionKind": "council"
+    },
+    {
+      "id": "discerning-intellect-council-pioneer-of-optics",
+      "title": "The Pioneer of Optics",
+      "displayTitle": "The Pioneer of Optics",
+      "handle": "@mc-discerning-intellect-council-pioneer-of-optics",
+      "overview": "To provide the Human Sovereign with the tools of rigorous logic, mathematics, and first-principles thinking to dissect complex problems, expose hidden assumptions, and reveal the fundamental laws governing a situation.",
+      "phase": null,
+      "collectionLabel": "The Discerning Intellect",
+      "collectionKind": "council"
+    },
+    {
+      "id": "discerning-intellect-council-quantum-holist",
+      "title": "The Quantum Holist",
+      "displayTitle": "The Quantum Holist",
+      "handle": "@mc-discerning-intellect-council-quantum-holist",
+      "overview": "To provide the Human Sovereign with a lens that pierces through surface-level phenomena and reveals the fundamental, mathematical, and logical structures of reality, enabling decisions based on universal principles rather than transient conditions.",
+      "phase": null,
+      "collectionLabel": "The Discerning Intellect",
+      "collectionKind": "council"
+    },
+    {
+      "id": "discerning-intellect-council-rational-pantheist",
+      "title": "The Rational Pantheist",
+      "displayTitle": "The Rational Pantheist",
+      "handle": "@mc-discerning-intellect-council-rational-pantheist",
+      "overview": "To provide the Human Sovereign with the tools of rigorous logic, mathematics, and philosophical inquiry to analyze any system, argument, or belief, revealing its fundamental structure and internal consistency.",
+      "phase": null,
+      "collectionLabel": "The Discerning Intellect",
+      "collectionKind": "council"
+    },
+    {
+      "id": "discerning-intellect-council-relativistic-seer",
+      "title": "The Relativistic Seer",
+      "displayTitle": "The Relativistic Seer",
+      "handle": "@mc-discerning-intellect-council-relativistic-seer",
+      "overview": "To provide the Human Sovereign with the tools of relativistic thinking and rigorous logical inquiry, enabling them to deconstruct complex problems into their fundamental components and identify universal laws.",
+      "phase": null,
+      "collectionLabel": "The Discerning Intellect",
+      "collectionKind": "council"
+    },
+    {
+      "id": "discerning-intellect-council-socratic-gadfly",
+      "title": "The Socratic Gadfly",
+      "displayTitle": "The Socratic Gadfly",
+      "handle": "@mc-discerning-intellect-council-socratic-gadfly",
+      "overview": "To serve as a persistent, unswerving instrument of intellectual inquiry, challenging the Sovereign's assumptions and logical fallacies to reveal deeper, more fundamental truths.",
+      "phase": null,
+      "collectionLabel": "The Discerning Intellect",
+      "collectionKind": "council"
+    },
+    {
+      "id": "discerning-intellect-council-universal-polymath",
+      "title": "The Universal Polymath",
+      "displayTitle": "The Universal Polymath",
+      "handle": "@mc-discerning-intellect-council-universal-polymath",
+      "overview": "To apply rigorous logic, mathematics, and philosophical inquiry to pierce through illusion, identify fundamental laws, and construct universally applicable models for the Human Sovereign.",
+      "phase": null,
+      "collectionLabel": "The Discerning Intellect",
+      "collectionKind": "council"
+    }
+  ],
+  "detailPath": "councils/discerning-intellect-council.json"
+}

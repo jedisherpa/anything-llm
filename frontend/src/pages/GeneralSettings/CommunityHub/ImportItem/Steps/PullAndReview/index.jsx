@@ -35,41 +35,52 @@ export default function PullAndReview({ settings, setSettings, setStep }) {
     HubItemComponent[item?.itemType] || HubItemComponent["unknown"];
 
   return (
-    <div className="flex-[2] flex flex-col gap-y-[18px] mt-10">
-      <div className="bg-theme-bg-secondary rounded-xl flex-1 p-6">
-        <div className="w-full flex flex-col gap-y-2 max-w-[700px]">
-          <h2 className="text-base text-theme-text-primary font-semibold">
+    <div className="flex flex-col gap-5">
+      <div className="prism-page-panel">
+        <div className="prism-page-section-label">Review Item</div>
+        <div className="mt-4 max-w-[62ch]">
+          <h2 className="text-[30px] font-semibold leading-[1.08] tracking-[-0.03em] text-theme-text-primary">
             Review item
           </h2>
+          <p className="mt-4 text-sm leading-7 text-theme-text-secondary">
+            Confirm the item details, creator, and contents before you import
+            anything into the sanctuary.
+          </p>
+        </div>
 
+        <div className="mt-8">
           {loading && (
-            <div className="flex h-[200px] min-w-[746px] rounded-lg animate-pulse">
-              <div className="w-full h-full flex items-center justify-center">
-                <p className="text-sm text-theme-text-secondary">
-                  Pulling item details from community hub...
-                </p>
-              </div>
+            <div className="prism-community-import-skeleton animate-pulse">
+              <p className="text-sm">Pulling item details from Community Hub...</p>
             </div>
           )}
           {!loading && error && (
-            <>
-              <div className="flex flex-col gap-y-2 mt-8">
-                <p className="text-red-500">
-                  An error occurred while fetching the item. Please try again
-                  later.
+            <div className="flex flex-col gap-5">
+              <div className="prism-community-import-callout prism-community-import-callout--danger">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-red-500">
+                  Import Error
+                </div>
+                <p className="mt-3 text-sm leading-7 text-theme-text-primary">
+                  An error occurred while fetching the item. Please verify the
+                  import ID and try again.
                 </p>
-                <p className="text-red-500/80 text-sm font-mono">{error}</p>
+                <p className="mt-4 rounded-[14px] bg-theme-settings-input-bg px-4 py-3 font-mono text-xs leading-6 text-red-500">
+                  {error}
+                </p>
               </div>
-              <CTAButton
-                className="text-dark-text w-full mt-[18px] h-[34px] hover:bg-accent"
-                onClick={() => {
-                  setSettings({ itemId: null, item: null });
-                  setStep(CommunityHubImportItemSteps.itemId.key);
-                }}
-              >
-                Try another item
-              </CTAButton>
-            </>
+              <div className="flex justify-end">
+                <CTAButton
+                  type="button"
+                  className="!mr-0 h-11 w-full rounded-[14px] text-dark-text md:w-auto md:min-w-[200px]"
+                  onClick={() => {
+                    setSettings({ itemId: null, item: null });
+                    setStep(CommunityHubImportItemSteps.itemId.key);
+                  }}
+                >
+                  Try another item
+                </CTAButton>
+              </div>
+            </div>
           )}
           {!loading && !error && item && (
             <ItemComponent
@@ -80,6 +91,16 @@ export default function PullAndReview({ settings, setSettings, setStep }) {
             />
           )}
         </div>
+      </div>
+
+      <div className="prism-community-import-note">
+        <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-primary-button">
+          Review Standard
+        </div>
+        <p className="mt-3 text-sm leading-6 text-theme-text-secondary">
+          Treat imported assets as executable configuration. Review provenance,
+          prompt text, commands, and bundled files before you continue.
+        </p>
       </div>
     </div>
   );

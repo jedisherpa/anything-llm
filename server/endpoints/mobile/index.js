@@ -205,6 +205,13 @@ function mobileEndpoints(app) {
           return response.status(404).json({ error: "Workspace not found" });
         }
 
+        if (!request.file?.originalname) {
+          return response.status(400).json({
+            success: false,
+            error: "A file upload is required.",
+          });
+        }
+
         const Collector = new CollectorApi();
         const { originalname } = request.file;
         const processingOnline = await Collector.online();

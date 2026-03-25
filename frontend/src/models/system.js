@@ -177,6 +177,27 @@ const System = {
       .then((res) => res?.types)
       .catch(() => null);
   },
+  transcribeAudio: async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    return await fetch(`${API_BASE}/system/speech-to-text`, {
+      method: "POST",
+      headers: baseHeaders(),
+      body: formData,
+    })
+      .then(async (res) => {
+        const payload = await res.json().catch(() => ({}));
+        if (!res.ok || !payload?.success) {
+          throw new Error(payload?.error || "Speech-to-text failed.");
+        }
+        return { text: payload.text || "", error: null };
+      })
+      .catch((e) => {
+        console.error(e);
+        return { text: "", error: e.message };
+      });
+  },
   updateSystem: async (data) => {
     return await fetch(`${API_BASE}/system/update-env`, {
       method: "POST",

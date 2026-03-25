@@ -2,6 +2,14 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import {
+  buildCanonicalBoardLensId,
+  buildCanonicalConstellationId,
+  buildCanonicalCouncilId,
+  buildCanonicalCouncilLensId,
+  canonicalizeConstellationTitle,
+  canonicalizeLensTitle,
+} from "./metacanonCanonicalNames.mjs";
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(SCRIPT_DIR, "..");
@@ -1071,10 +1079,11 @@ function parseCouncilFolderMetadata(folderName = "") {
 
   return {
     councilNumber,
-    councilId: `Council_${pad2(councilNumber)}`,
+    legacyCouncilId: `Council_${pad2(councilNumber)}`,
     councilLabel,
     councilName,
-    boardSlug: `council-${pad2(councilNumber)}`,
+    councilId: buildCanonicalCouncilId(councilName),
+    boardSlug: buildCanonicalCouncilId(councilName),
   };
 }
 
@@ -1087,16 +1096,20 @@ function buildCanonicalCouncilLens(filePath, content = "", root = "") {
   const fileMatch = fileName.match(/^PCL_(\d{2})_(\d{2})_(.+)$/i);
   const lensNumber = Number(fileMatch?.[2] || 0);
   const normalized = normalizeMarkdown(content);
-  const archetypeName = extractTitleFromContent(
-    normalized,
-    titleFromFileName(fileName)
+  const relativePath = path.relative(root, filePath).replace(/\\/g, "/");
+  const archetypeName = canonicalizeLensTitle(
+    extractTitleFromContent(normalized, titleFromFileName(fileName)),
+    {
+      relativePath,
+      content: normalized,
+    }
   );
   const backendId = buildCouncilBackendId(
     metadata.councilNumber,
     lensNumber,
     archetypeName
   );
-  const id = slugify(backendId);
+  const id = buildCanonicalCouncilLensId(metadata.councilId, archetypeName);
   const overview =
     extractField(normalized, "Core Mandate") ||
     extractField(normalized, "Human Support Protocol") ||
@@ -1110,7 +1123,7 @@ function buildCanonicalCouncilLens(filePath, content = "", root = "") {
     boardSlug: metadata.boardSlug,
     handle: buildLensHandle(id),
     content: normalized,
-    relativePath: path.relative(root, filePath).replace(/\\/g, "/"),
+    relativePath,
     sourceFormat: "pcl-markdown",
     archetypeName,
     displayTitle: archetypeName,
@@ -1121,11 +1134,16 @@ function buildCanonicalCouncilLens(filePath, content = "", root = "") {
     councilId: metadata.councilId,
     councilLabel: metadata.councilLabel,
     councilName: metadata.councilName,
+    councilNumber: metadata.councilNumber,
     phase: null,
     lensNumber,
     lensCountInCouncil: 12,
     overview,
     backendId,
+    legacyId: slugify(backendId),
+    legacyHandle: buildLensHandle(slugify(backendId)),
+    legacyCouncilId: metadata.legacyCouncilId,
+    legacyCollectionId: `council-${pad2(metadata.councilNumber)}`,
     colorHex: null,
     sortOrder: metadata.councilNumber * 100 + lensNumber,
   };
@@ -1173,6 +1191,8 @@ async function buildLibrary() {
       );
       const displayTitle = getBoardLensUiAlias(relativePath, archetypeTitle);
       const backendId = `${boardSlug}-${path.basename(filePath, ".md")}`;
+      const legacyId = slugify(`${boardSlug}-${path.basename(filePath, ".md")}`);
+      const id = buildCanonicalBoardLensId(boardSlug, displayTitle);
       const canonicalContent = rewriteLegacyBoardLensContent({
         title: displayTitle,
         backendId,
@@ -1181,11 +1201,11 @@ async function buildLibrary() {
       const hasDocxSource = allFiles.includes(filePath.replace(/\.md$/i, ".docx"));
 
       return {
-        id: slugify(`${boardSlug}-${path.basename(filePath, ".md")}`),
+        id,
         title: displayTitle,
         board: boardLabel(boardSlug),
         boardSlug,
-        handle: buildLensHandle(`${boardSlug}-${path.basename(filePath, ".md")}`),
+        handle: buildLensHandle(id),
         content: canonicalContent,
         relativePath,
         sourceFormat: hasDocxSource ? "docx-converted" : "markdown",
@@ -1196,6 +1216,8 @@ async function buildLibrary() {
         collectionKind: "board",
         displayBoard: boardLabel(boardSlug),
         backendId,
+        legacyId,
+        legacyHandle: buildLensHandle(legacyId),
         overview:
           extractField(canonicalContent, "Core Mandate") ||
           extractField(canonicalContent, "Archetypal Frequency") ||
@@ -1220,10 +1242,14 @@ async function buildLibrary() {
         const raw = await readText(filePath);
         const parsed = JSON.parse(raw);
         const relativePath = relative(filePath);
-        const displayTitle = getConstellationUiAlias(
+        const displayTitle = canonicalizeConstellationTitle(
+          getConstellationUiAlias(
+            relativePath,
+            normalizeArchetypeTitle(parsed.name, parsed.name)
+          ),
           relativePath,
-          normalizeArchetypeTitle(parsed.name, parsed.name)
         );
+        const id = buildCanonicalConstellationId(displayTitle);
         const projectManagerLens =
           lensByRelativePath.get(normalizeLensSourcePath(parsed.project_manager)) ||
           null;
@@ -1246,11 +1272,11 @@ async function buildLibrary() {
         });
 
         return {
-          id: slugify(parsed.name),
+          id,
           name: parsed.name,
           title: displayTitle,
           displayTitle,
-          handle: buildConstellationHandle(parsed.name),
+          handle: buildConstellationHandle(id),
           type: parsed.type,
           purpose: parsed.purpose,
           projectManager: parsed.project_manager,
@@ -1260,6 +1286,8 @@ async function buildLibrary() {
           projectManagerTitle: projectManagerLens?.title || null,
           members,
           relativePath,
+          legacyId: slugify(parsed.name),
+          legacyHandle: buildConstellationHandle(parsed.name),
         };
       })
   );
@@ -1534,7 +1562,7 @@ function buildCouncilManifest(library = {}) {
           lens.collectionLabel ||
           lens.displayBoard,
         phase: lens.phase || null,
-        sortOrder: Number(String(councilId).match(/\d+/)?.[0] || 999),
+        sortOrder: Math.floor(Number(lens.sortOrder || 99900) / 100),
         lensCount: 0,
         lensHandles: [],
         lensTitles: [],
@@ -1657,7 +1685,57 @@ function buildCollectionIndex(collections = {}) {
   );
 }
 
-function buildServerLibraryIndex(library = {}, collections = {}) {
+function buildAliases(library = {}, councils = []) {
+  const aliases = {
+    lenses: { byId: {}, byHandle: {} },
+    constellations: { byId: {}, byHandle: {} },
+    councils: { byId: {} },
+  };
+
+  (library.lenses || []).forEach((lens) => {
+    if (lens.legacyId && lens.legacyId !== lens.id) {
+      aliases.lenses.byId[lens.legacyId] = lens.id;
+    }
+    if (lens.legacyHandle && lens.legacyHandle !== lens.handle) {
+      aliases.lenses.byHandle[String(lens.legacyHandle).toLowerCase()] =
+        lens.handle;
+    }
+    if (lens.legacyCouncilId && lens.legacyCouncilId !== lens.councilId) {
+      aliases.councils.byId[lens.legacyCouncilId] = lens.councilId;
+    }
+    if (lens.legacyCollectionId && lens.legacyCollectionId !== lens.collectionId) {
+      aliases.councils.byId[lens.legacyCollectionId] = lens.collectionId;
+    }
+  });
+
+  (library.constellations || []).forEach((constellation) => {
+    if (constellation.legacyId && constellation.legacyId !== constellation.id) {
+      aliases.constellations.byId[constellation.legacyId] = constellation.id;
+    }
+    if (
+      constellation.legacyHandle &&
+      constellation.legacyHandle !== constellation.handle
+    ) {
+      aliases.constellations.byHandle[
+        String(constellation.legacyHandle).toLowerCase()
+      ] = constellation.handle;
+    }
+  });
+
+  councils.forEach((council) => {
+    (library.lenses || [])
+      .filter((lens) => lens.councilId === council.id)
+      .map((lens) => lens.legacyCouncilId)
+      .filter(Boolean)
+      .forEach((legacyId) => {
+        if (legacyId !== council.id) aliases.councils.byId[legacyId] = council.id;
+      });
+  });
+
+  return aliases;
+}
+
+function buildServerLibraryIndex(library = {}, collections = {}, aliases = {}) {
   return {
     generatedAt: library.generatedAt,
     counts: {
@@ -1668,6 +1746,7 @@ function buildServerLibraryIndex(library = {}, collections = {}) {
       constitution: library.counts?.constitution || 0,
     },
     collections: buildCollectionIndex(collections),
+    aliases,
     lookup: {
       lenses: (library.lenses || []).map((lens) => ({
         id: lens.id,
@@ -1793,7 +1872,12 @@ function buildLibrarySummary(library = {}, libraryManifest = null) {
 
 const library = await buildLibrary();
 const libraryCollections = buildLibraryManifest(library);
-const serverLibraryIndex = buildServerLibraryIndex(library, libraryCollections);
+const aliases = buildAliases(library, libraryCollections.councils || []);
+const serverLibraryIndex = buildServerLibraryIndex(
+  library,
+  libraryCollections,
+  aliases
+);
 const frontendLibraryIndex = buildFrontendLibraryIndex(library, libraryCollections);
 const librarySummary = buildLibrarySummary(library, serverLibraryIndex);
 const frontendSummaryOutputFile = outputFile.replace(

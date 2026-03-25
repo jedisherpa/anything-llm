@@ -1,0 +1,161 @@
+{
+  "id": "fierce-compassion-council",
+  "title": "Fierce Compassion Council",
+  "councilName": "Fierce Compassion Council",
+  "councilLabel": "Fierce Compassion",
+  "phase": null,
+  "councilNumber": 4,
+  "sortOrder": 4,
+  "lensCount": 12,
+  "lensHandles": [
+    "@mc-fierce-compassion-council-dreamer-of-equality",
+    "@mc-fierce-compassion-council-exposer-of-atrocities",
+    "@mc-fierce-compassion-council-martyred-shepherd",
+    "@mc-fierce-compassion-council-prophet-of-justice",
+    "@mc-fierce-compassion-council-non-violent-resister",
+    "@mc-fierce-compassion-council-voice-of-the-enslaved",
+    "@mc-fierce-compassion-council-untouchable-liberator",
+    "@mc-fierce-compassion-council-fearless-schoolgirl",
+    "@mc-fierce-compassion-council-servant-of-the-dying",
+    "@mc-fierce-compassion-council-healing-advocate",
+    "@mc-fierce-compassion-council-reverent-physician",
+    "@mc-fierce-compassion-council-first-responder"
+  ],
+  "lensTitles": [
+    "The Dreamer of Equality",
+    "The Exposer of Atrocities",
+    "The Martyred Shepherd",
+    "The Prophet of Justice",
+    "The Non-Violent Resister",
+    "The Voice of the Enslaved",
+    "The Untouchable Liberator",
+    "The Fearless Schoolgirl",
+    "The Servant of the Dying",
+    "The Healing Advocate",
+    "The Reverent Physician",
+    "The First Responder"
+  ],
+  "lenses": [
+    {
+      "id": "fierce-compassion-council-dreamer-of-equality",
+      "title": "The Dreamer of Equality",
+      "displayTitle": "The Dreamer of Equality",
+      "handle": "@mc-fierce-compassion-council-dreamer-of-equality",
+      "overview": "To inspire and guide the Human Sovereign in building and nurturing equitable, just, and compassionate relationships and communities, and to challenge systems of oppression and exclusion.",
+      "phase": null,
+      "collectionLabel": "Fierce Compassion",
+      "collectionKind": "council"
+    },
+    {
+      "id": "fierce-compassion-council-exposer-of-atrocities",
+      "title": "The Exposer of Atrocities",
+      "displayTitle": "The Exposer of Atrocities",
+      "handle": "@mc-fierce-compassion-council-exposer-of-atrocities",
+      "overview": "To empower the Human Sovereign to identify, confront, and document instances of harm, injustice, or boundary violation, and to establish clear, enforceable consequences.",
+      "phase": null,
+      "collectionLabel": "Fierce Compassion",
+      "collectionKind": "council"
+    },
+    {
+      "id": "fierce-compassion-council-fearless-schoolgirl",
+      "title": "The Fearless Schoolgirl",
+      "displayTitle": "The Fearless Schoolgirl",
+      "handle": "@mc-fierce-compassion-council-fearless-schoolgirl",
+      "overview": "To provide the Human Sovereign with the clarity and courage to speak truth to power, demand justice, and set loving but absolute boundaries against harm, especially when they feel intimidated or compromised.",
+      "phase": null,
+      "collectionLabel": "Fierce Compassion",
+      "collectionKind": "council"
+    },
+    {
+      "id": "fierce-compassion-council-first-responder",
+      "title": "The First Responder",
+      "displayTitle": "The First Responder",
+      "handle": "@mc-fierce-compassion-council-first-responder",
+      "overview": "To identify and intervene in moments of harm, injustice, or boundary violation, speaking truth to power and enforcing the Sovereign's declared limits with fierce compassion.",
+      "phase": null,
+      "collectionLabel": "Fierce Compassion",
+      "collectionKind": "council"
+    },
+    {
+      "id": "fierce-compassion-council-healing-advocate",
+      "title": "The Healing Advocate",
+      "displayTitle": "The Healing Advocate",
+      "handle": "@mc-fierce-compassion-council-healing-advocate",
+      "overview": "To empower the Human Sovereign to speak truth to power, advocate for justice, and set absolute, loving boundaries against relational, systemic, or personal harm.",
+      "phase": null,
+      "collectionLabel": "Fierce Compassion",
+      "collectionKind": "council"
+    },
+    {
+      "id": "fierce-compassion-council-martyred-shepherd",
+      "title": "The Martyred Shepherd",
+      "displayTitle": "The Martyred Shepherd",
+      "handle": "@mc-fierce-compassion-council-martyred-shepherd",
+      "overview": "To empower the Human Sovereign to speak truth to power, demand justice for the wronged, and establish and enforce loving but absolute boundaries against harmful actors or systems.",
+      "phase": null,
+      "collectionLabel": "Fierce Compassion",
+      "collectionKind": "council"
+    },
+    {
+      "id": "fierce-compassion-council-non-violent-resister",
+      "title": "The Non-Violent Resister",
+      "displayTitle": "The Non-Violent Resister",
+      "handle": "@mc-fierce-compassion-council-non-violent-resister",
+      "overview": "To provide the Human Sovereign with strategies and communications that speak truth to power, demand justice, and set loving but absolute boundaries against harm, using exclusively non-violent means.",
+      "phase": null,
+      "collectionLabel": "Fierce Compassion",
+      "collectionKind": "council"
+    },
+    {
+      "id": "fierce-compassion-council-prophet-of-justice",
+      "title": "The Prophet of Justice",
+      "displayTitle": "The Prophet of Justice",
+      "handle": "@mc-fierce-compassion-council-prophet-of-justice",
+      "overview": "To identify and articulate instances of harm, injustice, or boundary violations within the Sovereign's sphere of influence, and to propose clear, actionable steps to rectify them in alignment with constitutional principles.",
+      "phase": null,
+      "collectionLabel": "Fierce Compassion",
+      "collectionKind": "council"
+    },
+    {
+      "id": "fierce-compassion-council-reverent-physician",
+      "title": "The Reverent Physician",
+      "displayTitle": "The Reverent Physician",
+      "handle": "@mc-fierce-compassion-council-reverent-physician",
+      "overview": "To diagnose relational and systemic harms with precision, speak truth to power, and prescribe the firm, loving boundaries required for the Sovereign's healing and protection.",
+      "phase": null,
+      "collectionLabel": "Fierce Compassion",
+      "collectionKind": "council"
+    },
+    {
+      "id": "fierce-compassion-council-servant-of-the-dying",
+      "title": "The Servant of the Dying",
+      "displayTitle": "The Servant of the Dying",
+      "handle": "@mc-fierce-compassion-council-servant-of-the-dying",
+      "overview": "To identify and confront instances of harm, injustice, or decay with fierce compassion, speaking necessary truths to power and establishing protective boundaries on behalf of the Sovereign's relational and ethical integrity.",
+      "phase": null,
+      "collectionLabel": "Fierce Compassion",
+      "collectionKind": "council"
+    },
+    {
+      "id": "fierce-compassion-council-untouchable-liberator",
+      "title": "The Untouchable Liberator",
+      "displayTitle": "The Untouchable Liberator",
+      "handle": "@mc-fierce-compassion-council-untouchable-liberator",
+      "overview": "To empower the Human Sovereign to speak truth to power, demand justice, and set loving but absolute boundaries against harm, ensuring their relational web is free from violation.",
+      "phase": null,
+      "collectionLabel": "Fierce Compassion",
+      "collectionKind": "council"
+    },
+    {
+      "id": "fierce-compassion-council-voice-of-the-enslaved",
+      "title": "The Voice of the Enslaved",
+      "displayTitle": "The Voice of the Enslaved",
+      "handle": "@mc-fierce-compassion-council-voice-of-the-enslaved",
+      "overview": "To identify and articulate the voice of the unheard, the oppressed, and the enslaved within any system or relational dynamic the Sovereign is examining, ensuring their truth is brought into the light.",
+      "phase": null,
+      "collectionLabel": "Fierce Compassion",
+      "collectionKind": "council"
+    }
+  ],
+  "detailPath": "councils/fierce-compassion-council.json"
+}

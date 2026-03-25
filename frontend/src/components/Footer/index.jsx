@@ -1,9 +1,11 @@
 import System from "@/models/system";
+import { fetchMetacanonFeatures } from "@/models/metacanonLibrary";
 import paths from "@/utils/paths";
 import { BookOpen } from "@phosphor-icons/react/dist/csr/BookOpen";
 import { DiscordLogo } from "@phosphor-icons/react/dist/csr/DiscordLogo";
 import { Desktop } from "@phosphor-icons/react/dist/csr/Desktop";
 import { FileText } from "@phosphor-icons/react/dist/csr/FileText";
+import { Eyeglasses } from "@phosphor-icons/react/dist/csr/Eyeglasses";
 import { GithubLogo } from "@phosphor-icons/react/dist/csr/GithubLogo";
 import { Info } from "@phosphor-icons/react/dist/csr/Info";
 import { LinkSimple } from "@phosphor-icons/react/dist/csr/LinkSimple";
@@ -26,9 +28,12 @@ import {
   getBitcoinSupportUri,
   hasBitcoinSupportAddress,
 } from "@/utils/metacanonSupport";
+import {
+  prismExperimentalSurfacesEnabled,
+  prismRepoLabEnabled,
+} from "@/utils/prism/surfaces";
 
 export const MAX_ICONS = 3;
-const isDev = import.meta.env.DEV;
 export const ICON_COMPONENTS = {
   BookOpen: BookOpen,
   DiscordLogo: DiscordLogo,
@@ -38,6 +43,7 @@ export const ICON_COMPONENTS = {
   Desktop: Desktop,
   UserCircle: UserCircle,
   Info: Info,
+  Eyeglasses: Eyeglasses,
 };
 
 function MetacanonBadgeIcon({ className = "h-5 w-5" }) {
@@ -53,10 +59,19 @@ function MetacanonBadgeIcon({ className = "h-5 w-5" }) {
 
 export default function Footer() {
   const [footerData, setFooterData] = useState([]);
+  const [metacanonFeatures, setMetacanonFeatures] = useState(null);
   const [isSupportOpen, setIsSupportOpen] = useState(false);
   const supportRef = useRef(null);
   const bitcoinUri = useMemo(() => getBitcoinSupportUri(), []);
   const hasBitcoinAddress = useMemo(() => hasBitcoinSupportAddress(), []);
+  const experimentalPrismEnabled = useMemo(
+    () => prismExperimentalSurfacesEnabled(),
+    []
+  );
+  const repoLabEnabled = useMemo(
+    () => prismRepoLabEnabled() && !!metacanonFeatures?.repoLabReadEnabled,
+    [metacanonFeatures]
+  );
 
   useEffect(() => {
     async function fetchFooterData() {
@@ -64,6 +79,25 @@ export default function Footer() {
       setFooterData(footerData);
     }
     fetchFooterData();
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetchMetacanonFeatures()
+      .then((features) => {
+        if (!cancelled) setMetacanonFeatures(features);
+      })
+      .catch((error) => {
+        console.warn(
+          "Failed to hydrate Metacanon feature flags for footer.",
+          error
+        );
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
@@ -93,7 +127,7 @@ export default function Footer() {
         to={href}
         target={external ? "_blank" : undefined}
         rel={external ? "noreferrer" : undefined}
-        className="metacanon-footer-button flex h-9 w-9 items-center justify-center rounded-full p-[7px] transition-all duration-300"
+        className="metacanon-footer-button flex h-[38px] w-[38px] items-center justify-center rounded-full p-[7px] transition-all duration-300"
         aria-label={label}
         data-tooltip-id="footer-item"
         data-tooltip-content={tooltip}
@@ -141,6 +175,20 @@ export default function Footer() {
       ),
     },
     {
+      key: "handbook",
+      href: paths.handbook(),
+      label: "PrismAI User Manual",
+      tooltip:
+        "Read the PrismAI users manual, learn about Transformation Agency and the Metacanon AI Constitutional Governance for Human-AI interaction, Multi Agent Governed Coordination, The Lens Library, and more.",
+      icon: (
+        <Eyeglasses
+          weight="fill"
+          className="h-5 w-5"
+          color="var(--theme-sidebar-footer-icon-fill)"
+        />
+      ),
+    },
+    {
       key: "discord",
       href: paths.discord(),
       label: "Discord",
@@ -153,42 +201,41 @@ export default function Footer() {
         />
       ),
     },
-  ].concat(
-    isDev
-      ? [
-          {
-            key: "ui-lab",
-            href: paths.metacanonAILab(),
-            label: "UI Lab",
-            tooltip: "Open UI Lab",
-            icon: (
-              <BookOpen
-                weight="fill"
-                className="h-5 w-5"
-                color="var(--theme-sidebar-footer-icon-fill)"
-              />
-            ),
+  ];
 
-            external: false,
-          },
-          {
-            key: "repo-lab",
-            href: paths.metacanonAIRepoLab(),
-            label: "Repo Lab",
-            tooltip: "Open Repo Lab",
-            icon: (
-              <FileText
-                weight="fill"
-                className="h-5 w-5"
-                color="var(--theme-sidebar-footer-icon-fill)"
-              />
-            ),
+  if (experimentalPrismEnabled) {
+    defaultFooterItems.push({
+      key: "ui-lab",
+      href: paths.metacanonAILab(),
+      label: "UI Lab",
+      tooltip: "Open UI Lab (experimental)",
+      icon: (
+        <BookOpen
+          weight="fill"
+          className="h-5 w-5"
+          color="var(--theme-sidebar-footer-icon-fill)"
+        />
+      ),
+      external: false,
+    });
+  }
 
-            external: false,
-          },
-        ]
-      : []
-  );
+  if (repoLabEnabled) {
+    defaultFooterItems.push({
+      key: "repo-lab",
+      href: paths.metacanonAIRepoLab(),
+      label: "Repo Lab",
+      tooltip: "Open Repo Lab (experimental)",
+      icon: (
+        <FileText
+          weight="fill"
+          className="h-5 w-5"
+          color="var(--theme-sidebar-footer-icon-fill)"
+        />
+      ),
+      external: false,
+    });
+  }
 
   const footerItems =
     footerIcons.length > 0
@@ -219,8 +266,8 @@ export default function Footer() {
   };
 
   return (
-    <div className="flex w-full justify-start px-2 pt-0.5 pb-0">
-      <div className="metacanon-footer-dock relative flex w-fit max-w-full flex-nowrap items-center gap-1.5 rounded-[15px] border border-theme-sidebar-border px-1.5 py-1.5">
+    <div className="flex w-full justify-center px-1.5 pt-0.5 pb-0">
+      <div className="metacanon-footer-dock relative flex w-fit max-w-full flex-nowrap items-center gap-2.5 rounded-[15px] px-1 py-0.5">
         {renderFooterItem(metacanonItem)}
         <div
           ref={supportRef}
@@ -231,7 +278,7 @@ export default function Footer() {
           <PrismHoverTarget targetId="footer-bitcoin-support">
             <button
               type="button"
-              className="metacanon-footer-button flex h-9 w-9 items-center justify-center rounded-full p-[7px] transition-all duration-300"
+              className="metacanon-footer-button flex h-[38px] w-[38px] items-center justify-center rounded-full p-[7px] transition-all duration-300"
               aria-label={BITCOIN_SUPPORT_LABEL}
               data-tooltip-id="footer-item"
               data-tooltip-content={BITCOIN_SUPPORT_LABEL}

@@ -26,6 +26,7 @@ final class PrismLibraryStore {
     func lensDetails(for handles: [String]) throws -> [PrismLensDetail] {
         let index = try loadIndex()
         let entries = index.lookup?.lenses ?? []
+        let aliasByHandle = index.aliases?.lenses?.byHandle ?? [:]
         var entryByHandle: [String: PrismBundledLensEntry] = [:]
         for entry in entries {
             guard let handle = entry.handle?.lowercased(), !handle.isEmpty else { continue }
@@ -40,8 +41,10 @@ final class PrismLibraryStore {
                 continue
             }
 
+            let resolvedHandle = aliasByHandle[cacheKey]?.lowercased() ?? cacheKey
+
             guard
-                let entry = entryByHandle[cacheKey],
+                let entry = entryByHandle[resolvedHandle],
                 let detailPath = entry.detailPath,
                 !detailPath.isEmpty
             else {
@@ -53,6 +56,7 @@ final class PrismLibraryStore {
                 as: PrismLensDetail.self
             )
             lensCache[cacheKey] = detail
+            lensCache[resolvedHandle] = detail
             details.append(detail)
         }
 

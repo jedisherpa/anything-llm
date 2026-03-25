@@ -86,12 +86,12 @@ export default function EmbeddingTextSplitterPreference() {
   }, []);
 
   return (
-    <div className="metacanon-page-shell w-screen h-screen overflow-hidden bg-theme-bg-container flex">
+    <div className="metacanon-page-shell prism-settings-route w-screen h-screen overflow-hidden bg-theme-bg-container flex">
       <Sidebar />
       {loading ? (
         <div
           style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
-          className="metacanon-page-frame relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
+          className="metacanon-page-frame prism-settings-route__frame relative md:mx-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
         >
           <div className="w-full h-full flex justify-center items-center">
             <PreLoader />
@@ -100,7 +100,7 @@ export default function EmbeddingTextSplitterPreference() {
       ) : (
         <div
           style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
-          className="metacanon-page-frame relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
+          className="metacanon-page-frame prism-settings-route__frame relative md:mx-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
         >
           <form
             onSubmit={handleSubmit}
@@ -108,33 +108,30 @@ export default function EmbeddingTextSplitterPreference() {
             className="flex w-full"
             id="text-splitter-chunking-form"
           >
-            <div className="flex flex-col w-full px-1 md:pl-6 md:pr-[50px] md:py-6 py-16">
-              <div className="w-full flex flex-col gap-y-1 pb-4 border-white light:border-theme-sidebar-border border-b-2 border-opacity-10">
-                <div className="flex gap-x-4 items-center">
-                  <p className="text-lg leading-6 font-bold text-white">
-                    {t("text.title")}
-                  </p>
-                </div>
-                <p className="text-xs leading-[18px] font-base text-white text-opacity-60">
+            <div className="prism-settings-content prism-settings-content--wide flex flex-col w-full px-1 md:pl-6 md:pr-[50px] md:py-6 py-16">
+              <div className="prism-settings-page-header">
+                <div className="prism-page-section-label">Transformation Agency</div>
+                <p className="prism-settings-page-title">{t("text.title")}</p>
+                <p className="prism-settings-page-description">
                   {t("text.desc-start")} <br />
                   {t("text.desc-end")}
                 </p>
               </div>
-              <div className="w-full justify-end flex">
+              <div className="prism-settings-savebar w-full">
                 {hasChanges && (
-                  <CTAButton className="mt-3 mr-0 -mb-14 z-10">
+                  <CTAButton className="mt-3 mr-0 z-10">
                     {saving ? t("common.saving") : t("common.save")}
                   </CTAButton>
                 )}
               </div>
 
-              <div className="flex flex-col gap-y-4 mt-8">
-                <div className="flex flex-col max-w-[300px]">
+              <div className="prism-settings-field">
+                <div className="flex flex-col max-w-[360px]">
                   <div className="flex flex-col gap-y-2 mb-4">
-                    <label className="text-white text-sm font-semibold block">
+                    <label className="prism-settings-field-title mt-0 block">
                       {t("text.size.title")}
                     </label>
-                    <p className="text-xs text-white/60">
+                    <p className="prism-settings-field-copy mt-0 text-xs">
                       {t("text.size.description")}
                     </p>
                   </div>
@@ -154,20 +151,20 @@ export default function EmbeddingTextSplitterPreference() {
                     required={true}
                     autoComplete="off"
                   />
-                  <p className="text-xs text-white/40 mt-2">
+                  <p className="prism-settings-field-copy mt-2 text-xs">
                     {t("text.size.recommend")}{" "}
                     {numberWithCommas(settings?.max_embed_chunk_size || 1000)}.
                   </p>
                 </div>
               </div>
 
-              <div className="flex flex-col gap-y-4 mt-8">
-                <div className="flex flex-col max-w-[300px]">
+              <div className="prism-settings-field">
+                <div className="flex flex-col max-w-[360px]">
                   <div className="flex flex-col gap-y-2 mb-4">
-                    <label className="text-white text-sm font-semibold block">
+                    <label className="prism-settings-field-title mt-0 block">
                       {t("text.overlap.title")}
                     </label>
-                    <p className="text-xs text-white/60">
+                    <p className="prism-settings-field-copy mt-0 text-xs">
                       {t("text.overlap.description")}
                     </p>
                   </div>

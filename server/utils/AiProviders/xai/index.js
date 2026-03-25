@@ -8,6 +8,10 @@ const {
 } = require("../../helpers/chat/responses");
 const { MODEL_MAP } = require("../modelMap");
 
+const XAI_MODEL_ALIASES = {
+  "grok-4.20-multi-agent-0309": "grok-4.20-multi-agent-beta-0309",
+};
+
 class XAiLLM {
   constructor(embedder = null, modelPreference = null) {
     if (!process.env.XAI_LLM_API_KEY)
@@ -19,8 +23,9 @@ class XAiLLM {
       baseURL: "https://api.x.ai/v1",
       apiKey: process.env.XAI_LLM_API_KEY,
     });
-    this.model =
-      modelPreference || process.env.XAI_LLM_MODEL_PREF || "grok-beta";
+    this.model = this.#normalizeModel(
+      modelPreference || process.env.XAI_LLM_MODEL_PREF || "grok-beta"
+    );
     this.limits = {
       history: this.promptWindowLimit() * 0.15,
       system: this.promptWindowLimit() * 0.15,
@@ -36,6 +41,57 @@ class XAiLLM {
 
   log(text, ...args) {
     console.log(`\x1b[36m[${this.className}]\x1b[0m ${text}`, ...args);
+  }
+
+  #normalizeModel(model = "grok-beta") {
+    return XAI_MODEL_ALIASES[model] ?? model;
+  }
+
+  #usesResponsesApi() {
+    return this.model.includes("multi-agent");
+  }
+
+  #formatResponsesInput(messages = []) {
+    return messages.map((message) => ({
+      role: message.role,
+      content:
+        typeof message.content === "string"
+          ? message.content
+          : JSON.stringify(message.content),
+    }));
+  }
+
+  #extractResponsesText(response) {
+    if (typeof response?.output_text === "string" && response.output_text) {
+      return response.output_text;
+    }
+
+    const text = [];
+    for (const outputBlock of response?.output || []) {
+      if (outputBlock.type !== "message") continue;
+      for (const contentBlock of outputBlock.content || []) {
+        if (contentBlock.type === "output_text" && contentBlock.text) {
+          text.push(contentBlock.text);
+        }
+      }
+    }
+    return text.join("");
+  }
+
+  async *#responsesAsChatChunks(messages = []) {
+    const response = await this.openai.responses.create({
+      model: this.model,
+      input: this.#formatResponsesInput(messages),
+      stream: true,
+      store: false,
+    });
+
+    for await (const chunk of response) {
+      if (chunk.type !== "response.output_text.delta" || !chunk.delta) continue;
+      yield { choices: [{ delta: { content: chunk.delta } }] };
+    }
+
+    yield { choices: [{ delta: {}, finish_reason: "stop" }] };
   }
 
   #appendContext(contextTexts = []) {
@@ -122,21 +178,42 @@ class XAiLLM {
       );
 
     const result = await LLMPerformanceMonitor.measureAsyncFunction(
-      this.openai.chat.completions
-        .create({
-          model: this.model,
-          messages,
-          temperature,
-        })
-        .catch((e) => {
-          throw new Error(e.message);
-        })
+      (this.#usesResponsesApi()
+        ? this.openai.responses.create({
+            model: this.model,
+            input: this.#formatResponsesInput(messages),
+            store: false,
+          })
+        : this.openai.chat.completions.create({
+            model: this.model,
+            messages,
+            temperature,
+          })
+      ).catch((e) => {
+        throw new Error(e.message);
+      })
     );
 
-    if (
-      !result.output.hasOwnProperty("choices") ||
-      result.output.choices.length === 0
-    )
+    if (this.#usesResponsesApi()) {
+      const textResponse = this.#extractResponsesText(result.output);
+      if (!textResponse) return null;
+      return {
+        textResponse,
+        metrics: {
+          prompt_tokens: result.output.usage?.input_tokens || 0,
+          completion_tokens: result.output.usage?.output_tokens || 0,
+          total_tokens: result.output.usage?.total_tokens || 0,
+          outputTps:
+            (result.output.usage?.output_tokens || 0) / result.duration,
+          duration: result.duration,
+          model: this.model,
+          provider: this.className,
+          timestamp: new Date(),
+        },
+      };
+    }
+
+    if (!result.output.hasOwnProperty("choices") || result.output.choices.length === 0)
       return null;
 
     return {
@@ -161,12 +238,14 @@ class XAiLLM {
       );
 
     const measuredStreamRequest = await LLMPerformanceMonitor.measureStream({
-      func: this.openai.chat.completions.create({
-        model: this.model,
-        stream: true,
-        messages,
-        temperature,
-      }),
+      func: this.#usesResponsesApi()
+        ? this.#responsesAsChatChunks(messages)
+        : this.openai.chat.completions.create({
+            model: this.model,
+            stream: true,
+            messages,
+            temperature,
+          }),
       messages,
       runPromptTokenCalculation: false,
       modelTag: this.model,

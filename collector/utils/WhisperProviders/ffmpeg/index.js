@@ -34,6 +34,18 @@ class FFMPEGWrapper {
     if (this._ffmpegPath) return this._ffmpegPath;
     await patchShellEnvironmentPath();
 
+    const knownPaths =
+      process.platform === "darwin"
+        ? ["/opt/homebrew/bin/ffmpeg", "/usr/local/bin/ffmpeg"]
+        : [];
+
+    for (const candidatePath of knownPaths) {
+      if (!this.isValidFFMPEG(candidatePath)) continue;
+      this.log(`Found FFMPEG binary at ${candidatePath}`);
+      this._ffmpegPath = candidatePath;
+      return this._ffmpegPath;
+    }
+
     try {
       const which = process.platform === "win32" ? "where" : "which";
       const result = execSync(`${which} ffmpeg`, { encoding: "utf8" }).trim();

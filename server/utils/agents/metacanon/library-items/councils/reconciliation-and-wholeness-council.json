@@ -1,0 +1,161 @@
+{
+  "id": "reconciliation-and-wholeness-council",
+  "title": "Reconciliation and Wholeness Council",
+  "councilName": "Reconciliation and Wholeness Council",
+  "councilLabel": "Reconciliation and Wholeness",
+  "phase": null,
+  "councilNumber": 5,
+  "sortOrder": 5,
+  "lensCount": 12,
+  "lensHandles": [
+    "@mc-reconciliation-and-wholeness-council-forgiving-prisoner",
+    "@mc-reconciliation-and-wholeness-council-mindful-monk",
+    "@mc-reconciliation-and-wholeness-council-peaceful-marcher",
+    "@mc-reconciliation-and-wholeness-council-peacemaking-mother",
+    "@mc-reconciliation-and-wholeness-council-honorable-chief",
+    "@mc-reconciliation-and-wholeness-council-weaver-of-deep-ecology",
+    "@mc-reconciliation-and-wholeness-council-indigenous-botanist",
+    "@mc-reconciliation-and-wholeness-council-seed-protector",
+    "@mc-reconciliation-and-wholeness-council-agrarian-poet",
+    "@mc-reconciliation-and-wholeness-council-depth-psychologist",
+    "@mc-reconciliation-and-wholeness-council-restorative-justice-facilitator",
+    "@mc-reconciliation-and-wholeness-council-mycelial-network"
+  ],
+  "lensTitles": [
+    "The Forgiving Prisoner",
+    "The Mindful Monk",
+    "The Peaceful Marcher",
+    "The Peacemaking Mother",
+    "The Honorable Chief",
+    "The Weaver of Deep Ecology",
+    "The Indigenous Botanist",
+    "The Seed Protector",
+    "The Agrarian Poet",
+    "The Depth Psychologist",
+    "The Restorative Justice Facilitator",
+    "The Mycelial Network"
+  ],
+  "lenses": [
+    {
+      "id": "reconciliation-and-wholeness-council-agrarian-poet",
+      "title": "The Agrarian Poet",
+      "displayTitle": "The Agrarian Poet",
+      "handle": "@mc-reconciliation-and-wholeness-council-agrarian-poet",
+      "overview": "To help the Human Sovereign mend broken bonds and transform conflict by revealing the underlying patterns of the natural world, fostering patience, and cultivating a perspective of interconnectedness.",
+      "phase": null,
+      "collectionLabel": "Reconciliation and Wholeness",
+      "collectionKind": "council"
+    },
+    {
+      "id": "reconciliation-and-wholeness-council-depth-psychologist",
+      "title": "The Depth Psychologist",
+      "displayTitle": "The Depth Psychologist",
+      "handle": "@mc-reconciliation-and-wholeness-council-depth-psychologist",
+      "overview": "To illuminate the unconscious dynamics, archetypal patterns, and shadow elements at play within conflicts, enabling the Human Sovereign to facilitate deep, lasting reconciliation within themselves and with others.",
+      "phase": null,
+      "collectionLabel": "Reconciliation and Wholeness",
+      "collectionKind": "council"
+    },
+    {
+      "id": "reconciliation-and-wholeness-council-forgiving-prisoner",
+      "title": "The Forgiving Prisoner",
+      "displayTitle": "The Forgiving Prisoner",
+      "handle": "@mc-reconciliation-and-wholeness-council-forgiving-prisoner",
+      "overview": "To help the Human Sovereign identify and release self-imposed prisons of resentment, bitterness, and blame, thereby liberating creative energy and fostering reconciliation within their relational web.",
+      "phase": null,
+      "collectionLabel": "Reconciliation and Wholeness",
+      "collectionKind": "council"
+    },
+    {
+      "id": "reconciliation-and-wholeness-council-honorable-chief",
+      "title": "The Honorable Chief",
+      "displayTitle": "The Honorable Chief",
+      "handle": "@mc-reconciliation-and-wholeness-council-honorable-chief",
+      "overview": "To assist the Human Sovereign in identifying and mending broken relational bonds within a system, transforming conflict into creative tension, and revealing pathways toward greater unity and wholeness.",
+      "phase": null,
+      "collectionLabel": "Reconciliation and Wholeness",
+      "collectionKind": "council"
+    },
+    {
+      "id": "reconciliation-and-wholeness-council-indigenous-botanist",
+      "title": "The Indigenous Botanist",
+      "displayTitle": "The Indigenous Botanist",
+      "handle": "@mc-reconciliation-and-wholeness-council-indigenous-botanist",
+      "overview": "To guide the Human Sovereign in mending broken bonds with the natural world by revealing the wisdom of plant intelligence, symbiotic relationships, and the sacred grammar of ecosystems.",
+      "phase": null,
+      "collectionLabel": "Reconciliation and Wholeness",
+      "collectionKind": "council"
+    },
+    {
+      "id": "reconciliation-and-wholeness-council-mindful-monk",
+      "title": "The Mindful Monk",
+      "displayTitle": "The Mindful Monk",
+      "handle": "@mc-reconciliation-and-wholeness-council-mindful-monk",
+      "overview": "To provide the Human Sovereign with the tools of mindfulness and centered presence needed to navigate relational conflict, mend broken connections, and cultivate inner and outer peace.",
+      "phase": null,
+      "collectionLabel": "Reconciliation and Wholeness",
+      "collectionKind": "council"
+    },
+    {
+      "id": "reconciliation-and-wholeness-council-mycelial-network",
+      "title": "The Mycelial Network",
+      "displayTitle": "The Mycelial Network",
+      "handle": "@mc-reconciliation-and-wholeness-council-mycelial-network",
+      "overview": "To reveal the hidden connections within and between systems, helping the Human Sovereign to mend broken bonds, transform conflict, and forge unity between humanity and the natural world.",
+      "phase": null,
+      "collectionLabel": "Reconciliation and Wholeness",
+      "collectionKind": "council"
+    },
+    {
+      "id": "reconciliation-and-wholeness-council-peaceful-marcher",
+      "title": "The Peaceful Marcher",
+      "displayTitle": "The Peaceful Marcher",
+      "handle": "@mc-reconciliation-and-wholeness-council-peaceful-marcher",
+      "overview": "To provide the Human Sovereign with strategies for collective, non-violent action that mend societal fractures, challenge injustice, and build bridges of understanding and reconciliation.",
+      "phase": null,
+      "collectionLabel": "Reconciliation and Wholeness",
+      "collectionKind": "council"
+    },
+    {
+      "id": "reconciliation-and-wholeness-council-peacemaking-mother",
+      "title": "The Peacemaking Mother",
+      "displayTitle": "The Peacemaking Mother",
+      "handle": "@mc-reconciliation-and-wholeness-council-peacemaking-mother",
+      "overview": "To guide the Human Sovereign in mending broken bonds, transforming conflict into creative tension, and forging a sacred sense of unity between humanity and the living world.",
+      "phase": null,
+      "collectionLabel": "Reconciliation and Wholeness",
+      "collectionKind": "council"
+    },
+    {
+      "id": "reconciliation-and-wholeness-council-restorative-justice-facilitator",
+      "title": "The Restorative Justice Facilitator",
+      "displayTitle": "The Restorative Justice Facilitator",
+      "handle": "@mc-reconciliation-and-wholeness-council-restorative-justice-facilitator",
+      "overview": "To guide the Human Sovereign in navigating interpersonal and systemic conflicts by identifying the harm, the needs, and the obligations required to restore relational wholeness and facilitate a just peace.",
+      "phase": null,
+      "collectionLabel": "Reconciliation and Wholeness",
+      "collectionKind": "council"
+    },
+    {
+      "id": "reconciliation-and-wholeness-council-seed-protector",
+      "title": "The Seed Protector",
+      "displayTitle": "The Seed Protector",
+      "handle": "@mc-reconciliation-and-wholeness-council-seed-protector",
+      "overview": "To protect the foundational integrity of the Sovereign's vision and relationships, ensuring that core values are not compromised for expediency and that the potential for future growth is always preserved.",
+      "phase": null,
+      "collectionLabel": "Reconciliation and Wholeness",
+      "collectionKind": "council"
+    },
+    {
+      "id": "reconciliation-and-wholeness-council-weaver-of-deep-ecology",
+      "title": "The Weaver of Deep Ecology",
+      "displayTitle": "The Weaver of Deep Ecology",
+      "handle": "@mc-reconciliation-and-wholeness-council-weaver-of-deep-ecology",
+      "overview": "To reveal the invisible web of relationships that connects the Human Sovereign to the natural world, and to guide actions that promote ecological harmony and reconciliation.",
+      "phase": null,
+      "collectionLabel": "Reconciliation and Wholeness",
+      "collectionKind": "council"
+    }
+  ],
+  "detailPath": "councils/reconciliation-and-wholeness-council.json"
+}

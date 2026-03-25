@@ -1,0 +1,119 @@
+{
+  "id": "sovereign-strategy-forum",
+  "title": "Sovereign Strategy Forum",
+  "displayTitle": "Sovereign Strategy Forum",
+  "handle": "@constellation-sovereign-strategy-forum",
+  "type": "Dodecahedron",
+  "purpose": "To deliberate on the long-term direction, ethical framework, and systemic impact of a major strategic initiative or organization. This is the constitutional council — the one that asks not just \"what should we do?\" but \"who should we be, and why does it matter?\"",
+  "projectManagerTitle": "The Radical Transparency Operator",
+  "projectManagerHandle": "@mc-project-managers-board-radical-transparency-operator",
+  "members": [
+    {
+      "role": "The Systems Architect",
+      "lens_path": "/home/ubuntu/councils/project-managers-board/01_Profound_Knowledge_Systems_Lens.md",
+      "displayRole": "The Systems Architect",
+      "relativePath": "councils/project-managers-board/01_Profound_Knowledge_Systems_Lens.md",
+      "lensId": "project-managers-board-systems-architect",
+      "lensHandle": "@mc-project-managers-board-systems-architect",
+      "lensTitle": "The Systems Architect"
+    },
+    {
+      "role": "The Scenario Planner",
+      "lens_path": "/home/ubuntu/councils/project-managers-board/08_Scenario_Planning_Strategist_Lens.md",
+      "displayRole": "The Scenario Planner",
+      "relativePath": "councils/project-managers-board/08_Scenario_Planning_Strategist_Lens.md",
+      "lensId": "project-managers-board-scenario-planner",
+      "lensHandle": "@mc-project-managers-board-scenario-planner",
+      "lensTitle": "The Scenario Planner"
+    },
+    {
+      "role": "The First-Principles Engineer",
+      "lens_path": "/home/ubuntu/councils/pauls-board/01_First_Principles_Engineer_Lens.docx",
+      "displayRole": "The First-Principles Engineer",
+      "relativePath": "councils/pauls-board/01_First_Principles_Engineer_Lens.md",
+      "lensId": "pauls-board-first-principles-engineer",
+      "lensHandle": "@mc-pauls-board-first-principles-engineer",
+      "lensTitle": "The First-Principles Engineer"
+    },
+    {
+      "role": "The Founder Realist",
+      "lens_path": "/home/ubuntu/councils/pauls-board/07_Founder_Reality_And_Taste_Lens.docx",
+      "displayRole": "The Founder Realist",
+      "relativePath": "councils/pauls-board/07_Founder_Reality_And_Taste_Lens.md",
+      "lensId": "pauls-board-founder-realist",
+      "lensHandle": "@mc-pauls-board-founder-realist",
+      "lensTitle": "The Founder Realist"
+    },
+    {
+      "role": "The Ethical Boundary",
+      "lens_path": "/home/ubuntu/councils/pauls-board/06_Human_Dignity_And_Ethical_Boundary_Lens.docx",
+      "displayRole": "The Ethical Boundary",
+      "relativePath": "councils/pauls-board/06_Human_Dignity_And_Ethical_Boundary_Lens.md",
+      "lensId": "pauls-board-ethical-boundary",
+      "lensHandle": "@mc-pauls-board-ethical-boundary",
+      "lensTitle": "The Ethical Boundary"
+    },
+    {
+      "role": "The Long-Term Thinker",
+      "lens_path": "/home/ubuntu/councils/pauls-board/10_Leverage_Incentives_And_Long_Term_Thinking_Lens.docx",
+      "displayRole": "The Long-Term Thinker",
+      "relativePath": "councils/pauls-board/10_Leverage_Incentives_And_Long_Term_Thinking_Lens.md",
+      "lensId": "pauls-board-long-term-thinker",
+      "lensHandle": "@mc-pauls-board-long-term-thinker",
+      "lensTitle": "The Long-Term Thinker"
+    },
+    {
+      "role": "The Community Builder",
+      "lens_path": "/home/ubuntu/councils/millennial-founders-board/05_Community_First_System_Builder_Lens.docx",
+      "displayRole": "The Community Builder",
+      "relativePath": "councils/millennial-founders-board/05_Community_First_System_Builder_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    },
+    {
+      "role": "The Culture Architect",
+      "lens_path": "/home/ubuntu/councils/org-builder-board/04_Customer_Service_And_Company_Culture_Lens.docx",
+      "displayRole": "The Culture Architect",
+      "relativePath": "councils/org-builder-board/04_Customer_Service_And_Company_Culture_Lens.md",
+      "lensId": "org-builder-board-culture-architect",
+      "lensHandle": "@mc-org-builder-board-culture-architect",
+      "lensTitle": "The Culture Architect"
+    },
+    {
+      "role": "The Why-Finder",
+      "lens_path": "/home/ubuntu/councils/marketing-branding-board/01_Start_With_Why_And_Golden_Circle_Lens.docx",
+      "displayRole": "The Why-Finder",
+      "relativePath": "councils/marketing-branding-board/01_Start_With_Why_And_Golden_Circle_Lens.md",
+      "lensId": "marketing-branding-board-why-finder",
+      "lensHandle": "@mc-marketing-branding-board-why-finder",
+      "lensTitle": "The Why-Finder"
+    },
+    {
+      "role": "The World Builder",
+      "lens_path": "/home/ubuntu/councils/visual-branding-board/06_The_World_Builder_Lens.md",
+      "displayRole": "The World Builder",
+      "relativePath": "councils/visual-branding-board/06_The_World_Builder_Lens.md",
+      "lensId": "visual-branding-board-world-builder",
+      "lensHandle": "@mc-visual-branding-board-world-builder",
+      "lensTitle": "The World Builder"
+    },
+    {
+      "role": "The Complexity Navigator",
+      "lens_path": "/home/ubuntu/councils/project-managers-board/10_Complexity_Navigator_Lens.md",
+      "displayRole": "The Complexity Navigator",
+      "relativePath": "councils/project-managers-board/10_Complexity_Navigator_Lens.md",
+      "lensId": "project-managers-board-complexity-navigator",
+      "lensHandle": "@mc-project-managers-board-complexity-navigator",
+      "lensTitle": "The Complexity Navigator"
+    }
+  ],
+  "relativePath": "constellations/dodecahedron-1-sovereign-strategy.json",
+  "detailPath": "constellations/sovereign-strategy-forum.json",
+  "name": "Dodecahedron 1: The \"Sovereign Strategy\" Council",
+  "projectManager": "/home/ubuntu/councils/project-managers-board/09_Radical_Transparency_Operator_Lens.md",
+  "projectManagerRelativePath": "councils/project-managers-board/09_Radical_Transparency_Operator_Lens.md",
+  "projectManagerId": "project-managers-board-radical-transparency-operator",
+  "legacyId": "dodecahedron-1-the-sovereign-strategy-council",
+  "legacyHandle": "@constellation-dodecahedron-1-the-sovereign-strategy-council"
+}

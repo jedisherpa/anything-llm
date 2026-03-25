@@ -174,7 +174,23 @@ struct PrismProviderConfiguration: Codable, Equatable {
 struct PrismBundledLibraryIndex: Decodable {
     let generatedAt: String?
     let counts: PrismLibraryManifest.Counts
+    let aliases: PrismBundledLibraryAliases?
     let lookup: PrismBundledLibraryLookup?
+}
+
+struct PrismBundledLibraryAliases: Decodable {
+    let lenses: PrismBundledAliasGroup?
+    let constellations: PrismBundledAliasGroup?
+    let councils: PrismBundledIdAliasGroup?
+}
+
+struct PrismBundledAliasGroup: Decodable {
+    let byId: [String: String]?
+    let byHandle: [String: String]?
+}
+
+struct PrismBundledIdAliasGroup: Decodable {
+    let byId: [String: String]?
 }
 
 struct PrismBundledLibraryLookup: Decodable {

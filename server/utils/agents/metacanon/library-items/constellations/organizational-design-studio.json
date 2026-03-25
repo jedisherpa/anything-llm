@@ -1,0 +1,47 @@
+{
+  "id": "organizational-design-studio",
+  "title": "Organizational Design Studio",
+  "displayTitle": "Organizational Design Studio",
+  "handle": "@constellation-organizational-design-studio",
+  "type": "Tetrahedron",
+  "purpose": "To design the organizational structure and culture for a team at a specific stage of growth.",
+  "projectManagerTitle": "The Servant Leader",
+  "projectManagerHandle": "@mc-project-managers-board-servant-leader",
+  "members": [
+    {
+      "role": "The Culture Architect",
+      "lens_path": "/home/ubuntu/councils/org-builder-board/04_Customer_Service_And_Company_Culture_Lens.docx",
+      "displayRole": "The Culture Architect",
+      "relativePath": "councils/org-builder-board/04_Customer_Service_And_Company_Culture_Lens.md",
+      "lensId": "org-builder-board-culture-architect",
+      "lensHandle": "@mc-org-builder-board-culture-architect",
+      "lensTitle": "The Culture Architect"
+    },
+    {
+      "role": "The High-Output Manager",
+      "lens_path": "/home/ubuntu/councils/org-builder-board/01_High_Output_Management_And_OKRs_Lens.docx",
+      "displayRole": "The High-Output Manager",
+      "relativePath": "councils/org-builder-board/01_High_Output_Management_And_OKRs_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    },
+    {
+      "role": "The Calm Operator",
+      "lens_path": "/home/ubuntu/councils/org-builder-board/07_Calm_Company_And_Remote_Work_Lens.docx",
+      "displayRole": "The Calm Operator",
+      "relativePath": "councils/org-builder-board/07_Calm_Company_And_Remote_Work_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    }
+  ],
+  "relativePath": "constellations/tetrahedron-7-org-design.json",
+  "detailPath": "constellations/organizational-design-studio.json",
+  "name": "Tetrahedron 7: The \"Org Design\" Quad",
+  "projectManager": "/home/ubuntu/councils/project-managers-board/07_Servant_Leadership_Facilitator_Lens.md",
+  "projectManagerRelativePath": "councils/project-managers-board/07_Servant_Leadership_Facilitator_Lens.md",
+  "projectManagerId": "project-managers-board-servant-leader",
+  "legacyId": "tetrahedron-7-the-org-design-quad",
+  "legacyHandle": "@constellation-tetrahedron-7-the-org-design-quad"
+}

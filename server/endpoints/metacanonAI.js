@@ -25,17 +25,82 @@ const PROTECTED_ROUTE = [
   flexUserRoleValid([ROLES.admin, ROLES.manager]),
 ];
 
-function repoLabEnabled() {
+const READ_ROUTE = [validatedRequest];
+const REPO_WRITE_ROUTE = [validatedRequest, flexUserRoleValid([ROLES.admin])];
+
+const GOVERNANCE_ALLOWED_EXTENSIONS = new Set([
+  ".json",
+  ".md",
+  ".pdf",
+  ".txt",
+  ".docx",
+]);
+
+function hasRepoDevelopmentMarker() {
+  return fs.existsSync(path.join(REPO_ROOT, ".git"));
+}
+
+function isLocalRepoLabDevelopment() {
+  const normalized = String(process.env.NODE_ENV || "")
+    .trim()
+    .toLowerCase();
   return (
-    process.env.NODE_ENV !== "production" ||
-    process.env.METACANON_REPO_LAB === "enabled"
+    normalized === "development" ||
+    (normalized === "" && hasRepoDevelopmentMarker())
   );
 }
 
-function ensureRepoLabEnabled(response) {
-  if (repoLabEnabled()) return true;
+function repoLabReadEnabled() {
+  return (
+    isLocalRepoLabDevelopment() || process.env.METACANON_REPO_LAB === "enabled"
+  );
+}
+
+function repoLabWriteEnabled() {
+  return (
+    repoLabReadEnabled() &&
+    (isLocalRepoLabDevelopment() ||
+      process.env.METACANON_REPO_LAB_WRITE === "enabled")
+  );
+}
+
+function hasGovernanceDocumentFiles(directory) {
+  if (!fs.existsSync(directory) || !fs.statSync(directory).isDirectory()) {
+    return false;
+  }
+
+  for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+    const entryPath = path.join(directory, entry.name);
+
+    if (entry.isDirectory() && hasGovernanceDocumentFiles(entryPath)) {
+      return true;
+    }
+
+    if (
+      entry.isFile() &&
+      GOVERNANCE_ALLOWED_EXTENSIONS.has(path.extname(entry.name).toLowerCase())
+    ) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function ensureRepoLabReadEnabled(response) {
+  if (repoLabReadEnabled()) return true;
   response.status(404).json({
-    error: "Repo Lab is only available in local development.",
+    error:
+      "Repo Lab read surfaces are only available in local development or when explicitly enabled.",
+  });
+  return false;
+}
+
+function ensureRepoLabWriteEnabled(response) {
+  if (repoLabWriteEnabled()) return true;
+  response.status(404).json({
+    error:
+      "Repo Lab write surfaces are disabled outside local development unless explicitly enabled.",
   });
   return false;
 }
@@ -46,7 +111,11 @@ const GOVERNANCE_ROOT = path.resolve(
   "data/metacanon/governance-documents"
 );
 
-function resolveGovernanceFile(relativePath = "") {
+function governanceDocumentsAvailable() {
+  return hasGovernanceDocumentFiles(GOVERNANCE_ROOT);
+}
+
+function resolveGovernanceRequest(relativePath = "") {
   const normalized = normalizeRelativePath(relativePath);
   const absolutePath = path.resolve(REPO_ROOT, normalized);
   const governanceWithSep = `${GOVERNANCE_ROOT}${path.sep}`;
@@ -56,6 +125,12 @@ function resolveGovernanceFile(relativePath = "") {
     !absolutePath.startsWith(governanceWithSep)
   ) {
     throw new Error("Invalid governance document path.");
+  }
+
+  if (
+    !GOVERNANCE_ALLOWED_EXTENSIONS.has(path.extname(absolutePath).toLowerCase())
+  ) {
+    throw new Error("Governance document type is not allowed.");
   }
 
   if (!fs.existsSync(absolutePath) || !fs.statSync(absolutePath).isFile()) {
@@ -68,16 +143,31 @@ function resolveGovernanceFile(relativePath = "") {
 function metacanonAIEndpoints(app) {
   if (!app) return;
 
-  app.get("/metacanonai/governance/file", async (request, response) => {
-    try {
-      const { absolutePath } = resolveGovernanceFile(request.query.path || "");
-      response.sendFile(absolutePath);
-    } catch (error) {
-      response.status(400).json({ error: error.message });
-    }
+  app.get("/metacanonai/features", READ_ROUTE, async (_, response) => {
+    response.status(200).json({
+      repoLabReadEnabled: repoLabReadEnabled(),
+      repoLabWriteEnabled: repoLabWriteEnabled(),
+      governanceDocumentsAvailable: governanceDocumentsAvailable(),
+      governanceDocumentExtensions: Array.from(GOVERNANCE_ALLOWED_EXTENSIONS),
+    });
   });
 
-  app.get("/metacanonai/library/manifest", async (_, response) => {
+  app.get(
+    "/metacanonai/governance/file",
+    READ_ROUTE,
+    async (request, response) => {
+      try {
+        const { absolutePath } = resolveGovernanceRequest(
+          request.query.path || ""
+        );
+        response.sendFile(absolutePath);
+      } catch (error) {
+        response.status(400).json({ error: error.message });
+      }
+    }
+  );
+
+  app.get("/metacanonai/library/manifest", READ_ROUTE, async (_, response) => {
     try {
       response.status(200).json(getLibraryManifest());
     } catch (error) {
@@ -86,43 +176,51 @@ function metacanonAIEndpoints(app) {
     }
   });
 
-  app.get("/metacanonai/library/collection", async (request, response) => {
-    try {
-      const tab = String(request.query.tab || "").trim();
-      if (!tab) {
-        response.status(400).json({ error: "Missing tab parameter." });
-        return;
+  app.get(
+    "/metacanonai/library/collection",
+    READ_ROUTE,
+    async (request, response) => {
+      try {
+        const tab = String(request.query.tab || "").trim();
+        if (!tab) {
+          response.status(400).json({ error: "Missing tab parameter." });
+          return;
+        }
+        response.status(200).json({ items: getLibraryCollection(tab) });
+      } catch (error) {
+        response.status(400).json({ error: error.message });
       }
-      response.status(200).json({ items: getLibraryCollection(tab) });
-    } catch (error) {
-      response.status(400).json({ error: error.message });
     }
-  });
+  );
 
-  app.get("/metacanonai/library/item", async (request, response) => {
-    try {
-      const tab = String(request.query.tab || "").trim();
-      const id = String(request.query.id || "").trim();
-      if (!tab || !id) {
-        response.status(400).json({ error: "Missing tab or id parameter." });
-        return;
+  app.get(
+    "/metacanonai/library/item",
+    READ_ROUTE,
+    async (request, response) => {
+      try {
+        const tab = String(request.query.tab || "").trim();
+        const id = String(request.query.id || "").trim();
+        if (!tab || !id) {
+          response.status(400).json({ error: "Missing tab or id parameter." });
+          return;
+        }
+
+        const item = getLibraryItem(tab, id);
+        if (!item) {
+          response.status(404).json({ error: "Library item not found." });
+          return;
+        }
+
+        response.status(200).json(item);
+      } catch (error) {
+        response.status(400).json({ error: error.message });
       }
-
-      const item = getLibraryItem(tab, id);
-      if (!item) {
-        response.status(404).json({ error: "Library item not found." });
-        return;
-      }
-
-      response.status(200).json(item);
-    } catch (error) {
-      response.status(400).json({ error: error.message });
     }
-  });
+  );
 
   app.get("/metacanonai/repo/info", PROTECTED_ROUTE, async (_, response) => {
     try {
-      if (!ensureRepoLabEnabled(response)) return;
+      if (!ensureRepoLabReadEnabled(response)) return;
       response.status(200).json(await getRepoInfo());
     } catch (error) {
       console.error(error);
@@ -135,7 +233,7 @@ function metacanonAIEndpoints(app) {
     PROTECTED_ROUTE,
     async (request, response) => {
       try {
-        if (!ensureRepoLabEnabled(response)) return;
+        if (!ensureRepoLabReadEnabled(response)) return;
         const relativePath = normalizeRelativePath(request.query.path || "");
         const directory = await listDirectory(relativePath);
         response.status(200).json(directory);
@@ -147,7 +245,7 @@ function metacanonAIEndpoints(app) {
 
   app.get("/metacanonai/repo/index", PROTECTED_ROUTE, async (_, response) => {
     try {
-      if (!ensureRepoLabEnabled(response)) return;
+      if (!ensureRepoLabReadEnabled(response)) return;
       const files = await buildFileIndex();
       response.status(200).json({ files });
     } catch (error) {
@@ -156,23 +254,27 @@ function metacanonAIEndpoints(app) {
     }
   });
 
-  app.get("/metacanonai/repo/file", PROTECTED_ROUTE, async (request, response) => {
-    try {
-      if (!ensureRepoLabEnabled(response)) return;
-      const relativePath = normalizeRelativePath(request.query.path || "");
-      const file = await readFile(relativePath);
-      response.status(200).json(file);
-    } catch (error) {
-      response.status(400).json({ error: error.message });
-    }
-  });
-
-  app.post(
+  app.get(
     "/metacanonai/repo/file",
     PROTECTED_ROUTE,
     async (request, response) => {
       try {
-        if (!ensureRepoLabEnabled(response)) return;
+        if (!ensureRepoLabReadEnabled(response)) return;
+        const relativePath = normalizeRelativePath(request.query.path || "");
+        const file = await readFile(relativePath);
+        response.status(200).json(file);
+      } catch (error) {
+        response.status(400).json({ error: error.message });
+      }
+    }
+  );
+
+  app.post(
+    "/metacanonai/repo/file",
+    REPO_WRITE_ROUTE,
+    async (request, response) => {
+      try {
+        if (!ensureRepoLabWriteEnabled(response)) return;
         const { path: relativePath = "", content = "" } = reqBody(request);
         const file = await writeFile(relativePath, content);
         response.status(200).json({ success: true, file });
@@ -185,4 +287,13 @@ function metacanonAIEndpoints(app) {
 
 module.exports = {
   metacanonAIEndpoints,
+  _internals: {
+    governanceDocumentsAvailable,
+    hasGovernanceDocumentFiles,
+    hasRepoDevelopmentMarker,
+    isLocalRepoLabDevelopment,
+    repoLabReadEnabled,
+    repoLabWriteEnabled,
+    resolveGovernanceRequest,
+  },
 };

@@ -51,7 +51,7 @@ function ShowWorkspaceChat() {
     <>
       <div className="workspace-prism-shell metacanon-page-shell w-screen h-screen overflow-hidden flex">
         {!isMobile && <Sidebar />}
-        <div className="workspace-prism-frame metacanon-page-frame relative md:ml-[2px] md:mr-[16px] md:my-[16px] w-full h-full overflow-hidden">
+        <div className="workspace-prism-frame relative flex-1 min-w-0 h-full overflow-hidden">
           <WorkspaceChatContainer loading={loading} workspace={workspace} />
         </div>
       </div>

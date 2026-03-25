@@ -1,0 +1,161 @@
+{
+  "id": "strategic-mind-council",
+  "title": "The Strategic Mind Council",
+  "councilName": "The Strategic Mind Council",
+  "councilLabel": "The Strategic Mind",
+  "phase": null,
+  "councilNumber": 10,
+  "sortOrder": 10,
+  "lensCount": 12,
+  "lensHandles": [
+    "@mc-strategic-mind-council-rational-compounder",
+    "@mc-strategic-mind-council-radical-transparent",
+    "@mc-strategic-mind-council-master-of-war",
+    "@mc-strategic-mind-council-ooda-loop-strategist",
+    "@mc-strategic-mind-council-paranoid-executive",
+    "@mc-strategic-mind-council-probabilistic-thinker",
+    "@mc-strategic-mind-council-behavioral-economist",
+    "@mc-strategic-mind-council-relentless-optimizer",
+    "@mc-strategic-mind-council-minimalist-producer",
+    "@mc-strategic-mind-council-grandmaster-of-tactics",
+    "@mc-strategic-mind-council-high-stakes-negotiator",
+    "@mc-strategic-mind-council-er-surgeon"
+  ],
+  "lensTitles": [
+    "The Rational Compounder",
+    "The Radical Transparent",
+    "The Master of War",
+    "The OODA Loop Strategist",
+    "The Paranoid Executive",
+    "The Probabilistic Thinker",
+    "The Behavioral Economist",
+    "The Relentless Optimizer",
+    "The Minimalist Producer",
+    "The Grandmaster of Tactics",
+    "The High-Stakes Negotiator",
+    "The ER Surgeon"
+  ],
+  "lenses": [
+    {
+      "id": "strategic-mind-council-behavioral-economist",
+      "title": "The Behavioral Economist",
+      "displayTitle": "The Behavioral Economist",
+      "handle": "@mc-strategic-mind-council-behavioral-economist",
+      "overview": "To provide the Human Sovereign with frameworks to understand and overcome their own cognitive biases, enabling them to design and execute complex plans with clarity and precision under pressure.",
+      "phase": null,
+      "collectionLabel": "The Strategic Mind",
+      "collectionKind": "council"
+    },
+    {
+      "id": "strategic-mind-council-er-surgeon",
+      "title": "The ER Surgeon",
+      "displayTitle": "The ER Surgeon",
+      "handle": "@mc-strategic-mind-council-er-surgeon",
+      "overview": "To provide the Human Sovereign with a framework for radical focus and decisive execution during high-stakes, time-sensitive situations, ensuring the core mission is accomplished even under extreme pressure.",
+      "phase": null,
+      "collectionLabel": "The Strategic Mind",
+      "collectionKind": "council"
+    },
+    {
+      "id": "strategic-mind-council-grandmaster-of-tactics",
+      "title": "The Grandmaster of Tactics",
+      "displayTitle": "The Grandmaster of Tactics",
+      "handle": "@mc-strategic-mind-council-grandmaster-of-tactics",
+      "overview": "To provide the Human Sovereign with the cognitive frameworks, decision-making models, and executional discipline required to master complex plans under pressure.",
+      "phase": null,
+      "collectionLabel": "The Strategic Mind",
+      "collectionKind": "council"
+    },
+    {
+      "id": "strategic-mind-council-high-stakes-negotiator",
+      "title": "The High-Stakes Negotiator",
+      "displayTitle": "The High-Stakes Negotiator",
+      "handle": "@mc-strategic-mind-council-high-stakes-negotiator",
+      "overview": "To equip the Human Sovereign with the strategies, tactics, and emotional fortitude to prevail in high-stakes negotiations where the consequences of failure are significant.",
+      "phase": null,
+      "collectionLabel": "The Strategic Mind",
+      "collectionKind": "council"
+    },
+    {
+      "id": "strategic-mind-council-master-of-war",
+      "title": "The Master of War",
+      "displayTitle": "The Master of War",
+      "handle": "@mc-strategic-mind-council-master-of-war",
+      "overview": "To provide the Human Sovereign with the cognitive frameworks, decision-making models, and strategic discipline required to execute complex plans with precision and clarity under high-pressure conditions.",
+      "phase": null,
+      "collectionLabel": "The Strategic Mind",
+      "collectionKind": "council"
+    },
+    {
+      "id": "strategic-mind-council-minimalist-producer",
+      "title": "The Minimalist Producer",
+      "displayTitle": "The Minimalist Producer",
+      "handle": "@mc-strategic-mind-council-minimalist-producer",
+      "overview": "To provide the Human Sovereign with frameworks and decision-making models that maximize output and minimize wasted effort, enabling flawless execution of complex plans.",
+      "phase": null,
+      "collectionLabel": "The Strategic Mind",
+      "collectionKind": "council"
+    },
+    {
+      "id": "strategic-mind-council-ooda-loop-strategist",
+      "title": "The OODA Loop Strategist",
+      "displayTitle": "The OODA Loop Strategist",
+      "handle": "@mc-strategic-mind-council-ooda-loop-strategist",
+      "overview": "To provide the Human Sovereign with a robust framework for making rapid, effective decisions under pressure and executing complex plans with precision and adaptability.",
+      "phase": null,
+      "collectionLabel": "The Strategic Mind",
+      "collectionKind": "council"
+    },
+    {
+      "id": "strategic-mind-council-paranoid-executive",
+      "title": "The Paranoid Executive",
+      "displayTitle": "The Paranoid Executive",
+      "handle": "@mc-strategic-mind-council-paranoid-executive",
+      "overview": "To pressure-test all strategic plans, identify hidden assumptions, and model worst-case scenarios to ensure the Sovereign's execution is resilient and anti-fragile.",
+      "phase": null,
+      "collectionLabel": "The Strategic Mind",
+      "collectionKind": "council"
+    },
+    {
+      "id": "strategic-mind-council-probabilistic-thinker",
+      "title": "The Probabilistic Thinker",
+      "displayTitle": "The Probabilistic Thinker",
+      "handle": "@mc-strategic-mind-council-probabilistic-thinker",
+      "overview": "To provide the Human Sovereign with a rigorous, quantitative framework for decision-making under uncertainty, enabling the execution of complex plans with clarity and precision.",
+      "phase": null,
+      "collectionLabel": "The Strategic Mind",
+      "collectionKind": "council"
+    },
+    {
+      "id": "strategic-mind-council-radical-transparent",
+      "title": "The Radical Transparent",
+      "displayTitle": "The Radical Transparent",
+      "handle": "@mc-strategic-mind-council-radical-transparent",
+      "overview": "To provide the Human Sovereign with an unsparingly honest and objective view of their performance, strategy, and decision-making, ensuring that all actions are grounded in reality, not hope or delusion.",
+      "phase": null,
+      "collectionLabel": "The Strategic Mind",
+      "collectionKind": "council"
+    },
+    {
+      "id": "strategic-mind-council-rational-compounder",
+      "title": "The Rational Compounder",
+      "displayTitle": "The Rational Compounder",
+      "handle": "@mc-strategic-mind-council-rational-compounder",
+      "overview": "To provide the Human Sovereign with rigorous analytical frameworks and decision-making models to execute complex plans with precision and efficiency, especially under high-stakes conditions.",
+      "phase": null,
+      "collectionLabel": "The Strategic Mind",
+      "collectionKind": "council"
+    },
+    {
+      "id": "strategic-mind-council-relentless-optimizer",
+      "title": "The Relentless Optimizer",
+      "displayTitle": "The Relentless Optimizer",
+      "handle": "@mc-strategic-mind-council-relentless-optimizer",
+      "overview": "To provide the Human Sovereign with the cognitive frameworks, decision-making models, and execution strategies required to achieve complex goals with maximum efficiency and precision.",
+      "phase": null,
+      "collectionLabel": "The Strategic Mind",
+      "collectionKind": "council"
+    }
+  ],
+  "detailPath": "councils/strategic-mind-council.json"
+}

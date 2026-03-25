@@ -1,0 +1,47 @@
+{
+  "id": "complexity-diagnosis-array",
+  "title": "Complexity Diagnosis Array",
+  "displayTitle": "Complexity Diagnosis Array",
+  "handle": "@constellation-complexity-diagnosis-array",
+  "type": "Tetrahedron",
+  "purpose": "To accurately diagnose the nature of a complex strategic challenge before committing to an approach.",
+  "projectManagerTitle": "The Complexity Navigator",
+  "projectManagerHandle": "@mc-project-managers-board-complexity-navigator",
+  "members": [
+    {
+      "role": "The Cognitive Analyst",
+      "lens_path": "/home/ubuntu/councils/pauls-board/05_Cognitive_Bias_And_Judgment_Lens.docx",
+      "displayRole": "The Cognitive Analyst",
+      "relativePath": "councils/pauls-board/05_Cognitive_Bias_And_Judgment_Lens.md",
+      "lensId": "pauls-board-cognitive-analyst",
+      "lensHandle": "@mc-pauls-board-cognitive-analyst",
+      "lensTitle": "The Cognitive Analyst"
+    },
+    {
+      "role": "The Radical Transparency Operator",
+      "lens_path": "/home/ubuntu/councils/project-managers-board/09_Radical_Transparency_Operator_Lens.md",
+      "displayRole": "The Radical Transparency Operator",
+      "relativePath": "councils/project-managers-board/09_Radical_Transparency_Operator_Lens.md",
+      "lensId": "project-managers-board-radical-transparency-operator",
+      "lensHandle": "@mc-project-managers-board-radical-transparency-operator",
+      "lensTitle": "The Radical Transparency Operator"
+    },
+    {
+      "role": "The Long-Term Thinker",
+      "lens_path": "/home/ubuntu/councils/pauls-board/10_Leverage_Incentives_And_Long_Term_Thinking_Lens.docx",
+      "displayRole": "The Long-Term Thinker",
+      "relativePath": "councils/pauls-board/10_Leverage_Incentives_And_Long_Term_Thinking_Lens.md",
+      "lensId": "pauls-board-long-term-thinker",
+      "lensHandle": "@mc-pauls-board-long-term-thinker",
+      "lensTitle": "The Long-Term Thinker"
+    }
+  ],
+  "relativePath": "constellations/tetrahedron-8-complexity-diagnosis.json",
+  "detailPath": "constellations/complexity-diagnosis-array.json",
+  "name": "Tetrahedron 8: The \"Complexity Diagnosis\" Quad",
+  "projectManager": "/home/ubuntu/councils/project-managers-board/10_Complexity_Navigator_Lens.md",
+  "projectManagerRelativePath": "councils/project-managers-board/10_Complexity_Navigator_Lens.md",
+  "projectManagerId": "project-managers-board-complexity-navigator",
+  "legacyId": "tetrahedron-8-the-complexity-diagnosis-quad",
+  "legacyHandle": "@constellation-tetrahedron-8-the-complexity-diagnosis-quad"
+}

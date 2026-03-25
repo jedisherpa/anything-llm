@@ -34,6 +34,7 @@ The prepare step will:
 
 ## Run
 
+- Validation prerequisite: the Tauri crate expects `desktop-tauri/runtime` to exist. Until `corepack yarn prepare:core` succeeds, `cargo check` and `tauri build` will fail before Rust type-checking with `path matching ../runtime not found`.
 - Development app run: `corepack yarn tauri:dev`
 - Build the unsigned macOS `.app` only: `corepack yarn tauri:build`
 
@@ -99,6 +100,37 @@ Use the native app menu:
 - `Restart App`
 
 If you launch in `web` mode, the app shows a local launcher page and opens AnythingLLM in your browser on demand.
+
+## Desktop diagnostics
+
+Startup writes logs into the app data directory under `logs/`:
+
+- `bootstrap.log`: install validation, Prisma migration, seed, and release bootstrap commands
+- `server.log`: bundled server process output
+- `collector.log`: bundled collector process output
+
+Default macOS location:
+
+- `~/Library/Application Support/com.sovereign.anythingllm.desktop/logs/`
+
+The desktop runtime now reports startup phases explicitly:
+
+- `validating_install`
+- `preparing_database`
+- `starting_collector`
+- `starting_server`
+- `waiting_for_interface`
+- `ready`
+- `attention`
+
+The common failure classes for Wave 1 triage are:
+
+- install guard failure, including DMG-mounted launches
+- migration/bootstrap failure
+- collector exit during startup
+- server exit during startup
+- port conflict on server or collector
+- interface readiness timeout
 
 ## Optional environment overrides
 

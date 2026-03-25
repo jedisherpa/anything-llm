@@ -1,0 +1,83 @@
+{
+  "id": "full-spectrum-brand-forge",
+  "title": "Full-Spectrum Brand Forge",
+  "displayTitle": "Full-Spectrum Brand Forge",
+  "handle": "@constellation-full-spectrum-brand-forge",
+  "type": "Star Tetrahedron",
+  "purpose": "To develop a complete brand system — from strategic positioning to visual identity to customer experience.",
+  "projectManagerTitle": "The Clearhead Operator",
+  "projectManagerHandle": "@mc-project-managers-board-clearhead-operator",
+  "members": [
+    {
+      "role": "The Brand Theorist",
+      "lens_path": "/home/ubuntu/councils/marketing-branding-board/06_Brand_Gap_And_Zag_Lens.docx",
+      "displayRole": "The Brand Theorist",
+      "relativePath": "councils/marketing-branding-board/06_Brand_Gap_And_Zag_Lens.md",
+      "lensId": "marketing-branding-board-brand-theorist",
+      "lensHandle": "@mc-marketing-branding-board-brand-theorist",
+      "lensTitle": "The Brand Theorist"
+    },
+    {
+      "role": "The Why-Finder",
+      "lens_path": "/home/ubuntu/councils/marketing-branding-board/01_Start_With_Why_And_Golden_Circle_Lens.docx",
+      "displayRole": "The Why-Finder",
+      "relativePath": "councils/marketing-branding-board/01_Start_With_Why_And_Golden_Circle_Lens.md",
+      "lensId": "marketing-branding-board-why-finder",
+      "lensHandle": "@mc-marketing-branding-board-why-finder",
+      "lensTitle": "The Why-Finder"
+    },
+    {
+      "role": "The Brand Equity Builder",
+      "lens_path": "/home/ubuntu/councils/marketing-branding-board/07_Brand_Equity_And_Relevance_Lens.docx",
+      "displayRole": "The Brand Equity Builder",
+      "relativePath": "councils/marketing-branding-board/07_Brand_Equity_And_Relevance_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    },
+    {
+      "role": "The Visual Identity Lead",
+      "lens_path": "/home/ubuntu/councils/marketing-branding-board/10_Brand_Identity_And_Graphic_Design_Lens.docx",
+      "displayRole": "The Visual Identity Lead",
+      "relativePath": "councils/marketing-branding-board/10_Brand_Identity_And_Graphic_Design_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    },
+    {
+      "role": "The Essentialist",
+      "lens_path": "/home/ubuntu/councils/visual-branding-board/01_The_Essentialist_Tuner_Lens.md",
+      "displayRole": "The Essentialist",
+      "relativePath": "councils/visual-branding-board/01_The_Essentialist_Tuner_Lens.md",
+      "lensId": "visual-branding-board-essentialist",
+      "lensHandle": "@mc-visual-branding-board-essentialist",
+      "lensTitle": "The Essentialist"
+    },
+    {
+      "role": "The World Builder",
+      "lens_path": "/home/ubuntu/councils/visual-branding-board/06_The_World_Builder_Lens.md",
+      "displayRole": "The World Builder",
+      "relativePath": "councils/visual-branding-board/06_The_World_Builder_Lens.md",
+      "lensId": "visual-branding-board-world-builder",
+      "lensHandle": "@mc-visual-branding-board-world-builder",
+      "lensTitle": "The World Builder"
+    },
+    {
+      "role": "The Perception Shaper",
+      "lens_path": "/home/ubuntu/councils/pauls-board/09_Perception_Signaling_And_Narrative_Lens.docx",
+      "displayRole": "The Perception Shaper",
+      "relativePath": "councils/pauls-board/09_Perception_Signaling_And_Narrative_Lens.md",
+      "lensId": "pauls-board-perception-shaper",
+      "lensHandle": "@mc-pauls-board-perception-shaper",
+      "lensTitle": "The Perception Shaper"
+    }
+  ],
+  "relativePath": "constellations/star-tetrahedron-2-full-spectrum-brand.json",
+  "detailPath": "constellations/full-spectrum-brand-forge.json",
+  "name": "Star Tetrahedron 2: The \"Full-Spectrum Brand\"",
+  "projectManager": "/home/ubuntu/councils/project-managers-board/03_Clearhead_Execution_Lens.md",
+  "projectManagerRelativePath": "councils/project-managers-board/03_Clearhead_Execution_Lens.md",
+  "projectManagerId": "project-managers-board-clearhead-operator",
+  "legacyId": "star-tetrahedron-2-the-full-spectrum-brand",
+  "legacyHandle": "@constellation-star-tetrahedron-2-the-full-spectrum-brand"
+}

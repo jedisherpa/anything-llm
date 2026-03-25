@@ -1,4 +1,5 @@
 process.env.STORAGE_DIR = "test-storage";
+const { spawnSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 
@@ -8,7 +9,15 @@ jest.mock("fix-path", () => ({ default: jest.fn() }));
 
 const { FFMPEGWrapper } = require("../../../../utils/WhisperProviders/ffmpeg");
 
-const describeRunner = process.env.GITHUB_ACTIONS ? describe.skip : describe;
+const hasVmDynamicImportSupport = process.execArgv.includes(
+  "--experimental-vm-modules"
+);
+const hasFfmpegBinary =
+  spawnSync("which", ["ffmpeg"], { stdio: "ignore" }).status === 0;
+const describeRunner =
+  process.env.GITHUB_ACTIONS || !hasVmDynamicImportSupport || !hasFfmpegBinary
+    ? describe.skip
+    : describe;
 
 describeRunner("FFMPEGWrapper", () => {
   /** @type { import("../../../../utils/WhisperProviders/ffmpeg/index").FFMPEGWrapper } */

@@ -1,4 +1,5 @@
 import { API_BASE } from "./constants";
+import { PRISM_SURFACES } from "@/utils/prism/surfaces";
 
 function applyOptions(path, options = {}) {
   let updatedPath = path;
@@ -55,20 +56,26 @@ export default {
   docs: () => {
     return "https://docs.anythingllm.com";
   },
+  handbook: () => {
+    return "https://handbook.metacanonai.com";
+  },
   metacanonAI: () => {
-    return "/metacanonai";
+    return PRISM_SURFACES.controlCenter.path;
   },
   metacanonAILab: () => {
-    return "/metacanonai/ui-lab";
+    return PRISM_SURFACES.uiLab.path;
   },
   metacanonAILibrary: () => {
-    return "/metacanonai/library";
+    return PRISM_SURFACES.library.path;
+  },
+  metacanonAIComposer: () => {
+    return PRISM_SURFACES.composer.path;
   },
   metacanonAIManualPreviews: () => {
-    return "/metacanonai/manual-previews";
+    return PRISM_SURFACES.manualPreviews.path;
   },
   metacanonAIRepoLab: () => {
-    return "/metacanonai/repo-lab";
+    return PRISM_SURFACES.repoLab.path;
   },
   chatModes: () => {
     return "https://docs.anythingllm.com/features/chat-modes";

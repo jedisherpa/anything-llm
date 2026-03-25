@@ -19,7 +19,7 @@ export default function SettingsButton() {
         <PrismHoverTarget targetId="settings-button-home">
           <Link
             to={paths.home()}
-            className="transition-all duration-300 p-[7px] rounded-full bg-theme-sidebar-footer-icon hover:bg-theme-sidebar-footer-icon-hover"
+            className="metacanon-footer-button transition-all duration-300 p-[7px] rounded-full"
             aria-label="Home"
             data-tooltip-id="footer-item"
             data-tooltip-content="Back to workspaces"
@@ -39,7 +39,7 @@ export default function SettingsButton() {
       <PrismHoverTarget targetId="settings-button-open">
         <Link
           to={paths.settings.interface()}
-          className="transition-all duration-300 p-[7px] rounded-full bg-theme-sidebar-footer-icon hover:bg-theme-sidebar-footer-icon-hover"
+          className="metacanon-footer-button transition-all duration-300 p-[7px] rounded-full"
           aria-label="Settings"
           data-tooltip-id="footer-item"
           data-tooltip-content="Open settings"

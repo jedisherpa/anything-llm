@@ -47,6 +47,11 @@ These commands should be run from the `server` directory, where the Prisma schem
 
 - Always make sure to run scripts from the root level to avoid path issues.
 - SQLite remains the default local and desktop runtime. The PostgreSQL scripts are a prep path for scalable server deployments and do not automatically cut over the desktop runtime.
+- Prisma datasource precedence is now:
+  - explicit `DATABASE_URL` if present
+  - otherwise, a SQLite path derived from `STORAGE_DIR` when desktop/runtime packaging provides it
+  - otherwise, the schema default path
+- Desktop packaging keeps SQLite as the default runtime and uses `STORAGE_DIR` to relocate the database without changing the server's public behavior.
 - Before running migrations, ensure that the Prisma schema is correctly defined to prevent data loss or corruption.
 - If you are adding a new feature or making changes that require a change in the database schema, create a new migration rather than editing existing migrations.
 - For users transitioning from the old SQLite ORM, navigate to the `server` directory and run the `sqlite:migrate` script to smoothly transition to Prisma. If you're setting up the project fresh, this step is unnecessary as the setup will already be using Prisma.

@@ -1,0 +1,101 @@
+{
+  "id": "sovereign-brand-forge",
+  "title": "Sovereign Brand Forge",
+  "displayTitle": "Sovereign Brand Forge",
+  "handle": "@constellation-sovereign-brand-forge",
+  "type": "Decagon",
+  "purpose": "To develop the complete strategic and creative architecture for a brand that intends to define and own a cultural category.",
+  "projectManagerTitle": "The Radical Transparency Operator",
+  "projectManagerHandle": "@mc-project-managers-board-radical-transparency-operator",
+  "members": [
+    {
+      "role": "The Why-Finder",
+      "lens_path": "/home/ubuntu/councils/marketing-branding-board/01_Start_With_Why_And_Golden_Circle_Lens.docx",
+      "displayRole": "The Why-Finder",
+      "relativePath": "councils/marketing-branding-board/01_Start_With_Why_And_Golden_Circle_Lens.md",
+      "lensId": "marketing-branding-board-why-finder",
+      "lensHandle": "@mc-marketing-branding-board-why-finder",
+      "lensTitle": "The Why-Finder"
+    },
+    {
+      "role": "The Underdog Champion",
+      "lens_path": "/home/ubuntu/councils/pauls-board/03_Underdog_Brand_And_Culture_Lens.docx",
+      "displayRole": "The Underdog Champion",
+      "relativePath": "councils/pauls-board/03_Underdog_Brand_And_Culture_Lens.md",
+      "lensId": "pauls-board-underdog-champion",
+      "lensHandle": "@mc-pauls-board-underdog-champion",
+      "lensTitle": "The Underdog Champion"
+    },
+    {
+      "role": "The Permission Marketer",
+      "lens_path": "/home/ubuntu/councils/marketing-branding-board/03_Permission_Marketing_And_Tribes_Lens.docx",
+      "displayRole": "The Permission Marketer",
+      "relativePath": "councils/marketing-branding-board/03_Permission_Marketing_And_Tribes_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    },
+    {
+      "role": "The Cultural Synesthete",
+      "lens_path": "/home/ubuntu/councils/visual-branding-board/03_The_Cultural_Synesthete_Lens.md",
+      "displayRole": "The Cultural Synesthete",
+      "relativePath": "councils/visual-branding-board/03_The_Cultural_Synesthete_Lens.md",
+      "lensId": "visual-branding-board-cultural-synesthete",
+      "lensHandle": "@mc-visual-branding-board-cultural-synesthete",
+      "lensTitle": "The Cultural Synesthete"
+    },
+    {
+      "role": "The Cultural Remixer",
+      "lens_path": "/home/ubuntu/councils/visual-branding-board/04_The_Cultural_Remixer_Lens.md",
+      "displayRole": "The Cultural Remixer",
+      "relativePath": "councils/visual-branding-board/04_The_Cultural_Remixer_Lens.md",
+      "lensId": "visual-branding-board-cultural-remixer",
+      "lensHandle": "@mc-visual-branding-board-cultural-remixer",
+      "lensTitle": "The Cultural Remixer"
+    },
+    {
+      "role": "The Cinematic Immersionist",
+      "lens_path": "/home/ubuntu/councils/visual-branding-board/07_The_Cinematic_Immersionist_Lens.md",
+      "displayRole": "The Cinematic Immersionist",
+      "relativePath": "councils/visual-branding-board/07_The_Cinematic_Immersionist_Lens.md",
+      "lensId": "visual-branding-board-cinematic-immersionist",
+      "lensHandle": "@mc-visual-branding-board-cinematic-immersionist",
+      "lensTitle": "The Cinematic Immersionist"
+    },
+    {
+      "role": "The Multimedia Storyteller",
+      "lens_path": "/home/ubuntu/councils/visual-branding-board/09_The_Multimedia_Storyteller_Lens.md",
+      "displayRole": "The Multimedia Storyteller",
+      "relativePath": "councils/visual-branding-board/09_The_Multimedia_Storyteller_Lens.md",
+      "lensId": "visual-branding-board-multimedia-storyteller",
+      "lensHandle": "@mc-visual-branding-board-multimedia-storyteller",
+      "lensTitle": "The Multimedia Storyteller"
+    },
+    {
+      "role": "The Grand Slam Offer Architect",
+      "lens_path": "/home/ubuntu/councils/visual-branding-board/05_The_Grand_Slam_Offer_Architect_Lens.md",
+      "displayRole": "The Grand Slam Offer Architect",
+      "relativePath": "councils/visual-branding-board/05_The_Grand_Slam_Offer_Architect_Lens.md",
+      "lensId": "visual-branding-board-grand-slam-offer-architect",
+      "lensHandle": "@mc-visual-branding-board-grand-slam-offer-architect",
+      "lensTitle": "The Grand Slam Offer Architect"
+    },
+    {
+      "role": "The Pastoral Authority",
+      "lens_path": "/home/ubuntu/councils/direct-response-board/01_Pastoral_Authority_And_Logical_Dominance_Lens.md",
+      "displayRole": "The Clarity Shepherd",
+      "relativePath": "councils/direct-response-board/01_Pastoral_Authority_And_Logical_Dominance_Lens.md",
+      "lensId": "direct-response-board-clarity-shepherd",
+      "lensHandle": "@mc-direct-response-board-clarity-shepherd",
+      "lensTitle": "The Clarity Shepherd"
+    }
+  ],
+  "relativePath": "constellations/decagon-2-sovereign-brand.json",
+  "detailPath": "constellations/sovereign-brand-forge.json",
+  "name": "Decagon 2: The \"Sovereign Brand\" Council",
+  "projectManager": "/home/ubuntu/councils/project-managers-board/09_Radical_Transparency_Operator_Lens.md",
+  "projectManagerRelativePath": "councils/project-managers-board/09_Radical_Transparency_Operator_Lens.md",
+  "projectManagerId": "project-managers-board-radical-transparency-operator",
+  "legacyId": "decagon-2-the-sovereign-brand-council",
+  "legacyHandle": "@constellation-decagon-2-the-sovereign-brand-council"
+}

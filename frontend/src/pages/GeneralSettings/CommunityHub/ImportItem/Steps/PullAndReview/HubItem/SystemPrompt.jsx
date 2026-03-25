@@ -37,18 +37,18 @@ export default function SystemPrompt({ item, setStep }) {
   }
 
   return (
-    <div className="flex flex-col mt-4 gap-y-4">
-      <div className="flex flex-col gap-y-1">
-        <h2 className="text-base text-theme-text-primary font-semibold">
+    <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-2">
+        <h2 className="text-xl font-semibold text-theme-text-primary">
           Review System Prompt "{item.name}"
         </h2>
         {item.creatorUsername && (
-          <p className="text-white/60 light:text-theme-text-secondary text-xs font-mono">
+          <p className="text-xs font-mono text-theme-text-secondary">
             Created by{" "}
             <a
               href={paths.communityHub.profile(item.creatorUsername)}
               target="_blank"
-              className="hover:text-blue-500 hover:underline"
+              className="font-semibold text-theme-primary-button transition-colors duration-200 hover:text-theme-text-primary hover:underline"
               rel="noreferrer"
             >
               @{item.creatorUsername}
@@ -56,50 +56,55 @@ export default function SystemPrompt({ item, setStep }) {
           </p>
         )}
       </div>
-      <div className="flex flex-col gap-y-[25px] text-white/80 light:text-theme-text-secondary text-sm">
+
+      <div className="prism-community-import-summary text-sm leading-7 text-theme-text-secondary">
         <p>
           System prompts are used to guide the behavior of the AI agents and can
           be applied to any existing workspace.
         </p>
-
-        <div className="flex flex-col gap-y-2">
-          <p className="text-white/60 light:text-theme-text-secondary font-semibold">
-            Provided system prompt:
-          </p>
-          <div className="w-full text-theme-text-primary text-md flex flex-col max-h-[calc(300px)] overflow-y-auto">
-            <p className="text-white/60 light:text-theme-text-secondary font-mono bg-zinc-900 light:bg-slate-200 px-2 py-1 rounded-md text-sm whitespace-pre-line">
-              {item.prompt}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex flex-col w-60">
-          <label className="text-theme-text-primary text-sm font-semibold block mb-3">
-            Apply to Workspace
-          </label>
-          <select
-            name="destinationWorkspaceSlug"
-            required={true}
-            onChange={(e) => setDestinationWorkspaceSlug(e.target.value)}
-            className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
-          >
-            <optgroup label="Available workspaces">
-              {workspaces.map((workspace) => (
-                <option key={workspace.id} value={workspace.slug}>
-                  {workspace.name}
-                </option>
-              ))}
-            </optgroup>
-          </select>
-        </div>
       </div>
-      {destinationWorkspaceSlug && (
-        <CTAButton
-          className="text-dark-text w-full mt-[18px] h-[34px] hover:bg-accent"
-          onClick={handleSubmit}
+
+      <div className="prism-community-import-code">
+        <div className="prism-community-import-code__header">
+          <span>Provided system prompt</span>
+          <span className="font-mono">prompt</span>
+        </div>
+        <pre className="whitespace-pre-wrap text-sm leading-7 text-theme-text-primary">
+          {item.prompt}
+        </pre>
+      </div>
+
+      <div className="prism-community-import-summary max-w-[320px]">
+        <label className="mb-3 block text-sm font-semibold text-theme-text-primary">
+          Apply to workspace
+        </label>
+        <select
+          name="destinationWorkspaceSlug"
+          required={true}
+          value={destinationWorkspaceSlug || ""}
+          onChange={(e) => setDestinationWorkspaceSlug(e.target.value)}
+          className="block w-full rounded-[14px] border-none bg-theme-settings-input-bg px-4 py-3 text-sm text-theme-settings-input-text"
         >
-          Apply system prompt to workspace
-        </CTAButton>
+          <optgroup label="Available workspaces">
+            {workspaces.map((workspace) => (
+              <option key={workspace.id} value={workspace.slug}>
+                {workspace.name}
+              </option>
+            ))}
+          </optgroup>
+        </select>
+      </div>
+
+      {destinationWorkspaceSlug && (
+        <div className="flex justify-end">
+          <CTAButton
+            type="button"
+            className="!mr-0 h-11 w-full rounded-[14px] text-dark-text md:w-auto md:min-w-[280px]"
+            onClick={handleSubmit}
+          >
+            Apply system prompt to workspace
+          </CTAButton>
+        </div>
       )}
     </div>
   );

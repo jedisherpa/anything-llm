@@ -1,0 +1,47 @@
+{
+  "id": "brand-voice-atelier",
+  "title": "Brand Voice Atelier",
+  "displayTitle": "Brand Voice Atelier",
+  "handle": "@constellation-brand-voice-atelier",
+  "type": "Tetrahedron",
+  "purpose": "To define the precise, ownable, and resonant voice of a brand — what it says, how it says it, and why it matters.",
+  "projectManagerTitle": "The Clearhead Operator",
+  "projectManagerHandle": "@mc-project-managers-board-clearhead-operator",
+  "members": [
+    {
+      "role": "The Storyteller",
+      "lens_path": "/home/ubuntu/councils/marketing-branding-board/02_StoryBrand_And_Clarify_Your_Message_Lens.docx",
+      "displayRole": "The Storyteller",
+      "relativePath": "councils/marketing-branding-board/02_StoryBrand_And_Clarify_Your_Message_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    },
+    {
+      "role": "The Hardcore Persuader",
+      "lens_path": "/home/ubuntu/councils/direct-response-board/03_Hardcore_Direct_Response_And_Accountability_Lens.md",
+      "displayRole": "The Hardcore Persuader",
+      "relativePath": "councils/direct-response-board/03_Hardcore_Direct_Response_And_Accountability_Lens.md",
+      "lensId": "direct-response-board-hardcore-persuader",
+      "lensHandle": "@mc-direct-response-board-hardcore-persuader",
+      "lensTitle": "The Hardcore Persuader"
+    },
+    {
+      "role": "The Perception Shaper",
+      "lens_path": "/home/ubuntu/councils/pauls-board/09_Perception_Signaling_And_Narrative_Lens.docx",
+      "displayRole": "The Perception Shaper",
+      "relativePath": "councils/pauls-board/09_Perception_Signaling_And_Narrative_Lens.md",
+      "lensId": "pauls-board-perception-shaper",
+      "lensHandle": "@mc-pauls-board-perception-shaper",
+      "lensTitle": "The Perception Shaper"
+    }
+  ],
+  "relativePath": "constellations/tetrahedron-2-brand-voice.json",
+  "detailPath": "constellations/brand-voice-atelier.json",
+  "name": "Tetrahedron 2: The \"Brand Voice\" Quad",
+  "projectManager": "/home/ubuntu/councils/project-managers-board/03_Clearhead_Execution_Lens.md",
+  "projectManagerRelativePath": "councils/project-managers-board/03_Clearhead_Execution_Lens.md",
+  "projectManagerId": "project-managers-board-clearhead-operator",
+  "legacyId": "tetrahedron-2-the-brand-voice-quad",
+  "legacyHandle": "@constellation-tetrahedron-2-the-brand-voice-quad"
+}

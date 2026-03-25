@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-import { Plus } from "@phosphor-icons/react/dist/csr/Plus";
 import { MagnifyingGlass } from "@phosphor-icons/react/dist/csr/MagnifyingGlass";
 
 import { useTranslation } from "react-i18next";
@@ -210,7 +209,7 @@ function ShortWidthNewWorkspaceButton({ user, showNewWsModal }) {
           onClick={showNewWsModal}
           className="metacanon-search-create-button border-none flex h-[44px] w-[44px] items-center justify-center rounded-[14px] transition-all duration-300"
         >
-          <Plus size={18} weight="bold" />
+          <MagnifyingGlass size={18} weight="bold" />
         </button>
       </PrismHoverTarget>
       <Tooltip

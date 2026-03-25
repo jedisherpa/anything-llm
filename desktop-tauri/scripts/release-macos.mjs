@@ -43,6 +43,8 @@ function parseArgs(argv) {
     outputDir: resolve(desktopDir, "release-artifacts"),
     adHoc: false,
     notaryTimeoutMinutes: DEFAULT_NOTARY_TIMEOUT_MINUTES,
+    maxAppBytes: DEFAULT_BUDGETS.maxAppBytes,
+    maxDmgBytes: DEFAULT_BUDGETS.maxDmgBytes,
     help: false,
   };
 
@@ -76,6 +78,12 @@ function parseArgs(argv) {
           argv[++index] || options.notaryTimeoutMinutes
         );
         break;
+      case "--max-app-bytes":
+        options.maxAppBytes = Number(argv[++index] || options.maxAppBytes);
+        break;
+      case "--max-dmg-bytes":
+        options.maxDmgBytes = Number(argv[++index] || options.maxDmgBytes);
+        break;
       case "--help":
       case "-h":
         options.help = true;
@@ -101,6 +109,8 @@ Options:
   --output-dir "<path>"          Write release artifacts and manifest to this directory
   --ad-hoc                        Ad-hoc sign the staged build for local verification only
   --notary-timeout-minutes <n>    Poll Apple notarization up to this many minutes before marking pending
+  --max-app-bytes <n>             Override the .app audit budget
+  --max-dmg-bytes <n>             Override the .dmg audit budget
   --help                          Show this help
 `);
 }
@@ -602,6 +612,10 @@ async function main() {
   const zipNotaryLogPath = join(publishRoot, `${artifactBase}-zip-notary-log.json`);
   const dmgNotaryLogPath = join(publishRoot, `${artifactBase}-dmg-notary-log.json`);
   const source = loadSourceMetadata();
+  const auditBudgets = {
+    maxAppBytes: options.maxAppBytes,
+    maxDmgBytes: options.maxDmgBytes,
+  };
 
   const manifest = {
     productName,
@@ -641,7 +655,7 @@ async function main() {
     manifest.signing = signApp(stagedApp, options);
 
     stage("verify-app", "Auditing the staged app bundle against packaging budgets, banned payloads, and arm64-only binary rules.");
-    manifest.audits.app = auditAppBundle(stagedApp, DEFAULT_BUDGETS);
+    manifest.audits.app = auditAppBundle(stagedApp, auditBudgets);
     if (!manifest.audits.app.passed) {
       throw new Error(`App audit failed: ${manifest.audits.app.failures.join("; ")}`);
     }
@@ -710,7 +724,7 @@ async function main() {
     manifest.artifacts.push(artifactInfo(dmgPath, "dmg"));
 
     stage("verify-dmg", "Auditing the final DMG against size budgets and verifying the mounted installer contents.");
-    manifest.audits.dmg = auditDmg(dmgPath, DEFAULT_BUDGETS);
+    manifest.audits.dmg = auditDmg(dmgPath, auditBudgets);
     if (!manifest.audits.dmg.passed) {
       throw new Error(`DMG audit failed: ${manifest.audits.dmg.failures.join("; ")}`);
     }

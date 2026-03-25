@@ -44,7 +44,7 @@ export function OnboardingLayout({ children }) {
       >
         <div className="flex flex-col">
           <div className="prism-onboarding-panel w-full relative py-10 px-2">
-            <div className="flex flex-col w-fit mx-auto gap-y-1 mb-[55px]">
+            <div className="prism-onboarding-header">
               <h1 className="text-theme-text-primary font-semibold text-center text-2xl">
                 {header.title}
               </h1>
@@ -60,7 +60,7 @@ export function OnboardingLayout({ children }) {
                 <button
                   disabled={backBtn.disabled}
                   onClick={backBtn.onClick}
-                  className="group p-2 rounded-lg border-2 border-zinc-300 disabled:border-zinc-600 h-fit w-fit disabled:not-allowed hover:bg-zinc-100 disabled:hover:bg-transparent"
+                  className="prism-onboarding-nav-button group disabled:cursor-not-allowed"
                 >
                   <ArrowLeft
                     className="text-white group-hover:text-black group-disabled:text-gray-500"
@@ -75,7 +75,7 @@ export function OnboardingLayout({ children }) {
                 <button
                   disabled={forwardBtn.disabled}
                   onClick={forwardBtn.onClick}
-                  className="group p-2 rounded-lg border-2 border-zinc-300 disabled:border-zinc-600 h-fit w-fit disabled:not-allowed hover:bg-teal disabled:hover:bg-transparent"
+                  className="prism-onboarding-nav-button group disabled:cursor-not-allowed"
                 >
                   <ArrowRight
                     className="text-white group-hover:text-teal group-disabled:text-gray-500"
@@ -100,7 +100,7 @@ export function OnboardingLayout({ children }) {
           <button
             disabled={backBtn.disabled}
             onClick={backBtn.onClick}
-            className="group p-2 rounded-lg border-2 border-theme-sidebar-border h-fit w-fit disabled:cursor-not-allowed hover:bg-theme-bg-secondary disabled:hover:bg-transparent"
+            className="prism-onboarding-nav-button group disabled:cursor-not-allowed"
             aria-label="Back"
           >
             <ArrowLeft
@@ -112,7 +112,7 @@ export function OnboardingLayout({ children }) {
       </div>
 
       <div className="prism-onboarding-panel w-full md:w-3/5 relative h-full py-10">
-        <div className="flex flex-col w-fit mx-auto gap-y-1 mb-[55px]">
+        <div className="prism-onboarding-header">
           <h1 className="text-theme-text-primary font-semibold text-center text-2xl">
             {header.title}
           </h1>
@@ -128,7 +128,7 @@ export function OnboardingLayout({ children }) {
           <button
             disabled={forwardBtn.disabled}
             onClick={forwardBtn.onClick}
-            className="group p-2 rounded-lg border-2 border-theme-sidebar-border h-fit w-fit disabled:cursor-not-allowed hover:bg-teal disabled:hover:bg-transparent"
+            className="prism-onboarding-nav-button group disabled:cursor-not-allowed"
             aria-label="Continue"
           >
             <ArrowRight

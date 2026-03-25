@@ -1,0 +1,83 @@
+{
+  "id": "ai-product-council",
+  "title": "AI Product Council",
+  "displayTitle": "AI Product Council",
+  "handle": "@constellation-ai-product-council",
+  "type": "Star Tetrahedron",
+  "purpose": "To design, position, and govern an AI-powered product from first principles to market launch.",
+  "projectManagerTitle": "The Complexity Navigator",
+  "projectManagerHandle": "@mc-project-managers-board-complexity-navigator",
+  "members": [
+    {
+      "role": "The First-Principles Engineer",
+      "lens_path": "/home/ubuntu/councils/pauls-board/01_First_Principles_Engineer_Lens.docx",
+      "displayRole": "The First-Principles Engineer",
+      "relativePath": "councils/pauls-board/01_First_Principles_Engineer_Lens.md",
+      "lensId": "pauls-board-first-principles-engineer",
+      "lensHandle": "@mc-pauls-board-first-principles-engineer",
+      "lensTitle": "The First-Principles Engineer"
+    },
+    {
+      "role": "The Interaction Designer",
+      "lens_path": "/home/ubuntu/councils/pauls-board/08_Human_Comprehension_And_Interaction_Lens.docx",
+      "displayRole": "The Interaction Designer",
+      "relativePath": "councils/pauls-board/08_Human_Comprehension_And_Interaction_Lens.md",
+      "lensId": "pauls-board-interaction-designer",
+      "lensHandle": "@mc-pauls-board-interaction-designer",
+      "lensTitle": "The Interaction Designer"
+    },
+    {
+      "role": "The Ethical Boundary",
+      "lens_path": "/home/ubuntu/councils/pauls-board/06_Human_Dignity_And_Ethical_Boundary_Lens.docx",
+      "displayRole": "The Ethical Boundary",
+      "relativePath": "councils/pauls-board/06_Human_Dignity_And_Ethical_Boundary_Lens.md",
+      "lensId": "pauls-board-ethical-boundary",
+      "lensHandle": "@mc-pauls-board-ethical-boundary",
+      "lensTitle": "The Ethical Boundary"
+    },
+    {
+      "role": "The Keystone Problem Solver",
+      "lens_path": "/home/ubuntu/councils/millennial-founders-board/06_Keystone_Problem_AI_Builders_Lens.docx",
+      "displayRole": "The Keystone Problem Solver",
+      "relativePath": "councils/millennial-founders-board/06_Keystone_Problem_AI_Builders_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    },
+    {
+      "role": "The Contrarian",
+      "lens_path": "/home/ubuntu/councils/millennial-founders-board/03_Contrarian_Infrastructure_Builder_Lens.docx",
+      "displayRole": "The Contrarian Builder",
+      "relativePath": "councils/millennial-founders-board/03_Contrarian_Infrastructure_Builder_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    },
+    {
+      "role": "The Customer-Obsessed Architect",
+      "lens_path": "/home/ubuntu/councils/millennial-founders-board/08_Customer_Obsessed_Culture_Architect_Lens.docx",
+      "displayRole": "The Customer-Obsessed Architect",
+      "relativePath": "councils/millennial-founders-board/08_Customer_Obsessed_Culture_Architect_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    },
+    {
+      "role": "The Positioning Expert",
+      "lens_path": "/home/ubuntu/councils/marketing-branding-board/04_Obviously_Awesome_Positioning_Lens.docx",
+      "displayRole": "The Market Positioner",
+      "relativePath": "councils/marketing-branding-board/04_Obviously_Awesome_Positioning_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    }
+  ],
+  "relativePath": "constellations/star-tetrahedron-4-ai-product-council.json",
+  "detailPath": "constellations/ai-product-council.json",
+  "name": "Star Tetrahedron 4: The \"AI Product Council\"",
+  "projectManager": "/home/ubuntu/councils/project-managers-board/10_Complexity_Navigator_Lens.md",
+  "projectManagerRelativePath": "councils/project-managers-board/10_Complexity_Navigator_Lens.md",
+  "projectManagerId": "project-managers-board-complexity-navigator",
+  "legacyId": "star-tetrahedron-4-the-ai-product-council",
+  "legacyHandle": "@constellation-star-tetrahedron-4-the-ai-product-council"
+}

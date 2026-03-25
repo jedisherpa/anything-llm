@@ -15,6 +15,18 @@ const BOARD_ACCENTS = {
 };
 
 const COUNCIL_ACCENTS = {
+  "matchless-love-council": "#d9b24c",
+  "prophetic-witness-council": "#d9895f",
+  "wholistic-restoration-council": "#df6f77",
+  "fierce-compassion-council": "#e2778b",
+  "reconciliation-and-wholeness-council": "#b56be3",
+  "unseen-weavers-council": "#6d7cff",
+  "discerning-intellect-council": "#46c8ff",
+  "questioner-council": "#47d7c1",
+  "witness-and-the-void-council": "#6fdb8a",
+  "strategic-mind-council": "#b3d85a",
+  "builder-and-the-pivot-council": "#d5a24c",
+  "sovereign-command-and-legacy-council": "#db7a5f",
   Council_01: "#d9b24c",
   Council_02: "#d9895f",
   Council_03: "#df6f77",
@@ -38,6 +50,16 @@ function emitAlignmentUpdate(detail = null) {
   );
 }
 
+function uniqueStrings(values = []) {
+  return Array.from(
+    new Set(
+      (Array.isArray(values) ? values : [])
+        .map((value) => String(value || "").trim())
+        .filter(Boolean)
+    )
+  );
+}
+
 export function getMetacanonLensAccent(lens = {}) {
   if (lens?.colorHex) return lens.colorHex;
   if (lens?.councilId && COUNCIL_ACCENTS[lens.councilId]) {
@@ -49,20 +71,80 @@ export function getMetacanonLensAccent(lens = {}) {
   return "#d4a63e";
 }
 
+export function buildCouncilPackPrompt({
+  name = "Saved Constellation",
+  lensHandles = [],
+  leadHandle = "",
+  userQuery = "",
+}) {
+  return `@council
+Pack: ${name}
+${leadHandle ? `Lead: ${String(leadHandle).trim()}\n` : ""}Lenses: ${uniqueStrings(lensHandles).join(", ")}
+User query:
+${String(userQuery || "").trim()}`;
+}
+
+export function normalizeMetacanonAlignment(alignment = {}) {
+  const nextAlignment =
+    alignment && typeof alignment === "object" ? alignment : {};
+  const lensHandles = uniqueStrings(nextAlignment.lensHandles);
+  const normalizedHandle = String(nextAlignment.handle || "").trim() || null;
+  const inferredKind =
+    nextAlignment.kind ||
+    nextAlignment.mode ||
+    (lensHandles.length > 0 && !normalizedHandle
+      ? "pack"
+      : normalizedHandle === "@agent"
+        ? "agent"
+        : normalizedHandle?.startsWith("@constellation-")
+          ? "constellation"
+          : "lens");
+
+  return {
+    id: nextAlignment.id || null,
+    title:
+      nextAlignment.title ||
+      nextAlignment.name ||
+      nextAlignment.archetypeName ||
+      "Untitled Alignment",
+    handle: normalizedHandle,
+    kind: inferredKind,
+    sourceId: nextAlignment.sourceId || null,
+    description: nextAlignment.description || "",
+    collectionLabel:
+      nextAlignment.collectionLabel ||
+      nextAlignment.board ||
+      (inferredKind === "pack" ? "Saved Constellation" : "Library"),
+    colorHex: nextAlignment.colorHex || getMetacanonLensAccent(nextAlignment),
+    lensHandles,
+    lensTitles: uniqueStrings(nextAlignment.lensTitles),
+    leadHandle: String(nextAlignment.leadHandle || "").trim() || null,
+    leadTitle: String(nextAlignment.leadTitle || "").trim() || null,
+  };
+}
+
+export function isRunnableMetacanonAlignment(alignment = {}) {
+  const normalizedAlignment = normalizeMetacanonAlignment(alignment);
+  if (!normalizedAlignment?.title) return false;
+
+  if (normalizedAlignment.kind === "pack") {
+    return normalizedAlignment.lensHandles.length > 0;
+  }
+
+  return Boolean(normalizedAlignment.handle);
+}
+
 export function getActiveMetacanonAlignment() {
   if (typeof window === "undefined") return null;
-  return safeJsonParse(localStorage.getItem(ACTIVE_METACANON_ALIGNMENT), null);
+  return normalizeMetacanonAlignment(
+    safeJsonParse(localStorage.getItem(ACTIVE_METACANON_ALIGNMENT), null)
+  );
 }
 
 export function setActiveMetacanonAlignment(alignment = {}) {
   if (typeof window === "undefined") return null;
-  const next = {
-    id: alignment.id || null,
-    title: alignment.title || alignment.archetypeName || "Untitled Lens",
-    handle: alignment.handle || null,
-    collectionLabel: alignment.collectionLabel || alignment.board || "Library",
-    colorHex: alignment.colorHex || getMetacanonLensAccent(alignment),
-  };
+  const next = normalizeMetacanonAlignment(alignment);
+  if (!isRunnableMetacanonAlignment(next)) return null;
 
   localStorage.setItem(ACTIVE_METACANON_ALIGNMENT, JSON.stringify(next));
   emitAlignmentUpdate(next);
@@ -75,12 +157,41 @@ export function clearActiveMetacanonAlignment() {
   emitAlignmentUpdate(null);
 }
 
-export function buildAlignedPrompt(
+export function buildPromptForAlignment(
   prompt = "",
   alignment = getActiveMetacanonAlignment()
 ) {
   const trimmed = String(prompt || "").trim();
-  if (!trimmed || !alignment?.handle) return prompt;
+  if (!trimmed || !alignment) return prompt;
   if (/^[@/]/.test(trimmed)) return prompt;
-  return `${alignment.handle} ${trimmed}`;
+  if (!isRunnableMetacanonAlignment(alignment)) return prompt;
+
+  if (alignment.kind === "pack") {
+    return buildCouncilPackPrompt({
+      name: alignment.title,
+      lensHandles: alignment.lensHandles,
+      leadHandle: alignment.leadHandle,
+      userQuery: trimmed,
+    });
+  }
+
+  if (!alignment.handle) return prompt;
+  return `${buildExplicitMetacanonInvocation(alignment.handle)} ${trimmed}`.trim();
+}
+
+export function buildAlignedPrompt(
+  prompt = "",
+  alignment = getActiveMetacanonAlignment()
+) {
+  return buildPromptForAlignment(prompt, alignment);
+}
+
+export function buildExplicitMetacanonInvocation(handle = "") {
+  const normalizedHandle = String(handle || "").trim();
+  if (!normalizedHandle) return "";
+  if (normalizedHandle === "@agent") return "/agent";
+  if (normalizedHandle.startsWith("@constellation-")) {
+    return `/constellation ${normalizedHandle}`;
+  }
+  return `/lens ${normalizedHandle}`;
 }

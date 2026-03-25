@@ -1,0 +1,47 @@
+{
+  "id": "offer-architecture-engine",
+  "title": "Offer Architecture Engine",
+  "displayTitle": "Offer Architecture Engine",
+  "handle": "@constellation-offer-architecture-engine",
+  "type": "Tetrahedron",
+  "purpose": "To engineer an irresistible, high-value offer that converts at scale.",
+  "projectManagerTitle": "The Constraint Navigator",
+  "projectManagerHandle": "@mc-project-managers-board-constraint-navigator",
+  "members": [
+    {
+      "role": "The Grand Slam Offer Architect",
+      "lens_path": "/home/ubuntu/councils/visual-branding-board/05_The_Grand_Slam_Offer_Architect_Lens.md",
+      "displayRole": "The Grand Slam Offer Architect",
+      "relativePath": "councils/visual-branding-board/05_The_Grand_Slam_Offer_Architect_Lens.md",
+      "lensId": "visual-branding-board-grand-slam-offer-architect",
+      "lensHandle": "@mc-visual-branding-board-grand-slam-offer-architect",
+      "lensTitle": "The Grand Slam Offer Architect"
+    },
+    {
+      "role": "The Direct Response Master",
+      "lens_path": "/home/ubuntu/councils/direct-response-board/04_Simple_Writing_System_And_One_Reader_Lens.md",
+      "displayRole": "The Direct Response Master",
+      "relativePath": "councils/direct-response-board/04_Simple_Writing_System_And_One_Reader_Lens.md",
+      "lensId": "direct-response-board-direct-response-master",
+      "lensHandle": "@mc-direct-response-board-direct-response-master",
+      "lensTitle": "The Direct Response Master"
+    },
+    {
+      "role": "The Positioning Expert",
+      "lens_path": "/home/ubuntu/councils/marketing-branding-board/04_Obviously_Awesome_Positioning_Lens.docx",
+      "displayRole": "The Market Positioner",
+      "relativePath": "councils/marketing-branding-board/04_Obviously_Awesome_Positioning_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    }
+  ],
+  "relativePath": "constellations/tetrahedron-6-offer-architecture.json",
+  "detailPath": "constellations/offer-architecture-engine.json",
+  "name": "Tetrahedron 6: The \"Offer Architecture\" Quad",
+  "projectManager": "/home/ubuntu/councils/project-managers-board/02_Critical_Chain_Constraint_Lens.md",
+  "projectManagerRelativePath": "councils/project-managers-board/02_Critical_Chain_Constraint_Lens.md",
+  "projectManagerId": "project-managers-board-constraint-navigator",
+  "legacyId": "tetrahedron-6-the-offer-architecture-quad",
+  "legacyHandle": "@constellation-tetrahedron-6-the-offer-architecture-quad"
+}

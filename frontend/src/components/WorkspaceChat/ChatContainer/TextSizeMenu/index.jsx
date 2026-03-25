@@ -12,7 +12,12 @@ function getTextSizes(t) {
   ];
 }
 
-export default function TextSizeMenu() {
+export default function TextSizeMenu({
+  floating = true,
+  className = "",
+  buttonClassName = "",
+  panelClassName = "",
+}) {
   const { t } = useTranslation();
   const TEXT_SIZES = useMemo(() => getTextSizes(t), [t]);
   const mode = useLoginMode();
@@ -48,18 +53,21 @@ export default function TextSizeMenu() {
   // User icon is visible when login mode is active (single with password or multi-user)
   const hasUserIcon = mode !== null;
 
+  const wrapperClassName = floating
+    ? `absolute top-3 z-30 ${hasUserIcon ? "right-[55px] md:right-[67px]" : "right-4 md:right-6"}`
+    : `relative z-30 ${className}`;
+
   return (
-    <div
-      className={`absolute top-3 md:top-5 z-30 ${hasUserIcon ? "right-[55px] md:right-[67px]" : "right-4 md:right-6"}`}
-    >
+    <div className={wrapperClassName}>
       <button
         ref={buttonRef}
         type="button"
         onClick={() => setShowMenu(!showMenu)}
         className={`group border-none cursor-pointer flex items-center justify-center w-[35px] h-[35px] rounded-full transition-all ${
-          showMenu
+          buttonClassName ||
+          (showMenu
             ? "bg-zinc-700 light:bg-slate-200"
-            : "hover:bg-zinc-700 light:hover:bg-slate-200"
+            : "hover:bg-zinc-700 light:hover:bg-slate-200")
         }`}
       >
         <SlidersHorizontal
@@ -75,7 +83,7 @@ export default function TextSizeMenu() {
       {showMenu && (
         <div
           ref={menuRef}
-          className="absolute right-0 top-[42px] bg-zinc-800 light:bg-white border border-zinc-700 light:border-slate-300 rounded-lg p-3 w-[200px] flex flex-col gap-1 shadow-lg"
+          className={`absolute right-0 top-[42px] bg-zinc-800 light:bg-white border border-zinc-700 light:border-slate-300 rounded-lg p-3 w-[200px] flex flex-col gap-1 shadow-lg ${panelClassName}`}
         >
           <p className="text-[10px] font-medium text-zinc-400 light:text-slate-500 px-2 mb-0.5">
             {t("chat_window.text_size_label")}

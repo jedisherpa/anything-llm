@@ -30,8 +30,7 @@ export const STARTER_PACKS = [
     id: "builder",
     title: "Builder",
     subtitle: "First-principles building with practical execution",
-    handle:
-      "@mc-millennial-founders-board-09-first-principles-master-builder-lens",
+    handle: "@mc-millennial-founders-board-first-principles-builder",
     collectionLabel: "Starter Pack",
     colorHex: "#d9895f",
     glyph: "Bd",
@@ -40,7 +39,7 @@ export const STARTER_PACKS = [
     id: "reflection",
     title: "Reflection",
     subtitle: "Stillness, perspective, and inner calibration",
-    handle: "@mc-lens-09-09-the-empty-bowl",
+    handle: "@mc-witness-and-the-void-council-empty-bowl",
     collectionLabel: "Starter Pack",
     colorHex: "#9f8cff",
     glyph: "Rf",

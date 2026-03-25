@@ -622,10 +622,11 @@ function workspaceEndpoints(app) {
         const TTSProvider = getTTSProvider();
         const buffer = await TTSProvider.ttsBuffer(text);
         if (buffer === null) return response.sendStatus(204).end();
+        const mime = TTSProvider.mimeType || "audio/mpeg";
 
-        responseCache.set(cacheKey, { buffer, mime: "audio/mpeg" });
+        responseCache.set(cacheKey, { buffer, mime });
         response.writeHead(200, {
-          "Content-Type": "audio/mpeg",
+          "Content-Type": mime,
         });
         response.end(buffer);
         return;

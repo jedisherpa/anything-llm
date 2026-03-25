@@ -82,7 +82,9 @@ export function ToggleSidebarButton({ showSidebar, setShowSidebar }) {
     <>
       <button
         type="button"
-        className={`hidden md:block border-none bg-transparent outline-none ring-0 absolute transition-all duration-500 z-10 ${showSidebar ? "top-[18px] left-[248px]" : "top-[20px] left-[30px]"}`}
+        className={`metacanon-sidebar-toggle-button hidden md:flex h-8 w-8 items-center justify-center border-none bg-transparent outline-none ring-0 absolute transition-all duration-500 z-10 ${
+          showSidebar ? "top-[12px] right-[12px]" : "top-[12px] left-[12px]"
+        }`}
         onClick={() => setShowSidebar((prev) => !prev)}
         data-tooltip-id="sidebar-toggle"
         data-tooltip-content={

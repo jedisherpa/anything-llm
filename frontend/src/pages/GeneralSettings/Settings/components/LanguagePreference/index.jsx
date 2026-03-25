@@ -11,17 +11,18 @@ export default function LanguagePreference() {
   } = useLanguageOptions();
 
   return (
-    <div className="flex flex-col gap-y-0.5 my-4">
-      <p className="text-sm leading-6 font-semibold text-white">
+    <section className="prism-settings-field">
+      <div className="prism-page-section-label">Language</div>
+      <p className="prism-settings-field-title">
         {t("customization.items.display-language.title")}
       </p>
-      <p className="text-xs text-white/60">
+      <p className="prism-settings-field-copy">
         {t("customization.items.display-language.description")}
       </p>
-      <div className="flex items-center gap-x-4">
+      <div className="prism-settings-select-wrap">
         <select
           name="userLang"
-          className="border-none bg-theme-settings-input-bg mt-2 text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-fit py-2 px-4"
+          className="prism-settings-select"
           defaultValue={currentLanguage || "en"}
           onChange={(e) => changeLanguage(e.target.value)}
         >
@@ -34,6 +35,6 @@ export default function LanguagePreference() {
           })}
         </select>
       </div>
-    </div>
+    </section>
   );
 }

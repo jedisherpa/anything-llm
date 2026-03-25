@@ -1,5 +1,6 @@
 import Sidebar, { SidebarMobileHeader } from "@/components/Sidebar";
 import PrismHoverTarget from "@/components/PrismHoverTarget";
+import { fetchMetacanonFeatures } from "@/models/metacanonLibrary";
 import useUser from "@/hooks/useUser";
 import paths from "@/utils/paths";
 import metacanonLibrarySummary from "@/data/metacanon/summary.generated";
@@ -12,9 +13,15 @@ import { Wrench } from "@phosphor-icons/react/dist/csr/Wrench";
 import { Books } from "@phosphor-icons/react/dist/csr/Books";
 
 import { isMobile } from "react-device-detect";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
-const isDev = import.meta.env.DEV;
+import {
+  PRISM_SURFACE_STABILITY,
+  PRISM_SURFACES,
+  prismExperimentalSurfacesEnabled,
+  prismRepoLabEnabled,
+  prismSurfaceBadge,
+} from "@/utils/prism/surfaces";
 
 function MetacanonMark({ className = "h-12 w-12" }) {
   return (
@@ -72,20 +79,34 @@ function UILabIcon({ className = "h-7 w-7" }) {
   );
 }
 
-function FeatureCard({ title, description, cta, href, icon, targetId }) {
+function FeatureCard({
+  title,
+  description,
+  cta,
+  href,
+  icon,
+  targetId,
+  stability = PRISM_SURFACE_STABILITY.STABLE,
+}) {
+  const badge = prismSurfaceBadge({ stability });
   const card = (
     <Link
       to={href}
-      className="group flex h-full flex-col justify-between rounded-[20px] border border-theme-sidebar-border bg-theme-bg-sidebar px-5 py-5 shadow-[0_12px_34px_rgba(15,10,4,0.06)] transition-all duration-300 hover:-translate-y-[1px] hover:border-theme-primary-button hover:shadow-[0_16px_40px_rgba(15,10,4,0.1)]"
+      className="prism-page-card prism-page-card--interactive flex h-full flex-col justify-between"
     >
       <div className="flex flex-col gap-4">
         <div className="flex h-11 w-11 items-center justify-center rounded-[14px] bg-theme-sidebar-footer-icon">
           {icon}
         </div>
         <div className="flex flex-col gap-2">
-          <h2 className="text-base font-semibold text-theme-text-primary">
-            {title}
-          </h2>
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-base font-semibold text-theme-text-primary">
+              {title}
+            </h2>
+            <span className="rounded-full border border-theme-sidebar-border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-theme-text-secondary">
+              {badge}
+            </span>
+          </div>
           <p className="text-sm leading-6 text-theme-text-secondary">
             {description}
           </p>
@@ -106,7 +127,7 @@ function FeatureCard({ title, description, cta, href, icon, targetId }) {
 
 function StatusTile({ label, value, description }) {
   return (
-    <div className="rounded-[18px] border border-theme-sidebar-border bg-theme-bg-sidebar px-4 py-4">
+    <div className="prism-page-stat">
       <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-text-secondary">
         {label}
       </div>
@@ -122,10 +143,33 @@ function StatusTile({ label, value, description }) {
 
 export default function MetacanonAIPage() {
   const { user } = useUser();
+  const [metacanonFeatures, setMetacanonFeatures] = useState(null);
   const role = user?.role;
   const canManage = !role || role !== "default";
   const canAdmin = !role || role === "admin";
   const councilCount = metacanonLibrarySummary.councilCount || 0;
+  const experimentalPrismEnabled = prismExperimentalSurfacesEnabled();
+  const repoLabEnabled =
+    prismRepoLabEnabled() && !!metacanonFeatures?.repoLabReadEnabled;
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetchMetacanonFeatures()
+      .then((features) => {
+        if (!cancelled) setMetacanonFeatures(features);
+      })
+      .catch((error) => {
+        console.warn(
+          "Failed to hydrate Metacanon feature flags for the control center.",
+          error
+        );
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const featureCards = [
     {
@@ -137,26 +181,40 @@ export default function MetacanonAIPage() {
       icon: <Books className="h-5 w-5 text-theme-text-primary" />,
       targetId: "metacanon-library",
       enabled: true,
+      stability: PRISM_SURFACE_STABILITY.STABLE,
+    },
+    {
+      title: "Lens Composer",
+      description:
+        "Compose strict productivity shapes and freeform reflective councils from the existing Metacanon lens library.",
+      cta: "Open composer",
+      href: paths.metacanonAIComposer(),
+      icon: <FlowArrow className="h-5 w-5 text-theme-text-primary" />,
+      targetId: "metacanon-lens-composer",
+      enabled: true,
+      stability: PRISM_SURFACE_STABILITY.STABLE,
     },
     {
       title: "Prism Hero",
       description:
         "Open the Prism visual sandbox for hero composition and presentation testing.",
       cta: "Open hero surface",
-      href: "/prism-hero",
+      href: PRISM_SURFACES.prismHero.path,
       icon: <MetacanonMark className="h-7 w-7" />,
       targetId: "metacanon-prism-hero",
-      enabled: isDev,
+      enabled: experimentalPrismEnabled,
+      stability: PRISM_SURFACE_STABILITY.EXPERIMENTAL,
     },
     {
       title: "Prism Geometry",
       description:
         "Inspect the dodecahedron lab for shape, lighting, and visual direction work.",
       cta: "Open geometry lab",
-      href: "/prism-dodecahedron",
+      href: PRISM_SURFACES.prismDodecahedron.path,
       icon: <FlowArrow className="h-5 w-5 text-theme-text-primary" />,
       targetId: "metacanon-prism-geometry",
-      enabled: isDev,
+      enabled: experimentalPrismEnabled,
+      stability: PRISM_SURFACE_STABILITY.EXPERIMENTAL,
     },
     {
       title: "UI Lab",
@@ -166,7 +224,19 @@ export default function MetacanonAIPage() {
       href: paths.metacanonAILab(),
       icon: <UILabIcon className="h-6 w-6 text-theme-text-primary" />,
       targetId: "metacanon-ui-lab",
-      enabled: isDev,
+      enabled: experimentalPrismEnabled,
+      stability: PRISM_SURFACE_STABILITY.EXPERIMENTAL,
+    },
+    {
+      title: "Manual Previews",
+      description:
+        "Inspect manual screenshot and preview tooling without mixing it into the stable product path.",
+      cta: "Open preview tooling",
+      href: paths.metacanonAIManualPreviews(),
+      icon: <Books className="h-5 w-5 text-theme-text-primary" />,
+      targetId: "metacanon-manual-previews",
+      enabled: experimentalPrismEnabled,
+      stability: PRISM_SURFACE_STABILITY.EXPERIMENTAL,
     },
     {
       title: "Repo Lab",
@@ -176,7 +246,8 @@ export default function MetacanonAIPage() {
       href: paths.metacanonAIRepoLab(),
       icon: <BracketsCurly className="h-6 w-6 text-theme-text-primary" />,
       targetId: "metacanon-repo-lab",
-      enabled: isDev && canManage,
+      enabled: repoLabEnabled && canManage,
+      stability: PRISM_SURFACE_STABILITY.EXPERIMENTAL,
     },
     {
       title: "Interface & Theme",
@@ -187,6 +258,7 @@ export default function MetacanonAIPage() {
       icon: <Gear className="h-5 w-5 text-theme-text-primary" />,
       targetId: "metacanon-interface",
       enabled: canManage,
+      stability: PRISM_SURFACE_STABILITY.ADMIN_ONLY,
     },
     {
       title: "Branding",
@@ -197,6 +269,7 @@ export default function MetacanonAIPage() {
       icon: <Wrench className="h-5 w-5 text-theme-text-primary" />,
       targetId: "metacanon-branding",
       enabled: canManage,
+      stability: PRISM_SURFACE_STABILITY.ADMIN_ONLY,
     },
     {
       title: "Prism Runtime",
@@ -207,6 +280,7 @@ export default function MetacanonAIPage() {
       icon: <Robot className="h-5 w-5 text-theme-text-primary" />,
       targetId: "metacanon-agents",
       enabled: canAdmin,
+      stability: PRISM_SURFACE_STABILITY.ADMIN_ONLY,
     },
   ].filter((card) => card.enabled);
 
@@ -215,10 +289,10 @@ export default function MetacanonAIPage() {
       {!isMobile ? <Sidebar /> : <SidebarMobileHeader />}
       <div
         style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
-        className="metacanon-page-frame relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
+        className="metacanon-page-frame relative md:mx-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
       >
-        <div className="flex flex-col w-full px-1 md:px-6 md:py-6 py-20 gap-6">
-          <div className="rounded-[24px] border border-theme-sidebar-border bg-theme-bg-sidebar px-6 py-6 shadow-[0_16px_48px_rgba(15,10,4,0.06)]">
+        <div className="prism-route-content w-full px-1 py-20 md:px-6 md:py-6">
+          <div className="prism-page-hero">
             <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
               <div className="flex items-start gap-4">
                 <MetacanonMark />
@@ -258,10 +332,8 @@ export default function MetacanonAIPage() {
             </div>
           </div>
 
-          <div className="flex flex-col gap-2">
-            <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-text-secondary">
-              Control Surfaces
-            </div>
+          <div className="flex flex-col gap-3">
+            <div className="prism-page-section-label">Control Surfaces</div>
             <div className="grid grid-cols-1 xl:grid-cols-3 md:grid-cols-2 gap-4">
               {featureCards.map((card) => (
                 <FeatureCard key={card.title} {...card} />

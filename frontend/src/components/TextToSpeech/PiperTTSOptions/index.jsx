@@ -7,6 +7,12 @@ import { CircleNotch } from "@phosphor-icons/react/dist/csr/CircleNotch";
 import { PauseCircle } from "@phosphor-icons/react/dist/csr/PauseCircle";
 import { PlayCircle } from "@phosphor-icons/react/dist/csr/PlayCircle";
 
+const SUPPORTED_PIPER_VOICES = [
+  "en_US-lessac-medium",
+  "en_US-ryan-high",
+];
+const DEFAULT_PIPER_VOICE = "en_US-lessac-medium";
+
 export default function PiperTTSOptions({ settings }) {
   return (
     <>
@@ -42,7 +48,9 @@ function PiperTTSModelSelection({ settings }) {
   const [loading, setLoading] = useState(true);
   const [voices, setVoices] = useState([]);
   const [selectedVoice, setSelectedVoice] = useState(
-    settings?.TTSPiperTTSVoiceModel
+    SUPPORTED_PIPER_VOICES.includes(settings?.TTSPiperTTSVoiceModel)
+      ? settings?.TTSPiperTTSVoiceModel
+      : DEFAULT_PIPER_VOICE
   );
 
   function flushVoices() {
@@ -58,7 +66,10 @@ function PiperTTSModelSelection({ settings }) {
   useEffect(() => {
     PiperTTSClient.voices()
       .then((voices) => {
-        if (voices?.length !== 0) return setVoices(voices);
+        const filteredVoices = voices.filter((voice) =>
+          SUPPORTED_PIPER_VOICES.includes(voice.key)
+        );
+        if (filteredVoices?.length !== 0) return setVoices(filteredVoices);
         throw new Error("Could not fetch voices from web worker.");
       })
       .catch((e) => {
@@ -66,6 +77,13 @@ function PiperTTSModelSelection({ settings }) {
       })
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (!voices.length) return;
+    if (!voices.find((voice) => voice.key === selectedVoice)) {
+      setSelectedVoice(DEFAULT_PIPER_VOICE);
+    }
+  }, [voices, selectedVoice]);
 
   if (loading) {
     return (

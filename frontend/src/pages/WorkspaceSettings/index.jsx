@@ -78,48 +78,50 @@ function ShowWorkspaceChat() {
     <div className="workspace-prism-shell metacanon-page-shell w-screen h-screen overflow-hidden flex">
       {!isMobile && <Sidebar />}
       <div
-        style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
-        className="workspace-prism-frame metacanon-page-frame transition-all duration-500 relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] w-full h-full overflow-y-scroll"
+        style={{ height: "100%" }}
+        className="workspace-prism-frame transition-all duration-500 relative flex-1 min-w-0 h-full overflow-y-scroll"
       >
-        <div className="flex gap-x-10 pt-6 pb-4 ml-16 mr-8 border-b-2 border-white light:border-theme-chat-input-border border-opacity-10">
+        <div className="prism-settings-topbar">
           <Link
             to={paths.workspace.chat(slug)}
-            className="absolute top-2 left-2 md:top-4 md:left-4 transition-all duration-300 p-2 rounded-full text-white bg-theme-sidebar-footer-icon hover:bg-theme-sidebar-footer-icon-hover z-10"
+            className="prism-settings-back"
           >
             <ArrowUUpLeft className="h-5 w-5" weight="fill" />
           </Link>
-          <TabItem
-            title={t("workspaces—settings.general")}
-            icon={<Wrench className="h-6 w-6" />}
-            to={paths.workspace.settings.generalAppearance(slug)}
-          />
+          <div className="prism-settings-tablist">
+            <TabItem
+              title={t("workspaces—settings.general")}
+              icon={<Wrench className="h-5 w-5" />}
+              to={paths.workspace.settings.generalAppearance(slug)}
+            />
 
-          <TabItem
-            title={t("workspaces—settings.chat")}
-            icon={<ChatText className="h-6 w-6" />}
-            to={paths.workspace.settings.chatSettings(slug)}
-          />
+            <TabItem
+              title={t("workspaces—settings.chat")}
+              icon={<ChatText className="h-5 w-5" />}
+              to={paths.workspace.settings.chatSettings(slug)}
+            />
 
-          <TabItem
-            title={t("workspaces—settings.vector")}
-            icon={<Database className="h-6 w-6" />}
-            to={paths.workspace.settings.vectorDatabase(slug)}
-          />
+            <TabItem
+              title={t("workspaces—settings.vector")}
+              icon={<Database className="h-5 w-5" />}
+              to={paths.workspace.settings.vectorDatabase(slug)}
+            />
 
-          <TabItem
-            title={t("workspaces—settings.members")}
-            icon={<User className="h-6 w-6" />}
-            to={paths.workspace.settings.members(slug)}
-            visible={["admin", "manager"].includes(user?.role)}
-          />
+            <TabItem
+              title={t("workspaces—settings.members")}
+              icon={<User className="h-5 w-5" />}
+              to={paths.workspace.settings.members(slug)}
+              visible={["admin", "manager"].includes(user?.role)}
+            />
 
-          <TabItem
-            title={t("workspaces—settings.agent")}
-            icon={<Robot className="h-6 w-6" />}
-            to={paths.workspace.settings.agentConfig(slug)}
-          />
+            <TabItem
+              title={t("workspaces—settings.agent")}
+              icon={<Robot className="h-5 w-5" />}
+              to={paths.workspace.settings.agentConfig(slug)}
+            />
+          </div>
         </div>
-        <div className="px-16 py-6">
+        <div className="prism-settings-content">
           <TabContent slug={slug} workspace={workspace} />
         </div>
       </div>
@@ -133,11 +135,7 @@ function TabItem({ title, icon, to, visible = true }) {
     <NavLink
       to={to}
       className={({ isActive }) =>
-        `${
-          isActive
-            ? "text-sky-400 pb-4 border-b-[4px] -mb-[19px] border-sky-400"
-            : "text-white/60 hover:text-sky-400"
-        } ` + " flex gap-x-2 items-center font-medium"
+        `${isActive ? "prism-settings-tab prism-settings-tab--active" : "prism-settings-tab"}`
       }
     >
       {icon}

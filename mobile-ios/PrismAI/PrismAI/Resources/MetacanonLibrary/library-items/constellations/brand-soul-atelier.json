@@ -1,0 +1,65 @@
+{
+  "id": "brand-soul-atelier",
+  "title": "Brand Soul Atelier",
+  "displayTitle": "Brand Soul Atelier",
+  "handle": "@constellation-brand-soul-atelier",
+  "type": "Octahedron",
+  "purpose": "To define the deep, authentic, and resonant soul of a new brand — from its core purpose to its visual expression.",
+  "projectManagerTitle": "The Servant Leader",
+  "projectManagerHandle": "@mc-project-managers-board-servant-leader",
+  "members": [
+    {
+      "role": "The Why-Finder",
+      "lens_path": "/home/ubuntu/councils/marketing-branding-board/01_Start_With_Why_And_Golden_Circle_Lens.docx",
+      "displayRole": "The Why-Finder",
+      "relativePath": "councils/marketing-branding-board/01_Start_With_Why_And_Golden_Circle_Lens.md",
+      "lensId": "marketing-branding-board-why-finder",
+      "lensHandle": "@mc-marketing-branding-board-why-finder",
+      "lensTitle": "The Why-Finder"
+    },
+    {
+      "role": "The Storyteller",
+      "lens_path": "/home/ubuntu/councils/marketing-branding-board/08_Resonate_And_Storytelling_Lens.docx",
+      "displayRole": "The Storyteller",
+      "relativePath": "councils/marketing-branding-board/08_Resonate_And_Storytelling_Lens.md",
+      "lensId": "marketing-branding-board-storyteller",
+      "lensHandle": "@mc-marketing-branding-board-storyteller",
+      "lensTitle": "The Storyteller"
+    },
+    {
+      "role": "The Cultural Synesthete",
+      "lens_path": "/home/ubuntu/councils/visual-branding-board/03_The_Cultural_Synesthete_Lens.md",
+      "displayRole": "The Cultural Synesthete",
+      "relativePath": "councils/visual-branding-board/03_The_Cultural_Synesthete_Lens.md",
+      "lensId": "visual-branding-board-cultural-synesthete",
+      "lensHandle": "@mc-visual-branding-board-cultural-synesthete",
+      "lensTitle": "The Cultural Synesthete"
+    },
+    {
+      "role": "The Underdog Champion",
+      "lens_path": "/home/ubuntu/councils/pauls-board/03_Underdog_Brand_And_Culture_Lens.docx",
+      "displayRole": "The Underdog Champion",
+      "relativePath": "councils/pauls-board/03_Underdog_Brand_And_Culture_Lens.md",
+      "lensId": "pauls-board-underdog-champion",
+      "lensHandle": "@mc-pauls-board-underdog-champion",
+      "lensTitle": "The Underdog Champion"
+    },
+    {
+      "role": "The Community Builder",
+      "lens_path": "/home/ubuntu/councils/millennial-founders-board/05_Community_First_System_Builder_Lens.docx",
+      "displayRole": "The Community Builder",
+      "relativePath": "councils/millennial-founders-board/05_Community_First_System_Builder_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    }
+  ],
+  "relativePath": "constellations/octahedron-1-brand-soul.json",
+  "detailPath": "constellations/brand-soul-atelier.json",
+  "name": "Octahedron 1: The \"Brand Soul\" Council",
+  "projectManager": "/home/ubuntu/councils/project-managers-board/07_Servant_Leadership_Facilitator_Lens.md",
+  "projectManagerRelativePath": "councils/project-managers-board/07_Servant_Leadership_Facilitator_Lens.md",
+  "projectManagerId": "project-managers-board-servant-leader",
+  "legacyId": "octahedron-1-the-brand-soul-council",
+  "legacyHandle": "@constellation-octahedron-1-the-brand-soul-council"
+}

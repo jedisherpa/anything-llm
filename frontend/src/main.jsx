@@ -12,9 +12,16 @@ import "@/styles/theme-cathedral.css";
 import "@/styles/prism-presence.css";
 import "@/index.css";
 import "@/styles/prism-app-treatment.css";
+import {
+  PRISM_SURFACES,
+  prismExperimentalSurfacesEnabled,
+  prismRepoLabEnabled,
+} from "@/utils/prism/surfaces";
 
 const isDev = import.meta.env.DEV;
 const REACTWRAP = isDev ? React.Fragment : React.StrictMode;
+const prismExperimentsEnabled = prismExperimentalSurfacesEnabled();
+const repoLabEnabled = prismRepoLabEnabled();
 
 const appRoutes = [
   {
@@ -45,7 +52,7 @@ const appRoutes = [
         },
       },
       {
-        path: "/metacanonai",
+        path: PRISM_SURFACES.controlCenter.path,
         lazy: async () => {
           const { default: MetacanonAIPage } = await import(
             "@/pages/MetacanonAI"
@@ -54,7 +61,7 @@ const appRoutes = [
         },
       },
       {
-        path: "/metacanonai/library",
+        path: PRISM_SURFACES.library.path,
         lazy: async () => {
           const { default: MetacanonAILibraryPage } = await import(
             "@/pages/MetacanonAILibrary"
@@ -65,13 +72,13 @@ const appRoutes = [
         },
       },
       {
-        path: "/metacanonai/manual-previews",
+        path: PRISM_SURFACES.composer.path,
         lazy: async () => {
-          const { default: MetacanonAIManualPreviewsPage } = await import(
-            "@/pages/MetacanonAIManualPreviews"
+          const { default: MetacanonLensComposerPage } = await import(
+            "@/pages/MetacanonLensComposer"
           );
           return {
-            element: <PrivateRoute Component={MetacanonAIManualPreviewsPage} />,
+            element: <PrivateRoute Component={MetacanonLensComposerPage} />,
           };
         },
       },
@@ -435,19 +442,19 @@ const appRoutes = [
   },
 ];
 
-if (isDev) {
-  appRoutes[0].children.splice(
-    3,
-    0,
+const experimentalPrismRoutes = [];
+
+if (prismExperimentsEnabled) {
+  experimentalPrismRoutes.push(
     {
-      path: "/prism-hero",
+      path: PRISM_SURFACES.prismHero.path,
       lazy: async () => {
         const { default: PrismHeroPage } = await import("@/pages/PrismHero");
         return { element: <PrismHeroPage /> };
       },
     },
     {
-      path: "/prism-dodecahedron",
+      path: PRISM_SURFACES.prismDodecahedron.path,
       lazy: async () => {
         const { default: PrismDodecahedronPage } = await import(
           "@/pages/PrismDodecahedron"
@@ -456,7 +463,7 @@ if (isDev) {
       },
     },
     {
-      path: "/metacanonai/ui-lab",
+      path: PRISM_SURFACES.uiLab.path,
       lazy: async () => {
         const { default: MetacanonUILabPage } = await import(
           "@/pages/MetacanonAILab"
@@ -465,15 +472,33 @@ if (isDev) {
       },
     },
     {
-      path: "/metacanonai/repo-lab",
+      path: PRISM_SURFACES.manualPreviews.path,
       lazy: async () => {
-        const { default: MetacanonAIRepoPage } = await import(
-          "@/pages/MetacanonAIRepo"
+        const { default: MetacanonAIManualPreviewsPage } = await import(
+          "@/pages/MetacanonAIManualPreviews"
         );
-        return { element: <PrivateRoute Component={MetacanonAIRepoPage} /> };
+        return {
+          element: <PrivateRoute Component={MetacanonAIManualPreviewsPage} />,
+        };
       },
     }
   );
+}
+
+if (repoLabEnabled) {
+  experimentalPrismRoutes.push({
+    path: PRISM_SURFACES.repoLab.path,
+    lazy: async () => {
+      const { default: MetacanonAIRepoPage } = await import(
+        "@/pages/MetacanonAIRepo"
+      );
+      return { element: <PrivateRoute Component={MetacanonAIRepoPage} /> };
+    },
+  });
+}
+
+if (experimentalPrismRoutes.length > 0) {
+  appRoutes[0].children.splice(3, 0, ...experimentalPrismRoutes);
 }
 
 const router = createBrowserRouter(appRoutes);

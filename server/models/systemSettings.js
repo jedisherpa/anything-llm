@@ -1,6 +1,4 @@
-process.env.NODE_ENV === "development"
-  ? require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` })
-  : require("dotenv").config();
+require("../utils/loadEnv").loadEnv();
 
 const { default: slugify } = require("slugify");
 const { isValidUrl, safeJsonParse } = require("../utils/http");
@@ -270,7 +268,8 @@ const SystemSettings = {
       // TTS/STT  Selection Settings & Configs
       // - Currently the only 3rd party is OpenAI or the native browser-built in
       // --------------------------------------------------------
-      TextToSpeechProvider: process.env.TTS_PROVIDER || "native",
+      SpeechToTextProvider: process.env.STT_PROVIDER || "whisper",
+      TextToSpeechProvider: process.env.TTS_PROVIDER || "piper_local",
       TTSOpenAIKey: !!process.env.TTS_OPEN_AI_KEY,
       TTSOpenAIVoiceModel: process.env.TTS_OPEN_AI_VOICE_MODEL,
 
@@ -279,7 +278,7 @@ const SystemSettings = {
       TTSElevenLabsVoiceModel: process.env.TTS_ELEVEN_LABS_VOICE_MODEL,
       // Piper TTS
       TTSPiperTTSVoiceModel:
-        process.env.TTS_PIPER_VOICE_MODEL ?? "en_US-hfc_female-medium",
+        process.env.TTS_PIPER_VOICE_MODEL ?? "en_US-lessac-medium",
       // OpenAI Generic TTS
       TTSOpenAICompatibleKey: !!process.env.TTS_OPEN_AI_COMPATIBLE_KEY,
       TTSOpenAICompatibleModel: process.env.TTS_OPEN_AI_COMPATIBLE_MODEL,

@@ -6,6 +6,7 @@ import {
   closeSync,
   cpSync,
   existsSync,
+  lstatSync,
   mkdirSync,
   openSync,
   readFileSync,
@@ -58,6 +59,7 @@ const runtimeOpenSourceDir = join(runtimeRoot, "OpenSource", "AnythingLLM");
 const bundledNodePath = join(runtimeBinDir, "node");
 const templateWorkspaceDir = "/tmp/anythingllm-desktop-template";
 const templateStorageDir = join(templateWorkspaceDir, "storage");
+const prismaCacheDir = join(templateWorkspaceDir, ".cache");
 const templateDbPath = join(templateStorageDir, "anythingllm.db");
 const defaultTemplateSourceDbPath = process.env.HOME
   ? join(
@@ -71,7 +73,9 @@ const defaultTemplateSourceDbPath = process.env.HOME
   : "";
 const shouldSkipInstall = process.argv.includes("--skip-install");
 const shouldForceInstall = process.argv.includes("--install");
-const shouldSkipRuntimeProdInstall = process.argv.includes("--skip-runtime-prod-install");
+const shouldSkipRuntimeProdInstall = process.argv.includes(
+  "--skip-runtime-prod-install"
+);
 
 const PRUNABLE_DIR_NAMES = new Set([
   "__tests__",
@@ -124,8 +128,10 @@ const DOC_TEXT_EXTENSIONS = new Set([
 ]);
 const NON_MAC_RUNTIME_SEGMENT_RE =
   /\/(linux|win32|windows|android|freebsd|openbsd|sunos)\/(x64|arm64|arm|ia32)\//;
-const LEGAL_DOC_NAMES = /^(license|licence|notice|notices|copying|authors|patents?)(\..+)?$/i;
-const DOC_FILE_NAMES = /^(readme|changelog|history|changes|contributing|security|todo|roadmap|release-notes)(\..+)?$/i;
+const LEGAL_DOC_NAMES =
+  /^(license|licence|notice|notices|copying|authors|patents?)(\..+)?$/i;
+const DOC_FILE_NAMES =
+  /^(readme|changelog|history|changes|contributing|security|todo|roadmap|release-notes)(\..+)?$/i;
 
 function run(command, args, cwd) {
   return runWithEnv(command, args, cwd, {});
@@ -162,10 +168,27 @@ function runCapture(command, args, cwd) {
 
   if (result.error) throw result.error;
   if (typeof result.status === "number" && result.status !== 0) {
-    throw new Error((result.stderr || result.stdout || "").trim() || `${command} failed`);
+    throw new Error(
+      (result.stderr || result.stdout || "").trim() || `${command} failed`
+    );
   }
 
   return (result.stdout || "").trim();
+}
+
+function copyTree(source, destination) {
+  rmSync(destination, { recursive: true, force: true });
+  const sourceStat = statSync(source);
+  if (sourceStat.isDirectory()) {
+    try {
+      run("cp", ["-cR", source, destination], coreRoot);
+    } catch (_error) {
+      run("cp", ["-R", source, destination], coreRoot);
+    }
+    return;
+  }
+
+  cpSync(source, destination, { force: true });
 }
 
 function ensureCoreLayout() {
@@ -190,16 +213,24 @@ function ensureCoreLayout() {
 function installIfNeeded(name, dir) {
   const hasNodeModules = existsSync(join(dir, "node_modules"));
   if (shouldSkipInstall) {
-    console.log(`Skipping source dependency install for ${name} (--skip-install).`);
+    console.log(
+      `Skipping source dependency install for ${name} (--skip-install).`
+    );
     return;
   }
 
   if (hasNodeModules && !shouldForceInstall) {
-    console.log(`Dependencies already present for ${name}; skipping source install.`);
+    console.log(
+      `Dependencies already present for ${name}; skipping source install.`
+    );
     return;
   }
 
-  run("corepack", ["yarn", "install", "--frozen-lockfile", "--non-interactive"], dir);
+  run(
+    "corepack",
+    ["yarn", "install", "--frozen-lockfile", "--non-interactive"],
+    dir
+  );
 }
 
 function ensureRuntimeEnvFiles() {
@@ -247,6 +278,32 @@ function ensureRuntimePrismaSchema() {
   console.log(`Generated ${prismaRuntimeSchemaPath}`);
 }
 
+function prismExperimentalAssetsEnabled() {
+  return process.env.VITE_PRISM_EXPERIMENTAL_SURFACES === "enabled";
+}
+
+function pruneStableDesktopPublicAssets() {
+  if (prismExperimentalAssetsEnabled()) {
+    console.log(
+      "Keeping experimental Prism public assets in the desktop runtime."
+    );
+    return;
+  }
+
+  const removable = [
+    join(serverPublicDir, "music"),
+    join(serverPublicDir, "models", "platonic-solids.glb"),
+  ];
+
+  removable.forEach((target) => {
+    rmSync(target, { recursive: true, force: true });
+  });
+
+  console.log(
+    "Removed experimental Prism public assets from the stable desktop runtime bundle."
+  );
+}
+
 function syncFrontendIntoServerPublic() {
   if (!existsSync(frontendDistDir)) {
     throw new Error(
@@ -257,6 +314,7 @@ function syncFrontendIntoServerPublic() {
   rmSync(serverPublicDir, { recursive: true, force: true });
   mkdirSync(serverPublicDir, { recursive: true });
   cpSync(frontendDistDir, serverPublicDir, { recursive: true });
+  pruneStableDesktopPublicAssets();
   console.log(`Synced ${frontendDistDir} -> ${serverPublicDir}`);
 }
 
@@ -279,9 +337,11 @@ function copyRuntimeSubset(name, sourceDir, targetDir, includeEntries) {
     const source = join(sourceDir, entry);
     const destination = join(targetDir, entry);
     if (!existsSync(source)) {
-      throw new Error(`Runtime manifest for ${name} references missing path: ${source}`);
+      throw new Error(
+        `Runtime manifest for ${name} references missing path: ${source}`
+      );
     }
-    cpSync(source, destination, { recursive: true });
+    copyTree(source, destination);
   }
 
   console.log(`Copied fail-closed ${name} runtime subset into ${targetDir}`);
@@ -289,17 +349,107 @@ function copyRuntimeSubset(name, sourceDir, targetDir, includeEntries) {
 
 function installRuntimeProductionDependencies(name, dir) {
   if (shouldSkipRuntimeProdInstall) {
-    console.log(`Skipping production install for ${name} (--skip-runtime-prod-install).`);
+    console.log(
+      `Skipping production install for ${name} (--skip-runtime-prod-install).`
+    );
     return;
   }
 
   rmSync(join(dir, "node_modules"), { recursive: true, force: true });
   runWithEnv(
     "corepack",
-    ["yarn", "install", "--production=true", "--frozen-lockfile", "--non-interactive"],
+    [
+      "yarn",
+      "install",
+      "--production=true",
+      "--frozen-lockfile",
+      "--non-interactive",
+    ],
     dir,
     {
       NODE_ENV: "production",
+      DISABLE_TELEMETRY: "true",
+    }
+  );
+}
+
+function removeRuntimeSymlinks(dir) {
+  let removed = 0;
+
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const absolutePath = join(dir, entry.name);
+    const stat = lstatSync(absolutePath);
+
+    if (stat.isSymbolicLink()) {
+      rmSync(absolutePath, { recursive: true, force: true });
+      removed += 1;
+      continue;
+    }
+
+    if (stat.isDirectory()) {
+      removed += removeRuntimeSymlinks(absolutePath);
+    }
+  }
+
+  return removed;
+}
+
+function removeRedundantRuntimePrismaArtifacts(serverRuntimeDir) {
+  const removablePaths = [
+    join(
+      serverRuntimeDir,
+      "node_modules",
+      "@prisma",
+      "engines",
+      "libquery_engine-darwin-arm64.dylib.node"
+    ),
+    join(
+      serverRuntimeDir,
+      "node_modules",
+      "prisma",
+      "libquery_engine-darwin-arm64.dylib.node"
+    ),
+  ];
+
+  let removed = 0;
+  for (const filePath of removablePaths) {
+    if (!existsSync(filePath)) continue;
+    rmSync(filePath, { force: true });
+    removed += 1;
+  }
+
+  return removed;
+}
+
+function generateRuntimeServerPrismaClient() {
+  const runtimePrismaCli = join(
+    runtimeServerDir,
+    "node_modules",
+    "prisma",
+    "build",
+    "index.js"
+  );
+  const runtimeSchemaPath = join(runtimeServerDir, "prisma", "runtime.prisma");
+
+  if (!existsSync(runtimePrismaCli)) {
+    throw new Error(`Runtime Prisma CLI missing at ${runtimePrismaCli}`);
+  }
+
+  if (!existsSync(runtimeSchemaPath)) {
+    throw new Error(`Runtime Prisma schema missing at ${runtimeSchemaPath}`);
+  }
+
+  mkdirSync(prismaCacheDir, { recursive: true });
+
+  runWithEnv(
+    process.execPath,
+    [runtimePrismaCli, "generate", "--schema", runtimeSchemaPath],
+    runtimeServerDir,
+    {
+      DATABASE_URL:
+        "file:///tmp/anythingllm-desktop-template/storage/anythingllm.db",
+      STORAGE_DIR: templateStorageDir,
+      XDG_CACHE_HOME: prismaCacheDir,
       DISABLE_TELEMETRY: "true",
     }
   );
@@ -323,6 +473,10 @@ function shouldPruneDirectory(relativePath, name) {
     return true;
   }
 
+  if (loweredName.startsWith("dist-test")) {
+    return true;
+  }
+
   const normalized = `/${relativePath}/`;
 
   if (loweredName === ".bin" && normalized.includes("/node_modules/")) {
@@ -341,7 +495,11 @@ function shouldPruneDirectory(relativePath, name) {
     return true;
   }
 
-  if (/\/napi-v\d+\/(linux|win32|windows|android|freebsd|openbsd|sunos)\//.test(normalized)) {
+  if (
+    /\/napi-v\d+\/(linux|win32|windows|android|freebsd|openbsd|sunos)\//.test(
+      normalized
+    )
+  ) {
     return true;
   }
 
@@ -508,7 +666,9 @@ function loadUpstreamMetadata() {
 
   try {
     commit = runCapture("git", ["-C", coreRoot, "rev-parse", "HEAD"], coreRoot);
-    dirty = runCapture("git", ["-C", coreRoot, "status", "--porcelain"], coreRoot).length > 0;
+    dirty =
+      runCapture("git", ["-C", coreRoot, "status", "--porcelain"], coreRoot)
+        .length > 0;
   } catch {
     // Keep defaults when git metadata is unavailable.
   }
@@ -516,7 +676,8 @@ function loadUpstreamMetadata() {
   return {
     productName: pkg.name,
     version: pkg.version,
-    repositoryUrl: pkg.repository?.url || "https://github.com/mintplex-labs/anything-llm",
+    repositoryUrl:
+      pkg.repository?.url || "https://github.com/mintplex-labs/anything-llm",
     commit,
     dirty,
   };
@@ -536,7 +697,11 @@ function bundleOpenSourceMaterials() {
 
   cpSync(rootLicensePath, join(runtimeOpenSourceDir, "LICENSE"));
   cpSync(rootReadmePath, join(runtimeOpenSourceDir, "README.md"));
-  writeFileSync(join(runtimeOpenSourceDir, "NOTICE-PrismAI.md"), `${notice}\n`, "utf8");
+  writeFileSync(
+    join(runtimeOpenSourceDir, "NOTICE-PrismAI.md"),
+    `${notice}\n`,
+    "utf8"
+  );
   writeFileSync(
     join(runtimeOpenSourceDir, "metadata.json"),
     `${JSON.stringify(upstream, null, 2)}\n`,
@@ -547,7 +712,12 @@ function bundleOpenSourceMaterials() {
 function copyPortableRuntime() {
   const runtimeManifest = loadRuntimeManifest();
   resetRuntimeDir();
-  copyRuntimeSubset("server", serverDir, runtimeServerDir, runtimeManifest.server.include);
+  copyRuntimeSubset(
+    "server",
+    serverDir,
+    runtimeServerDir,
+    runtimeManifest.server.include
+  );
   copyRuntimeSubset(
     "collector",
     collectorDir,
@@ -555,9 +725,22 @@ function copyPortableRuntime() {
     runtimeManifest.collector.include
   );
   installRuntimeProductionDependencies("server", runtimeServerDir);
+  generateRuntimeServerPrismaClient();
   installRuntimeProductionDependencies("collector", runtimeCollectorDir);
+  const removedServerSymlinks = removeRuntimeSymlinks(runtimeServerDir);
+  const removedCollectorSymlinks = removeRuntimeSymlinks(runtimeCollectorDir);
+  const removedPrismaArtifacts =
+    removeRedundantRuntimePrismaArtifacts(runtimeServerDir);
+  console.log(
+    `Removed ${removedServerSymlinks} symlinks from ${runtimeServerDir} and ${removedCollectorSymlinks} symlinks from ${runtimeCollectorDir}`
+  );
+  console.log(
+    `Removed ${removedPrismaArtifacts} redundant Prisma runtime artifacts from ${runtimeServerDir}`
+  );
   cpSync(governanceDocsDir, runtimeGovernanceDocsDir, { recursive: true });
-  cpSync(templateDbPath, runtimeTemplateDbPath);
+  if (existsSync(templateDbPath)) {
+    cpSync(templateDbPath, runtimeTemplateDbPath);
+  }
   bundleOpenSourceMaterials();
   pruneRuntimeDir(runtimeServerDir);
   pruneRuntimeDir(runtimeCollectorDir);
@@ -594,7 +777,9 @@ function validateTemplateSourceDatabase(dbPath) {
     .map((value) => Number(value));
 
   if (counts.length !== 5 || counts.some((value) => Number.isNaN(value))) {
-    throw new Error(`Unexpected validation output for template database at ${dbPath}`);
+    throw new Error(
+      `Unexpected validation output for template database at ${dbPath}`
+    );
   }
 
   if (counts.some((value) => value !== 0)) {
@@ -607,6 +792,7 @@ function validateTemplateSourceDatabase(dbPath) {
 function prepareRuntimeTemplateDatabase() {
   rmSync(templateWorkspaceDir, { recursive: true, force: true });
   mkdirSync(templateStorageDir, { recursive: true });
+  mkdirSync(prismaCacheDir, { recursive: true });
 
   const preferredTemplateSource =
     process.env.ANYTHINGLLM_TEMPLATE_DB || defaultTemplateSourceDbPath;
@@ -623,32 +809,6 @@ function prepareRuntimeTemplateDatabase() {
         "Falling back to a clean generated template database for packaging."
       );
     }
-  }
-
-  const databaseUrl = "file:///tmp/anythingllm-desktop-template/storage/anythingllm.db";
-  const prismaCli = join(serverDir, "node_modules", "prisma", "build", "index.js");
-
-  closeSync(openSync(templateDbPath, "a"));
-
-  runWithEnv(
-    process.execPath,
-    [prismaCli, "db", "push", "--schema", prismaRuntimeSchemaPath, "--skip-generate", "--accept-data-loss"],
-    serverDir,
-    {
-      DATABASE_URL: databaseUrl,
-      STORAGE_DIR: templateStorageDir,
-      DISABLE_TELEMETRY: "true",
-    }
-  );
-
-  runWithEnv(process.execPath, ["prisma/seed.js"], serverDir, {
-    DATABASE_URL: databaseUrl,
-    STORAGE_DIR: templateStorageDir,
-    DISABLE_TELEMETRY: "true",
-  });
-
-  if (!existsSync(templateDbPath)) {
-    throw new Error(`Template database was not created at ${templateDbPath}`);
   }
 }
 

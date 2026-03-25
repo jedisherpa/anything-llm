@@ -3,6 +3,10 @@ const Provider = require("./ai-provider.js");
 const InheritMultiple = require("./helpers/classes.js");
 const UnTooled = require("./helpers/untooled.js");
 
+const XAI_MODEL_ALIASES = {
+  "grok-4.20-multi-agent-0309": "grok-4.20-multi-agent-beta-0309",
+};
+
 /**
  * The agent provider for the xAI provider.
  */
@@ -19,7 +23,7 @@ class XAIProvider extends InheritMultiple([Provider, UnTooled]) {
     });
 
     this._client = client;
-    this.model = model;
+    this.model = this.#normalizeModel(model);
     this.verbose = true;
   }
 
@@ -40,7 +44,69 @@ class XAIProvider extends InheritMultiple([Provider, UnTooled]) {
     return false;
   }
 
+  #normalizeModel(model = "grok-beta") {
+    return XAI_MODEL_ALIASES[model] ?? model;
+  }
+
+  #usesResponsesApi() {
+    return this.model.includes("multi-agent");
+  }
+
+  #formatResponsesInput(messages = []) {
+    return messages.map((message) => ({
+      role: message.role,
+      content: typeof message.content === "string"
+        ? message.content
+        : JSON.stringify(message.content),
+    }));
+  }
+
+  #extractResponsesText(response) {
+    if (typeof response?.output_text === "string" && response.output_text) {
+      return response.output_text;
+    }
+
+    const text = [];
+    for (const outputBlock of response?.output || []) {
+      if (outputBlock.type !== "message") continue;
+      for (const contentBlock of outputBlock.content || []) {
+        if (contentBlock.type === "output_text" && contentBlock.text) {
+          text.push(contentBlock.text);
+        }
+      }
+    }
+
+    return text.join("");
+  }
+
+  async *#streamResponsesAsChatChunks({ messages = [] }) {
+    const response = await this.client.responses.create({
+      model: this.model,
+      input: this.#formatResponsesInput(messages),
+      stream: true,
+      store: false,
+    });
+
+    for await (const chunk of response) {
+      if (chunk.type !== "response.output_text.delta" || !chunk.delta) continue;
+      yield { choices: [{ delta: { content: chunk.delta } }] };
+    }
+  }
+
   async #handleFunctionCallChat({ messages = [] }) {
+    if (this.#usesResponsesApi()) {
+      return await this.client.responses
+        .create({
+          model: this.model,
+          input: this.#formatResponsesInput(messages),
+          store: false,
+        })
+        .then((result) => this.#extractResponsesText(result))
+        .catch((_) => {
+          return null;
+        });
+    }
+
     return await this.client.chat.completions
       .create({
         model: this.model,
@@ -59,6 +125,10 @@ class XAIProvider extends InheritMultiple([Provider, UnTooled]) {
   }
 
   async #handleFunctionCallStream({ messages = [] }) {
+    if (this.#usesResponsesApi()) {
+      return this.#streamResponsesAsChatChunks({ messages });
+    }
+
     return await this.client.chat.completions.create({
       model: this.model,
       stream: true,

@@ -33,18 +33,18 @@ export default function AgentFlow({ item, setStep }) {
   }
 
   return (
-    <div className="flex flex-col mt-4 gap-y-4">
-      <div className="flex flex-col gap-y-1">
-        <h2 className="text-base text-theme-text-primary font-semibold">
+    <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-2">
+        <h2 className="text-xl font-semibold text-theme-text-primary">
           Import Agent Flow &quot;{item.name}&quot;
         </h2>
         {item.creatorUsername && (
-          <p className="text-white/60 light:text-theme-text-secondary text-xs font-mono">
+          <p className="text-xs font-mono text-theme-text-secondary">
             Created by{" "}
             <a
               href={paths.communityHub.profile(item.creatorUsername)}
               target="_blank"
-              className="hover:text-blue-500 hover:underline"
+              className="font-semibold text-theme-primary-button transition-colors duration-200 hover:text-theme-text-primary hover:underline"
               rel="noreferrer"
             >
               @{item.creatorUsername}
@@ -52,30 +52,67 @@ export default function AgentFlow({ item, setStep }) {
           </p>
         )}
       </div>
-      <div className="flex flex-col gap-y-[25px] text-white/80 light:text-theme-text-secondary text-sm">
+
+      <div className="prism-community-import-summary text-sm leading-7 text-theme-text-secondary">
         <p>
           Agent flows allow you to create reusable sequences of actions that can
           be triggered by your agent.
         </p>
-        <div className="flex flex-col gap-y-2">
-          <p className="font-semibold">Flow Details:</p>
-          <p>Description: {item.description}</p>
-          <p className="font-semibold">Steps ({flowInfo.steps.length}):</p>
-          <ul className="list-disc pl-6">
-            {flowInfo.steps.map((step, index) => (
-              <li key={index}>{step.type}</li>
-            ))}
-          </ul>
+
+        <div className="mt-5 flex flex-col gap-3">
+          <p className="font-semibold text-theme-text-primary">Flow details</p>
+          <p>{item.description || "No description was provided with this flow."}</p>
+          <div>
+            <p className="font-semibold text-theme-text-primary">
+              Steps ({flowInfo.steps.length})
+            </p>
+            <ul className="mt-2 list-disc pl-6">
+              {flowInfo.steps.map((step, index) => (
+                <li key={index}>{step.type}</li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
-      <CTAButton
-        disabled={loading}
-        className="text-dark-text w-full mt-[18px] h-[34px] hover:bg-accent"
-        onClick={importAgentFlow}
-      >
-        {loading ? <CircleNotch size={16} className="animate-spin" /> : null}
-        {loading ? "Importing..." : "Import agent flow"}
-      </CTAButton>
+
+      <div className="grid gap-4 md:grid-cols-3">
+        <div className="prism-community-import-summary">
+          <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-primary-button">
+            Type
+          </div>
+          <div className="mt-2 text-sm font-semibold text-theme-text-primary">
+            Agent Flow
+          </div>
+        </div>
+        <div className="prism-community-import-summary">
+          <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-primary-button">
+            Imported State
+          </div>
+          <div className="mt-2 text-sm font-semibold text-theme-text-primary">
+            Enabled automatically
+          </div>
+        </div>
+        <div className="prism-community-import-summary">
+          <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-primary-button">
+            Step Count
+          </div>
+          <div className="mt-2 text-sm font-semibold text-theme-text-primary">
+            {flowInfo.steps.length} step{flowInfo.steps.length === 1 ? "" : "s"}
+          </div>
+        </div>
+      </div>
+
+      <div className="flex justify-end">
+        <CTAButton
+          type="button"
+          disabled={loading}
+          className="!mr-0 h-11 w-full rounded-[14px] text-dark-text md:w-auto md:min-w-[220px]"
+          onClick={importAgentFlow}
+        >
+          {loading ? <CircleNotch size={16} className="animate-spin" /> : null}
+          {loading ? "Importing..." : "Import agent flow"}
+        </CTAButton>
+      </div>
     </div>
   );
 }

@@ -1,0 +1,47 @@
+{
+  "id": "crisis-response-cell",
+  "title": "Crisis Response Cell",
+  "displayTitle": "Crisis Response Cell",
+  "handle": "@constellation-crisis-response-cell",
+  "type": "Tetrahedron",
+  "purpose": "To make clear, decisive, and defensible decisions under conditions of acute pressure and incomplete information.",
+  "projectManagerTitle": "The Ownership Operator",
+  "projectManagerHandle": "@mc-project-managers-board-ownership-operator",
+  "members": [
+    {
+      "role": "The Wartime CEO",
+      "lens_path": "/home/ubuntu/councils/org-builder-board/02_Hard_Things_And_Wartime_CEO_Lens.docx",
+      "displayRole": "The Wartime CEO",
+      "relativePath": "councils/org-builder-board/02_Hard_Things_And_Wartime_CEO_Lens.md",
+      "lensId": null,
+      "lensHandle": null,
+      "lensTitle": null
+    },
+    {
+      "role": "The Scenario Planner",
+      "lens_path": "/home/ubuntu/councils/project-managers-board/08_Scenario_Planning_Strategist_Lens.md",
+      "displayRole": "The Scenario Planner",
+      "relativePath": "councils/project-managers-board/08_Scenario_Planning_Strategist_Lens.md",
+      "lensId": "project-managers-board-scenario-planner",
+      "lensHandle": "@mc-project-managers-board-scenario-planner",
+      "lensTitle": "The Scenario Planner"
+    },
+    {
+      "role": "The Ethical Boundary",
+      "lens_path": "/home/ubuntu/councils/pauls-board/06_Human_Dignity_And_Ethical_Boundary_Lens.docx",
+      "displayRole": "The Ethical Boundary",
+      "relativePath": "councils/pauls-board/06_Human_Dignity_And_Ethical_Boundary_Lens.md",
+      "lensId": "pauls-board-ethical-boundary",
+      "lensHandle": "@mc-pauls-board-ethical-boundary",
+      "lensTitle": "The Ethical Boundary"
+    }
+  ],
+  "relativePath": "constellations/tetrahedron-5-crisis-response.json",
+  "detailPath": "constellations/crisis-response-cell.json",
+  "name": "Tetrahedron 5: The \"Crisis Response\" Quad",
+  "projectManager": "/home/ubuntu/councils/project-managers-board/06_Extreme_Ownership_Operator_Lens.md",
+  "projectManagerRelativePath": "councils/project-managers-board/06_Extreme_Ownership_Operator_Lens.md",
+  "projectManagerId": "project-managers-board-ownership-operator",
+  "legacyId": "tetrahedron-5-the-crisis-response-quad",
+  "legacyHandle": "@constellation-tetrahedron-5-the-crisis-response-quad"
+}

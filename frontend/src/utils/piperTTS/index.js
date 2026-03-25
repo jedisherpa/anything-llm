@@ -2,7 +2,7 @@ import showToast from "../toast";
 
 export default class PiperTTSClient {
   static _instance;
-  voiceId = "en_US-hfc_female-medium";
+  voiceId = "en_US-lessac-medium";
   worker = null;
 
   constructor({ voiceId } = { voiceId: null }) {
@@ -82,7 +82,7 @@ export default class PiperTTSClient {
    * Runs prediction via webworker so we can get an audio blob back.
    * @returns {Promise<{blobURL: string|null, error: string|null}>} objectURL blob: type.
    */
-  async waitForBlobResponse() {
+  async waitForBlobResponse(timeoutMs = 30_000) {
     return new Promise((resolve) => {
       let timeout = null;
       const handleMessage = (event) => {
@@ -106,24 +106,25 @@ export default class PiperTTSClient {
 
       timeout = setTimeout(() => {
         resolve({ blobURL: null, error: "PiperTTSWorker Worker timed out." });
-      }, 30_000);
+      }, timeoutMs);
       this.worker.addEventListener("message", handleMessage);
     });
   }
 
-  async getAudioBlobForText(textToSpeak, voiceId = null) {
+  async getAudioBlobForText(textToSpeak, voiceId = null, timeoutMs = 30_000) {
     const primaryWorker = this.#getWorker();
     primaryWorker.postMessage({
       type: "init",
       text: String(textToSpeak),
       voiceId: voiceId ?? this.voiceId,
+      baseUrl: window.location.origin,
       // Don't reference WASM because in the docker image
       // the user will be connected to internet (mostly)
       // and it bloats the app size on the frontend or app significantly
       // and running the docker image fully offline is not an intended use-case unlike the app.
     });
 
-    const { blobURL, error } = await this.waitForBlobResponse();
+    const { blobURL, error } = await this.waitForBlobResponse(timeoutMs);
     if (!!error) {
       showToast(
         `Could not generate voice prediction. Error: ${error}`,

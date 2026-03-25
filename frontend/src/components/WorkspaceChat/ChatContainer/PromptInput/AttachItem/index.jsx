@@ -98,12 +98,12 @@ export default function AttachItem({
         type="button"
         onClick={handleClick}
         onPointerEnter={fetchFiles}
-        className="group border-none relative flex justify-center items-center cursor-pointer w-6 h-6 rounded-full hover:bg-zinc-700 light:hover:bg-slate-200"
+        className="metacanon-composer-toolbar-button group relative flex h-7 min-w-[28px] cursor-pointer items-center justify-center rounded-full border-none px-2"
       >
         <div className="relative">
           <Plus
             size={18}
-            className="pointer-events-none text-zinc-300 light:text-slate-600 group-hover:text-white light:group-hover:text-slate-600 shrink-0"
+            className="pointer-events-none shrink-0 text-current"
             weight="bold"
           />
 

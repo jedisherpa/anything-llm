@@ -4,6 +4,9 @@ process.env.NODE_ENV = "test";
 
 const { SystemPromptVariables } = require("../../../models/systemPromptVariables");
 const Provider = require("../../../utils/agents/aibitat/providers/ai-provider");
+const {
+  withAiOnlyLens,
+} = require("../../../utils/agents/aibitat/prompts/aiOnlyLens");
 
 jest.mock("../../../models/systemPromptVariables");
 jest.mock("../../../models/systemSettings");
@@ -72,7 +75,7 @@ describe("WORKSPACE_AGENT.getDefinition", () => {
       user.id,
       workspace.id
     );
-    expect(definition.role).toBe(expandedPrompt);
+    expect(definition.role).toBe(withAiOnlyLens(expandedPrompt));
   });
 
   it("should handle workspace system prompt without user context", async () => {
@@ -97,7 +100,7 @@ describe("WORKSPACE_AGENT.getDefinition", () => {
       null,
       workspace.id
     );
-    expect(definition.role).toBe(expandedPrompt);
+    expect(definition.role).toBe(withAiOnlyLens(expandedPrompt));
   });
 
   it("should return functions array in definition", async () => {
@@ -128,4 +131,3 @@ describe("WORKSPACE_AGENT.getDefinition", () => {
     expect(definition.role).toContain("helpful ai assistant");
   });
 });
-

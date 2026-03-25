@@ -8,6 +8,7 @@ import { signalPrismError } from "@/utils/prism/events";
 export const AGENT_SESSION_START = "agentSessionStart";
 export const AGENT_SESSION_END = "agentSessionEnd";
 const handledEvents = [
+  "agentSessionReady",
   "statusResponse",
   "fileDownload",
   "awaitingFeedback",
@@ -26,6 +27,18 @@ export function websocketURI() {
 export default function handleSocketResponse(socket, event, setChatHistory) {
   const data = safeJsonParse(event.data, null);
   if (data === null) return;
+
+  if (data.type === "agentSessionReady") {
+    socket.agentSessionReady = true;
+    socket.agentSessionFailed = false;
+    if (socket.agentSessionInitTimeout) {
+      window.clearTimeout(socket.agentSessionInitTimeout);
+      socket.agentSessionInitTimeout = null;
+    }
+    setAgentSessionActive(true);
+    window.dispatchEvent(new CustomEvent(AGENT_SESSION_START));
+    return;
+  }
 
   // No message type is defined then this is a generic message
   // that we need to print to the user as a system response
@@ -48,6 +61,7 @@ export default function handleSocketResponse(socket, event, setChatHistory) {
   }
 
   if (!handledEvents.includes(data.type) || !data.content) return;
+  socket.agentSessionHadActivity = true;
 
   if (data.type === "reportStreamEvent") {
     // Enable agent streaming for the next message so we can handle streaming or non-streaming responses
@@ -179,6 +193,13 @@ export default function handleSocketResponse(socket, event, setChatHistory) {
   }
 
   if (data.type === "wssFailure") {
+    socket.agentSessionFailed = true;
+    if (socket.agentSessionInitTimeout) {
+      window.clearTimeout(socket.agentSessionInitTimeout);
+      socket.agentSessionInitTimeout = null;
+    }
+    setAgentSessionActive(false);
+    window.dispatchEvent(new CustomEvent(AGENT_SESSION_END));
     signalPrismError({ source: "agent-wss", message: data.content });
     return setChatHistory((prev) => {
       return [

@@ -1,0 +1,47 @@
+{
+  "id": "first-principles-inquiry",
+  "title": "First-Principles Inquiry",
+  "displayTitle": "First-Principles Inquiry",
+  "handle": "@constellation-first-principles-inquiry",
+  "type": "Tetrahedron",
+  "purpose": "To deconstruct a complex problem to its most fundamental truths and rebuild a solution from the ground up.",
+  "projectManagerTitle": "The Systems Architect",
+  "projectManagerHandle": "@mc-project-managers-board-systems-architect",
+  "members": [
+    {
+      "role": "The First-Principles Engineer",
+      "lens_path": "/home/ubuntu/councils/pauls-board/01_First_Principles_Engineer_Lens.docx",
+      "displayRole": "The First-Principles Engineer",
+      "relativePath": "councils/pauls-board/01_First_Principles_Engineer_Lens.md",
+      "lensId": "pauls-board-first-principles-engineer",
+      "lensHandle": "@mc-pauls-board-first-principles-engineer",
+      "lensTitle": "The First-Principles Engineer"
+    },
+    {
+      "role": "The Founder Realist",
+      "lens_path": "/home/ubuntu/councils/pauls-board/07_Founder_Reality_And_Taste_Lens.docx",
+      "displayRole": "The Founder Realist",
+      "relativePath": "councils/pauls-board/07_Founder_Reality_And_Taste_Lens.md",
+      "lensId": "pauls-board-founder-realist",
+      "lensHandle": "@mc-pauls-board-founder-realist",
+      "lensTitle": "The Founder Realist"
+    },
+    {
+      "role": "The Cognitive Analyst",
+      "lens_path": "/home/ubuntu/councils/pauls-board/05_Cognitive_Bias_And_Judgment_Lens.docx",
+      "displayRole": "The Cognitive Analyst",
+      "relativePath": "councils/pauls-board/05_Cognitive_Bias_And_Judgment_Lens.md",
+      "lensId": "pauls-board-cognitive-analyst",
+      "lensHandle": "@mc-pauls-board-cognitive-analyst",
+      "lensTitle": "The Cognitive Analyst"
+    }
+  ],
+  "relativePath": "constellations/tetrahedron-1-first-principles.json",
+  "detailPath": "constellations/first-principles-inquiry.json",
+  "name": "Tetrahedron 1: The \"First Principles\" Inquiry",
+  "projectManager": "/home/ubuntu/councils/project-managers-board/01_Profound_Knowledge_Systems_Lens.md",
+  "projectManagerRelativePath": "councils/project-managers-board/01_Profound_Knowledge_Systems_Lens.md",
+  "projectManagerId": "project-managers-board-systems-architect",
+  "legacyId": "tetrahedron-1-the-first-principles-inquiry",
+  "legacyHandle": "@constellation-tetrahedron-1-the-first-principles-inquiry"
+}

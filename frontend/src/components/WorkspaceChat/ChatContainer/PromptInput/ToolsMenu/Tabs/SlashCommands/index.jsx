@@ -55,19 +55,49 @@ export default function SlashCommandsTab({
   // matches against exact "/reset" and "/exit" commands.
   const items = useMemo(() => {
     const builtIn = isActiveAgentSession
-      ? {
-          command: "/exit",
-          description: t("chat_window.preset_exit_description"),
-          autoSubmit: true,
-        }
-      : {
-          command: "/reset",
-          description: t("chat_window.preset_reset_description"),
-          autoSubmit: true,
-        };
+      ? [
+          {
+            command: "/exit",
+            description: t("chat_window.preset_exit_description"),
+            autoSubmit: true,
+          },
+        ]
+      : [
+          {
+            command: "/reset",
+            description: t("chat_window.preset_reset_description"),
+            autoSubmit: true,
+          },
+          {
+            command: "/agent",
+            insertText: "/agent ",
+            description: "Start an explicit Prism agent session.",
+            autoSubmit: false,
+          },
+          {
+            command: "/lens",
+            insertText: "/lens ",
+            description:
+              "Route your next message through one specific lens handle.",
+            autoSubmit: false,
+          },
+          {
+            command: "/constellation",
+            insertText: "/constellation ",
+            description: "Run a named constellation explicitly.",
+            autoSubmit: false,
+          },
+          {
+            command: "/council",
+            insertText: "/council ",
+            description:
+              "Build an ad hoc council with handles, then add -- and your query.",
+            autoSubmit: false,
+          },
+        ];
 
     return [
-      builtIn,
+      ...builtIn,
       ...presets.map((preset) => ({
         command: preset.command,
         description: preset.description,
@@ -114,7 +144,8 @@ export default function SlashCommandsTab({
     items,
     highlightedIndex,
     onSelect: (item) => {
-      const text = item.preset ? `${item.command} ` : item.command;
+      const text =
+        item.insertText ?? (item.preset ? `${item.command} ` : item.command);
       handleUseCommand(text, item.autoSubmit);
     },
     registerItemCount,
@@ -176,7 +207,8 @@ export default function SlashCommandsTab({
           description={item.description}
           onClick={() =>
             handleUseCommand(
-              item.preset ? `${item.command} ` : item.command,
+              item.insertText ??
+                (item.preset ? `${item.command} ` : item.command),
               item.autoSubmit
             )
           }

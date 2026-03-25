@@ -59,6 +59,12 @@
   min-height: 100vh;
 }
 
+.prism-route-content {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
 .metacanon-page-shell,
 .workspace-prism-shell,
 .prism-auth-shell,
@@ -100,19 +106,11 @@
 .prism-onboarding-panel,
 .prism-sso-panel {
   position: relative;
-  border: 1px solid color-mix(in srgb, var(--sidebar-border) 90%, transparent);
-  background:
-    radial-gradient(circle at top left, color-mix(in srgb, var(--gold) 6%, transparent) 0%, transparent 22%),
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--sidebar-bg) 86%, transparent) 0%,
-      color-mix(in srgb, var(--bg) 92%, transparent) 100%
-    );
-  box-shadow:
-    0 28px 64px rgba(0, 0, 0, 0.28),
-    inset 0 1px 0 color-mix(in srgb, white 8%, transparent);
-  backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 .metacanon-page-frame::before,
@@ -125,19 +123,1459 @@
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--gold) 7%, transparent) 0%,
-      transparent 16%
-    );
-  opacity: 0.92;
+  background: none;
+  opacity: 0;
 }
 
 .workspace-prism-frame {
   flex: 1 1 auto;
   min-width: 0;
   overflow: hidden;
+}
+
+.prism-page-hero,
+.prism-page-panel,
+.prism-page-card,
+.prism-page-stat {
+  position: relative;
+  border: 1px solid color-mix(in srgb, var(--sidebar-border) 76%, transparent);
+  background:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--gold) 4%, transparent) 0%, transparent 22%),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--sidebar-bg) 76%, transparent) 0%,
+      color-mix(in srgb, var(--bg) 92%, transparent) 100%
+    );
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, white 4%, transparent),
+    0 10px 24px rgba(0, 0, 0, 0.08);
+}
+
+.prism-page-hero {
+  border-radius: 24px;
+  padding: 24px;
+}
+
+.prism-page-panel {
+  border-radius: 22px;
+  padding: 20px;
+}
+
+.prism-page-card {
+  border-radius: 20px;
+  padding: 20px;
+}
+
+.prism-page-card--interactive {
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    background 180ms ease;
+}
+
+.prism-page-card--interactive:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--gold-border) 58%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, white 5%, transparent),
+    0 14px 28px rgba(0, 0, 0, 0.1);
+}
+
+.prism-page-stat {
+  border-radius: 18px;
+  padding: 16px;
+}
+
+.prism-library-page .prism-page-hero {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 8px 4px 6px;
+}
+
+.prism-library-page .prism-library-hero-shell {
+  margin-bottom: 2px;
+}
+
+.prism-library-page .prism-library-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(340px, 0.9fr);
+  gap: 28px;
+  align-items: start;
+}
+
+.prism-library-page .prism-library-hero-copy {
+  padding-right: 10px;
+}
+
+.prism-library-page .prism-library-hero-note {
+  max-width: 34rem;
+  color: color-mix(in srgb, var(--theme-text-secondary) 88%, transparent);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+.prism-library-page .prism-library-hero-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+}
+
+.prism-library-page .prism-library-stat-grid {
+  align-self: stretch;
+}
+
+.prism-library-page .prism-page-panel {
+  border-color: color-mix(in srgb, var(--sidebar-border) 34%, transparent);
+  background: transparent;
+  box-shadow: none;
+}
+
+.prism-library-page .prism-library-draft-shell {
+  padding: 24px 20px;
+}
+
+.prism-library-page .prism-library-draft-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(360px, 1.1fr);
+}
+
+.prism-library-page .prism-library-draft-intro {
+  padding-right: 22px;
+}
+
+.prism-library-page .prism-library-draft-board {
+  padding: 18px 18px 16px;
+  border: 1px solid color-mix(in srgb, var(--sidebar-border) 28%, transparent);
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--gold) 4%, transparent) 0%, transparent 24%),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--sidebar-bg) 64%, transparent) 0%,
+      color-mix(in srgb, var(--bg) 88%, transparent) 100%
+    );
+}
+
+.prism-library-page .prism-library-draft-board-header {
+  padding-bottom: 2px;
+}
+
+.prism-library-page .prism-library-draft-name {
+  border: 1px solid color-mix(in srgb, var(--sidebar-border) 24%, transparent);
+}
+
+.prism-library-page .prism-library-draft-chip-row {
+  min-height: 36px;
+}
+
+.prism-library-page .prism-library-draft-chip {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.prism-library-page .prism-library-draft-summary {
+  border-color: color-mix(in srgb, var(--gold-border) 38%, transparent);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--sidebar-bg) 72%, transparent) 0%,
+      color-mix(in srgb, var(--bg) 86%, transparent) 100%
+    );
+}
+
+.prism-library-page .prism-library-draft-actions {
+  padding-top: 2px;
+}
+
+.prism-library-page .prism-page-card,
+.prism-library-page .prism-page-stat {
+  border-color: color-mix(in srgb, var(--sidebar-border) 28%, transparent);
+  box-shadow: none;
+}
+
+.prism-library-page .prism-page-card--interactive:hover {
+  box-shadow: none;
+  transform: none;
+}
+
+.prism-library-page .prism-library-stat {
+  background: color-mix(in srgb, white 78%, var(--sidebar-bg) 22%);
+}
+
+.prism-library-page .prism-library-stat-card {
+  min-height: 100%;
+}
+
+.prism-library-page .prism-library-panel-card {
+  background: color-mix(in srgb, white 72%, var(--sidebar-bg) 28%);
+}
+
+.prism-library-page .prism-library-mode-tile {
+  background: color-mix(in srgb, white 68%, var(--sidebar-bg) 32%);
+}
+
+.prism-library-page .prism-library-mode-card {
+  min-height: 100%;
+}
+
+.prism-library-page .prism-library-input {
+  background: color-mix(in srgb, white 78%, var(--sidebar-bg) 22%);
+  box-shadow: none;
+}
+
+.prism-library-page .prism-library-action {
+  box-shadow: none;
+}
+
+.prism-library-page .prism-library-action--secondary {
+  background: color-mix(in srgb, white 80%, var(--sidebar-bg) 20%);
+}
+
+.prism-library-page .prism-library-summary {
+  background: color-mix(in srgb, white 84%, var(--sidebar-bg) 16%);
+  box-shadow: none;
+}
+
+.prism-library-page .prism-library-mode-intro,
+.prism-library-page .prism-library-sidebar-manager {
+  box-shadow: none;
+}
+
+.prism-library-page .prism-library-tab-row {
+  padding-top: 2px;
+}
+
+@media (max-width: 1100px) {
+  .prism-library-page .prism-library-hero-grid,
+  .prism-library-page .prism-library-draft-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .prism-library-page .prism-library-hero-copy,
+  .prism-library-page .prism-library-draft-intro {
+    padding-right: 0;
+  }
+}
+
+.prism-composer-page .prism-page-hero,
+.prism-composer-page .prism-page-panel,
+.prism-composer-page .prism-page-card,
+.prism-composer-page .prism-page-stat {
+  box-shadow: none;
+}
+
+.prism-composer-page .prism-composer-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+  gap: 24px;
+  padding: 20px 8px 6px;
+  border: 0;
+  background: transparent;
+}
+
+.prism-composer-page .prism-composer-hero-copy {
+  max-width: 48rem;
+}
+
+.prism-composer-page .prism-composer-hero-eyebrow,
+.prism-composer-page .prism-composer-panel-eyebrow,
+.prism-composer-page .prism-composer-rail-eyebrow,
+.prism-composer-page .prism-composer-mode-label,
+.prism-composer-page .prism-composer-stat-eyebrow {
+  color: color-mix(in srgb, var(--gold) 82%, var(--text-1) 18%);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.prism-composer-page .prism-composer-hero-title {
+  margin-top: 8px;
+  font-size: clamp(2.1rem, 4vw, 3.4rem);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  color: var(--text-1);
+}
+
+.prism-composer-page .prism-composer-hero-description {
+  margin-top: 12px;
+  max-width: 40rem;
+  color: color-mix(in srgb, var(--text-2) 84%, var(--text-1) 16%);
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.prism-composer-page .prism-composer-hero-links {
+  margin-top: 18px;
+}
+
+.prism-composer-page .prism-composer-text-link {
+  color: color-mix(in srgb, var(--gold) 86%, var(--text-1) 14%);
+}
+
+.prism-composer-page .prism-composer-hero-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.prism-composer-page .prism-composer-stat-card {
+  min-height: 100%;
+  border: 1px solid color-mix(in srgb, var(--sidebar-border) 28%, transparent);
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--gold) 6%, transparent) 0%, transparent 24%),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--sidebar-bg) 68%, transparent) 0%,
+      color-mix(in srgb, var(--bg) 90%, transparent) 100%
+    );
+  padding: 18px;
+}
+
+.prism-composer-page .prism-composer-stat-value {
+  margin-top: 10px;
+  color: var(--text-1);
+  font-size: 2.2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.prism-composer-page .prism-composer-stat-copy {
+  margin-top: 10px;
+  color: color-mix(in srgb, var(--text-2) 84%, var(--text-1) 16%);
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+.prism-composer-page .prism-composer-topbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  align-items: flex-start;
+  padding: 16px 18px;
+}
+
+.prism-composer-page .prism-composer-mode-dial {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 240px;
+}
+
+.prism-composer-page .prism-composer-mode-track {
+  display: inline-flex;
+  gap: 8px;
+  padding: 6px;
+  border: 1px solid color-mix(in srgb, var(--sidebar-border) 28%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--sidebar-bg) 72%, transparent);
+}
+
+.prism-composer-page .prism-composer-mode-pill,
+.prism-composer-page .prism-composer-add-button,
+.prism-composer-page .prism-composer-action,
+.prism-composer-page .prism-composer-inline-action {
+  border: 1px solid color-mix(in srgb, var(--sidebar-border) 32%, transparent);
+  border-radius: 999px;
+  background: transparent;
+  color: color-mix(in srgb, var(--text-2) 78%, var(--text-1) 22%);
+  transition:
+    border-color 160ms ease,
+    color 160ms ease,
+    background 160ms ease;
+}
+
+.prism-composer-page .prism-composer-mode-pill {
+  min-height: 40px;
+  padding: 0 16px;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.prism-composer-page .prism-composer-mode-pill.is-active,
+.prism-composer-page .prism-composer-action,
+.prism-composer-page .prism-composer-add-button:hover,
+.prism-composer-page .prism-composer-inline-action:hover {
+  border-color: color-mix(in srgb, var(--gold-border) 64%, transparent);
+  background: color-mix(in srgb, var(--gold) 12%, transparent);
+  color: var(--text-1);
+}
+
+.prism-composer-page .prism-composer-grid {
+  display: grid;
+  grid-template-columns: 290px minmax(0, 1fr) 360px;
+  gap: 18px;
+  align-items: start;
+}
+
+.prism-composer-page .prism-composer-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.prism-composer-page .prism-composer-rail,
+.prism-composer-page .prism-composer-roster,
+.prism-composer-page .prism-composer-library,
+.prism-composer-page .prism-composer-save,
+.prism-composer-page .prism-composer-saved,
+.prism-composer-page .prism-composer-preset-summary,
+.prism-composer-page .prism-composer-viewer-shell {
+  border-color: color-mix(in srgb, var(--sidebar-border) 28%, transparent);
+  background:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--gold) 5%, transparent) 0%, transparent 24%),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--sidebar-bg) 70%, transparent) 0%,
+      color-mix(in srgb, var(--bg) 90%, transparent) 100%
+    );
+}
+
+.prism-composer-page .prism-composer-rail-header,
+.prism-composer-page .prism-composer-panel-header,
+.prism-composer-page .prism-composer-viewer-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.prism-composer-page .prism-composer-rail-title,
+.prism-composer-page .prism-composer-panel-title,
+.prism-composer-page .prism-composer-viewer-title {
+  color: var(--text-1);
+  font-size: 1.35rem;
+  font-weight: 650;
+  line-height: 1.15;
+}
+
+.prism-composer-page .prism-composer-panel-note,
+.prism-composer-page .prism-composer-rail-subtitle,
+.prism-composer-page .prism-composer-viewer-description,
+.prism-composer-page .prism-composer-preset-copy,
+.prism-composer-page .prism-composer-library-meta,
+.prism-composer-page .prism-composer-saved-meta,
+.prism-composer-page .prism-composer-status-meta {
+  color: color-mix(in srgb, var(--text-2) 86%, var(--text-1) 14%);
+  font-size: 0.94rem;
+  line-height: 1.65;
+}
+
+.prism-composer-page .prism-composer-rail-list,
+.prism-composer-page .prism-composer-roster-list,
+.prism-composer-page .prism-composer-library-list,
+.prism-composer-page .prism-composer-saved-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.prism-composer-page .prism-composer-rail-item,
+.prism-composer-page .prism-composer-roster-item,
+.prism-composer-page .prism-composer-library-item,
+.prism-composer-page .prism-composer-saved-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  border: 1px solid color-mix(in srgb, var(--sidebar-border) 22%, transparent);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--sidebar-bg) 52%, transparent);
+  padding: 12px 14px;
+  text-align: left;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease;
+}
+
+.prism-composer-page .prism-composer-rail-item.is-active,
+.prism-composer-page .prism-composer-roster-item.is-active {
+  border-color: color-mix(in srgb, var(--gold-border) 60%, transparent);
+  background: color-mix(in srgb, var(--gold) 11%, transparent);
+}
+
+.prism-composer-page .prism-composer-rail-copy,
+.prism-composer-page .prism-composer-library-copy,
+.prism-composer-page .prism-composer-saved-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.prism-composer-page .prism-composer-rail-meta,
+.prism-composer-page .prism-composer-roster-meta {
+  color: color-mix(in srgb, var(--text-2) 86%, var(--text-1) 14%);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.prism-composer-page .prism-composer-search,
+.prism-composer-page .prism-composer-description {
+  width: 100%;
+  border: 1px solid color-mix(in srgb, var(--sidebar-border) 24%, transparent);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--sidebar-bg) 52%, transparent);
+  color: var(--text-1);
+  padding: 12px 14px;
+  outline: none;
+  box-shadow: none;
+}
+
+.prism-composer-page .prism-composer-search::placeholder,
+.prism-composer-page .prism-composer-description::placeholder {
+  color: color-mix(in srgb, var(--text-2) 90%, transparent);
+}
+
+.prism-composer-page .prism-composer-description {
+  min-height: 108px;
+  resize: vertical;
+}
+
+.prism-composer-page .prism-composer-viewer-shell {
+  padding: 18px;
+}
+
+.prism-composer-page .prism-composer-viewer-canvas {
+  margin-top: 14px;
+  height: 460px;
+  border: 1px solid color-mix(in srgb, var(--sidebar-border) 20%, transparent);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at center, color-mix(in srgb, var(--gold) 6%, transparent) 0%, transparent 48%),
+    color-mix(in srgb, var(--sidebar-bg) 54%, transparent);
+}
+
+.prism-composer-page .prism-composer-wire {
+  stroke: color-mix(in srgb, var(--gold-border) 72%, transparent);
+  stroke-width: 2.25px;
+  opacity: 0.7;
+}
+
+.prism-composer-page .prism-composer-spoke {
+  stroke: color-mix(in srgb, var(--theme-text-secondary) 18%, transparent);
+  stroke-width: 1.25px;
+  opacity: 0.55;
+}
+
+.prism-composer-page .prism-composer-council-ring {
+  fill: none;
+  stroke: color-mix(in srgb, var(--gold-border) 68%, transparent);
+  stroke-width: 1.75px;
+  opacity: 0.7;
+}
+
+.prism-composer-page .prism-composer-node {
+  fill: color-mix(in srgb, var(--sidebar-bg) 92%, transparent);
+  stroke: color-mix(in srgb, var(--sidebar-border) 74%, transparent);
+  stroke-width: 2px;
+}
+
+.prism-composer-page .prism-composer-node.is-filled {
+  fill: color-mix(in srgb, var(--gold) 18%, var(--sidebar-bg) 82%);
+  stroke: color-mix(in srgb, var(--gold-border) 74%, transparent);
+}
+
+.prism-composer-page .prism-composer-node.is-locked {
+  fill: color-mix(in srgb, var(--gold) 24%, var(--sidebar-bg) 76%);
+}
+
+.prism-composer-page .prism-composer-node.is-active {
+  stroke: color-mix(in srgb, var(--theme-primary-button) 88%, transparent);
+}
+
+.prism-composer-page .prism-composer-node-label,
+.prism-composer-page .prism-composer-core-title,
+.prism-composer-page .prism-composer-core-copy {
+  fill: var(--theme-text-primary);
+  font-family: inherit;
+}
+
+.prism-composer-page .prism-composer-node-label {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.prism-composer-page .prism-composer-core {
+  fill: color-mix(in srgb, var(--sidebar-bg) 92%, transparent);
+  stroke: color-mix(in srgb, var(--gold-border) 68%, transparent);
+  stroke-width: 1.5px;
+}
+
+.prism-composer-page .prism-composer-core-title {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.prism-composer-page .prism-composer-core-copy {
+  font-size: 11px;
+  opacity: 0.72;
+}
+
+.prism-composer-page .prism-composer-viewer-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.prism-composer-page .prism-composer-status-chip,
+.prism-composer-page .prism-composer-roster-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  border: 1px solid color-mix(in srgb, var(--gold-border) 52%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--gold) 11%, transparent);
+  color: var(--text-1);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0 10px;
+}
+
+.prism-composer-page .prism-composer-roster-slot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.prism-composer-page .prism-composer-roster-index {
+  color: color-mix(in srgb, var(--gold) 84%, var(--text-1) 16%);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.prism-composer-page .prism-composer-roster-copy {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.prism-composer-page .prism-composer-roster-title,
+.prism-composer-page .prism-composer-library-title,
+.prism-composer-page .prism-composer-saved-title {
+  color: var(--text-1);
+  font-size: 0.98rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.prism-composer-page .prism-composer-roster-actions,
+.prism-composer-page .prism-composer-saved-actions,
+.prism-composer-page .prism-composer-save-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.prism-composer-page .prism-composer-inline-action,
+.prism-composer-page .prism-composer-add-button {
+  min-height: 34px;
+  padding: 0 12px;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.prism-composer-page .prism-composer-action {
+  min-height: 42px;
+  padding: 0 16px;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.prism-composer-page .prism-composer-action.is-secondary {
+  background: transparent;
+  color: color-mix(in srgb, var(--text-2) 80%, var(--text-1) 20%);
+}
+
+.prism-composer-page .prism-composer-save-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.prism-composer-page .prism-composer-empty {
+  color: color-mix(in srgb, var(--text-2) 86%, var(--text-1) 14%);
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+@media (max-width: 1280px) {
+  .prism-composer-page .prism-composer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .prism-composer-page .prism-composer-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .prism-composer-page .prism-composer-hero-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .prism-composer-page .prism-composer-hero-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .prism-composer-page .prism-composer-viewer-canvas {
+    height: 360px;
+  }
+}
+
+.prism-page-section-label {
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.prism-settings-sidebar-shell {
+  display: flex;
+  flex: 0 0 344px;
+  min-width: 344px;
+  height: 100%;
+}
+
+.prism-settings-sidebar-brand {
+  position: relative;
+}
+
+.prism-settings-sidebar-shell .metacanon-sidebar-panel {
+  border: 0;
+  border-right: 1px solid color-mix(in srgb, var(--theme-sidebar-border) 82%, transparent);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  margin: 0;
+  padding: 14px 14px 14px 14px;
+}
+
+.prism-settings-sidebar-divider {
+  height: 1px;
+  margin: 0 8px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--theme-sidebar-border) 82%, transparent) 16%,
+    color-mix(in srgb, var(--theme-sidebar-border) 82%, transparent) 84%,
+    transparent 100%
+  );
+}
+
+.metacanon-page-shell > .prism-settings-sidebar-shell + .metacanon-page-frame {
+  margin: 0 !important;
+  border-radius: 0 !important;
+}
+
+.prism-settings-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 24px;
+  border-bottom: 1px solid color-mix(in srgb, var(--sidebar-border) 72%, transparent);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--bg) 94%, transparent) 0%,
+      color-mix(in srgb, var(--bg) 90%, transparent) 100%
+    );
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.prism-settings-tablist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.prism-settings-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--sidebar-border) 72%, transparent);
+  color: color-mix(in srgb, var(--theme-text-secondary) 92%, transparent);
+  background: color-mix(in srgb, var(--theme-sidebar-item-default) 52%, transparent);
+  transition:
+    color 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease;
+}
+
+.prism-settings-tab:hover {
+  color: var(--theme-text-primary);
+  border-color: color-mix(in srgb, var(--theme-home-border) 52%, transparent);
+  background: color-mix(in srgb, var(--theme-sidebar-item-hover) 62%, transparent);
+}
+
+.prism-settings-tab--active {
+  color: var(--theme-text-primary);
+  border-color: color-mix(in srgb, var(--theme-home-border) 70%, transparent);
+  background: color-mix(in srgb, var(--theme-sidebar-item-selected) 86%, transparent);
+}
+
+.prism-settings-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--sidebar-border) 72%, transparent);
+  background: color-mix(in srgb, var(--theme-sidebar-item-default) 48%, transparent);
+  color: var(--theme-text-secondary);
+  transition:
+    color 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease;
+}
+
+.prism-settings-back:hover {
+  color: var(--theme-text-primary);
+  border-color: color-mix(in srgb, var(--theme-home-border) 56%, transparent);
+  background: color-mix(in srgb, var(--theme-sidebar-item-hover) 62%, transparent);
+}
+
+.prism-settings-content {
+  padding: 24px;
+}
+
+.prism-settings-content--wide {
+  max-width: 1120px;
+}
+
+.prism-settings-page-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 6px 0 22px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid color-mix(in srgb, var(--theme-sidebar-border) 72%, transparent);
+}
+
+.prism-settings-page-title {
+  font-size: 1.72rem;
+  line-height: 1.06;
+  font-weight: 700;
+  color: var(--theme-text-primary);
+  letter-spacing: -0.025em;
+}
+
+.prism-settings-page-description {
+  max-width: 540px;
+  color: color-mix(in srgb, var(--theme-text-secondary) 92%, transparent);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.prism-settings-page-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-top: 10px;
+}
+
+.prism-community-import-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 320px) minmax(0, 720px);
+  gap: 28px;
+  align-items: start;
+  padding-top: 18px;
+}
+
+.prism-community-import-rail {
+  position: sticky;
+  top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.prism-community-import-step-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.prism-community-import-step {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--theme-sidebar-border) 48%, transparent);
+  background: color-mix(in srgb, var(--theme-sidebar-item-default) 42%, transparent);
+  text-align: left;
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    transform 180ms ease,
+    color 180ms ease;
+}
+
+.prism-community-import-step:not(:disabled):hover {
+  border-color: color-mix(in srgb, var(--theme-home-border) 64%, transparent);
+  background: color-mix(in srgb, var(--theme-sidebar-item-hover) 58%, transparent);
+  transform: translateY(-1px);
+}
+
+.prism-community-import-step--current {
+  border-color: color-mix(in srgb, var(--theme-home-border) 74%, transparent);
+  background: color-mix(in srgb, var(--theme-sidebar-item-selected) 66%, transparent);
+}
+
+.prism-community-import-step:disabled {
+  cursor: default;
+}
+
+.prism-community-import-step__label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.prism-community-import-step__title {
+  color: var(--theme-text-primary);
+  font-size: 0.98rem;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+.prism-community-import-step__hint {
+  color: color-mix(in srgb, var(--theme-text-secondary) 92%, transparent);
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.prism-community-import-step__status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--theme-text-primary) 72%, transparent);
+  flex-shrink: 0;
+}
+
+.prism-community-import-step__status::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: transparent;
+  transition: background 180ms ease;
+}
+
+.prism-community-import-step--done .prism-community-import-step__status {
+  border-color: color-mix(in srgb, var(--theme-checklist-checkbox-fill) 78%, transparent);
+}
+
+.prism-community-import-step--done .prism-community-import-step__status::after {
+  background: var(--theme-checklist-checkbox-fill);
+}
+
+.prism-community-import-step--current .prism-community-import-step__status {
+  border-color: color-mix(in srgb, var(--theme-home-border) 84%, transparent);
+}
+
+.prism-community-import-step--current .prism-community-import-step__status::after {
+  background: color-mix(in srgb, var(--theme-button-primary) 88%, white 12%);
+}
+
+.prism-community-import-note,
+.prism-community-import-callout,
+.prism-community-import-code,
+.prism-community-import-summary {
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--theme-sidebar-border) 42%, transparent);
+  background: color-mix(in srgb, var(--theme-settings-input-bg) 58%, transparent);
+}
+
+.prism-community-import-note,
+.prism-community-import-callout,
+.prism-community-import-summary {
+  padding: 14px 16px;
+}
+
+.prism-community-import-callout {
+  background:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--theme-button-primary) 5%, transparent) 0%, transparent 24%),
+    color-mix(in srgb, var(--theme-settings-input-bg) 54%, transparent);
+}
+
+.prism-community-import-callout--warning {
+  border-color: color-mix(in srgb, var(--theme-button-primary) 42%, transparent);
+}
+
+.prism-community-import-callout--danger {
+  border-color: rgba(180, 35, 24, 0.28);
+  background:
+    radial-gradient(circle at top left, rgba(180, 35, 24, 0.12) 0%, transparent 24%),
+    color-mix(in srgb, var(--theme-settings-input-bg) 78%, transparent);
+}
+
+.prism-community-import-code {
+  overflow: hidden;
+}
+
+.prism-community-import-code__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 16px;
+  border-bottom: 1px solid color-mix(in srgb, var(--theme-sidebar-border) 48%, transparent);
+  color: color-mix(in srgb, var(--theme-text-secondary) 92%, transparent);
+  font-size: 0.8rem;
+  line-height: 1.4;
+  background: color-mix(in srgb, var(--theme-sidebar-item-default) 72%, transparent);
+}
+
+.prism-community-import-code pre,
+.prism-community-import-code .hljs {
+  margin: 0;
+  padding: 16px 18px;
+  max-height: 460px;
+  overflow: auto;
+  background: transparent;
+}
+
+.prism-community-import-skeleton {
+  min-height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 22px;
+  border: 1px dashed color-mix(in srgb, var(--theme-sidebar-border) 56%, transparent);
+  color: color-mix(in srgb, var(--theme-text-secondary) 92%, transparent);
+  background: color-mix(in srgb, var(--theme-sidebar-item-default) 42%, transparent);
+}
+
+.prism-sidebar-scroll-region {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--theme-sidebar-border) 82%, transparent)
+    transparent;
+}
+
+.prism-sidebar-scroll-region::-webkit-scrollbar {
+  width: 8px;
+}
+
+.prism-sidebar-scroll-region::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.prism-sidebar-scroll-region::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--theme-sidebar-border) 82%, transparent);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.prism-sidebar-scroll-region::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--theme-home-border) 88%, transparent);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.prism-settings-savebar {
+  display: flex;
+  justify-content: flex-end;
+  margin: -2px 0 4px;
+}
+
+.prism-settings-block-title {
+  margin: 22px 0 14px;
+  color: var(--theme-text-primary);
+  font-size: 1.05rem;
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+.prism-settings-field {
+  padding: 18px 0 20px;
+  border-bottom: 1px solid color-mix(in srgb, var(--theme-sidebar-border) 52%, transparent);
+}
+
+.prism-settings-field-title {
+  margin-top: 8px;
+  color: var(--theme-text-primary);
+  font-size: 1.05rem;
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+.prism-settings-field-copy {
+  margin-top: 6px;
+  color: color-mix(in srgb, var(--theme-text-secondary) 92%, transparent);
+  font-size: 0.92rem;
+  line-height: 1.55;
+  max-width: 620px;
+}
+
+.prism-settings-choice-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.prism-settings-choice {
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--theme-sidebar-border) 72%, transparent);
+  color: color-mix(in srgb, var(--theme-text-secondary) 92%, transparent);
+  background: color-mix(in srgb, var(--theme-bg-sidebar) 32%, transparent);
+  transition:
+    color 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease;
+}
+
+.prism-settings-choice:hover {
+  color: var(--theme-text-primary);
+  border-color: color-mix(in srgb, var(--theme-home-border) 72%, transparent);
+  background: color-mix(in srgb, var(--theme-sidebar-item-hover) 72%, transparent);
+}
+
+.prism-settings-choice--active {
+  color: var(--theme-text-primary);
+  border-color: color-mix(in srgb, var(--theme-home-border) 82%, transparent);
+  background: color-mix(in srgb, var(--theme-sidebar-item-selected) 88%, transparent);
+}
+
+.prism-settings-select-wrap {
+  margin-top: 16px;
+  display: inline-flex;
+  width: min(320px, 100%);
+}
+
+.prism-settings-select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 44px 0 16px;
+  border-radius: 14px;
+  color: var(--theme-settings-input-text);
+  background: color-mix(in srgb, var(--theme-settings-input-bg) 96%, transparent);
+  border: 1px solid color-mix(in srgb, var(--theme-sidebar-border) 72%, transparent);
+  box-shadow: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.prism-settings-route .metacanon-page-frame {
+  background: transparent;
+}
+
+.prism-settings-route__frame {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.prism-settings-route__scroll {
+  width: 100%;
+  min-height: 100%;
+}
+
+.prism-settings-route .metacanon-page-frame :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea, select) {
+  border-color: color-mix(in srgb, var(--theme-sidebar-border) 58%, transparent);
+  background: color-mix(in srgb, var(--theme-settings-input-bg) 94%, transparent);
+  color: var(--theme-settings-input-text);
+  box-shadow: none;
+}
+
+.prism-settings-route .metacanon-page-frame :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea, select):focus {
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--theme-button-primary) 12%, transparent),
+    0 1px 0 color-mix(in srgb, white 4%, transparent);
+}
+
+@media (max-width: 1024px) {
+  .prism-community-import-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .prism-community-import-rail {
+    position: static;
+  }
+}
+
+.prism-settings-provider-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 760px;
+}
+
+.prism-settings-provider-menu {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 20;
+  width: 100%;
+  max-width: 760px;
+  min-height: 72px;
+  max-height: 360px;
+  overflow: hidden;
+  border-radius: 22px;
+  border: 1px solid color-mix(in srgb, var(--theme-sidebar-border) 72%, transparent);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--theme-settings-input-bg) 98%, transparent) 0%,
+      color-mix(in srgb, var(--theme-bg-container) 96%, transparent) 100%
+    );
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.18);
+}
+
+.prism-settings-provider-search {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid color-mix(in srgb, var(--theme-sidebar-border) 48%, transparent);
+  background: inherit;
+}
+
+.prism-settings-provider-search-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 42px;
+  padding: 0 12px 0 4px;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.prism-settings-provider-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  color: var(--theme-text-secondary);
+  transition:
+    color 180ms ease,
+    background 180ms ease;
+}
+
+.prism-settings-provider-close:hover {
+  color: var(--theme-text-primary);
+  background: color-mix(in srgb, var(--theme-sidebar-item-hover) 62%, transparent);
+}
+
+.prism-settings-provider-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 12px 14px;
+  overflow-y: auto;
+  max-height: 288px;
+}
+
+.prism-settings-provider-trigger {
+  display: flex;
+  width: 100%;
+  max-width: 760px;
+  min-height: 72px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 22px;
+  border: 1px solid color-mix(in srgb, var(--theme-sidebar-border) 66%, transparent);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--theme-settings-input-bg) 92%, transparent) 0%,
+      color-mix(in srgb, var(--theme-bg-container) 90%, transparent) 100%
+    );
+  transition:
+    border-color 180ms ease,
+    background 180ms ease;
+}
+
+.prism-settings-provider-trigger:hover {
+  border-color: color-mix(in srgb, var(--theme-home-border) 76%, transparent);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--theme-sidebar-item-hover) 58%, transparent) 0%,
+      color-mix(in srgb, var(--theme-settings-input-bg) 92%, transparent) 100%
+    );
+}
+
+.prism-settings-provider-copy {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 14px;
+}
+
+.prism-settings-provider-meta {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  text-align: left;
+}
+
+.prism-settings-provider-title {
+  color: var(--theme-text-primary);
+  font-size: 0.98rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.prism-settings-provider-description {
+  margin-top: 4px;
+  color: color-mix(in srgb, var(--theme-text-secondary) 90%, transparent);
+  font-size: 0.83rem;
+  line-height: 1.5;
+}
+
+.prism-settings-provider-caret {
+  color: var(--theme-text-secondary);
+}
+
+.prism-settings-provider-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.prism-settings-panel-flat {
+  border: 1px solid color-mix(in srgb, var(--theme-sidebar-border) 46%, transparent);
+  border-radius: 22px;
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--theme-settings-input-bg) 90%, transparent) 0%,
+      color-mix(in srgb, var(--theme-bg-container) 94%, transparent) 100%
+    );
+  box-shadow: none;
+}
+
+.prism-settings-widget-layout {
+  display: flex;
+  gap: 18px;
+  padding: 24px 28px 28px;
+}
+
+.prism-settings-widget-nav {
+  border: 1px solid color-mix(in srgb, var(--theme-sidebar-border) 46%, transparent);
+  border-radius: 22px;
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--theme-settings-input-bg) 92%, transparent) 0%,
+      color-mix(in srgb, var(--theme-bg-container) 96%, transparent) 100%
+    );
+  box-shadow: none;
+}
+
+.prism-settings-widget-item {
+  min-height: 46px;
+  transition:
+    background 180ms ease,
+    color 180ms ease;
+}
+
+.prism-settings-widget-item:hover {
+  background: color-mix(in srgb, var(--theme-sidebar-item-hover) 56%, transparent);
+}
+
+.prism-settings-widget-item--active {
+  background: color-mix(in srgb, var(--theme-sidebar-item-selected) 78%, transparent);
+}
+
+.prism-settings-modal-card {
+  border: 1px solid color-mix(in srgb, var(--theme-sidebar-border) 56%, transparent);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 20% 18%, color-mix(in srgb, var(--theme-button-primary) 16%, transparent) 0%, transparent 28%),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-bg-container) 92%, transparent) 0%,
+      color-mix(in srgb, var(--theme-bg-secondary) 96%, transparent) 100%
+    );
+  box-shadow: 0 20px 42px rgba(0, 0, 0, 0.24);
+}
+
+.prism-settings-modal-qr {
+  border: 1px solid color-mix(in srgb, var(--theme-sidebar-border) 46%, transparent);
+  border-radius: 22px;
+  background: color-mix(in srgb, var(--theme-settings-input-bg) 74%, transparent);
+}
+
+.prism-onboarding-header {
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  margin: 0 auto 44px;
+  gap: 6px;
+}
+
+.prism-onboarding-nav-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--theme-sidebar-border) 76%, transparent);
+  background: color-mix(in srgb, var(--theme-sidebar-item-default) 42%, transparent);
+  color: var(--theme-text-secondary);
+  transition:
+    color 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease,
+    transform 180ms ease;
+}
+
+.prism-onboarding-nav-button:hover {
+  color: var(--theme-text-primary);
+  border-color: color-mix(in srgb, var(--theme-home-border) 56%, transparent);
+  background: color-mix(in srgb, var(--theme-sidebar-item-hover) 62%, transparent);
+  transform: translateY(-1px);
+}
+
+.prism-onboarding-nav-button:disabled {
+  opacity: 0.45;
+  transform: none;
 }
 
 .prism-auth-shell,
@@ -174,7 +1612,7 @@
 .prism-auth-copy {
   max-width: 380px;
   text-align: center;
-  color: var(--text-secondary);
+  color: var(--theme-text-secondary);
   font-size: 0.95rem;
   line-height: 1.6;
 }
@@ -191,7 +1629,7 @@
 
 .prism-onboarding-rail {
   position: relative;
-  color: var(--text-secondary);
+  color: var(--theme-text-secondary);
 }
 
 .prism-onboarding-rail::before {
@@ -217,7 +1655,7 @@
   :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea, select) {
   border: 1px solid color-mix(in srgb, var(--comp-border) 90%, transparent);
   background: color-mix(in srgb, var(--comp-bg) 94%, transparent);
-  color: var(--text-primary);
+  color: var(--theme-settings-input-text);
   border-radius: 14px;
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, white 6%, transparent),
@@ -233,7 +1671,7 @@
     .metacanon-sidebar-panel
   )
   :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea, select)::placeholder {
-  color: color-mix(in srgb, var(--text-secondary) 92%, transparent);
+  color: color-mix(in srgb, var(--theme-text-secondary) 92%, transparent);
 }
 
 :where(
@@ -276,19 +1714,12 @@
 
 .workspace-prism-chat-panel {
   position: relative;
-  border: 1px solid color-mix(in srgb, var(--sidebar-border) 86%, transparent);
-  background:
-    radial-gradient(circle at 12% 4%, color-mix(in srgb, var(--gold) 8%, transparent) 0%, transparent 24%),
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--sidebar-bg) 88%, transparent) 0%,
-      color-mix(in srgb, var(--bg) 94%, transparent) 100%
-    );
-  box-shadow:
-    0 24px 56px rgba(0, 0, 0, 0.24),
-    inset 0 1px 0 color-mix(in srgb, white 6%, transparent);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 .workspace-prism-chat-panel::before {
@@ -296,12 +1727,432 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--gold) 6%, transparent) 0%,
-    transparent 16%
-  );
-  opacity: 0.92;
+  background: none;
+  opacity: 0;
+}
+
+.prism-sidebar-module {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 2px 4px 0;
+}
+
+.prism-sidebar-module__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 4px;
+}
+
+.prism-sidebar-module__heading {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.metacanon-sidebar-section-label {
+  color: color-mix(in srgb, var(--gold-text) 86%, var(--theme-text-secondary) 14%);
+  letter-spacing: 0.14em;
+}
+
+.prism-sidebar-module__hint {
+  color: color-mix(in srgb, var(--theme-text-secondary) 88%, var(--theme-text-primary) 12%);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.prism-sidebar-module__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--sidebar-border) 58%, transparent);
+  background: color-mix(in srgb, var(--theme-sidebar-item-default) 82%, transparent);
+  color: color-mix(in srgb, var(--theme-text-secondary) 80%, var(--theme-text-primary) 20%);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    box-shadow 180ms ease;
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, white 6%, transparent),
+    0 6px 14px rgba(0, 0, 0, 0.04);
+}
+
+.prism-sidebar-module__link:hover {
+  color: var(--theme-text-primary);
+  background: color-mix(in srgb, var(--gold-bg) 60%, transparent);
+  border-color: color-mix(in srgb, var(--gold-border) 56%, transparent);
+}
+
+.prism-sidebar-card {
+  width: 100%;
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--sidebar-border) 82%, transparent);
+  background:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--gold) 5%, transparent) 0%, transparent 24%),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--sidebar-bg) 86%, transparent) 0%,
+      color-mix(in srgb, var(--bg) 94%, transparent) 100%
+    );
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, white 5%, transparent),
+    0 8px 18px rgba(0, 0, 0, 0.08);
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.prism-sidebar-card:hover {
+  border-color: color-mix(in srgb, var(--gold-border) 52%, transparent);
+  background:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--gold) 6%, transparent) 0%, transparent 24%),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--sidebar-bg) 88%, transparent) 0%,
+      color-mix(in srgb, var(--bg) 96%, transparent) 100%
+    );
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, white 5%, transparent),
+    0 10px 22px rgba(0, 0, 0, 0.1);
+}
+
+.prism-sidebar-card__eyebrow {
+  color: color-mix(in srgb, var(--theme-text-secondary) 78%, var(--theme-text-primary) 22%);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.prism-sidebar-card__title {
+  color: var(--theme-text-primary);
+  font-size: 15px;
+  line-height: 1.1;
+}
+
+.prism-sidebar-card__body {
+  color: color-mix(in srgb, var(--theme-text-secondary) 82%, var(--theme-text-primary) 18%);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.prism-sidebar-card__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid color-mix(in srgb, var(--sidebar-border) 62%, transparent);
+}
+
+.prism-sidebar-card__action-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.prism-sidebar-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 24px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--sidebar-border) 78%, transparent);
+  background: color-mix(in srgb, var(--sidebar-bg) 62%, transparent);
+  color: var(--theme-text-secondary);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.prism-sidebar-chip:hover {
+  border-color: color-mix(in srgb, var(--gold-border) 54%, transparent);
+  background: color-mix(in srgb, var(--gold-bg) 40%, transparent);
+  color: var(--theme-text-primary);
+}
+
+[data-theme="light"] .prism-app-ambient--left,
+[data-theme="light"] .prism-app-ambient--right {
+  opacity: 0.48;
+}
+
+[data-theme="light"] .prism-app-grid {
+  opacity: 0.08;
+}
+
+[data-theme="light"] :is(
+    .metacanon-page-shell,
+    .workspace-prism-shell,
+    .prism-auth-shell,
+    [data-layout="onboarding"],
+    .prism-sso-shell
+  ) {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--bg) 98%, white 2%) 0%,
+      color-mix(in srgb, var(--bg) 94%, var(--sidebar-bg) 6%) 100%
+    );
+}
+
+[data-theme="light"] :is(
+    .metacanon-page-shell,
+    .workspace-prism-shell,
+    .prism-auth-shell,
+    [data-layout="onboarding"],
+    .prism-sso-shell
+  )::after {
+  opacity: 0.3;
+}
+
+[data-theme="light"] :is(
+    .metacanon-page-frame,
+    .workspace-prism-frame
+  ) {
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+[data-theme="light"] :is(
+    .prism-auth-panel,
+    .prism-onboarding-panel,
+    .prism-sso-panel
+  )::before {
+  opacity: 0.36;
+}
+
+[data-theme="light"] :is(.prism-auth-panel, .prism-onboarding-panel, .prism-sso-panel) {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--sidebar-bg) 42%, white 58%) 0%,
+      color-mix(in srgb, var(--bg) 92%, white 8%) 100%
+    );
+  box-shadow: 0 14px 30px rgba(93, 75, 37, 0.08);
+}
+
+[data-theme="light"]
+  :where(
+      .metacanon-page-frame,
+      .workspace-prism-frame,
+      .prism-auth-panel,
+      .prism-onboarding-panel,
+      .prism-sso-panel,
+      .metacanon-sidebar-panel
+    )
+  :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea, select) {
+  background: color-mix(in srgb, white 88%, var(--sidebar-bg) 12%);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+[data-theme="light"]
+  :where(
+      .metacanon-page-frame,
+      .workspace-prism-frame,
+      .prism-auth-panel,
+      .prism-onboarding-panel,
+      .prism-sso-panel,
+      .metacanon-sidebar-panel
+    )
+  :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea, select):focus {
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--gold) 10%, transparent),
+    0 8px 18px rgba(93, 75, 37, 0.08);
+}
+
+[data-theme="light"] .workspace-prism-chat-panel {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+[data-theme="light"] .workspace-prism-chat-panel::before {
+  opacity: 0;
+}
+
+[data-theme="light"] .prism-sidebar-card {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, white 86%, var(--sidebar-bg) 14%) 0%,
+      color-mix(in srgb, var(--bg) 95%, white 5%) 100%
+    );
+  box-shadow: 0 5px 12px rgba(93, 75, 37, 0.04);
+}
+
+[data-theme="light"] :is(.prism-page-hero, .prism-page-panel, .prism-page-card, .prism-page-stat) {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, white 90%, var(--sidebar-bg) 10%) 0%,
+      color-mix(in srgb, var(--bg) 96%, white 4%) 100%
+    );
+  box-shadow: 0 6px 14px rgba(93, 75, 37, 0.04);
+}
+
+[data-theme="light"] .prism-library-page .prism-page-panel,
+[data-theme="light"] .prism-library-page .prism-page-card,
+[data-theme="light"] .prism-library-page .prism-page-stat {
+  background: transparent;
+  box-shadow: none;
+}
+
+[data-theme="light"] .prism-library-page .prism-library-stat,
+[data-theme="light"] .prism-library-page .prism-library-panel-card,
+[data-theme="light"] .prism-library-page .prism-library-mode-tile,
+[data-theme="light"] .prism-library-page .prism-library-input,
+[data-theme="light"] .prism-library-page .prism-library-summary {
+  background: color-mix(in srgb, white 92%, var(--sidebar-bg) 8%);
+}
+
+[data-theme="dark"] :is(.prism-page-hero, .prism-page-panel, .prism-page-card, .prism-page-stat) {
+  background:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--gold) 5%, transparent) 0%, transparent 24%),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--sidebar-bg) 80%, transparent) 0%,
+      color-mix(in srgb, var(--bg) 94%, transparent) 100%
+    );
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, white 4%, transparent),
+    0 12px 26px rgba(0, 0, 0, 0.18);
+}
+
+[data-theme="cathedral"] :is(.prism-page-hero, .prism-page-panel, .prism-page-card, .prism-page-stat) {
+  border-color: color-mix(in srgb, var(--gold-border) 82%, rgba(0, 128, 128, 0.16));
+  background:
+    radial-gradient(circle at top left, rgba(218, 165, 32, 0.07) 0%, transparent 22%),
+    radial-gradient(circle at 78% 18%, rgba(0, 128, 128, 0.06) 0%, transparent 28%),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--sidebar-bg) 84%, #101626 16%) 0%,
+      color-mix(in srgb, var(--bg) 92%, #0d1322 8%) 100%
+    );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.03),
+    0 14px 32px rgba(0, 0, 0, 0.24);
+}
+
+[data-theme="cathedral"] .prism-page-card--interactive:hover {
+  border-color: color-mix(in srgb, var(--gold-border) 72%, rgba(0, 128, 128, 0.24));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 18px 36px rgba(0, 0, 0, 0.28);
+}
+
+.prism-sidebar-chip--active {
+  color: var(--theme-text-primary);
+  border-color: color-mix(in srgb, var(--gold-border) 76%, transparent);
+  background: color-mix(in srgb, var(--gold) 10%, transparent);
+}
+
+.prism-sidebar-chip--ghost {
+  background: transparent;
+}
+
+.prism-sidebar-empty {
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--sidebar-border) 72%, transparent);
+  background:
+    radial-gradient(circle at top center, color-mix(in srgb, var(--gold) 5%, transparent) 0%, transparent 28%),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--sidebar-bg) 72%, transparent) 0%,
+      color-mix(in srgb, var(--bg) 90%, transparent) 100%
+    );
+  padding: 12px 14px;
+  color: color-mix(in srgb, var(--theme-text-secondary) 86%, var(--theme-text-primary) 14%);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+[data-theme="cathedral"] .metacanon-sidebar-section-label {
+  color: rgba(218, 165, 32, 0.82);
+}
+
+[data-theme="cathedral"] :is(.prism-page-hero, .prism-page-panel, .prism-page-card, .prism-page-stat) .text-theme-primary-button,
+[data-theme="cathedral"] .prism-page-section-label {
+  color: rgba(232, 196, 103, 0.94);
+}
+
+[data-theme="cathedral"] :is(.prism-page-hero, .prism-page-panel, .prism-page-card, .prism-page-stat) .text-theme-text-secondary {
+  color: rgba(246, 241, 222, 0.82);
+}
+
+[data-theme="cathedral"] .prism-sidebar-module__hint,
+[data-theme="cathedral"] .prism-sidebar-card__eyebrow,
+[data-theme="cathedral"] .prism-sidebar-card__body,
+[data-theme="cathedral"] .prism-sidebar-empty {
+  color: rgba(246, 241, 222, 0.74);
+}
+
+[data-theme="cathedral"] .prism-sidebar-module__link {
+  color: rgba(246, 241, 222, 0.8);
+  border-color: rgba(218, 165, 32, 0.28);
+  background: rgba(197, 165, 90, 0.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 6px 14px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="cathedral"] .prism-sidebar-module__link:hover {
+  color: #f6f1de;
+  background: rgba(197, 165, 90, 0.16);
+  border-color: rgba(218, 165, 32, 0.42);
+}
+
+[data-theme="dark"] .metacanon-sidebar-section-label {
+  color: rgba(230, 187, 78, 0.9);
+}
+
+[data-theme="dark"] :is(.prism-page-hero, .prism-page-panel, .prism-page-card, .prism-page-stat) .text-theme-primary-button,
+[data-theme="dark"] .prism-page-section-label {
+  color: rgba(232, 196, 103, 0.9);
+}
+
+[data-theme="dark"] :is(.prism-page-hero, .prism-page-panel, .prism-page-card, .prism-page-stat) .text-theme-text-secondary {
+  color: rgba(245, 245, 245, 0.8);
+}
+
+[data-theme="dark"] .prism-sidebar-module__hint,
+[data-theme="dark"] .prism-sidebar-card__eyebrow,
+[data-theme="dark"] .prism-sidebar-card__body,
+[data-theme="dark"] .prism-sidebar-empty {
+  color: rgba(245, 245, 245, 0.76);
+}
+
+[data-theme="dark"] .prism-sidebar-module__link {
+  color: rgba(245, 245, 245, 0.82);
+  border-color: rgba(255, 215, 0, 0.2);
+  background: rgba(255, 215, 0, 0.06);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 6px 14px rgba(0, 0, 0, 0.14);
+}
+
+[data-theme="dark"] .prism-sidebar-module__link:hover {
+  color: rgba(255, 248, 230, 0.94);
+  background: rgba(255, 215, 0, 0.12);
+  border-color: rgba(255, 215, 0, 0.34);
 }
 
 .prism-data-table {

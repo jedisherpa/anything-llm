@@ -1,0 +1,65 @@
+{
+  "id": "ethical-architecture-forum",
+  "title": "Ethical Architecture Forum",
+  "displayTitle": "Ethical Architecture Forum",
+  "handle": "@constellation-ethical-architecture-forum",
+  "type": "Octahedron",
+  "purpose": "To design the ethical framework, governance structures, and human-centered principles for an AI system or technology product.",
+  "projectManagerTitle": "The Systems Architect",
+  "projectManagerHandle": "@mc-project-managers-board-systems-architect",
+  "members": [
+    {
+      "role": "The Ethical Boundary",
+      "lens_path": "/home/ubuntu/councils/pauls-board/06_Human_Dignity_And_Ethical_Boundary_Lens.docx",
+      "displayRole": "The Ethical Boundary",
+      "relativePath": "councils/pauls-board/06_Human_Dignity_And_Ethical_Boundary_Lens.md",
+      "lensId": "pauls-board-ethical-boundary",
+      "lensHandle": "@mc-pauls-board-ethical-boundary",
+      "lensTitle": "The Ethical Boundary"
+    },
+    {
+      "role": "The Cognitive Analyst",
+      "lens_path": "/home/ubuntu/councils/pauls-board/05_Cognitive_Bias_And_Judgment_Lens.docx",
+      "displayRole": "The Cognitive Analyst",
+      "relativePath": "councils/pauls-board/05_Cognitive_Bias_And_Judgment_Lens.md",
+      "lensId": "pauls-board-cognitive-analyst",
+      "lensHandle": "@mc-pauls-board-cognitive-analyst",
+      "lensTitle": "The Cognitive Analyst"
+    },
+    {
+      "role": "The Interaction Designer",
+      "lens_path": "/home/ubuntu/councils/pauls-board/08_Human_Comprehension_And_Interaction_Lens.docx",
+      "displayRole": "The Interaction Designer",
+      "relativePath": "councils/pauls-board/08_Human_Comprehension_And_Interaction_Lens.md",
+      "lensId": "pauls-board-interaction-designer",
+      "lensHandle": "@mc-pauls-board-interaction-designer",
+      "lensTitle": "The Interaction Designer"
+    },
+    {
+      "role": "The Complexity Navigator",
+      "lens_path": "/home/ubuntu/councils/project-managers-board/10_Complexity_Navigator_Lens.md",
+      "displayRole": "The Complexity Navigator",
+      "relativePath": "councils/project-managers-board/10_Complexity_Navigator_Lens.md",
+      "lensId": "project-managers-board-complexity-navigator",
+      "lensHandle": "@mc-project-managers-board-complexity-navigator",
+      "lensTitle": "The Complexity Navigator"
+    },
+    {
+      "role": "The Long-Term Thinker",
+      "lens_path": "/home/ubuntu/councils/pauls-board/10_Leverage_Incentives_And_Long_Term_Thinking_Lens.docx",
+      "displayRole": "The Long-Term Thinker",
+      "relativePath": "councils/pauls-board/10_Leverage_Incentives_And_Long_Term_Thinking_Lens.md",
+      "lensId": "pauls-board-long-term-thinker",
+      "lensHandle": "@mc-pauls-board-long-term-thinker",
+      "lensTitle": "The Long-Term Thinker"
+    }
+  ],
+  "relativePath": "constellations/octahedron-5-ethical-architecture.json",
+  "detailPath": "constellations/ethical-architecture-forum.json",
+  "name": "Octahedron 5: The \"Ethical Architecture\" Council",
+  "projectManager": "/home/ubuntu/councils/project-managers-board/01_Profound_Knowledge_Systems_Lens.md",
+  "projectManagerRelativePath": "councils/project-managers-board/01_Profound_Knowledge_Systems_Lens.md",
+  "projectManagerId": "project-managers-board-systems-architect",
+  "legacyId": "octahedron-5-the-ethical-architecture-council",
+  "legacyHandle": "@constellation-octahedron-5-the-ethical-architecture-council"
+}

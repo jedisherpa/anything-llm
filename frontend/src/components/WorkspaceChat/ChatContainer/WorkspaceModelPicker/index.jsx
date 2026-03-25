@@ -11,7 +11,31 @@ import {
 } from "../PromptInput/LLMSelector/action";
 import Workspace from "@/models/workspace";
 import System from "@/models/system";
-import { SIDEBAR_TOGGLE_EVENT } from "@/components/Sidebar/SidebarToggle";
+
+function humanizeModelName(model = "") {
+  if (!model) return "";
+
+  let value = String(model).split("/").pop()?.trim() || "";
+  value = value.replace(/-(?:non-)?reasoning\b/gi, "");
+  value = value.replace(/\bgrok-4-l\b/gi, "grok-4");
+  value = value.replace(/\bgrok-4-1\b/gi, "grok-4.1");
+  value = value.replace(/[_-]+/g, " ").trim();
+
+  const tokens = value.split(/\s+/).filter(Boolean);
+  return tokens
+    .map((token) => {
+      if (/^\d+(?:\.\d+)?$/.test(token)) return token;
+      if (/^grok$/i.test(token)) return "Grok";
+      if (/^gpt$/i.test(token)) return "GPT";
+      if (/^llama$/i.test(token)) return "Llama";
+      if (/^gemini$/i.test(token)) return "Gemini";
+      if (/^claude$/i.test(token)) return "Claude";
+      if (/^fast$/i.test(token)) return "Fast";
+      if (/^mini$/i.test(token)) return "Mini";
+      return token.charAt(0).toUpperCase() + token.slice(1);
+    })
+    .join(" ");
+}
 
 function fetchModelName(slug, setModelName) {
   if (!slug) return;
@@ -23,7 +47,11 @@ function fetchModelName(slug, setModelName) {
   );
 }
 
-export default function WorkspaceModelPicker({ workspaceSlug = null }) {
+export default function WorkspaceModelPicker({
+  workspaceSlug = null,
+  compact = false,
+  className = "",
+}) {
   const { t } = useTranslation();
   const { slug: urlSlug } = useParams();
   const slug = urlSlug ?? workspaceSlug;
@@ -37,16 +65,7 @@ export default function WorkspaceModelPicker({ workspaceSlug = null }) {
   } = useModal();
   const [config, setConfig] = useState({ settings: {}, provider: null });
   const [refreshKey, setRefreshKey] = useState(0);
-  const [sidebarOpen, setSidebarOpen] = useState(
-    () => window.localStorage.getItem("anythingllm_sidebar_toggle") !== "closed"
-  );
-
-  useEffect(() => {
-    const handleToggle = (e) => setSidebarOpen(e.detail.open);
-    window.addEventListener(SIDEBAR_TOGGLE_EVENT, handleToggle);
-    return () => window.removeEventListener(SIDEBAR_TOGGLE_EVENT, handleToggle);
-  }, []);
-
+  const displayName = humanizeModelName(modelName);
   // Fetch current model name for display
   useEffect(() => fetchModelName(slug, setModelName), [slug]);
 
@@ -85,25 +104,29 @@ export default function WorkspaceModelPicker({ workspaceSlug = null }) {
           onClick={() => setShowSelector(false)}
         />
       )}
-      <div
-        className={`hidden md:block absolute top-2 z-30 transition-all duration-500 ${
-          sidebarOpen ? "left-8" : "left-11"
-        }`}
-      >
+      <div className={`relative hidden md:block shrink-0 z-30 ${className}`}>
         <button
           type="button"
           onClick={() => setShowSelector(!showSelector)}
-          className="metacanon-model-picker-button group flex cursor-pointer items-center rounded-full border-none px-3 py-2 transition-all"
+          className={`metacanon-model-picker-button group flex cursor-pointer items-center rounded-full border-none transition-all ${
+            compact
+              ? "metacanon-model-picker-button--compact max-w-[148px] px-2.5 py-1.5"
+              : "metacanon-composer-toolbar-button max-w-[260px] px-3 py-2"
+          }`}
           data-open={showSelector ? "true" : "false"}
         >
-          <span className="metacanon-model-picker-button__text text-[14px] leading-none">
-            {modelName || t("chat_window.select_model")}{" "}
+          <span
+            className={`metacanon-model-picker-button__text block truncate leading-none ${
+              compact ? "text-[11px]" : "text-[13px]"
+            }`}
+          >
+            {displayName || t("chat_window.select_model")}{" "}
             <span aria-hidden="true">▾</span>
           </span>
         </button>
 
         {showSelector && (
-          <div className="metacanon-model-picker-panel absolute left-0 top-full mt-2 w-[620px] overflow-hidden rounded-[22px]">
+          <div className="metacanon-model-picker-panel absolute bottom-full left-0 mb-2 w-[620px] overflow-hidden rounded-[22px]">
             <LLMSelectorModal
               key={refreshKey}
               workspaceSlug={slug}

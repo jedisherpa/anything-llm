@@ -1,0 +1,56 @@
+{
+  "id": "creative-world-forge",
+  "title": "Creative World Forge",
+  "displayTitle": "Creative World Forge",
+  "handle": "@constellation-creative-world-forge",
+  "type": "Octahedron",
+  "purpose": "To build a complete, internally consistent creative world for a brand, product, or cultural project.",
+  "projectManagerTitle": "The Flow Optimizer",
+  "projectManagerHandle": "@mc-project-managers-board-flow-optimizer",
+  "members": [
+    {
+      "role": "The World Builder",
+      "lens_path": "/home/ubuntu/councils/visual-branding-board/06_The_World_Builder_Lens.md",
+      "displayRole": "The World Builder",
+      "relativePath": "councils/visual-branding-board/06_The_World_Builder_Lens.md",
+      "lensId": "visual-branding-board-world-builder",
+      "lensHandle": "@mc-visual-branding-board-world-builder",
+      "lensTitle": "The World Builder"
+    },
+    {
+      "role": "The Cinematic Immersionist",
+      "lens_path": "/home/ubuntu/councils/visual-branding-board/07_The_Cinematic_Immersionist_Lens.md",
+      "displayRole": "The Cinematic Immersionist",
+      "relativePath": "councils/visual-branding-board/07_The_Cinematic_Immersionist_Lens.md",
+      "lensId": "visual-branding-board-cinematic-immersionist",
+      "lensHandle": "@mc-visual-branding-board-cinematic-immersionist",
+      "lensTitle": "The Cinematic Immersionist"
+    },
+    {
+      "role": "The Multimedia Storyteller",
+      "lens_path": "/home/ubuntu/councils/visual-branding-board/09_The_Multimedia_Storyteller_Lens.md",
+      "displayRole": "The Multimedia Storyteller",
+      "relativePath": "councils/visual-branding-board/09_The_Multimedia_Storyteller_Lens.md",
+      "lensId": "visual-branding-board-multimedia-storyteller",
+      "lensHandle": "@mc-visual-branding-board-multimedia-storyteller",
+      "lensTitle": "The Multimedia Storyteller"
+    },
+    {
+      "role": "The Interactive Experience Pioneer",
+      "lens_path": "/home/ubuntu/councils/visual-branding-board/10_The_Interactive_Experience_Pioneers_Lens.md",
+      "displayRole": "The Interactive Experience Pioneer",
+      "relativePath": "councils/visual-branding-board/10_The_Interactive_Experience_Pioneers_Lens.md",
+      "lensId": "visual-branding-board-interactive-experience-pioneer",
+      "lensHandle": "@mc-visual-branding-board-interactive-experience-pioneer",
+      "lensTitle": "The Interactive Experience Pioneer"
+    }
+  ],
+  "relativePath": "constellations/octahedron-3-creative-world.json",
+  "detailPath": "constellations/creative-world-forge.json",
+  "name": "Octahedron 3: The \"Creative World\" Council",
+  "projectManager": "/home/ubuntu/councils/project-managers-board/05_Lean_Flow_Optimizer_Lens.md",
+  "projectManagerRelativePath": "councils/project-managers-board/05_Lean_Flow_Optimizer_Lens.md",
+  "projectManagerId": "project-managers-board-flow-optimizer",
+  "legacyId": "octahedron-3-the-creative-world-council",
+  "legacyHandle": "@constellation-octahedron-3-the-creative-world-council"
+}

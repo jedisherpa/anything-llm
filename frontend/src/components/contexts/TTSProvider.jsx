@@ -24,7 +24,7 @@ export function TTSProvider({ children }) {
   useEffect(() => {
     async function getSettings() {
       const _settings = await System.keys();
-      setProvider(_settings?.TextToSpeechProvider ?? "native");
+      setProvider(_settings?.TextToSpeechProvider ?? "piper_local");
       setSettings(_settings);
       setLoading(false);
     }

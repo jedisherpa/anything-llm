@@ -6,6 +6,9 @@ import dns from "dns"
 import { visualizer } from "rollup-plugin-visualizer"
 
 dns.setDefaultResultOrder("verbatim")
+const shouldAnalyzeBundle = process.env.BUNDLE_INSPECT === "1"
+const useSimpleChunks = process.env.VITE_LEGACY_MANUAL_CHUNKS !== "1"
+const disableReactPlugin = process.env.VITE_DISABLE_REACT_PLUGIN === "1"
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -28,14 +31,18 @@ export default defineConfig({
     postcss
   },
   plugins: [
-    react(),
-    visualizer({
-      template: "treemap", // or sunburst
-      open: false,
-      gzipSize: true,
-      brotliSize: true,
-      filename: "bundleinspector.html" // will be saved in project's root
-    })
+    ...(!disableReactPlugin ? [react()] : []),
+    ...(shouldAnalyzeBundle
+      ? [
+          visualizer({
+            template: "treemap", // or sunburst
+            open: false,
+            gzipSize: true,
+            brotliSize: true,
+            filename: "bundleinspector.html" // will be saved in project's root
+          }),
+        ]
+      : []),
   ],
   resolve: {
     alias: [
@@ -103,6 +110,8 @@ export default defineConfig({
           return assetInfo.name;
         },
         manualChunks(id) {
+          if (useSimpleChunks) return;
+
           const localeMatch = id.match(/\/src\/locales\/([^/]+)\/common\.js$/);
           if (localeMatch) {
             if (localeMatch[1] === "en") {
@@ -222,6 +231,9 @@ export default defineConfig({
             id.includes("/recharts/") ||
             id.includes("/recharts-scale/") ||
             id.includes("/victory-vendor/") ||
+            id.includes("/d3-") ||
+            id.includes("/internmap/") ||
+            id.includes("/decimal.js-light/") ||
             id.includes("/react-smooth/") ||
             id.includes("/eventemitter3/")
           ) {
@@ -236,14 +248,6 @@ export default defineConfig({
             id.includes("/clsx/")
           ) {
             return "utility-vendor";
-          }
-
-          if (
-            id.includes("/d3-") ||
-            id.includes("/internmap/") ||
-            id.includes("/decimal.js-light/")
-          ) {
-            return "d3-vendor";
           }
 
           if (

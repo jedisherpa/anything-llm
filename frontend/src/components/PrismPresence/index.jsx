@@ -45,6 +45,7 @@ export default function PrismPresence({
   label = "Prism",
   caption = null,
   showState = true,
+  showLabel = true,
   className = "",
   align = "center",
 }) {
@@ -52,6 +53,7 @@ export default function PrismPresence({
   const { state, setHoverTarget } = usePrism();
   const { isLightTheme, resolvedTheme } = useTheme();
   const palette = SIZE_MAP[size] ?? SIZE_MAP.md;
+  const stateLabel = STATE_LABELS[state] ?? state;
   const alignmentClass =
     align === "left" ? "items-start text-left" : "items-center text-center";
   const themeMode =
@@ -87,7 +89,7 @@ export default function PrismPresence({
       role="status"
       aria-live="polite"
       aria-label={`Prism status: ${state}`}
-      title={`Prism ${state}`}
+      title={`Prism ${stateLabel}`}
     >
       <div className={`flex flex-col gap-2 ${alignmentClass}`}>
         <div
@@ -103,23 +105,29 @@ export default function PrismPresence({
             className={`prism-presence__image ${palette.image}`}
           />
         </div>
-        <div className="space-y-0.5">
-          <p
-            className={`prism-presence__label ${palette.copy} uppercase tracking-[0.24em] text-[var(--prism-text-strong)]`}
-          >
-            {label}
-          </p>
-          {caption ? (
-            <p className="prism-presence__caption text-[11px] text-[var(--prism-text-soft)]">
-              {caption}
-            </p>
-          ) : null}
-          {showState ? (
-            <span className="prism-presence__state text-[10px] uppercase tracking-[0.18em]">
-              {STATE_LABELS[state] ?? state}
-            </span>
-          ) : null}
-        </div>
+        {showLabel || caption || showState ? (
+          <div className="prism-presence__copy space-y-0.5">
+            {showLabel ? (
+              <p
+                className={`prism-presence__label ${palette.copy} uppercase tracking-[0.24em] text-[var(--prism-text-strong)]`}
+              >
+                {label}
+              </p>
+            ) : null}
+            {caption ? (
+              <p className="prism-presence__caption text-[11px] text-[var(--prism-text-soft)]">
+                {caption}
+              </p>
+            ) : null}
+            {showState ? (
+              <span className="prism-presence__state-row">
+                <span className="prism-presence__state text-[10px] uppercase tracking-[0.18em]">
+                  {stateLabel}
+                </span>
+              </span>
+            ) : null}
+          </div>
+        ) : null}
       </div>
     </div>
   );

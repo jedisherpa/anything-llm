@@ -12,21 +12,24 @@ export default function InterfaceSettings() {
       <Sidebar />
       <div
         style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
-        className="metacanon-page-frame relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
+        className="metacanon-page-frame relative md:mx-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
       >
-        <div className="flex flex-col w-full px-1 md:pl-6 md:pr-[86px] md:py-6 py-16">
-          <div className="w-full flex flex-col gap-y-1 pb-6 border-white light:border-theme-sidebar-border border-b-2 border-opacity-10">
-            <div className="items-center">
-              <p className="text-lg leading-6 font-bold text-white">
-                {t("customization.interface.title")}
-              </p>
+        <div className="prism-settings-content prism-settings-interface flex flex-col w-full px-1 md:pl-6 md:pr-[86px] md:py-6 py-16">
+          <div className="prism-settings-page-header">
+            <div className="prism-page-section-label">
+              Transformation Agency
             </div>
-            <p className="text-xs leading-[18px] font-base text-white text-opacity-60">
+            <div className="prism-settings-page-title">
+              {t("customization.interface.title")}
+            </div>
+            <p className="prism-settings-page-description">
               {t("customization.interface.description")}
             </p>
           </div>
-          <ThemePreference />
-          <LanguagePreference />
+          <div className="prism-settings-page-stack">
+            <ThemePreference />
+            <LanguagePreference />
+          </div>
         </div>
       </div>
     </div>

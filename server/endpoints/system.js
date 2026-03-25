@@ -1,6 +1,4 @@
-process.env.NODE_ENV === "development"
-  ? require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` })
-  : require("dotenv").config();
+require("../utils/loadEnv").loadEnv();
 const { viewLocalFiles, normalizePath, isWithin } = require("../utils/files");
 const { purgeDocument, purgeFolder } = require("../utils/files/purgeDocument");
 const { getVectorDbClass } = require("../utils/helpers");
@@ -12,7 +10,11 @@ const {
   multiUserMode,
   queryParams,
 } = require("../utils/http");
-const { handleAssetUpload, handlePfpUpload } = require("../utils/files/multer");
+const {
+  handleAssetUpload,
+  handleFileUpload,
+  handlePfpUpload,
+} = require("../utils/files/multer");
 const { v4 } = require("uuid");
 const { SystemSettings } = require("../models/systemSettings");
 const { User } = require("../models/user");
@@ -64,6 +66,10 @@ const { VALID_COMMANDS } = require("../utils/chats");
 
 function systemEndpoints(app) {
   if (!app) return;
+  const directUploadsRoot =
+    process.env.NODE_ENV === "development"
+      ? path.resolve(__dirname, "../storage")
+      : path.resolve(process.env.STORAGE_DIR);
 
   app.get("/ping", (_, response) => {
     response.status(200).json({ online: true });
@@ -109,6 +115,46 @@ function systemEndpoints(app) {
       response.sendStatus(500).end();
     }
   });
+
+  app.post(
+    "/system/speech-to-text",
+    [validatedRequest, flexUserRoleValid([ROLES.all]), handleFileUpload],
+    async (request, response) => {
+      try {
+        const Collector = new CollectorApi();
+        const processingOnline = await Collector.online();
+
+        if (!processingOnline) {
+          return response.status(503).json({
+            success: false,
+            error: "Document processing API is not online.",
+          });
+        }
+
+        const { success, reason, documents = [] } = await Collector.parseDocument(
+          request.file.originalname
+        );
+
+        if (!success || documents.length === 0) {
+          return response.status(500).json({
+            success: false,
+            error: reason || "Speech-to-text transcription failed.",
+          });
+        }
+
+        const text = documents[0]?.pageContent?.trim?.() || "";
+        if (!text) return response.sendStatus(204).end();
+
+        return response.status(200).json({ success: true, text });
+      } catch (error) {
+        console.error("Error processing speech-to-text request:", error);
+        return response.status(500).json({
+          success: false,
+          error: "Speech-to-text could not be completed.",
+        });
+      }
+    }
+  );
 
   app.get(
     "/system/check-token",
@@ -531,6 +577,68 @@ function systemEndpoints(app) {
       } catch (e) {
         console.error(e.message, e);
         response.sendStatus(500).end();
+      }
+    }
+  );
+
+  app.post(
+    "/system/speech-to-text",
+    [validatedRequest, handleFileUpload],
+    async (request, response) => {
+      const Collector = new CollectorApi();
+      const cleanupTargets = [];
+
+      try {
+        if (!(await Collector.online())) {
+          return response.status(503).json({
+            success: false,
+            error: "Document processing API is not online.",
+          });
+        }
+
+        const { originalname } = request.file;
+        const { success, reason, documents = [] } =
+          await Collector.parseDocument(originalname);
+
+        cleanupTargets.push(
+          ...documents
+            .map((doc) => doc?.location)
+            .filter(Boolean)
+            .map((location) => path.resolve(directUploadsRoot, location))
+        );
+
+        if (!success) {
+          return response.status(500).json({
+            success: false,
+            error: reason || "Audio transcription failed.",
+          });
+        }
+
+        const text = documents
+          .map((doc) => doc?.pageContent || "")
+          .join("\n\n")
+          .trim();
+
+        if (!text.length) {
+          return response.status(422).json({
+            success: false,
+            error: "No speech detected in the provided audio.",
+          });
+        }
+
+        return response.status(200).json({ success: true, text, error: null });
+      } catch (e) {
+        console.error(e.message, e);
+        return response.status(500).json({
+          success: false,
+          error: e.message || "Speech-to-text failed.",
+        });
+      } finally {
+        for (const filePath of cleanupTargets) {
+          try {
+            if (fs.existsSync(filePath)) fs.rmSync(filePath);
+          } catch {}
+        }
       }
     }
   );

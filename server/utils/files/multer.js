@@ -4,16 +4,20 @@ const fs = require("fs");
 const { v4 } = require("uuid");
 const { normalizePath } = require(".");
 
+function resolveCollectorHotdir() {
+  return process.env.NODE_ENV === "development"
+    ? path.resolve(__dirname, `../../../collector/hotdir`)
+    : path.resolve(process.env.STORAGE_DIR, `..`, `collector`, `hotdir`);
+}
+
 /**
  * Handle File uploads for auto-uploading.
  * Mostly used for internal GUI/API uploads.
  */
 const fileUploadStorage = multer.diskStorage({
   destination: function (_, __, cb) {
-    const uploadOutput =
-      process.env.NODE_ENV === "development"
-        ? path.resolve(__dirname, `../../../collector/hotdir`)
-        : path.resolve(process.env.STORAGE_DIR, `../../collector/hotdir`);
+    const uploadOutput = resolveCollectorHotdir();
+    fs.mkdirSync(uploadOutput, { recursive: true });
     cb(null, uploadOutput);
   },
   filename: function (_, file, cb) {
@@ -30,10 +34,8 @@ const fileUploadStorage = multer.diskStorage({
  */
 const fileAPIUploadStorage = multer.diskStorage({
   destination: function (_, __, cb) {
-    const uploadOutput =
-      process.env.NODE_ENV === "development"
-        ? path.resolve(__dirname, `../../../collector/hotdir`)
-        : path.resolve(process.env.STORAGE_DIR, `../../collector/hotdir`);
+    const uploadOutput = resolveCollectorHotdir();
+    fs.mkdirSync(uploadOutput, { recursive: true });
     cb(null, uploadOutput);
   },
   filename: function (_, file, cb) {
@@ -83,14 +85,7 @@ const pfpUploadStorage = multer.diskStorage({
   },
 });
 
-/**
- * Handle Generic file upload as documents from the GUI
- * @param {Request} request
- * @param {Response} response
- * @param {NextFunction} next
- */
-function handleFileUpload(request, response, next) {
-  const upload = multer({ storage: fileUploadStorage }).single("file");
+function runSingleUpload(upload, request, response, next) {
   upload(request, response, function (err) {
     if (err) {
       response
@@ -102,8 +97,31 @@ function handleFileUpload(request, response, next) {
         .end();
       return;
     }
+
+    if (!request.file) {
+      response
+        .status(400)
+        .json({
+          success: false,
+          error: "No file uploaded.",
+        })
+        .end();
+      return;
+    }
+
     next();
   });
+}
+
+/**
+ * Handle Generic file upload as documents from the GUI
+ * @param {Request} request
+ * @param {Response} response
+ * @param {NextFunction} next
+ */
+function handleFileUpload(request, response, next) {
+  const upload = multer({ storage: fileUploadStorage }).single("file");
+  runSingleUpload(upload, request, response, next);
 }
 
 /**
@@ -115,19 +133,7 @@ function handleFileUpload(request, response, next) {
  */
 function handleAPIFileUpload(request, response, next) {
   const upload = multer({ storage: fileAPIUploadStorage }).single("file");
-  upload(request, response, function (err) {
-    if (err) {
-      response
-        .status(500)
-        .json({
-          success: false,
-          error: `Invalid file upload. ${err.message}`,
-        })
-        .end();
-      return;
-    }
-    next();
-  });
+  runSingleUpload(upload, request, response, next);
 }
 
 /**
@@ -135,19 +141,7 @@ function handleAPIFileUpload(request, response, next) {
  */
 function handleAssetUpload(request, response, next) {
   const upload = multer({ storage: assetUploadStorage }).single("logo");
-  upload(request, response, function (err) {
-    if (err) {
-      response
-        .status(500)
-        .json({
-          success: false,
-          error: `Invalid file upload. ${err.message}`,
-        })
-        .end();
-      return;
-    }
-    next();
-  });
+  runSingleUpload(upload, request, response, next);
 }
 
 /**
@@ -155,19 +149,7 @@ function handleAssetUpload(request, response, next) {
  */
 function handlePfpUpload(request, response, next) {
   const upload = multer({ storage: pfpUploadStorage }).single("file");
-  upload(request, response, function (err) {
-    if (err) {
-      response
-        .status(500)
-        .json({
-          success: false,
-          error: `Invalid file upload. ${err.message}`,
-        })
-        .end();
-      return;
-    }
-    next();
-  });
+  runSingleUpload(upload, request, response, next);
 }
 
 module.exports = {

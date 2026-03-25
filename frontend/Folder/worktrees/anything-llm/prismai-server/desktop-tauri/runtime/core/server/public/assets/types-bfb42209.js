@@ -1,0 +1,1 @@
+function o(r,s){const e={openAiTemp:{cast:t=>Number(t)},openAiHistory:{cast:t=>Number(t)},similarityThreshold:{cast:t=>parseFloat(t)},topN:{cast:t=>Number(t)}};return e.hasOwnProperty(r)?e[r].cast(s):s}export{o as c};

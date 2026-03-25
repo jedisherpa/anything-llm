@@ -70,11 +70,11 @@ export default function CustomLogo() {
   };
 
   return (
-    <div className="flex flex-col gap-y-0.5 my-4">
-      <p className="text-sm leading-6 font-semibold text-white">
+    <section className="prism-settings-field flex flex-col gap-y-0.5">
+      <p className="prism-settings-field-title mt-0">
         {t("customization.items.logo.title")}
       </p>
-      <p className="text-xs text-white/60">
+      <p className="prism-settings-field-copy mt-0">
         {t("customization.items.logo.description")}
       </p>
       {isDefaultLogo ? (
@@ -93,7 +93,7 @@ export default function CustomLogo() {
               />
 
               <div
-                className="w-80 py-4 bg-theme-settings-input-bg rounded-2xl border-2 border-dashed border-theme-text-secondary border-opacity-60 justify-center items-center inline-flex cursor-pointer"
+                className="w-80 py-4 bg-theme-settings-input-bg rounded-2xl border border-dashed border-theme-sidebar-border justify-center items-center inline-flex cursor-pointer"
                 htmlFor="logo-upload"
               >
                 <div className="flex flex-col items-center justify-center">
@@ -147,6 +147,6 @@ export default function CustomLogo() {
           </div>
         </div>
       )}
-    </div>
+    </section>
   );
 }

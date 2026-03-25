@@ -51,6 +51,9 @@ const ACCEPTED_MIMES = {
 
   "audio/wav": [".wav"],
   "audio/mpeg": [".mp3"],
+  "audio/webm": [".webm"],
+  "video/webm": [".webm"],
+  "audio/mp4": [".m4a"],
 
   "video/mp4": [".mp4"],
   "video/mpeg": [".mpeg"],
@@ -90,6 +93,8 @@ const SUPPORTED_FILETYPE_CONVERTERS = {
 
   ".mp3": "./convert/asAudio.js",
   ".wav": "./convert/asAudio.js",
+  ".webm": "./convert/asAudio.js",
+  ".m4a": "./convert/asAudio.js",
   ".mp4": "./convert/asAudio.js",
   ".mpeg": "./convert/asAudio.js",
 

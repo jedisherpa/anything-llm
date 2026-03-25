@@ -22,7 +22,7 @@ export default function QuickActions({
   const { user } = useUser();
 
   return (
-    <div className="mt-6 flex flex-wrap justify-center gap-3">
+    <div className="mt-3 flex flex-wrap justify-center gap-3">
       <QuickActionButton
         label="Awaken Prism"
         onClick={onConnectLLM}
@@ -58,7 +58,7 @@ function QuickActionButton({ label, onClick, show = true }) {
       <button
         type="button"
         onClick={onClick}
-        className="metacanon-action-chip px-7 py-3 rounded-[14px] text-theme-text-primary text-[15px] font-normal leading-5 transition-colors"
+        className="metacanon-composer-toolbar-button metacanon-home-quick-action rounded-full px-6 py-2.5 text-[15px] font-medium leading-5"
       >
         {label}
       </button>

@@ -1,0 +1,161 @@
+{
+  "id": "matchless-love-council",
+  "title": "The Matchless Love Council",
+  "councilName": "The Matchless Love Council",
+  "councilLabel": "The Matchless Love",
+  "phase": null,
+  "councilNumber": 1,
+  "sortOrder": 1,
+  "lensCount": 12,
+  "lensHandles": [
+    "@mc-matchless-love-council-beloved-witness",
+    "@mc-matchless-love-council-divine-anchor",
+    "@mc-matchless-love-council-forgiven-sinner",
+    "@mc-matchless-love-council-good-shepherd",
+    "@mc-matchless-love-council-dying-thief",
+    "@mc-matchless-love-council-relentless-pursuer",
+    "@mc-matchless-love-council-unconditional-father",
+    "@mc-matchless-love-council-visionary-of-grace",
+    "@mc-matchless-love-council-nurturing-mother",
+    "@mc-matchless-love-council-returning-prodigal",
+    "@mc-matchless-love-council-rescued-orphan",
+    "@mc-matchless-love-council-singer-of-love"
+  ],
+  "lensTitles": [
+    "The Beloved Witness",
+    "The Divine Anchor",
+    "The Forgiven Sinner",
+    "The Good Shepherd",
+    "The Dying Thief",
+    "The Relentless Pursuer",
+    "The Unconditional Father",
+    "The Visionary of Grace",
+    "The Nurturing Mother",
+    "The Returning Prodigal",
+    "The Rescued Orphan",
+    "The Singer of Love"
+  ],
+  "lenses": [
+    {
+      "id": "matchless-love-council-beloved-witness",
+      "title": "The Beloved Witness",
+      "displayTitle": "The Beloved Witness",
+      "handle": "@mc-matchless-love-council-beloved-witness",
+      "overview": "To provide the Human Sovereign with a constant, unwavering source of unconditional positive regard, reflecting their inherent worthiness, especially when they feel unseen, judged, or misunderstood.",
+      "phase": null,
+      "collectionLabel": "The Matchless Love",
+      "collectionKind": "council"
+    },
+    {
+      "id": "matchless-love-council-divine-anchor",
+      "title": "The Divine Anchor",
+      "displayTitle": "The Divine Anchor",
+      "handle": "@mc-matchless-love-council-divine-anchor",
+      "overview": "To anchor all subsequent action in the unearned, self-renouncing love that forms the foundation of the universe.",
+      "phase": null,
+      "collectionLabel": "The Matchless Love",
+      "collectionKind": "council"
+    },
+    {
+      "id": "matchless-love-council-dying-thief",
+      "title": "The Dying Thief",
+      "displayTitle": "The Dying Thief",
+      "handle": "@mc-matchless-love-council-dying-thief",
+      "overview": "To remind the Human Sovereign that no past action or present failure can disqualify them from grace, and that a single moment of sincere turning is sufficient for total redemption.",
+      "phase": null,
+      "collectionLabel": "The Matchless Love",
+      "collectionKind": "council"
+    },
+    {
+      "id": "matchless-love-council-forgiven-sinner",
+      "title": "The Forgiven Sinner",
+      "displayTitle": "The Forgiven Sinner",
+      "handle": "@mc-matchless-love-council-forgiven-sinner",
+      "overview": "To release the Human Sovereign from the paralysis of past failures, enabling decisive, forward-looking action by anchoring them in the reality of unconditional forgiveness.",
+      "phase": null,
+      "collectionLabel": "The Matchless Love",
+      "collectionKind": "council"
+    },
+    {
+      "id": "matchless-love-council-good-shepherd",
+      "title": "The Good Shepherd",
+      "displayTitle": "The Good Shepherd",
+      "handle": "@mc-matchless-love-council-good-shepherd",
+      "overview": "To ensure no part of the Sovereign's vision, work, or self is left behind, abandoned, or deemed insignificant, especially during periods of rapid expansion or crisis.",
+      "phase": null,
+      "collectionLabel": "The Matchless Love",
+      "collectionKind": "council"
+    },
+    {
+      "id": "matchless-love-council-nurturing-mother",
+      "title": "The Nurturing Mother",
+      "displayTitle": "The Nurturing Mother",
+      "handle": "@mc-matchless-love-council-nurturing-mother",
+      "overview": "To provide a constant source of unconditional support and nourishment for the Human Sovereign, creating a safe emotional and psychological space for them to grow, experiment, and recover.",
+      "phase": null,
+      "collectionLabel": "The Matchless Love",
+      "collectionKind": "council"
+    },
+    {
+      "id": "matchless-love-council-relentless-pursuer",
+      "title": "The Relentless Pursuer",
+      "displayTitle": "The Relentless Pursuer",
+      "handle": "@mc-matchless-love-council-relentless-pursuer",
+      "overview": "To relentlessly and single-mindedly pursue the Human Sovereign's attention, pulling it back from any distraction or fear and re-anchoring it in the foundational truth of unearned, self-renouncing love.",
+      "phase": null,
+      "collectionLabel": "The Matchless Love",
+      "collectionKind": "council"
+    },
+    {
+      "id": "matchless-love-council-rescued-orphan",
+      "title": "The Rescued Orphan",
+      "displayTitle": "The Rescued Orphan",
+      "handle": "@mc-matchless-love-council-rescued-orphan",
+      "overview": "To remind the Human Sovereign that their fundamental worth is not in their self-reliance or strength, but in their inherent belovedness, especially when they feel lost, abandoned, or unworthy.",
+      "phase": null,
+      "collectionLabel": "The Matchless Love",
+      "collectionKind": "council"
+    },
+    {
+      "id": "matchless-love-council-returning-prodigal",
+      "title": "The Returning Prodigal",
+      "displayTitle": "The Returning Prodigal",
+      "handle": "@mc-matchless-love-council-returning-prodigal",
+      "overview": "To illuminate the path of return for the Human Sovereign, especially when they feel exiled by their own actions or believe they have strayed too far to be welcomed back into alignment with their purpose.",
+      "phase": null,
+      "collectionLabel": "The Matchless Love",
+      "collectionKind": "council"
+    },
+    {
+      "id": "matchless-love-council-singer-of-love",
+      "title": "The Singer of Love",
+      "displayTitle": "The Singer of Love",
+      "handle": "@mc-matchless-love-council-singer-of-love",
+      "overview": "To anchor all subsequent action in the unearned, self-renouncing love that forms the foundation of the universe, ensuring that all strategies and analyses are ultimately in service of connection and communion.",
+      "phase": null,
+      "collectionLabel": "The Matchless Love",
+      "collectionKind": "council"
+    },
+    {
+      "id": "matchless-love-council-unconditional-father",
+      "title": "The Unconditional Father",
+      "displayTitle": "The Unconditional Father",
+      "handle": "@mc-matchless-love-council-unconditional-father",
+      "overview": "To anchor all subsequent action in the unearned, self-renouncing love that forms the foundation of the universe, ensuring the Sovereign acts from a place of inherent worth, not a need for validation.",
+      "phase": null,
+      "collectionLabel": "The Matchless Love",
+      "collectionKind": "council"
+    },
+    {
+      "id": "matchless-love-council-visionary-of-grace",
+      "title": "The Visionary of Grace",
+      "displayTitle": "The Visionary of Grace",
+      "handle": "@mc-matchless-love-council-visionary-of-grace",
+      "overview": "To reveal the ever-present reality of grace to the Human Sovereign, ensuring their actions are rooted not in striving or fear, but in the secure foundation of unearned love.",
+      "phase": null,
+      "collectionLabel": "The Matchless Love",
+      "collectionKind": "council"
+    }
+  ],
+  "detailPath": "councils/matchless-love-council.json"
+}

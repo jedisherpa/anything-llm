@@ -156,9 +156,7 @@ export default function ActiveWorkspaces() {
                                 </div>
                               </div>
                               {user?.role !== "default" && (
-                                <div
-                                  className={`flex items-center gap-x-[2px] transition-opacity duration-200 ${isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
-                                >
+                                <div className="flex items-center gap-x-[6px] opacity-100">
                                   <button
                                     type="button"
                                     onClick={(e) => {
@@ -166,7 +164,7 @@ export default function ActiveWorkspaces() {
                                       setSelectedWs(workspace);
                                       showModal();
                                     }}
-                                    className="metacanon-sidebar-icon-button group/upload ml-auto flex items-center justify-center rounded-md border-none p-[2px]"
+                                    className="metacanon-sidebar-icon-button group/upload ml-auto flex h-7 w-7 items-center justify-center rounded-full border-none p-0"
                                   >
                                     <UploadSimple className="h-[18px] w-[18px]" />
                                   </button>
@@ -182,7 +180,7 @@ export default function ActiveWorkspaces() {
                                             )
                                       );
                                     }}
-                                    className="metacanon-sidebar-icon-button group/gear ml-auto flex items-center justify-center rounded-md p-[2px]"
+                                    className="metacanon-sidebar-icon-button group/gear ml-auto flex h-7 w-7 items-center justify-center rounded-full border-none p-0"
                                     aria-label="General appearance settings"
                                   >
                                     <GearSix

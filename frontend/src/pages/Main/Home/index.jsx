@@ -22,7 +22,6 @@ import showToast from "@/utils/toast";
 import { safeJsonParse } from "@/utils/request";
 import useUser from "@/hooks/useUser";
 import TextSizeMenu from "@/components/WorkspaceChat/ChatContainer/TextSizeMenu";
-import WorkspaceModelPicker from "@/components/WorkspaceChat/ChatContainer/WorkspaceModelPicker";
 import { ChatTooltips } from "@/components/WorkspaceChat/ChatContainer/ChatTooltips";
 import MetacanonHomeStage from "@/components/Metacanon/HomeStage";
 
@@ -129,8 +128,8 @@ export default function Home() {
   if (workspaceLoading) {
     return (
       <div
-        style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
-        className="transition-all duration-500 relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-zinc-900 light:bg-white w-full h-full overflow-hidden"
+        style={{ height: "100%" }}
+        className="transition-all duration-500 relative flex-1 min-w-0 bg-zinc-900 light:bg-white h-full overflow-hidden"
       />
     );
   }
@@ -305,12 +304,11 @@ function HomeContent({ workspace, setWorkspace, threadSlug, setThreadSlug }) {
 
   return (
     <div
-      style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
-      className="metacanon-home-surface transition-all duration-500 relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] w-full h-full overflow-hidden border-none light:border-solid light:border light:border-theme-modal-border"
+      style={{ height: "100%" }}
+      className="metacanon-home-surface transition-all duration-500 relative flex-1 min-w-0 h-full overflow-hidden border-none"
     >
       {isMobile && <SidebarMobileHeader />}
       <TextSizeMenu />
-      <WorkspaceModelPicker workspaceSlug={workspace?.slug} />
       <DnDFileUploaderWrapper>
         <MetacanonHomeStage
           submit={handleSubmit}
@@ -339,8 +337,8 @@ function NoWorkspacesAssigned() {
   const { t } = useTranslation();
   return (
     <div
-      style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
-      className="transition-all duration-500 relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-zinc-900 light:bg-white w-full h-full overflow-hidden"
+      style={{ height: "100%" }}
+      className="transition-all duration-500 relative flex-1 min-w-0 bg-zinc-900 light:bg-white h-full overflow-hidden"
     >
       <div className="flex flex-col h-full w-full items-center justify-center">
         <p className="text-white/60 text-sm text-center whitespace-pre-line">

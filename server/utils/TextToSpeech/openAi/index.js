@@ -1,3 +1,5 @@
+const { ttsBufferFromChunks } = require("./utils");
+
 class OpenAiTTS {
   constructor() {
     if (!process.env.TTS_OPEN_AI_KEY)
@@ -11,12 +13,14 @@ class OpenAiTTS {
 
   async ttsBuffer(textInput) {
     try {
-      const result = await this.openai.audio.speech.create({
-        model: "tts-1",
-        voice: this.voice,
-        input: textInput,
+      return await ttsBufferFromChunks(textInput, async (chunk) => {
+        const result = await this.openai.audio.speech.create({
+          model: "tts-1",
+          voice: this.voice,
+          input: chunk,
+        });
+        return Buffer.from(await result.arrayBuffer());
       });
-      return Buffer.from(await result.arrayBuffer());
     } catch (e) {
       console.error(e);
     }

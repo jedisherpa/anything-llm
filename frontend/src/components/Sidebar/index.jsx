@@ -14,9 +14,10 @@ import { useSidebarToggle, ToggleSidebarButton } from "./SidebarToggle";
 import SearchBox from "./SearchBox";
 import { Tooltip } from "react-tooltip";
 import { createPortal } from "react-dom";
-import PrismPresence from "@/components/PrismPresence";
 import { MetacanonSidebarBrand } from "@/components/Metacanon/Branding";
 import SidebarFeaturedLenses from "./FeaturedLenses";
+import SidebarFeaturedCouncils from "./FeaturedCouncils";
+import SidebarPinnedConstellations from "./PinnedConstellations";
 
 export default function Sidebar() {
   const { user } = useUser();
@@ -47,34 +48,30 @@ export default function Sidebar() {
         <div className="overflow-hidden h-full flex flex-col">
           <div
             ref={sidebarRef}
-            className="metacanon-sidebar-panel relative m-[16px] flex-1 min-h-0 rounded-[18px] border border-theme-sidebar-border min-w-[304px] p-[14px]"
+            className="metacanon-sidebar-panel relative flex-1 min-h-0 min-w-[304px] border-0 border-r border-theme-sidebar-border px-[14px] pt-[14px] pb-[14px]"
           >
             <div className="flex flex-col h-full overflow-hidden">
               <div className="flex-grow flex flex-col min-w-[235px] min-h-0">
-                <div className="mb-3 flex items-center justify-between gap-3">
+                <div className="mb-4 flex items-start gap-4">
                   <MetacanonSidebarBrand />
-                  <div className="hidden shrink-0 md:flex">
-                    <PrismPresence
-                      surface="sidebar"
-                      size="xs"
-                      label="Prism"
-                      caption="Idle"
-                      align="left"
-                      showState={false}
-                    />
-                  </div>
                 </div>
                 <div className="relative flex-1 min-h-0 flex flex-col w-full pt-[4px]">
-                  <div className="flex flex-col gap-y-[14px] overflow-y-scroll no-scroll pb-[86px]">
-                    <SearchBox user={user} showNewWsModal={showNewWsModal} />
-                    <div className="metacanon-sidebar-section-label px-2 text-[11px] font-semibold uppercase tracking-[0.26em]">
-                      Workspaces
+                  <div className="metacanon-sidebar-scroll flex-1 overflow-y-auto no-scroll pb-[90px]">
+                    <div className="metacanon-sidebar-search-rail sticky top-0 z-20">
+                      <SearchBox user={user} showNewWsModal={showNewWsModal} />
                     </div>
-                    <ActiveWorkspaces />
-                    <SidebarFeaturedLenses />
+                    <div className="flex flex-col gap-y-[14px] pt-4">
+                      <div className="metacanon-sidebar-section-label px-2 text-[11px] font-semibold uppercase tracking-[0.26em]">
+                        Workspaces
+                      </div>
+                      <ActiveWorkspaces />
+                      <SidebarFeaturedCouncils />
+                      <SidebarPinnedConstellations />
+                      <SidebarFeaturedLenses />
+                    </div>
                   </div>
                 </div>
-                <div className="absolute bottom-0 left-0 right-0 pt-2 pb-1 rounded-b-[16px] border-t border-theme-sidebar-border bg-transparent bg-opacity-95 backdrop-filter backdrop-blur-md z-10">
+                <div className="metacanon-sidebar-footer-tray absolute bottom-0 left-0 right-0 z-10 border-t border-theme-sidebar-border pt-2 pb-1">
                   <Footer />
                 </div>
               </div>
@@ -179,6 +176,8 @@ export function SidebarMobileHeader() {
                   />
 
                   <ActiveWorkspaces />
+                  <SidebarFeaturedCouncils />
+                  <SidebarPinnedConstellations />
                   <SidebarFeaturedLenses />
                 </div>
               </div>

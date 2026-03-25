@@ -17,6 +17,13 @@ const { Agent } = require("undici");
 class CollectorApi {
   /** @type {number} - The maximum timeout for extension requests in milliseconds */
   extensionRequestTimeout = 15 * 60_000; // 15 minutes
+  /** @type {number} - The default timeout for collector requests in milliseconds */
+  requestTimeout = 10 * 60_000; // 10 minutes
+  /** @type {Agent} - Shared agent for regular collector requests */
+  requestAgent = new Agent({
+    headersTimeout: this.requestTimeout,
+    bodyTimeout: this.requestTimeout,
+  });
   /** @type {Agent} - The agent for extension requests */
   extensionRequestAgent = new Agent({
     headersTimeout: this.extensionRequestTimeout,
@@ -50,6 +57,55 @@ class CollectorApi {
         browserLaunchArgs: process.env.ANYTHINGLLM_CHROMIUM_ARGS ?? [],
       },
     };
+  }
+
+  #signedHeaders(data) {
+    return {
+      "Content-Type": "application/json",
+      "X-Integrity": this.comkey.sign(data),
+      "X-Payload-Signer": this.comkey.encrypt(
+        new EncryptionManager().xPayload
+      ),
+    };
+  }
+
+  async #parseJsonResponse(response) {
+    if (response.ok) return response.json();
+
+    let details = "";
+    try {
+      const contentType = response.headers?.get?.("content-type") || "";
+      if (contentType.includes("application/json")) {
+        const payload = await response.json();
+        details =
+          payload?.error || payload?.reason || JSON.stringify(payload || {});
+      } else {
+        details = await response.text();
+      }
+    } catch {
+      details = "";
+    }
+
+    const statusText = response.statusText ? ` ${response.statusText}` : "";
+    const suffix = details?.trim() ? `: ${details.trim()}` : "";
+    throw new Error(
+      `Collector request failed (${response.status}${statusText})${suffix}`
+    );
+  }
+
+  async #postJson(endpoint, data, fallback, dispatcher = this.requestAgent) {
+    try {
+      const response = await fetch(`${this.endpoint}${endpoint}`, {
+        method: "POST",
+        headers: this.#signedHeaders(data),
+        body: data,
+        dispatcher,
+      });
+      return await this.#parseJsonResponse(response);
+    } catch (error) {
+      this.log(error.message);
+      return fallback(error);
+    }
   }
 
   async online() {
@@ -87,27 +143,42 @@ class CollectorApi {
       options: this.#attachOptions(),
     });
 
-    return await fetch(`${this.endpoint}/process`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Integrity": this.comkey.sign(data),
-        "X-Payload-Signer": this.comkey.encrypt(
-          new EncryptionManager().xPayload
-        ),
-      },
-      body: data,
-      dispatcher: new Agent({ headersTimeout: 600000 }),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Response could not be completed");
-        return res.json();
-      })
-      .then((res) => res)
-      .catch((e) => {
-        this.log(e.message);
-        return { success: false, reason: e.message, documents: [] };
-      });
+    return await this.#postJson(
+      "/process",
+      data,
+      (error) => ({
+        success: false,
+        reason: error.message,
+        documents: [],
+      }),
+      this.requestAgent
+    );
+  }
+
+  /**
+   * Parse a document without promoting it into the selectable document library.
+   * Useful for one-off transcription/extraction flows like chat speech-to-text.
+   * @param {string} filename
+   * @returns {Promise<Object>}
+   */
+  async parseDocument(filename = "") {
+    if (!filename) return false;
+
+    const data = JSON.stringify({
+      filename,
+      options: this.#attachOptions(),
+    });
+
+    return await this.#postJson(
+      "/parse",
+      data,
+      (error) => ({
+        success: false,
+        reason: error.message,
+        documents: [],
+      }),
+      this.requestAgent
+    );
   }
 
   /**
@@ -128,26 +199,11 @@ class CollectorApi {
       metadata: metadata,
     });
 
-    return await fetch(`${this.endpoint}/process-link`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Integrity": this.comkey.sign(data),
-        "X-Payload-Signer": this.comkey.encrypt(
-          new EncryptionManager().xPayload
-        ),
-      },
-      body: data,
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Response could not be completed");
-        return res.json();
-      })
-      .then((res) => res)
-      .catch((e) => {
-        this.log(e.message);
-        return { success: false, reason: e.message, documents: [] };
-      });
+    return await this.#postJson("/process-link", data, (error) => ({
+      success: false,
+      reason: error.message,
+      documents: [],
+    }));
   }
 
   /**
@@ -163,26 +219,11 @@ class CollectorApi {
       metadata,
       options: this.#attachOptions(),
     });
-    return await fetch(`${this.endpoint}/process-raw-text`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Integrity": this.comkey.sign(data),
-        "X-Payload-Signer": this.comkey.encrypt(
-          new EncryptionManager().xPayload
-        ),
-      },
-      body: data,
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Response could not be completed");
-        return res.json();
-      })
-      .then((res) => res)
-      .catch((e) => {
-        this.log(e.message);
-        return { success: false, reason: e.message, documents: [] };
-      });
+    return await this.#postJson("/process-raw-text", data, (error) => ({
+      success: false,
+      reason: error.message,
+      documents: [],
+    }));
   }
 
   // We will not ever expose the document processor to the frontend API so instead we relay
@@ -190,29 +231,12 @@ class CollectorApi {
   // on the document processor.
   async forwardExtensionRequest({ endpoint, method, body }) {
     const data = typeof body === "string" ? body : JSON.stringify(body);
-    return await fetch(`${this.endpoint}${endpoint}`, {
-      method,
-      body: data,
-      headers: {
-        "Content-Type": "application/json",
-        "X-Integrity": this.comkey.sign(data),
-        "X-Payload-Signer": this.comkey.encrypt(
-          new EncryptionManager().xPayload
-        ),
-      },
-      // Extensions do a lot of work, and may take a while to complete so we need to increase the timeout
-      // substantially so that they do not show a failure to the user early.
-      dispatcher: this.extensionRequestAgent,
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Response could not be completed");
-        return res.json();
-      })
-      .then((res) => res)
-      .catch((e) => {
-        this.log(e.message);
-        return { success: false, data: {}, reason: e.message };
-      });
+    return await this.#postJson(
+      endpoint,
+      data,
+      (error) => ({ success: false, data: {}, reason: error.message }),
+      this.extensionRequestAgent
+    );
   }
 
   /**
@@ -230,26 +254,10 @@ class CollectorApi {
       captureAs,
       options: this.#attachOptions(),
     });
-    return await fetch(`${this.endpoint}/util/get-link`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Integrity": this.comkey.sign(data),
-        "X-Payload-Signer": this.comkey.encrypt(
-          new EncryptionManager().xPayload
-        ),
-      },
-      body: data,
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Response could not be completed");
-        return res.json();
-      })
-      .then((res) => res)
-      .catch((e) => {
-        this.log(e.message);
-        return { success: false, content: null };
-      });
+    return await this.#postJson("/util/get-link", data, () => ({
+      success: false,
+      content: null,
+    }));
   }
 
   /**
@@ -266,26 +274,11 @@ class CollectorApi {
       options: this.#attachOptions(),
     });
 
-    return await fetch(`${this.endpoint}/parse`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Integrity": this.comkey.sign(data),
-        "X-Payload-Signer": this.comkey.encrypt(
-          new EncryptionManager().xPayload
-        ),
-      },
-      body: data,
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Response could not be completed");
-        return res.json();
-      })
-      .then((res) => res)
-      .catch((e) => {
-        this.log(e.message);
-        return { success: false, reason: e.message, documents: [] };
-      });
+    return await this.#postJson("/parse", data, (error) => ({
+      success: false,
+      reason: error.message,
+      documents: [],
+    }));
   }
 }
 

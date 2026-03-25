@@ -1,3 +1,5 @@
+const { ttsBufferFromChunks } = require("./utils");
+
 class GenericOpenAiTTS {
   constructor() {
     if (!process.env.TTS_OPEN_AI_COMPATIBLE_KEY)
@@ -40,12 +42,14 @@ class GenericOpenAiTTS {
    */
   async ttsBuffer(textInput) {
     try {
-      const result = await this.openai.audio.speech.create({
-        model: this.model,
-        voice: this.voice,
-        input: textInput,
+      return await ttsBufferFromChunks(textInput, async (chunk) => {
+        const result = await this.openai.audio.speech.create({
+          model: this.model,
+          voice: this.voice,
+          input: chunk,
+        });
+        return Buffer.from(await result.arrayBuffer());
       });
-      return Buffer.from(await result.arrayBuffer());
     } catch (e) {
       console.error(e);
     }
