@@ -288,6 +288,7 @@ function copyCleanApp(sourceApp, stageRoot, appName) {
     ].join(" && "),
   ]);
   run("xattr", ["-cr", targetApp]);
+  run("/usr/bin/find", [targetApp, "-name", ".DS_Store", "-delete"]);
   return targetApp;
 }
 

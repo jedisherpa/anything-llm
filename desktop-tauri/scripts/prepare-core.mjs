@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { spawnSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import {
   chmodSync,
   closeSync,
@@ -176,8 +177,36 @@ function runCapture(command, args, cwd) {
   return (result.stdout || "").trim();
 }
 
+function forceRemovePath(target, options = {}) {
+  try {
+    rmSync(target, {
+      recursive: true,
+      force: true,
+      maxRetries: 5,
+      retryDelay: 100,
+      ...options,
+    });
+  } catch (error) {
+    if (!["ENOTEMPTY", "EPERM", "EBUSY"].includes(error?.code)) {
+      throw error;
+    }
+
+    const result = spawnSync("/bin/rm", ["-rf", target], {
+      stdio: "inherit",
+    });
+
+    if (result.error) {
+      throw result.error;
+    }
+
+    if (typeof result.status === "number" && result.status !== 0) {
+      throw error;
+    }
+  }
+}
+
 function copyTree(source, destination) {
-  rmSync(destination, { recursive: true, force: true });
+  forceRemovePath(destination);
   const sourceStat = statSync(source);
   if (sourceStat.isDirectory()) {
     try {
@@ -296,7 +325,7 @@ function pruneStableDesktopPublicAssets() {
   ];
 
   removable.forEach((target) => {
-    rmSync(target, { recursive: true, force: true });
+    forceRemovePath(target);
   });
 
   console.log(
@@ -311,15 +340,90 @@ function syncFrontendIntoServerPublic() {
     );
   }
 
-  rmSync(serverPublicDir, { recursive: true, force: true });
+  forceRemovePath(serverPublicDir);
   mkdirSync(serverPublicDir, { recursive: true });
   cpSync(frontendDistDir, serverPublicDir, { recursive: true });
   pruneStableDesktopPublicAssets();
   console.log(`Synced ${frontendDistDir} -> ${serverPublicDir}`);
 }
 
+function collectDirectoryFiles(rootDir, currentDir, entries = []) {
+  const dirEntries = readdirSync(currentDir, { withFileTypes: true }).sort(
+    (left, right) => left.name.localeCompare(right.name)
+  );
+
+  for (const entry of dirEntries) {
+    const absolutePath = join(currentDir, entry.name);
+    if (entry.isDirectory()) {
+      collectDirectoryFiles(rootDir, absolutePath, entries);
+      continue;
+    }
+
+    if (!entry.isFile()) continue;
+    entries.push({
+      relativePath: absoluteRuntimePath(rootDir, absolutePath),
+      absolutePath,
+    });
+  }
+
+  return entries;
+}
+
+function shouldOmitStableDesktopAsset(relativePath) {
+  if (prismExperimentalAssetsEnabled()) {
+    return false;
+  }
+
+  return (
+    relativePath === "models/platonic-solids.glb" ||
+    relativePath.startsWith("music/")
+  );
+}
+
+function hashDirectory(rootDir, options = {}) {
+  const hash = createHash("sha256");
+  const entries = collectDirectoryFiles(rootDir, rootDir).filter((entry) => {
+    if (typeof options.filter === "function") {
+      return options.filter(entry);
+    }
+    return true;
+  });
+
+  for (const entry of entries) {
+    hash.update(entry.relativePath);
+    hash.update("\n");
+    hash.update(readFileSync(entry.absolutePath));
+    hash.update("\n");
+  }
+
+  return {
+    fileCount: entries.length,
+    digest: hash.digest("hex"),
+  };
+}
+
+function verifyFrontendSyncParity() {
+  const source = hashDirectory(frontendDistDir, {
+    filter: (entry) => !shouldOmitStableDesktopAsset(entry.relativePath),
+  });
+  const target = hashDirectory(serverPublicDir);
+
+  if (
+    source.fileCount !== target.fileCount ||
+    source.digest !== target.digest
+  ) {
+    throw new Error(
+      `Frontend asset sync mismatch: dist(${source.fileCount}, ${source.digest}) != public(${target.fileCount}, ${target.digest})`
+    );
+  }
+
+  console.log(
+    `Verified frontend parity across ${source.fileCount} files (${source.digest.slice(0, 12)}).`
+  );
+}
+
 function resetRuntimeDir() {
-  rmSync(runtimeRoot, { recursive: true, force: true });
+  forceRemovePath(runtimeRoot);
   mkdirSync(runtimeCoreDir, { recursive: true });
   mkdirSync(runtimeBinDir, { recursive: true });
   mkdirSync(runtimeTemplateDir, { recursive: true });
@@ -355,7 +459,7 @@ function installRuntimeProductionDependencies(name, dir) {
     return;
   }
 
-  rmSync(join(dir, "node_modules"), { recursive: true, force: true });
+  forceRemovePath(join(dir, "node_modules"));
   runWithEnv(
     "corepack",
     [
@@ -381,7 +485,7 @@ function removeRuntimeSymlinks(dir) {
     const stat = lstatSync(absolutePath);
 
     if (stat.isSymbolicLink()) {
-      rmSync(absolutePath, { recursive: true, force: true });
+      forceRemovePath(absolutePath);
       removed += 1;
       continue;
     }
@@ -607,7 +711,7 @@ function pruneRuntimeDir(dir) {
   ];
 
   removable.forEach((entry) => {
-    rmSync(join(dir, entry), { recursive: true, force: true });
+    forceRemovePath(join(dir, entry));
   });
 
   const summary = {
@@ -621,7 +725,7 @@ function pruneRuntimeDir(dir) {
   pendingRemovals
     .sort((left, right) => right.path.length - left.path.length)
     .forEach(({ path, type }) => {
-      rmSync(path, { recursive: true, force: true });
+      forceRemovePath(path);
       if (type === "dir") {
         summary.directories += 1;
       } else {
@@ -657,6 +761,14 @@ function normalizeExecutablePermissions(dir) {
 
     chmodSync(absolutePath, stat.mode & ~0o111);
   }
+}
+
+function removeFinderMetadata(dir) {
+  if (!existsSync(dir)) {
+    return;
+  }
+
+  run("/usr/bin/find", [dir, "-name", ".DS_Store", "-delete"], coreRoot);
 }
 
 function loadUpstreamMetadata() {
@@ -746,6 +858,7 @@ function copyPortableRuntime() {
   pruneRuntimeDir(runtimeCollectorDir);
   normalizeExecutablePermissions(runtimeServerDir);
   normalizeExecutablePermissions(runtimeCollectorDir);
+  removeFinderMetadata(runtimeRoot);
 
   const hostNodePath = process.env.ANYTHINGLLM_NODE_BIN || process.execPath;
   const resolvedNodePath = realpathSync(hostNodePath);
@@ -790,7 +903,7 @@ function validateTemplateSourceDatabase(dbPath) {
 }
 
 function prepareRuntimeTemplateDatabase() {
-  rmSync(templateWorkspaceDir, { recursive: true, force: true });
+  forceRemovePath(templateWorkspaceDir);
   mkdirSync(templateStorageDir, { recursive: true });
   mkdirSync(prismaCacheDir, { recursive: true });
 
@@ -820,8 +933,10 @@ function main() {
   ensureRuntimeEnvFiles();
   ensureRuntimePrismaSchema();
   prepareRuntimeTemplateDatabase();
+  forceRemovePath(frontendDistDir);
   run("npm", ["run", "build"], frontendDir);
   syncFrontendIntoServerPublic();
+  verifyFrontendSyncParity();
   copyPortableRuntime();
 
   const audit = auditRuntimeTree(runtimeRoot);
