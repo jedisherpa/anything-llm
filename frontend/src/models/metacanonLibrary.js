@@ -112,6 +112,7 @@ function normalizeFeaturedCouncil(council = {}) {
     collectionLabel: council.collectionLabel || "Council",
     lensHandles: Array.from(new Set(council.lensHandles || [])),
     lensTitles: Array.from(new Set(council.lensTitles || [])),
+    leadTitle: council.leadTitle || null,
     colorHex: council.colorHex || null,
   };
 }
@@ -129,6 +130,58 @@ export function saveCouncilPack(pack = {}) {
   const next = [nextPack, ...existing];
   localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
   return nextPack;
+}
+
+export function updateCouncilPack(packId = "", updates = {}) {
+  if (typeof window === "undefined") return null;
+
+  let updatedPack = null;
+  const nextPacks = loadCouncilPacks().map((item) => {
+    if (item.id !== packId) return item;
+    updatedPack = normalizePack({
+      ...item,
+      ...updates,
+      id: item.id,
+      createdAt: item.createdAt,
+    });
+    return updatedPack;
+  });
+
+  if (!updatedPack) return null;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(nextPacks));
+
+  const featuredCouncilId = `council-pack:${String(packId || "")}`;
+  const currentFeaturedCouncils = loadFeaturedCouncils();
+  let featuredCouncilUpdated = false;
+  const nextFeaturedCouncils = currentFeaturedCouncils.map((item) => {
+    if (item.featureId !== featuredCouncilId) return item;
+    featuredCouncilUpdated = true;
+    return normalizeFeaturedCouncil({
+      ...item,
+      sourceId: updatedPack.id,
+      title: updatedPack.name,
+      description: updatedPack.description,
+      collectionLabel:
+        updatedPack.kind === "council"
+          ? "Custom Council"
+          : item.collectionLabel,
+      lensHandles: updatedPack.lensHandles,
+      lensTitles: updatedPack.lensTitles,
+      leadTitle: updatedPack.leadTitle,
+      colorHex: updatedPack.colorHex,
+      kind: "custom",
+    });
+  });
+
+  if (featuredCouncilUpdated) {
+    localStorage.setItem(
+      FEATURED_COUNCILS_STORAGE_KEY,
+      JSON.stringify(nextFeaturedCouncils)
+    );
+    emitFeaturedCouncilsUpdate(nextFeaturedCouncils);
+  }
+
+  return updatedPack;
 }
 
 export function deleteCouncilPack(packId = "") {

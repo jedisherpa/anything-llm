@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { Plus } from "@phosphor-icons/react/dist/csr/Plus";
 import { MagnifyingGlass } from "@phosphor-icons/react/dist/csr/MagnifyingGlass";
 
 import { useTranslation } from "react-i18next";
@@ -54,8 +55,8 @@ export default function SearchBox({ user, showNewWsModal }) {
   }, []);
 
   return (
-    <div className="flex gap-x-[8px] w-full items-center h-[44px]">
-      <div className="relative h-full w-full flex">
+    <div className="flex w-full flex-col gap-y-[10px]">
+      <div className="relative h-[44px] w-full flex">
         <PrismHoverTarget targetId="sidebar-search">
           <input
             ref={searchRef}
@@ -206,10 +207,14 @@ function ShortWidthNewWorkspaceButton({ user, showNewWsModal }) {
         <button
           data-tooltip-id="new-workspace-tooltip"
           data-tooltip-content={t("new-workspace.title")}
+          aria-label={t("new-workspace.title")}
           onClick={showNewWsModal}
-          className="metacanon-search-create-button border-none flex h-[44px] w-[44px] items-center justify-center rounded-[14px] transition-all duration-300"
+          className="metacanon-search-create-button border-none flex h-[42px] w-full items-center justify-center gap-x-2 rounded-[14px] px-4 transition-all duration-300"
         >
-          <MagnifyingGlass size={18} weight="bold" />
+          <Plus size={18} weight="bold" />
+          <span className="metacanon-search-create-button__label text-[12px] font-semibold leading-none">
+            {t("new-workspace.title")}
+          </span>
         </button>
       </PrismHoverTarget>
       <Tooltip

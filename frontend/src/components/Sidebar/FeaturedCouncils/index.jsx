@@ -1,9 +1,11 @@
+import ModalWrapper from "@/components/ModalWrapper";
 import PrismHoverTarget from "@/components/PrismHoverTarget";
 import useMetacanonAlignment from "@/hooks/useMetacanonAlignment";
 import {
   deleteFeaturedCouncil,
   loadFeaturedCouncils,
   METACANON_FEATURED_COUNCILS_EVENT,
+  updateCouncilPack,
 } from "@/models/metacanonLibrary";
 import {
   clearActiveMetacanonAlignment,
@@ -31,68 +33,163 @@ function buildCouncilAlignment(council = {}) {
   };
 }
 
+function getCouncilChipLabel(council = {}) {
+  if (council.kind !== "council" && council.leadTitle) {
+    return `Lead Lens: ${council.leadTitle}`;
+  }
+
+  const lensCount =
+    council.lensHandles?.length || council.lensTitles?.length || 0;
+  if (lensCount > 0) {
+    return `${lensCount} ${lensCount === 1 ? "Lens" : "Lenses"}`;
+  }
+
+  return council.collectionLabel || METACANON_TERMS.councils;
+}
+
 function FeaturedCouncilRow({
   council,
   active = false,
   onToggle = () => {},
   onOpenChat = () => {},
   onRemove = () => {},
+  onRename = async () => false,
 }) {
   const title = council.title || getCouncilUiTitle(council);
+  const [showRenameModal, setShowRenameModal] = useState(false);
+  const [nextName, setNextName] = useState(title);
+  const [renaming, setRenaming] = useState(false);
+  const isCustomCouncil =
+    council.kind !== "council" && !!(council.sourceId || council.id);
+
+  useEffect(() => {
+    if (showRenameModal) {
+      setNextName(title);
+    }
+  }, [showRenameModal, title]);
+
+  async function handleRename(event) {
+    event?.preventDefault?.();
+    const name = nextName.trim();
+    if (!name) return;
+    if (name === title) {
+      setShowRenameModal(false);
+      return;
+    }
+
+    setRenaming(true);
+    const renamed = await onRename(council, name);
+    setRenaming(false);
+    if (renamed) {
+      setShowRenameModal(false);
+    }
+  }
 
   return (
-    <PrismHoverTarget targetId={`sidebar-council-${council.featureId}`}>
-      <div className="prism-sidebar-card px-[12px] py-[10px] text-left transition-all duration-200">
-        <button
-          type="button"
-          onClick={() => onToggle(council, active)}
-          className="w-full text-left"
-        >
-          <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0">
-              <div className="prism-sidebar-card__eyebrow">
-                {council.kind === "council"
-                  ? "Canonical Council"
-                  : "Custom Council"}
+    <>
+      <PrismHoverTarget targetId={`sidebar-council-${council.featureId}`}>
+        <div className="prism-sidebar-card px-[12px] py-[10px] text-left transition-all duration-200">
+          <button
+            type="button"
+            onClick={() => onToggle(council, active)}
+            className="w-full text-left"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <div className="prism-sidebar-card__eyebrow">
+                  {council.kind === "council"
+                    ? "Canonical Council"
+                    : "Custom Council"}
+                </div>
+                <div className="prism-sidebar-card__title mt-1 truncate">
+                  {title}
+                </div>
+                <div className="prism-sidebar-card__body mt-1">
+                  {council.description ||
+                    `${council.lensHandles?.length || 0} lenses routed through council-pack orchestration.`}
+                </div>
               </div>
-              <div className="prism-sidebar-card__title mt-1 truncate">
-                {title}
-              </div>
-              <div className="prism-sidebar-card__body mt-1">
-                {council.description ||
-                  `${council.lensHandles?.length || 0} lenses routed through council-pack orchestration.`}
+              {active ? (
+                <div className="prism-sidebar-chip prism-sidebar-chip--active shrink-0">
+                  Aligned
+                </div>
+              ) : null}
+            </div>
+          </button>
+          <div className="prism-sidebar-card__actions">
+            <div className="prism-sidebar-card__action-group">
+              <div className="prism-sidebar-chip prism-sidebar-chip--ghost">
+                {getCouncilChipLabel(council)}
               </div>
             </div>
-            {active ? (
-              <div className="prism-sidebar-chip prism-sidebar-chip--active shrink-0">
-                Aligned
-              </div>
+            {isCustomCouncil ? (
+              <button
+                type="button"
+                onClick={() => setShowRenameModal(true)}
+                className="prism-sidebar-module__link"
+              >
+                Rename
+              </button>
             ) : null}
+            <button
+              type="button"
+              onClick={() => onOpenChat(council)}
+              className="prism-sidebar-module__link"
+            >
+              Chat
+            </button>
+            <button
+              type="button"
+              onClick={() => onRemove(council.featureId, title)}
+              className="prism-sidebar-module__link"
+            >
+              Remove
+            </button>
           </div>
-        </button>
-        <div className="prism-sidebar-card__actions">
-          <div className="prism-sidebar-card__action-group">
-            <div className="prism-sidebar-chip prism-sidebar-chip--ghost">
-              {council.collectionLabel || METACANON_TERMS.councils}
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={() => onOpenChat(council)}
-            className="prism-sidebar-module__link"
-          >
-            Chat
-          </button>
-          <button
-            type="button"
-            onClick={() => onRemove(council.featureId, title)}
-            className="prism-sidebar-module__link"
-          >
-            Remove
-          </button>
         </div>
-      </div>
-    </PrismHoverTarget>
+      </PrismHoverTarget>
+
+      {showRenameModal ? (
+        <ModalWrapper isOpen={showRenameModal}>
+          <div className="w-full max-w-md rounded-2xl border border-theme-sidebar-border bg-theme-bg-container p-5 shadow-xl">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-theme-primary-button">
+              Rename Custom Council
+            </div>
+            <div className="mt-2 text-lg font-semibold text-theme-text-primary">
+              Update the council name shown in Featured Councils
+            </div>
+            <div className="mt-2 text-sm leading-6 text-theme-text-secondary">
+              Choose the name people will recognize in the sidebar and library.
+            </div>
+            <form className="mt-4 flex flex-col gap-3" onSubmit={handleRename}>
+              <input
+                autoFocus
+                value={nextName}
+                onChange={(event) => setNextName(event.target.value)}
+                placeholder="Name this custom council"
+                className="h-[46px] rounded-[16px] border border-theme-sidebar-border bg-theme-bg-sidebar px-4 text-sm text-theme-text-primary outline-none placeholder:text-theme-settings-input-placeholder"
+              />
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowRenameModal(false)}
+                  className="prism-sidebar-module__link"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={renaming || !nextName.trim()}
+                  className="rounded-full bg-theme-primary-button px-4 py-2 text-sm font-semibold text-theme-primary-button-text disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {renaming ? "Renaming..." : "Save Name"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </ModalWrapper>
+      ) : null}
+    </>
   );
 }
 
@@ -155,6 +252,36 @@ export default function SidebarFeaturedCouncils() {
     showToast(`${title || "Council"} removed from the sidebar.`, "success");
   }
 
+  async function renameCouncil(council, name) {
+    const updated = updateCouncilPack(council.sourceId || council.id, { name });
+    if (!updated) {
+      showToast("Could not rename this council.", "error");
+      return false;
+    }
+
+    if (
+      activeAlignment?.id === (council.sourceId || council.id) &&
+      activeAlignment?.collectionLabel ===
+        (council.collectionLabel || METACANON_TERMS.councils)
+    ) {
+      setActiveMetacanonAlignment(
+        buildCouncilAlignment({
+          ...council,
+          title: updated.name,
+          description: updated.description,
+          lensHandles: updated.lensHandles,
+          lensTitles: updated.lensTitles,
+          leadTitle: updated.leadTitle,
+          colorHex: updated.colorHex,
+        })
+      );
+    }
+
+    setFeaturedCouncils(loadFeaturedCouncils());
+    showToast(`Council renamed to ${updated.name}.`, "success");
+    return true;
+  }
+
   async function openAlignedChat(council) {
     const next = setActiveMetacanonAlignment(buildCouncilAlignment(council));
     if (!next) {
@@ -202,6 +329,7 @@ export default function SidebarFeaturedCouncils() {
                 onToggle={toggleCouncil}
                 onOpenChat={openAlignedChat}
                 onRemove={removeCouncil}
+                onRename={renameCouncil}
               />
             );
           })}

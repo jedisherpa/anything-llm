@@ -1627,6 +1627,134 @@
   margin: 18px 0 28px;
 }
 
+.prism-onboarding-home-stage {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 720px);
+}
+
+.prism-onboarding-home-kicker {
+  margin-bottom: 10px;
+  letter-spacing: 0.02em;
+}
+
+.prism-onboarding-home-logo {
+  width: min(100%, 520px);
+  height: auto;
+  object-fit: contain;
+}
+
+.prism-onboarding-home-action {
+  position: relative;
+  overflow: hidden;
+  box-shadow: none;
+}
+
+.prism-onboarding-home-action::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06), transparent 55%);
+  opacity: 0.82;
+  pointer-events: none;
+}
+
+.prism-onboarding-home-action--primary {
+  background: color-mix(in srgb, var(--theme-button-primary) 92%, transparent);
+}
+
+.prism-onboarding-home-action--secondary {
+  background: color-mix(in srgb, var(--theme-sidebar-item-default) 78%, transparent);
+}
+
+.prism-onboarding-home-ambient {
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.prism-onboarding-home-ambient--left {
+  left: max(28px, 4vw);
+  bottom: max(28px, 4vw);
+  width: min(28vw, 360px);
+  height: min(32vw, 380px);
+}
+
+.prism-onboarding-home-ambient--right {
+  right: max(28px, 4vw);
+  top: max(24px, 4vw);
+  width: min(26vw, 340px);
+  height: min(30vw, 360px);
+}
+
+.prism-onboarding-home-geometry {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.88;
+}
+
+.prism-onboarding-home-geometry--right {
+  transform: scale(0.82) translate(6%, -2%);
+}
+
+.prism-onboarding-home-presence {
+  position: absolute;
+}
+
+.prism-onboarding-home-presence--left {
+  left: 4%;
+  bottom: 0;
+}
+
+.prism-onboarding-home-presence--right {
+  right: 2%;
+  top: 2%;
+}
+
+.prism-onboarding-geometry__outline,
+.prism-onboarding-geometry__spoke,
+.prism-onboarding-geometry__facet {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.prism-onboarding-geometry__outline {
+  stroke: color-mix(in srgb, var(--gold) 52%, transparent);
+  stroke-width: 2.1;
+}
+
+.prism-onboarding-geometry__outline--soft {
+  opacity: 0.56;
+}
+
+.prism-onboarding-geometry__spoke {
+  stroke: color-mix(in srgb, var(--thread-active) 44%, transparent);
+  stroke-width: 1.4;
+  opacity: 0.72;
+}
+
+.prism-onboarding-geometry__facet {
+  stroke: color-mix(in srgb, var(--thread-active) 58%, transparent);
+  stroke-width: 1.6;
+  opacity: 0.62;
+}
+
+.prism-onboarding-geometry__node {
+  fill: color-mix(in srgb, var(--thread-active) 80%, white 20%);
+  opacity: 0.86;
+}
+
+.prism-onboarding-geometry__node--hot {
+  fill: color-mix(in srgb, var(--gold) 84%, white 16%);
+}
+
+.prism-onboarding-geometry__node--core {
+  fill: color-mix(in srgb, var(--gold) 46%, var(--thread-active) 54%);
+}
+
 .prism-onboarding-rail {
   position: relative;
   color: var(--theme-text-secondary);
@@ -1948,6 +2076,27 @@
       color-mix(in srgb, var(--bg) 92%, white 8%) 100%
     );
   box-shadow: 0 14px 30px rgba(93, 75, 37, 0.08);
+}
+
+[data-theme="light"] .prism-onboarding-geometry__outline {
+  stroke: color-mix(in srgb, #b99543 36%, transparent);
+}
+
+[data-theme="light"] .prism-onboarding-geometry__spoke,
+[data-theme="light"] .prism-onboarding-geometry__facet {
+  stroke: color-mix(in srgb, #8ecfc7 42%, transparent);
+}
+
+[data-theme="light"] .prism-onboarding-geometry__node {
+  fill: color-mix(in srgb, #7eb8c9 64%, white 36%);
+}
+
+[data-theme="light"] .prism-onboarding-home-action--secondary {
+  background: color-mix(in srgb, rgba(255, 252, 245, 0.92) 84%, transparent);
+}
+
+[data-theme="cathedral"] .prism-onboarding-home-action--secondary {
+  background: color-mix(in srgb, rgba(17, 25, 34, 0.78) 82%, transparent);
 }
 
 [data-theme="light"]
@@ -2320,6 +2469,24 @@
     margin: 0 10px 24px;
     padding: 28px 18px 36px;
     border-radius: 24px;
+  }
+
+  .prism-onboarding-home-ambient {
+    opacity: 0.58;
+  }
+
+  .prism-onboarding-home-ambient--left {
+    width: 220px;
+    height: 240px;
+    left: -12px;
+    bottom: -8px;
+  }
+
+  .prism-onboarding-home-ambient--right {
+    width: 210px;
+    height: 230px;
+    right: -10px;
+    top: 6px;
   }
 
   .prism-app-grid {

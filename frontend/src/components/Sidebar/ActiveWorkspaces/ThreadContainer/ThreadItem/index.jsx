@@ -1,4 +1,5 @@
 import useScrollActiveItemIntoView from "@/hooks/useScrollActiveItemIntoView";
+import ModalWrapper from "@/components/ModalWrapper";
 import Workspace from "@/models/workspace";
 import paths from "@/utils/paths";
 import showToast from "@/utils/toast";
@@ -174,6 +175,9 @@ function OptionsMenu({
   currentThreadSlug,
 }) {
   const menuRef = useRef(null);
+  const [showRenameModal, setShowRenameModal] = useState(false);
+  const [threadName, setThreadName] = useState(thread.name ?? "");
+  const [renaming, setRenaming] = useState(false);
 
   // Ref menu options
   const outsideClick = (e) => {
@@ -205,32 +209,44 @@ function OptionsMenu({
 
     setListeners();
     return cleanupListeners;
-  }, [menuRef.current, containerRef.current]);
+  }, [containerRef, close]);
 
-  const renameThread = async () => {
-    const name = window
-      .prompt("What would you like to rename this thread to?")
-      ?.trim();
+  useEffect(() => {
+    if (showRenameModal) {
+      setThreadName(thread.name ?? "");
+    }
+  }, [showRenameModal, thread.name]);
+
+  const renameThread = async (event) => {
+    event?.preventDefault?.();
+    const name = threadName.trim();
     if (!name || name.length === 0) {
-      close();
       return;
     }
 
-    const { message } = await Workspace.threads.update(
+    setRenaming(true);
+    const { thread: updatedThread, message } = await Workspace.threads.update(
       workspace.slug,
       thread.slug,
       { name }
     );
+    setRenaming(false);
     if (!!message) {
       showToast(`Thread could not be updated! ${message}`, "error", {
         clear: true,
       });
-      close();
       return;
     }
 
-    thread.name = name;
-    close();
+    window.dispatchEvent(
+      new CustomEvent("renameThread", {
+        detail: {
+          threadSlug: thread.slug,
+          newName: updatedThread?.name ?? name,
+        },
+      })
+    );
+    setShowRenameModal(false);
   };
 
   const handleDelete = async () => {
@@ -256,27 +272,110 @@ function OptionsMenu({
     }
   };
 
+  function openRenameModal() {
+    close();
+    setThreadName(thread.name ?? "");
+    setShowRenameModal(true);
+  }
+
   return (
-    <div
-      ref={menuRef}
-      className="metacanon-thread-options-menu absolute top-[25px] right-[10px] z-[20] w-fit rounded-lg p-1"
-    >
-      <button
-        onClick={renameThread}
-        type="button"
-        className="flex w-full items-center gap-x-2 rounded-md p-2 text-theme-text-primary hover:bg-theme-action-menu-item-hover"
+    <>
+      <div
+        ref={menuRef}
+        className="metacanon-thread-options-menu absolute top-[25px] right-[10px] z-[20] w-fit rounded-lg p-1"
       >
-        <PencilSimple size={18} />
-        <p className="text-sm">Rename</p>
-      </button>
-      <button
-        onClick={handleDelete}
-        type="button"
-        className="flex w-full items-center gap-x-2 rounded-md p-2 text-theme-text-primary hover:bg-red-500/20 hover:text-red-100"
-      >
-        <Trash size={18} />
-        <p className="text-sm">Delete Thread</p>
-      </button>
-    </div>
+        <button
+          onClick={openRenameModal}
+          type="button"
+          className="flex w-full items-center gap-x-2 rounded-md p-2 text-theme-text-primary hover:bg-theme-action-menu-item-hover"
+        >
+          <PencilSimple size={18} />
+          <p className="text-sm">Rename</p>
+        </button>
+        <button
+          onClick={handleDelete}
+          type="button"
+          className="flex w-full items-center gap-x-2 rounded-md p-2 text-theme-text-primary hover:bg-red-500/20 hover:text-red-100"
+        >
+          <Trash size={18} />
+          <p className="text-sm">Delete Thread</p>
+        </button>
+      </div>
+      <RenameThreadModal
+        isOpen={showRenameModal}
+        name={threadName}
+        renaming={renaming}
+        onChange={setThreadName}
+        onClose={() => setShowRenameModal(false)}
+        onSubmit={renameThread}
+      />
+    </>
+  );
+}
+
+function RenameThreadModal({
+  isOpen,
+  name,
+  renaming = false,
+  onChange,
+  onClose,
+  onSubmit,
+}) {
+  return (
+    <ModalWrapper isOpen={isOpen}>
+      <div className="metacanon-modal-panel w-full max-w-lg overflow-hidden rounded-lg border-2 border-theme-modal-border bg-theme-bg-secondary shadow">
+        <div className="relative border-b border-theme-modal-border p-6">
+          <div className="w-full flex items-center gap-x-2">
+            <h3 className="overflow-hidden overflow-ellipsis whitespace-nowrap text-xl font-semibold text-white">
+              Rename Thread
+            </h3>
+          </div>
+          <button
+            onClick={onClose}
+            type="button"
+            className="absolute top-4 right-4 inline-flex items-center rounded-lg border border-transparent bg-transparent p-1 text-sm transition-all duration-300 hover:border-theme-modal-border hover:border-opacity-50 hover:bg-theme-modal-border"
+          >
+            <X size={24} weight="bold" className="text-white" />
+          </button>
+        </div>
+        <form onSubmit={onSubmit}>
+          <div className="flex flex-col gap-y-4 px-9 py-7">
+            <div>
+              <label
+                htmlFor="thread-name"
+                className="mb-2 block text-sm font-medium text-white"
+              >
+                Thread Name
+              </label>
+              <input
+                id="thread-name"
+                type="text"
+                value={name}
+                onChange={(event) => onChange(event.target.value)}
+                required={true}
+                autoFocus={true}
+                className="block w-full rounded-lg border-none bg-theme-settings-input-bg p-2.5 text-sm text-white outline-none focus:outline-primary-button active:outline-primary-button placeholder:text-theme-settings-input-placeholder"
+              />
+            </div>
+          </div>
+          <div className="flex w-full items-center justify-end space-x-2 rounded-b border-t border-theme-modal-border p-6">
+            <button
+              onClick={onClose}
+              type="button"
+              className="border-none rounded-lg bg-transparent px-4 py-2 text-sm text-white transition-all duration-300 hover:opacity-60"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={renaming}
+              className="rounded-lg bg-white px-4 py-2 text-sm text-black transition-all duration-300 hover:opacity-60 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {renaming ? "Saving..." : "Save"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </ModalWrapper>
   );
 }

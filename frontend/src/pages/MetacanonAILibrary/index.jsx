@@ -43,10 +43,12 @@ import {
 } from "@/utils/metacanonTerminology";
 import {
   buildPromptForAlignment,
+  clearActiveMetacanonAlignment,
   getMetacanonLensAccent,
   isRunnableMetacanonAlignment,
   setActiveMetacanonAlignment,
 } from "@/utils/metacanonAlignment";
+import useMetacanonAlignment from "@/hooks/useMetacanonAlignment";
 import { BookOpen } from "@phosphor-icons/react/dist/csr/BookOpen";
 import { FileText } from "@phosphor-icons/react/dist/csr/FileText";
 import { FlowArrow } from "@phosphor-icons/react/dist/csr/FlowArrow";
@@ -246,6 +248,10 @@ function getDraftModeMeta(draftMode = "constellation") {
       activateCopy: "custom council",
       saveCopy: "Council",
       clearCopy: "Council",
+      nameLabel: "Council Name",
+      nameHelper:
+        "This is the name shown when the council is saved or featured in the sidebar.",
+      namePlaceholder: "Name this custom council",
     };
   }
 
@@ -257,7 +263,17 @@ function getDraftModeMeta(draftMode = "constellation") {
     activateCopy: "custom constellation",
     saveCopy: "Constellation",
     clearCopy: "Constellation",
+    nameLabel: "Constellation Name",
+    nameHelper:
+      "This is the name shown when the constellation is saved for reuse.",
+    namePlaceholder: "Name this custom constellation",
   };
+}
+
+function shouldReplaceDraftName(currentName = "") {
+  const normalized = String(currentName || "").trim();
+  if (!normalized) return true;
+  return ["Custom Constellation", "Custom Council"].includes(normalized);
 }
 
 function normalizeDraftLens(item = {}) {
@@ -923,6 +939,7 @@ function renderDetail(item, tab) {
 
 export default function MetacanonAILibraryPage() {
   const navigate = useNavigate();
+  const activeAlignment = useMetacanonAlignment();
   const [tab, setTab] = useState("councils");
   const [search, setSearch] = useState("");
   const [selectedId, setSelectedId] = useState(null);
@@ -1260,6 +1277,12 @@ export default function MetacanonAILibraryPage() {
     setSelectedId(null);
   };
 
+  const clearDraftAlignmentIfActive = (draftId = `draft-${draftMode}`) => {
+    if (activeAlignment?.id === draftId) {
+      clearActiveMetacanonAlignment();
+    }
+  };
+
   const addLensToDraft = (lens) => {
     const nextLens = normalizeDraftLens(lens);
     let added = false;
@@ -1299,6 +1322,7 @@ export default function MetacanonAILibraryPage() {
   };
 
   const removeLensFromDraft = (handle = "") => {
+    clearDraftAlignmentIfActive();
     setDraftLenses((current) =>
       current.filter((item) => item.handle !== handle)
     );
@@ -1325,6 +1349,7 @@ export default function MetacanonAILibraryPage() {
   };
 
   const clearDraftConstellation = () => {
+    clearDraftAlignmentIfActive();
     const nextDraftModeMeta = getDraftModeMeta(draftMode);
     setDraftLenses([]);
     setDraftName(nextDraftModeMeta.defaultName);
@@ -1367,9 +1392,12 @@ export default function MetacanonAILibraryPage() {
     }
 
     activateAlignment(
-      draftConstellation,
+      {
+        ...draftConstellation,
+        id: `draft-${draftMode}`,
+      },
       (next) =>
-        `Prism aligned to ${next?.title}. Your next message will run this custom constellation.`
+        `Prism aligned to ${next?.title}. Your next message will run this custom ${draftMode}.`
     );
   };
 
@@ -1501,6 +1529,7 @@ export default function MetacanonAILibraryPage() {
         collectionLabel: "Custom Council",
         lensHandles: pack.lensHandles,
         lensTitles: pack.lensTitles,
+        leadTitle: pack.leadTitle,
         colorHex: pack.colorHex,
       });
       setFeaturedCouncils(loadFeaturedCouncils());
@@ -1863,9 +1892,11 @@ export default function MetacanonAILibraryPage() {
                     <ActionButton
                       label="Draft a Constellation"
                       onClick={() => {
+                        clearDraftAlignmentIfActive();
                         setDraftMode("constellation");
-                        if (!draftName.trim())
+                        if (shouldReplaceDraftName(draftName)) {
                           setDraftName("Custom Constellation");
+                        }
                       }}
                       variant={
                         draftMode === "constellation" ? "primary" : "secondary"
@@ -1874,8 +1905,11 @@ export default function MetacanonAILibraryPage() {
                     <ActionButton
                       label="Draft a Council"
                       onClick={() => {
+                        clearDraftAlignmentIfActive();
                         setDraftMode("council");
-                        if (!draftName.trim()) setDraftName("Custom Council");
+                        if (shouldReplaceDraftName(draftName)) {
+                          setDraftName("Custom Council");
+                        }
                       }}
                       variant={
                         draftMode === "council" ? "primary" : "secondary"
@@ -1887,10 +1921,10 @@ export default function MetacanonAILibraryPage() {
                   <div className="prism-library-draft-board-header flex items-center justify-between gap-3">
                     <div>
                       <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-theme-primary-button">
-                        Working Title
+                        {draftModeMeta.nameLabel}
                       </div>
                       <div className="mt-1 text-sm text-theme-text-secondary">
-                        Name the formation you are composing.
+                        {draftModeMeta.nameHelper}
                       </div>
                     </div>
                     <div className="rounded-full border border-theme-sidebar-border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-theme-text-secondary">
@@ -1901,8 +1935,13 @@ export default function MetacanonAILibraryPage() {
                     value={draftName}
                     onChange={(event) => setDraftName(event.target.value)}
                     className="metacanon-sidebar-search prism-library-input prism-library-draft-name h-[46px] rounded-[16px] border-none px-4 text-sm text-theme-text-primary outline-none placeholder:text-theme-settings-input-placeholder"
-                    placeholder="Custom Constellation Name"
+                    placeholder={draftModeMeta.namePlaceholder}
                   />
+                  <div className="text-xs leading-5 text-theme-text-secondary">
+                    {draftMode === "council"
+                      ? "Tip: give the council a role-based name before saving so it is easy to recognize in Featured Councils."
+                      : "Tip: give the constellation a job-focused name before saving so it is easy to find later."}
+                  </div>
 
                   <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-theme-text-secondary">
                     Draft Lens Order

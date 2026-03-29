@@ -3,6 +3,10 @@ import { safeJsonParse } from "@/utils/request";
 export const ACTIVE_METACANON_ALIGNMENT =
   "anythingllm_active_metacanon_alignment";
 export const METACANON_ALIGNMENT_EVENT = "metacanon_alignment_updated";
+const REFERENTIAL_ALIGNMENT_PROMPT_PATTERN =
+  /\b(answer|respond|re-answer|rewrite|rework|revise|refine|try|do|approach)\b[\s\S]{0,80}\bagain\b|\bin light of\b|\busing (?:the )?(?:constellation|council|lens)\b|\bwith (?:the )?(?:constellation|council|lens)\b|\bthrough (?:the )?.+?\blens\b/i;
+const MAX_FOLLOW_UP_SNIPPET_LENGTH = 1200;
+const MAX_SHORT_FOLLOW_UP_LENGTH = 500;
 
 const BOARD_ACCENTS = {
   "direct-response-board": "#c89b2f",
@@ -58,6 +62,97 @@ function uniqueStrings(values = []) {
         .filter(Boolean)
     )
   );
+}
+
+function normalizeMessageText(text = "") {
+  return String(text || "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function truncateForAlignment(
+  text = "",
+  maxLength = MAX_FOLLOW_UP_SNIPPET_LENGTH
+) {
+  const normalized = normalizeMessageText(text);
+  if (!normalized || normalized.length <= maxLength) return normalized;
+  return `${normalized.slice(0, maxLength - 1).trimEnd()}...`;
+}
+
+function shouldAnchorFollowUpPrompt(prompt = "") {
+  return REFERENTIAL_ALIGNMENT_PROMPT_PATTERN.test(String(prompt || "").trim());
+}
+
+function assistantAskedForFollowUp(assistantText = "") {
+  const normalized = normalizeMessageText(assistantText).toLowerCase();
+  if (!normalized) return false;
+  if (normalized.includes("?")) return true;
+  return /\b(what|which|who|where|when|why|how|can you|could you|would you|tell me|share|clarify|describe|give me)\b/.test(
+    normalized
+  );
+}
+
+function getMostRecentResolvedExchange(history = []) {
+  const messages = Array.isArray(history) ? history : [];
+  let assistantIndex = -1;
+
+  for (let i = messages.length - 1; i >= 0; i -= 1) {
+    const message = messages[i];
+    if (message?.pending) continue;
+    if (
+      message?.role === "assistant" &&
+      normalizeMessageText(message?.content)
+    ) {
+      assistantIndex = i;
+      break;
+    }
+  }
+
+  if (assistantIndex < 0) return null;
+
+  for (let i = assistantIndex - 1; i >= 0; i -= 1) {
+    const message = messages[i];
+    if (message?.pending) continue;
+    if (message?.role !== "user") continue;
+
+    const userText = normalizeMessageText(message?.content);
+    if (!userText) continue;
+
+    return {
+      user: userText,
+      assistant: normalizeMessageText(messages[assistantIndex]?.content),
+    };
+  }
+
+  return null;
+}
+
+function buildAnchoredFollowUpPrompt(prompt = "", history = []) {
+  const trimmedPrompt = String(prompt || "").trim();
+  if (!trimmedPrompt) {
+    return trimmedPrompt;
+  }
+
+  const priorExchange = getMostRecentResolvedExchange(history);
+  if (!priorExchange?.user) return trimmedPrompt;
+
+  const shouldAnchor =
+    shouldAnchorFollowUpPrompt(trimmedPrompt) ||
+    (trimmedPrompt.length <= MAX_SHORT_FOLLOW_UP_LENGTH &&
+      assistantAskedForFollowUp(priorExchange.assistant));
+
+  if (!shouldAnchor) return trimmedPrompt;
+
+  const assistantReply = truncateForAlignment(priorExchange.assistant);
+  return [
+    "Continue the existing thread using this alignment.",
+    "Stay anchored to the ongoing conversation instead of describing the alignment on its own.",
+    `Original user question:\n${truncateForAlignment(priorExchange.user)}`,
+    assistantReply ? `Most recent assistant answer:\n${assistantReply}` : null,
+    `Current user follow-up:\n${trimmedPrompt}`,
+  ]
+    .filter(Boolean)
+    .join("\n\n");
 }
 
 export function getMetacanonLensAccent(lens = {}) {
@@ -181,9 +276,13 @@ export function buildPromptForAlignment(
 
 export function buildAlignedPrompt(
   prompt = "",
-  alignment = getActiveMetacanonAlignment()
+  alignment = getActiveMetacanonAlignment(),
+  history = []
 ) {
-  return buildPromptForAlignment(prompt, alignment);
+  return buildPromptForAlignment(
+    buildAnchoredFollowUpPrompt(prompt, history),
+    alignment
+  );
 }
 
 export function buildExplicitMetacanonInvocation(handle = "") {
