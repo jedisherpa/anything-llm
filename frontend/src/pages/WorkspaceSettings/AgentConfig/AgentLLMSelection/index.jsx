@@ -10,44 +10,6 @@ import { X } from "@phosphor-icons/react/dist/csr/X";
 import AgentModelSelection from "../AgentModelSelection";
 import { useTranslation } from "react-i18next";
 
-const ENABLED_PROVIDERS = [
-  "openai",
-  "anthropic",
-  "lmstudio",
-  "ollama",
-  "localai",
-  "groq",
-  "azure",
-  "koboldcpp",
-  "togetherai",
-  "openrouter",
-  "novita",
-  "mistral",
-  "perplexity",
-  "textgenwebui",
-  "generic-openai",
-  "bedrock",
-  "fireworksai",
-  "deepseek",
-  "ppio",
-  "litellm",
-  "apipie",
-  "xai",
-  "nvidia-nim",
-  "gemini",
-  "moonshotai",
-  "cometapi",
-  "foundry",
-  "zai",
-  "giteeai",
-  "cohere",
-  "docker-model-runner",
-  "privatemode",
-  "sambanova",
-  "lemonade",
-  // TODO: More agent support.
-  // "huggingface"     // Can be done but already has issues with no-chat templated. Needs to be tested.
-];
 const WARN_PERFORMANCE = [
   "lmstudio",
   "koboldcpp",
@@ -67,12 +29,7 @@ const LLM_DEFAULT = {
   requiredConfig: [],
 };
 
-const LLMS = [
-  LLM_DEFAULT,
-  ...AVAILABLE_LLM_PROVIDERS.filter((llm) =>
-    ENABLED_PROVIDERS.includes(llm.value)
-  ),
-];
+const LLMS = [LLM_DEFAULT, ...AVAILABLE_LLM_PROVIDERS];
 
 export default function AgentLLMSelection({
   settings,

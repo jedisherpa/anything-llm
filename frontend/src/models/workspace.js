@@ -333,20 +333,39 @@ const Workspace = {
         return false;
       });
   },
-  ttsMessage: async function (slug, chatId) {
-    return await fetch(`${API_BASE}/workspace/${slug}/tts/${chatId}`, {
-      method: "GET",
-      cache: "no-cache",
-      headers: baseHeaders(),
-    })
-      .then((res) => {
-        if (res.ok && res.status !== 204) return res.blob();
-        throw new Error("Failed to fetch TTS.");
-      })
-      .then((blob) => (blob ? URL.createObjectURL(blob) : null))
-      .catch(() => {
-        return null;
-      });
+  ttsMessage: async function (
+    slug,
+    chatId,
+    { retries = 1, retryDelayMs = 750 } = {}
+  ) {
+    const fetchTtsBlob = async () => {
+      const response = await fetch(
+        `${API_BASE}/workspace/${slug}/tts/${chatId}`,
+        {
+          method: "GET",
+          cache: "no-cache",
+          headers: baseHeaders(),
+        }
+      );
+
+      if (response.ok && response.status !== 204) {
+        return response.blob();
+      }
+
+      throw new Error("Failed to fetch TTS.");
+    };
+
+    for (let attempt = 0; attempt <= retries; attempt++) {
+      try {
+        const blob = await fetchTtsBlob();
+        return blob ? URL.createObjectURL(blob) : null;
+      } catch {
+        if (attempt === retries) return null;
+        await new Promise((resolve) => setTimeout(resolve, retryDelayMs));
+      }
+    }
+
+    return null;
   },
   uploadPfp: async function (formData, slug) {
     return await fetch(`${API_BASE}/workspace/${slug}/upload-pfp`, {

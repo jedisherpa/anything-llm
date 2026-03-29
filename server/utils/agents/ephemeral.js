@@ -8,11 +8,11 @@ const { User } = require("../../models/user");
 const { WorkspaceChats } = require("../../models/workspaceChats");
 const { safeJsonParse } = require("../http");
 const {
-    USER_AGENT,
-    WORKSPACE_AGENT,
-    agentSkillsFromSystemSettings,
-    getLensAgentDefinitions,
-  } = require("./defaults");
+  USER_AGENT,
+  WORKSPACE_AGENT,
+  agentSkillsFromSystemSettings,
+  getLensAgentDefinitions,
+} = require("./defaults");
 const { AgentHandler } = require(".");
 const {
   WorkspaceAgentInvocation,
@@ -158,6 +158,40 @@ class EphemeralAgentHandler extends AgentHandler {
     return null;
   }
 
+  #resolveProviderAndModel() {
+    // Respect an explicit agent provider/model pair first.
+    if (this.#workspace.agentProvider && this.#workspace.agentModel) {
+      return {
+        provider: this.#workspace.agentProvider,
+        model: this.#workspace.agentModel,
+      };
+    }
+
+    // If the workspace chat model is already pinned, prefer it over a stale
+    // agent provider with no model. This keeps ephemeral lens runs aligned
+    // with the active Prism workspace LLM.
+    if (this.#workspace.chatProvider && this.#workspace.chatModel) {
+      return {
+        provider: this.#workspace.chatProvider,
+        model: this.#workspace.chatModel,
+      };
+    }
+
+    if (this.#workspace.agentProvider) {
+      const agentProviderModel = this.providerDefault(
+        this.#workspace.agentProvider
+      );
+      if (agentProviderModel) {
+        return {
+          provider: this.#workspace.agentProvider,
+          model: agentProviderModel,
+        };
+      }
+    }
+
+    return this.#getFallbackProvider();
+  }
+
   /**
    * Finds or assumes the model preference value to use for API calls.
    * If multi-model loading is supported, we use their agent model selection of the workspace
@@ -169,7 +203,7 @@ class EphemeralAgentHandler extends AgentHandler {
     // Provider was not explicitly set for workspace, so we are going to run our fallback logic
     // that will set a provider and model for us to use.
     if (!this.provider) {
-      const fallback = this.#getFallbackProvider();
+      const fallback = this.#resolveProviderAndModel();
       if (!fallback) throw new Error("No valid provider found for the agent.");
       this.provider = fallback.provider; // re-set the provider to the fallback provider so it is not null.
       return fallback.model; // set its defined model based on fallback logic.
@@ -184,8 +218,9 @@ class EphemeralAgentHandler extends AgentHandler {
   }
 
   #providerSetupAndCheck() {
-    this.provider = this.#workspace.agentProvider ?? null;
-    this.model = this.#fetchModel();
+    const resolvedSelection = this.#resolveProviderAndModel();
+    this.provider = resolvedSelection?.provider ?? null;
+    this.model = resolvedSelection?.model ?? this.#fetchModel();
 
     if (!this.provider)
       throw new Error("No valid provider found for the agent.");

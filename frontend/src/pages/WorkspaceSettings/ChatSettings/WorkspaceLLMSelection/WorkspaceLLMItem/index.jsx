@@ -11,6 +11,7 @@ import System from "@/models/system";
 import showToast from "@/utils/toast";
 import { useEffect, useState } from "react";
 import PrismHoverTarget from "@/components/PrismHoverTarget";
+import { PROVIDER_OPTIONS_COMPONENTS } from "@/components/LLMSelection/providerOptions";
 
 const NO_SETTINGS_NEEDED = ["default"];
 export default function WorkspaceLLM({
@@ -116,6 +117,7 @@ function SetupProvider({
   if (!isOpen) return null;
   const LLMOption = availableLLMs.find((llm) => llm.value === provider);
   if (!LLMOption) return null;
+  const ProviderOptions = PROVIDER_OPTIONS_COMPONENTS[provider] ?? null;
 
   async function handleUpdate(e) {
     e.preventDefault();
@@ -161,7 +163,13 @@ function SetupProvider({
                 it up first.
               </p>
               <div>
-                {LLMOption.options(settings, { credentialsOnly: true })}
+                {ProviderOptions ? (
+                  <ProviderOptions settings={settings} credentialsOnly={true} />
+                ) : (
+                  <p className="text-sm text-white/60">
+                    No additional settings are available for {LLMOption.name}.
+                  </p>
+                )}
               </div>
             </div>
           </div>

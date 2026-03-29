@@ -454,6 +454,9 @@ const System = {
       cache: "no-cache",
     })
       .then(async (res) => {
+        if (res.status === 204) {
+          return { isCustomLogo: false, logoURL: null };
+        }
         if (res.ok && res.status !== 204) {
           const isCustomLogo = res.headers.get("X-Is-Custom-Logo") === "true";
           const blob = await res.blob();
@@ -462,8 +465,7 @@ const System = {
         }
         throw new Error("Failed to fetch logo!");
       })
-      .catch((e) => {
-        console.log(e);
+      .catch(() => {
         return { isCustomLogo: false, logoURL: null };
       });
   },

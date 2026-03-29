@@ -333,3 +333,4 @@ export const AVAILABLE_LLM_PROVIDERS = [
 ];
 
 export const LLM_PREFERENCE_CHANGED_EVENT = "llm-preference-changed";
+export const LLM_PREFERENCE_SAVED_EVENT = "llm-preference-saved";

@@ -9,6 +9,7 @@ import {
   SAVE_LLM_SELECTOR_EVENT,
   PROVIDER_SETUP_EVENT,
 } from "../PromptInput/LLMSelector/action";
+import { LLM_PREFERENCE_SAVED_EVENT } from "@/constants/llmProviders";
 import Workspace from "@/models/workspace";
 import System from "@/models/system";
 
@@ -76,8 +77,11 @@ export default function WorkspaceModelPicker({
       fetchModelName(slug, setModelName);
     }
     window.addEventListener(SAVE_LLM_SELECTOR_EVENT, handleSave);
-    return () =>
+    window.addEventListener(LLM_PREFERENCE_SAVED_EVENT, handleSave);
+    return () => {
       window.removeEventListener(SAVE_LLM_SELECTOR_EVENT, handleSave);
+      window.removeEventListener(LLM_PREFERENCE_SAVED_EVENT, handleSave);
+    };
   }, [slug]);
 
   // Handle provider setup request

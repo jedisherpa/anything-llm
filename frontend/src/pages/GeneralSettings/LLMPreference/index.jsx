@@ -14,11 +14,54 @@ import { X } from "@phosphor-icons/react/dist/csr/X";
 import CTAButton from "@/components/lib/CTAButton";
 import paths from "@/utils/paths";
 import { Link } from "react-router-dom";
+import Workspace from "@/models/workspace";
 import {
   AVAILABLE_LLM_PROVIDERS,
+  LLM_PREFERENCE_SAVED_EVENT,
   LLM_PREFERENCE_CHANGED_EVENT,
 } from "@/constants/llmProviders";
 import { PROVIDER_OPTIONS_COMPONENTS } from "@/components/LLMSelection/providerOptions";
+
+function getGlobalLLMSelection(settings = null) {
+  return {
+    provider: settings?.LLMProvider ?? null,
+    model: settings?.LLMModel ?? null,
+  };
+}
+
+async function syncWorkspacesToGlobalSelection(
+  previousSelection,
+  nextSelection
+) {
+  if (
+    !previousSelection?.provider ||
+    !previousSelection?.model ||
+    !nextSelection?.provider ||
+    !nextSelection?.model
+  ) {
+    return 0;
+  }
+
+  const workspaces = await Workspace.all();
+  const staleOverrides = workspaces.filter(
+    (workspace) =>
+      workspace.chatProvider === previousSelection.provider &&
+      workspace.chatModel === previousSelection.model
+  );
+
+  if (staleOverrides.length === 0) return 0;
+
+  await Promise.all(
+    staleOverrides.map((workspace) =>
+      Workspace.update(workspace.slug, {
+        chatProvider: nextSelection.provider,
+        chatModel: nextSelection.model,
+      })
+    )
+  );
+
+  return staleOverrides.length;
+}
 
 export default function GeneralLLMPreference() {
   const [saving, setSaving] = useState(false);
@@ -34,17 +77,36 @@ export default function GeneralLLMPreference() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSaving(true);
     const form = e.target;
     const data = { LLMProvider: selectedLLM };
     const formData = new FormData(form);
+    const previousSelection = getGlobalLLMSelection(settings);
 
     for (var [key, value] of formData.entries()) data[key] = value;
     const { error } = await System.updateSystem(data);
-    setSaving(true);
 
     if (error) {
       showToast(`Failed to save LLM settings: ${error}`, "error");
     } else {
+      const refreshedSettings = await System.keys();
+      const nextSelection = getGlobalLLMSelection(refreshedSettings);
+      const syncedWorkspaces = await syncWorkspacesToGlobalSelection(
+        previousSelection,
+        nextSelection
+      );
+
+      setSettings(refreshedSettings);
+      setSelectedLLM(nextSelection.provider);
+      window.dispatchEvent(
+        new CustomEvent(LLM_PREFERENCE_SAVED_EVENT, {
+          detail: {
+            previousSelection,
+            nextSelection,
+            syncedWorkspaces,
+          },
+        })
+      );
       showToast("LLM preferences saved successfully.", "success");
     }
     setSaving(false);
@@ -124,7 +186,9 @@ export default function GeneralLLMPreference() {
           <form onSubmit={handleSubmit} className="flex w-full">
             <div className="prism-settings-content prism-settings-content--wide flex flex-col w-full px-1 md:pl-6 md:pr-[50px] md:py-6 py-16">
               <div className="prism-settings-page-header">
-                <div className="prism-page-section-label">Transformation Agency</div>
+                <div className="prism-page-section-label">
+                  Transformation Agency
+                </div>
                 <p className="prism-settings-page-title">{t("llm.title")}</p>
                 <p className="prism-settings-page-description">
                   {t("llm.description")}

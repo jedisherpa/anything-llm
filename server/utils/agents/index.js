@@ -382,6 +382,40 @@ class AgentHandler {
     return null;
   }
 
+  #resolveProviderAndModel() {
+    const workspace = this.invocation.workspace;
+
+    // Respect an explicit agent provider/model pair first.
+    if (workspace.agentProvider && workspace.agentModel) {
+      return {
+        provider: workspace.agentProvider,
+        model: workspace.agentModel,
+      };
+    }
+
+    // If chat has already been configured explicitly for the workspace, prefer
+    // that over a stale agent provider with no model. This keeps lens/agent
+    // runs aligned with the active workspace LLM in Prism.
+    if (workspace.chatProvider && workspace.chatModel) {
+      return {
+        provider: workspace.chatProvider,
+        model: workspace.chatModel,
+      };
+    }
+
+    if (workspace.agentProvider) {
+      const agentProviderModel = this.providerDefault(workspace.agentProvider);
+      if (agentProviderModel) {
+        return {
+          provider: workspace.agentProvider,
+          model: agentProviderModel,
+        };
+      }
+    }
+
+    return this.#getFallbackProvider();
+  }
+
   /**
    * Finds or assumes the model preference value to use for API calls.
    * If multi-model loading is supported, we use their agent model selection of the workspace
@@ -393,7 +427,7 @@ class AgentHandler {
     // Provider was not explicitly set for workspace, so we are going to run our fallback logic
     // that will set a provider and model for us to use.
     if (!this.provider) {
-      const fallback = this.#getFallbackProvider();
+      const fallback = this.#resolveProviderAndModel();
       if (!fallback) throw new Error("No valid provider found for the agent.");
       this.provider = fallback.provider; // re-set the provider to the fallback provider so it is not null.
       return fallback.model; // set its defined model based on fallback logic.
@@ -409,8 +443,9 @@ class AgentHandler {
   }
 
   #providerSetupAndCheck() {
-    this.provider = this.invocation.workspace.agentProvider ?? null; // set provider to workspace agent provider if it exists
-    this.model = this.#fetchModel();
+    const resolvedSelection = this.#resolveProviderAndModel();
+    this.provider = resolvedSelection?.provider ?? null;
+    this.model = resolvedSelection?.model ?? this.#fetchModel();
 
     if (!this.provider)
       throw new Error("No valid provider found for the agent.");
@@ -701,7 +736,9 @@ class AgentHandler {
     let orchestrationBrief = "";
 
     if (resolvedLeadHandle) {
-      this.aibitat.introspect?.(`Lead lens guiding orchestration: ${leadLabel}.`);
+      this.aibitat.introspect?.(
+        `Lead lens guiding orchestration: ${leadLabel}.`
+      );
       orchestrationBrief = await this.executeLensAgent(
         resolvedLeadHandle,
         `Council pack: ${packName}\nLead lens: ${leadLabel}\nUser query:\n${userQuery || this.stripInvocationHandles(prompt)}\n\nLens roster:\n${resolvedHandles.join(
