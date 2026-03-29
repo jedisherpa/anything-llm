@@ -99,7 +99,7 @@ export function PrismProvider({ children }) {
     if (typeof window === "undefined") return undefined;
 
     const handleAgentStart = () => beginThinking();
-    const handleAgentEnd = () => completeThinking();
+    const handleAgentEnd = () => pulseResponse();
     const handleThinking = () => beginThinking();
     const handleResponse = () => pulseResponse();
     const handleError = () => signalError();
@@ -120,7 +120,7 @@ export function PrismProvider({ children }) {
       window.removeEventListener(PRISM_STATE_ERROR, handleError);
       window.removeEventListener(PRISM_STATE_RESET, handleReset);
     };
-  }, [beginThinking, completeThinking, pulseResponse, resetState, signalError]);
+  }, [beginThinking, pulseResponse, resetState, signalError]);
 
   useEffect(() => {
     return () => clearTransientTimers();

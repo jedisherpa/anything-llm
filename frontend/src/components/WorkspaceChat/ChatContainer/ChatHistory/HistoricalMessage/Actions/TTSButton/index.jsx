@@ -7,6 +7,10 @@ function WrapTTS({ children }) {
   return <div className="mx-2">{children}</div>;
 }
 
+function isDesktopTauri() {
+  return typeof window !== "undefined" && Boolean(window.__TAURI__);
+}
+
 export default function TTSMessage({ slug, chatId, message }) {
   const { settings, provider, loading } = useTTSProvider();
   if (!chatId || loading) return null;
@@ -15,11 +19,15 @@ export default function TTSMessage({ slug, chatId, message }) {
     case "piper_local":
       return (
         <WrapTTS>
-          <PiperTTSMessage
-            chatId={chatId}
-            message={message}
-            voiceId={settings?.TTSPiperTTSVoiceModel}
-          />
+          {isDesktopTauri() ? (
+            <AsyncTTSMessage chatId={chatId} slug={slug} />
+          ) : (
+            <PiperTTSMessage
+              chatId={chatId}
+              message={message}
+              voiceId={settings?.TTSPiperTTSVoiceModel}
+            />
+          )}
         </WrapTTS>
       );
     case "openai":

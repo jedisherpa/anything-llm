@@ -3,7 +3,7 @@ import { safeJsonParse } from "../request";
 import { saveAs } from "file-saver";
 import { API_BASE } from "../constants";
 import { useEffect, useState } from "react";
-import { signalPrismError } from "@/utils/prism/events";
+import { signalPrismError, signalPrismResponse } from "@/utils/prism/events";
 
 export const AGENT_SESSION_START = "agentSessionStart";
 export const AGENT_SESSION_END = "agentSessionEnd";
@@ -22,6 +22,10 @@ export function websocketURI() {
   const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
   if (API_BASE === "/api") return `${wsProtocol}//${window.location.host}`;
   return `${wsProtocol}//${new URL(import.meta.env.VITE_API_BASE).host}`;
+}
+
+function signalAgentResponse(detail = {}) {
+  signalPrismResponse({ source: "agent-stream", ...detail });
 }
 
 export default function handleSocketResponse(socket, event, setChatHistory) {
@@ -43,6 +47,7 @@ export default function handleSocketResponse(socket, event, setChatHistory) {
   // No message type is defined then this is a generic message
   // that we need to print to the user as a system response
   if (!data.hasOwnProperty("type") && !socket.supportsAgentStreaming) {
+    signalAgentResponse({ type: "genericMessage" });
     return setChatHistory((prev) => {
       return [
         ...prev.filter((msg) => !!msg.content),
@@ -77,6 +82,7 @@ export default function handleSocketResponse(socket, event, setChatHistory) {
         : null;
       if (!knownMessage) {
         if (data.content.type === "fullTextResponse") {
+          signalAgentResponse({ type: "fullTextResponse" });
           return [
             ...prev.filter((msg) => !!msg.content),
             {
@@ -98,6 +104,7 @@ export default function handleSocketResponse(socket, event, setChatHistory) {
         // Providers like Gemini send large chunks and can complete in a single chunk before the update logic can convert it.
         // Other providers send many small chunks so the second chunk triggers the update logic to fix the type.
         if (data.content.type === "textResponseChunk") {
+          signalAgentResponse({ type: "textResponseChunk", initial: true });
           return [
             ...prev.filter((msg) => !!msg.content),
             {
@@ -216,6 +223,13 @@ export default function handleSocketResponse(socket, event, setChatHistory) {
         },
       ];
     });
+  }
+
+  if (
+    data.type === "statusResponse" &&
+    /done thinking/i.test(String(data.content || ""))
+  ) {
+    signalAgentResponse({ type: "statusResponse", state: "doneThinking" });
   }
 
   return setChatHistory((prev) => {

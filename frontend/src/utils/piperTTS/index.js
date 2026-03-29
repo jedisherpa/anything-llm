@@ -1,9 +1,12 @@
 import showToast from "../toast";
+import { API_BASE } from "../constants";
 
 export default class PiperTTSClient {
   static _instance;
   voiceId = "en_US-lessac-medium";
   worker = null;
+  prewarmedVoiceId = null;
+  prewarmPromise = null;
 
   constructor({ voiceId } = { voiceId: null }) {
     if (PiperTTSClient._instance) {
@@ -22,6 +25,59 @@ export default class PiperTTSClient {
         type: "module",
       });
     return this.worker;
+  }
+
+  #logWorkerEvent(event) {
+    if (!event?.data) return;
+
+    if (event.data.type === "debug") {
+      console.debug("[PiperTTSWorker]", event.data);
+      return;
+    }
+
+    if (event.data.type === "progress") {
+      console.debug("[PiperTTSWorker progress]", event.data);
+      return;
+    }
+
+    if (typeof event.data === "string") {
+      console.debug("[PiperTTSWorker]", event.data);
+    }
+  }
+
+  waitForWorkerMessage(expectedType, timeoutMs = 30_000) {
+    return new Promise((resolve) => {
+      const worker = this.#getWorker();
+      let timeout = null;
+
+      const handleMessage = (event) => {
+        if (event.data?.type === "error") {
+          worker.removeEventListener("message", handleMessage);
+          timeout && clearTimeout(timeout);
+          console.error("[PiperTTSWorker error]", event.data);
+          return resolve({ ok: false, error: event.data.message, data: null });
+        }
+
+        if (event.data?.type === expectedType) {
+          worker.removeEventListener("message", handleMessage);
+          timeout && clearTimeout(timeout);
+          return resolve({ ok: true, error: null, data: event.data });
+        }
+
+        this.#logWorkerEvent(event);
+      };
+
+      timeout = setTimeout(() => {
+        worker.removeEventListener("message", handleMessage);
+        resolve({
+          ok: false,
+          error: `PiperTTSWorker timed out waiting for ${expectedType}.`,
+          data: null,
+        });
+      }, timeoutMs);
+
+      worker.addEventListener("message", handleMessage);
+    });
   }
 
   /**
@@ -83,41 +139,66 @@ export default class PiperTTSClient {
    * @returns {Promise<{blobURL: string|null, error: string|null}>} objectURL blob: type.
    */
   async waitForBlobResponse(timeoutMs = 30_000) {
-    return new Promise((resolve) => {
-      let timeout = null;
-      const handleMessage = (event) => {
-        if (event.data.type === "error") {
-          this.worker.removeEventListener("message", handleMessage);
-          timeout && clearTimeout(timeout);
-          return resolve({ blobURL: null, error: event.data.message });
-        }
+    const { ok, error, data } = await this.waitForWorkerMessage(
+      "result",
+      timeoutMs
+    );
 
-        if (event.data.type !== "result") {
-          console.log("PiperTTSWorker debug event:", event.data);
-          return;
-        }
-        resolve({
-          blobURL: URL.createObjectURL(event.data.audio),
-          error: null,
-        });
-        this.worker.removeEventListener("message", handleMessage);
-        timeout && clearTimeout(timeout);
+    if (!ok || !data?.audio) {
+      return {
+        blobURL: null,
+        error: error ?? "PiperTTSWorker Worker timed out.",
       };
+    }
 
-      timeout = setTimeout(() => {
-        resolve({ blobURL: null, error: "PiperTTSWorker Worker timed out." });
-      }, timeoutMs);
-      this.worker.addEventListener("message", handleMessage);
+    return {
+      blobURL: URL.createObjectURL(data.audio),
+      error: null,
+    };
+  }
+
+  async prewarm(voiceId = null, timeoutMs = 90_000) {
+    const requestedVoiceId = voiceId ?? this.voiceId;
+    if (this.prewarmedVoiceId === requestedVoiceId) return true;
+
+    if (this.prewarmPromise) return this.prewarmPromise;
+
+    const worker = this.#getWorker();
+    const apiOrigin = new URL(API_BASE, window.location.origin).origin;
+    worker.postMessage({
+      type: "warmup",
+      voiceId: requestedVoiceId,
+      baseUrl: `${apiOrigin}/static`,
     });
+
+    this.prewarmPromise = this.waitForWorkerMessage("warmup", timeoutMs)
+      .then(({ ok, error, data }) => {
+        if (!ok) {
+          console.error("[PiperTTSWorker warmup failed]", error);
+          return false;
+        }
+
+        this.prewarmedVoiceId = data?.voiceId ?? requestedVoiceId;
+        console.debug("[PiperTTSWorker warmup ready]", {
+          voiceId: this.prewarmedVoiceId,
+        });
+        return true;
+      })
+      .finally(() => {
+        this.prewarmPromise = null;
+      });
+
+    return this.prewarmPromise;
   }
 
   async getAudioBlobForText(textToSpeak, voiceId = null, timeoutMs = 30_000) {
     const primaryWorker = this.#getWorker();
+    const apiOrigin = new URL(API_BASE, window.location.origin).origin;
     primaryWorker.postMessage({
       type: "init",
       text: String(textToSpeak),
       voiceId: voiceId ?? this.voiceId,
-      baseUrl: window.location.origin,
+      baseUrl: `${apiOrigin}/static`,
       // Don't reference WASM because in the docker image
       // the user will be connected to internet (mostly)
       // and it bloats the app size on the frontend or app significantly
@@ -134,6 +215,7 @@ export default class PiperTTSClient {
       return;
     }
 
+    this.prewarmedVoiceId = voiceId ?? this.voiceId;
     return blobURL;
   }
 }

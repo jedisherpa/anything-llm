@@ -1,6 +1,7 @@
 import * as TTS from "@mintplex-labs/piper-tts-web";
 
-const HF_BASE = "https://huggingface.co/diffusionstudio/piper-voices/resolve/main";
+const HF_BASE =
+  "https://huggingface.co/diffusionstudio/piper-voices/resolve/main";
 const LOCAL_VOICE_ASSETS = {
   "en_US-lessac-medium": {
     remotePath: "en/en_US/lessac/medium",
@@ -18,6 +19,34 @@ const DEFAULT_LOCAL_VOICE_ID = "en_US-lessac-medium";
 let LOCAL_FETCH_PATCHED = false;
 let LOCAL_CACHE_FLUSHED = false;
 let ACTIVE_VOICE_ID = null;
+const INVALID_LOCAL_VOICES = new Set();
+const WARMUP_TEXT = "Ready.";
+
+function serializeError(error) {
+  if (!error) return null;
+  return {
+    name: error.name ?? "Error",
+    message: error.message ?? String(error),
+    stack: error.stack ?? null,
+  };
+}
+
+function postDebug(message, meta = {}) {
+  self.postMessage({ type: "debug", message: String(message), ...meta });
+}
+
+function postProgress(stage, detail = {}) {
+  self.postMessage({ type: "progress", stage, ...detail });
+}
+
+function postError(message, error = null, phase = "unknown") {
+  self.postMessage({
+    type: "error",
+    message: String(message),
+    phase,
+    error: serializeError(error),
+  });
+}
 
 function withBase(baseUrl = "", assetPath = "") {
   if (!baseUrl) return assetPath;
@@ -28,7 +57,7 @@ function installLocalPiperFetch(baseUrl = "") {
   if (LOCAL_FETCH_PATCHED || typeof fetch !== "function") return;
 
   const originalFetch = fetch.bind(self);
-  self.fetch = (input, init) => {
+  self.fetch = async (input, init) => {
     const requestUrl = typeof input === "string" ? input : input?.url;
     if (typeof requestUrl === "string") {
       const localVoice = Object.entries(LOCAL_VOICE_ASSETS).find(
@@ -38,11 +67,25 @@ function installLocalPiperFetch(baseUrl = "") {
       );
 
       if (localVoice) {
-        const [, asset] = localVoice;
+        const [voiceId, asset] = localVoice;
+        if (INVALID_LOCAL_VOICES.has(voiceId)) {
+          return originalFetch(input, init);
+        }
+
         const localUrl = requestUrl.endsWith(".json")
           ? withBase(baseUrl, asset.config)
           : withBase(baseUrl, asset.model);
-        return originalFetch(localUrl, init);
+        const localResponse = await originalFetch(localUrl, init);
+
+        if (
+          requestUrl.endsWith(".onnx") &&
+          !(await isValidLocalModelResponse(localResponse))
+        ) {
+          INVALID_LOCAL_VOICES.add(voiceId);
+          return originalFetch(input, init);
+        }
+
+        return localResponse;
       }
     }
 
@@ -57,6 +100,27 @@ function normalizeLocalVoiceId(voiceId = "") {
   return DEFAULT_LOCAL_VOICE_ID;
 }
 
+async function isValidLocalModelResponse(response) {
+  if (!response?.ok) return false;
+
+  const contentLength = Number(response.headers.get("content-length") || 0);
+  const contentType = String(response.headers.get("content-type") || "");
+  if (contentLength > 1024 && !contentType.startsWith("text/plain")) {
+    return true;
+  }
+
+  try {
+    const sample = await response.clone().text();
+    if (sample.startsWith("version https://git-lfs.github.com/spec/v1")) {
+      return false;
+    }
+  } catch {
+    return contentLength > 1024;
+  }
+
+  return contentLength > 1024;
+}
+
 function sanitizePiperText(text = "") {
   return String(text)
     .normalize("NFKC")
@@ -69,7 +133,7 @@ function sanitizePiperText(text = "") {
     .replace(/^\s*\d+\.\s+/gm, "")
     .replace(/[|<>]/g, " ")
     .replace(/\p{Extended_Pictographic}/gu, " ")
-    .replace(/[\u200B-\u200D\uFE0F]/g, "")
+    .replace(/\u200B|\u200C|\u200D|\uFE0F/g, "")
     .replace(/[“”]/g, '"')
     .replace(/[‘’]/g, "'")
     .replace(/[–—]/g, ", ")
@@ -94,10 +158,22 @@ function simplifyPiperText(text = "") {
 }
 
 async function createSession({ requestedVoiceId, baseUrl }) {
+  postDebug(`Creating Piper session for ${requestedVoiceId}`, {
+    phase: "session-init",
+    voiceId: requestedVoiceId,
+  });
   return new TTS.TtsSession({
     voiceId: requestedVoiceId,
-    progress: (e) => self.postMessage(JSON.stringify(e)),
-    logger: (msg) => self.postMessage(msg),
+    progress: (event) =>
+      postProgress("session-download", {
+        voiceId: requestedVoiceId,
+        event,
+      }),
+    logger: (msg) =>
+      postDebug(msg, {
+        phase: "session-init",
+        voiceId: requestedVoiceId,
+      }),
     ...(!!baseUrl
       ? {
           wasmPaths: {
@@ -112,6 +188,29 @@ async function createSession({ requestedVoiceId, baseUrl }) {
 
 /** @type {import("@mintplexlabs/piper-web-tts").TtsSession | null} */
 let PIPER_SESSION = null;
+
+async function ensureSession({ requestedVoiceId, baseUrl }) {
+  if (LOCAL_VOICE_ASSETS[requestedVoiceId] && !LOCAL_CACHE_FLUSHED) {
+    postDebug("Flushing Piper cache before first local voice use", {
+      phase: "session-flush",
+      voiceId: requestedVoiceId,
+    });
+    await TTS.flush().catch(() => {});
+    LOCAL_CACHE_FLUSHED = true;
+  }
+
+  if (!PIPER_SESSION || ACTIVE_VOICE_ID !== requestedVoiceId) {
+    PIPER_SESSION = null;
+    PIPER_SESSION = await createSession({ requestedVoiceId, baseUrl });
+    ACTIVE_VOICE_ID = requestedVoiceId;
+    postDebug("Piper session ready", {
+      phase: "session-ready",
+      voiceId: requestedVoiceId,
+    });
+  }
+
+  return PIPER_SESSION;
+}
 
 /**
  * @typedef PredictionRequest
@@ -177,24 +276,48 @@ async function main(event) {
     return;
   }
 
-  if (event.data?.type !== "init") return;
-  const requestedVoiceId = normalizeLocalVoiceId(event.data?.voiceId);
-  if (LOCAL_VOICE_ASSETS[requestedVoiceId] && !LOCAL_CACHE_FLUSHED) {
-    await TTS.flush().catch(() => {});
-    LOCAL_CACHE_FLUSHED = true;
+  if (event.data?.type === "warmup") {
+    const requestedVoiceId = normalizeLocalVoiceId(event.data?.voiceId);
+    try {
+      postDebug("Warmup requested", {
+        phase: "warmup",
+        voiceId: requestedVoiceId,
+      });
+      await ensureSession({ requestedVoiceId, baseUrl });
+      postDebug("Running warmup inference", {
+        phase: "warmup-predict",
+        voiceId: requestedVoiceId,
+      });
+      await PIPER_SESSION.predict(WARMUP_TEXT);
+      self.postMessage({
+        type: "warmup",
+        voiceId: requestedVoiceId,
+      });
+    } catch (error) {
+      postError(
+        error?.message ?? "Failed to prewarm Piper session.",
+        error,
+        "warmup"
+      );
+    }
+    return;
   }
 
-  if (!PIPER_SESSION || ACTIVE_VOICE_ID !== requestedVoiceId) {
-    PIPER_SESSION = null;
-    PIPER_SESSION = await createSession({ requestedVoiceId, baseUrl });
-    ACTIVE_VOICE_ID = requestedVoiceId;
-  }
+  if (event.data?.type !== "init") return;
+  const requestedVoiceId = normalizeLocalVoiceId(event.data?.voiceId);
   const rawText = String(event.data.text ?? "");
   const normalizedText = sanitizePiperText(rawText);
   const fallbackText = simplifyPiperText(normalizedText);
   const primaryText = normalizedText || fallbackText || rawText.trim();
 
   try {
+    await ensureSession({ requestedVoiceId, baseUrl });
+    postDebug("Starting Piper prediction", {
+      phase: "predict",
+      voiceId: requestedVoiceId,
+      textLength: primaryText.length,
+      fallbackLength: fallbackText.length,
+    });
     const result =
       (primaryText ? await PIPER_SESSION.predict(primaryText) : null) ||
       (fallbackText && fallbackText !== primaryText
@@ -213,6 +336,11 @@ async function main(event) {
 
     if (needsSanitizedRetry && fallbackText) {
       try {
+        postDebug("Retrying Piper prediction with simplified fallback text", {
+          phase: "predict-retry",
+          voiceId: requestedVoiceId,
+          fallbackLength: fallbackText.length,
+        });
         PIPER_SESSION = await createSession({ requestedVoiceId, baseUrl });
         ACTIVE_VOICE_ID = requestedVoiceId;
         const retried = await PIPER_SESSION.predict(fallbackText);
@@ -221,16 +349,16 @@ async function main(event) {
           return;
         }
       } catch (retryError) {
-        self.postMessage({
-          type: "error",
-          message: retryError.message,
-          error: retryError,
-        });
+        postError(
+          retryError?.message ?? "Piper retry failed.",
+          retryError,
+          "predict-retry"
+        );
         return;
       }
     }
 
-    self.postMessage({ type: "error", message: error.message, error });
+    postError(error?.message ?? "Piper prediction failed.", error, "predict");
   }
 }
 

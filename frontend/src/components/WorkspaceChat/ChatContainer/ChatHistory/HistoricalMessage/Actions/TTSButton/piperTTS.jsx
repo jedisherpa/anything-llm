@@ -8,7 +8,10 @@ import PiperTTSClient from "@/utils/piperTTS";
 const TWO_CHUNK_THRESHOLD = 1600;
 const FOUR_CHUNK_THRESHOLD = 3200;
 const MAX_CHUNK_LENGTH = 1200;
-const MIN_TIMEOUT_MS = 45_000;
+const FIRST_CHUNK_MAX_LENGTH = 180;
+const PREWARM_TIMEOUT_MS = 120_000;
+const FIRST_CHUNK_MIN_TIMEOUT_MS = 90_000;
+const FOLLOW_ON_MIN_TIMEOUT_MS = 45_000;
 const MAX_TIMEOUT_MS = 120_000;
 
 function splitIntoSentences(text = "") {
@@ -79,13 +82,27 @@ function createBalancedChunks(text = "") {
 
   if (currentChunk) chunks.push(currentChunk.trim());
 
-  return chunks.filter(Boolean);
+  return prioritizeSmallFirstChunk(chunks.filter(Boolean));
 }
 
-function timeoutForChunk(chunk = "") {
+function prioritizeSmallFirstChunk(chunks = []) {
+  if (!chunks.length) return chunks;
+  const [firstChunk, ...remainingChunks] = chunks;
+  if (firstChunk.length <= FIRST_CHUNK_MAX_LENGTH) return chunks;
+
+  const firstParts = splitLongSentence(firstChunk, FIRST_CHUNK_MAX_LENGTH);
+  if (firstParts.length <= 1) return chunks;
+
+  return [...firstParts, ...remainingChunks].filter(Boolean);
+}
+
+function timeoutForChunk(chunk = "", { isFirstChunk = false } = {}) {
+  const minimum = isFirstChunk
+    ? FIRST_CHUNK_MIN_TIMEOUT_MS
+    : FOLLOW_ON_MIN_TIMEOUT_MS;
   return Math.min(
     MAX_TIMEOUT_MS,
-    Math.max(MIN_TIMEOUT_MS, 20_000 + String(chunk).length * 25)
+    Math.max(minimum, 20_000 + String(chunk).length * 25)
   );
 }
 
@@ -136,7 +153,7 @@ export default function PiperTTS({ chatId, voiceId = null, message }) {
     const blobUrl = await clientRef.current.getAudioBlobForText(
       chunk,
       voiceId,
-      timeoutForChunk(chunk)
+      timeoutForChunk(chunk, { isFirstChunk: index === 0 })
     );
     if (showLoader) setLoading(false);
 
@@ -170,6 +187,18 @@ export default function PiperTTS({ chatId, voiceId = null, message }) {
 
       requestNonceRef.current += 1;
       chunkTextsRef.current = chunks;
+      if (!clientRef.current) {
+        clientRef.current = new PiperTTSClient({ voiceId });
+      }
+      setLoading(true);
+      const prewarmed = await clientRef.current.prewarm(
+        voiceId,
+        PREWARM_TIMEOUT_MS
+      );
+      if (!prewarmed) {
+        setLoading(false);
+        return;
+      }
       await playChunkAtIndex(0, chunks, { showLoader: true });
     } catch (error) {
       console.error(error);

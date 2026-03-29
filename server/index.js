@@ -29,6 +29,7 @@ const { mcpServersEndpoints } = require("./endpoints/mcpServers");
 const { mobileEndpoints } = require("./endpoints/mobile");
 const { webPushEndpoints } = require("./endpoints/webPush");
 const { metacanonAIEndpoints } = require("./endpoints/metacanonAI");
+const { piperTTSStaticEndpoint } = require("./utils/piper");
 const { httpLogger } = require("./middleware/httpLogger");
 const app = express();
 const apiRouter = express.Router();
@@ -81,6 +82,7 @@ mcpServersEndpoints(apiRouter);
 mobileEndpoints(apiRouter);
 webPushEndpoints(apiRouter);
 metacanonAIEndpoints(apiRouter);
+piperTTSStaticEndpoint(app);
 // Externally facing embedder endpoints
 embeddedEndpoints(apiRouter);
 
