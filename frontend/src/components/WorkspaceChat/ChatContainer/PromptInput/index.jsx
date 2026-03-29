@@ -22,7 +22,10 @@ import { useSearchParams } from "react-router-dom";
 import { useIsAgentSessionActive } from "@/utils/chat/agent";
 import { useTheme } from "@/hooks/useTheme";
 import useMetacanonAlignment from "@/hooks/useMetacanonAlignment";
-import { clearActiveMetacanonAlignment } from "@/utils/metacanonAlignment";
+import {
+  clearActiveMetacanonAlignment,
+  isRunnableMetacanonAlignment,
+} from "@/utils/metacanonAlignment";
 import StarterPackSheet from "@/components/Metacanon/StarterPackSheet";
 
 export const PROMPT_INPUT_ID = "primary-prompt-input";
@@ -50,12 +53,14 @@ export default function PromptInput({
   threadSlug = null,
   chatMode = "chat",
   onChatModeChange = null,
+  onHeightChange = null,
 }) {
   const { t } = useTranslation();
   const { resolvedTheme } = useTheme();
   const { isDisabled } = useIsDisabled();
   const agentSessionActive = useIsAgentSessionActive();
   const activeAlignment = useMetacanonAlignment();
+  const hasActiveAlignment = isRunnableMetacanonAlignment(activeAlignment);
   const [promptInput, setPromptInput] = useState("");
   const [showTools, setShowTools] = useState(false);
   const [showStarterPacks, setShowStarterPacks] = useState(false);
@@ -63,6 +68,7 @@ export default function PromptInput({
   const toolsHighlightRef = useRef(-1);
   const formRef = useRef(null);
   const textareaRef = useRef(null);
+  const shellRef = useRef(null);
   const [_, setFocused] = useState(false);
   const undoStack = useRef([]);
   const redoStack = useRef([]);
@@ -119,6 +125,31 @@ export default function PromptInput({
     if (!isStreaming && textareaRef.current) textareaRef.current.focus();
     resetTextAreaHeight();
   }, [isStreaming]);
+
+  useEffect(() => {
+    if (typeof onHeightChange !== "function" || !shellRef.current) return;
+
+    const updateHeight = () => {
+      if (!shellRef.current) return;
+      const rect = shellRef.current.getBoundingClientRect();
+      const viewportInset = Math.max(window.innerHeight - rect.top, 0);
+      onHeightChange(viewportInset);
+    };
+
+    updateHeight();
+
+    if (typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(() => updateHeight());
+    observer.observe(shellRef.current);
+
+    return () => observer.disconnect();
+  }, [
+    onHeightChange,
+    hasActiveAlignment,
+    promptInput,
+    attachments.length,
+    chatMode,
+  ]);
 
   /**
    * Save the current state before changes
@@ -265,35 +296,50 @@ export default function PromptInput({
     element.style.height = `${element.scrollHeight}px`;
   }
 
-  function handlePasteEvent(e) {
-    e.preventDefault();
-    if (e.clipboardData.items.length === 0) return false;
+  function clipboardFileFingerprint(file) {
+    return [file?.name, file?.size, file?.type, file?.lastModified].join("::");
+  }
 
-    // paste any clipboard items that are images.
-    for (const item of e.clipboardData.items) {
-      if (item.type.startsWith("image/")) {
-        const file = item.getAsFile();
-        window.dispatchEvent(
-          new CustomEvent(PASTE_ATTACHMENT_EVENT, {
-            detail: { files: [file] },
-          })
-        );
-        continue;
-      }
+  function collectClipboardFiles(clipboardData) {
+    const filesByFingerprint = new Map();
 
-      // handle files specifically that are not images as uploads
-      if (item.kind === "file") {
-        const file = item.getAsFile();
-        window.dispatchEvent(
-          new CustomEvent(PASTE_ATTACHMENT_EVENT, {
-            detail: { files: [file] },
-          })
-        );
-        continue;
-      }
+    const pushFile = (file) => {
+      if (!file) return;
+      filesByFingerprint.set(clipboardFileFingerprint(file), file);
+    };
+
+    const clipboardItems = Array.from(clipboardData?.items || []);
+    for (const item of clipboardItems) {
+      if (!item) continue;
+      if (item.kind !== "file" && !item.type?.startsWith("image/")) continue;
+      pushFile(item.getAsFile?.());
     }
 
-    const pasteText = e.clipboardData.getData("text/plain");
+    const clipboardFiles = Array.from(clipboardData?.files || []);
+    for (const file of clipboardFiles) {
+      pushFile(file);
+    }
+
+    return Array.from(filesByFingerprint.values());
+  }
+
+  function handlePasteEvent(e) {
+    const clipboardData = e.clipboardData;
+    if (!clipboardData) return false;
+
+    const files = collectClipboardFiles(clipboardData);
+    if (!files.length) return false;
+
+    e.preventDefault();
+    if (files.length > 0) {
+      window.dispatchEvent(
+        new CustomEvent(PASTE_ATTACHMENT_EVENT, {
+          detail: { files },
+        })
+      );
+    }
+
+    const pasteText = clipboardData.getData("text/plain");
     if (pasteText) {
       const textarea = textareaRef.current;
       const start = textarea.selectionStart;
@@ -330,10 +376,11 @@ export default function PromptInput({
 
   return (
     <div
+      ref={shellRef}
       className={
         centered
           ? "w-full relative flex justify-center items-center"
-          : "w-full fixed md:absolute bottom-0 left-0 z-10 flex justify-center items-center pwa:pb-5"
+          : "w-full fixed md:absolute md:bottom-3 bottom-0 left-0 z-10 flex justify-center items-center pwa:pb-5"
       }
     >
       <form
@@ -341,7 +388,7 @@ export default function PromptInput({
         className={
           centered
             ? "flex w-full max-w-[816px] flex-col gap-y-1 rounded-t-lg items-center"
-            : "flex flex-col gap-y-1 rounded-t-lg md:w-full w-full mx-auto max-w-[750px] items-center"
+            : "flex flex-col gap-y-1 rounded-t-lg md:w-full w-full mx-auto max-w-[750px] items-center px-3 md:px-0"
         }
       >
         <div
@@ -365,7 +412,7 @@ export default function PromptInput({
             />
 
             <div
-              className={`metacanon-composer-shell ${centered ? "metacanon-composer-shell--centered" : "metacanon-composer-shell--workspace"} flex flex-col overflow-hidden rounded-[24px] px-5 md:px-6 pwa:rounded-3xl`}
+              className={`metacanon-composer-shell ${centered ? "metacanon-composer-shell--centered" : "metacanon-composer-shell--workspace"} flex flex-col overflow-hidden rounded-[24px] px-5 md:px-5 pwa:rounded-3xl`}
             >
               <AttachmentManager attachments={attachments} />
               {typeof onChatModeChange === "function" ? (
@@ -377,9 +424,9 @@ export default function PromptInput({
                   />
                 </div>
               ) : null}
-              {activeAlignment?.handle ? (
+              {hasActiveAlignment ? (
                 <div
-                  className="metacanon-alignment-chip mt-3 flex items-center justify-between gap-3 rounded-[16px] px-4 py-3"
+                  className="metacanon-alignment-chip mt-2.5 flex items-center justify-between gap-3 rounded-[16px] px-3.5 py-2.5"
                   style={{ "--lens-color": activeAlignment.colorHex }}
                 >
                   <div className="min-w-0">
@@ -407,11 +454,7 @@ export default function PromptInput({
                 </div>
               ) : null}
               <div
-                className={`flex items-center ${
-                  centered
-                    ? ""
-                    : "metacanon-composer-input-shell--workspace"
-                }`}
+                className={`flex items-center ${centered ? "" : "metacanon-composer-input-shell--workspace"}`}
               >
                 <textarea
                   id={PROMPT_INPUT_ID}
@@ -435,7 +478,7 @@ export default function PromptInput({
                 />
               </div>
               <div
-                className={`metacanon-composer-footer flex justify-between items-center ${centered ? "pt-[5px] pb-[5px]" : "pt-3.5 pb-3.5"}`}
+                className={`metacanon-composer-footer flex justify-between items-center ${centered ? "pt-[5px] pb-[5px]" : "pt-2.5 pb-2.5"}`}
               >
                 <div className="flex items-center gap-x-0.5">
                   <div className="flex items-center gap-x-1">
@@ -490,9 +533,7 @@ export default function PromptInput({
 function ChatModeToggle({ chatMode = "chat", onChange, centered = false }) {
   const { t } = useTranslation();
   const description =
-    chatMode === "chat"
-      ? "LLM plus web plus database"
-      : "LLM plus database";
+    chatMode === "chat" ? "LLM plus web plus database" : "LLM plus database";
 
   return (
     <div

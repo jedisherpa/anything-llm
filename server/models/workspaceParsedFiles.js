@@ -6,6 +6,37 @@ const { safeJsonParse } = require("../utils/http");
 const fs = require("fs");
 const path = require("path");
 
+function buildParsedFileDedupKey(metadata = {}, file = {}) {
+  const title = String(metadata.title || "")
+    .trim()
+    .toLowerCase();
+  const location = String(metadata.location || "")
+    .trim()
+    .toLowerCase();
+  const filename = String(file.filename || "")
+    .trim()
+    .toLowerCase();
+  return title || location || filename || String(file.id || "");
+}
+
+function resolveParsedFileSource(metadata = {}) {
+  const location = metadata.location;
+  if (!location) return null;
+
+  const sourceFile = path.join(directUploadsPath, path.basename(location));
+  if (!fs.existsSync(sourceFile)) return null;
+
+  try {
+    const content = fs.readFileSync(sourceFile, "utf-8");
+    const data = safeJsonParse(content, null);
+    if (!data?.pageContent) return null;
+    return { sourceFile, data };
+  } catch (error) {
+    console.error("Failed to read parsed file source:", error.message);
+    return null;
+  }
+}
+
 const WorkspaceParsedFiles = {
   create: async function ({
     filename,
@@ -153,17 +184,29 @@ const WorkspaceParsedFiles = {
   ) {
     try {
       if (!workspace) throw new Error("Workspace is required");
-      const files = await this.where({
-        workspaceId: workspace.id,
-        threadId: thread?.id || null,
-        ...(user ? { userId: user.id } : {}),
-      });
+      const files = await this.where(
+        {
+          workspaceId: workspace.id,
+          threadId: thread?.id || null,
+          ...(user ? { userId: user.id } : {}),
+        },
+        null,
+        { createdAt: "desc" }
+      );
 
       const results = [];
       let totalTokens = 0;
+      const seen = new Set();
 
       for (const file of files) {
         const metadata = safeJsonParse(file.metadata, {});
+        const resolved = resolveParsedFileSource(metadata);
+        if (!resolved) continue;
+
+        const dedupKey = buildParsedFileDedupKey(metadata, file);
+        if (seen.has(dedupKey)) continue;
+        seen.add(dedupKey);
+
         totalTokens += file.tokenCountEstimate || 0;
         results.push({
           id: file.id,
@@ -190,30 +233,29 @@ const WorkspaceParsedFiles = {
 
   getContextFiles: async function (workspace, thread = null, user = null) {
     try {
-      const files = await this.where({
-        workspaceId: workspace.id,
-        threadId: thread?.id || null,
-        ...(user ? { userId: user.id } : {}),
-      });
+      const files = await this.where(
+        {
+          workspaceId: workspace.id,
+          threadId: thread?.id || null,
+          ...(user ? { userId: user.id } : {}),
+        },
+        null,
+        { createdAt: "desc" }
+      );
 
       const results = [];
+      const seen = new Set();
       for (const file of files) {
         const metadata = safeJsonParse(file.metadata, {});
-        const location = metadata.location;
-        if (!location) continue;
+        const resolved = resolveParsedFileSource(metadata);
+        if (!resolved) continue;
 
-        const sourceFile = path.join(
-          directUploadsPath,
-          path.basename(location)
-        );
-        if (!fs.existsSync(sourceFile)) continue;
-
-        const content = fs.readFileSync(sourceFile, "utf-8");
-        const data = safeJsonParse(content, null);
-        if (!data?.pageContent) continue;
+        const dedupKey = buildParsedFileDedupKey(metadata, file);
+        if (seen.has(dedupKey)) continue;
+        seen.add(dedupKey);
 
         results.push({
-          pageContent: data.pageContent,
+          pageContent: resolved.data.pageContent,
           token_count_estimate: file.tokenCountEstimate,
           ...metadata,
         });

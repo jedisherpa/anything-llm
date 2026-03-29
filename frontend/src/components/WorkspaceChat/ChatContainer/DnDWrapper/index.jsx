@@ -14,6 +14,7 @@ export const CLEAR_ATTACHMENTS_EVENT = "ATTACHMENT_CLEAR";
 export const PASTE_ATTACHMENT_EVENT = "ATTACHMENT_PASTED";
 export const ATTACHMENTS_PROCESSING_EVENT = "ATTACHMENTS_PROCESSING";
 export const ATTACHMENTS_PROCESSED_EVENT = "ATTACHMENTS_PROCESSED";
+export const OPEN_ATTACHMENT_PICKER_EVENT = "OPEN_ATTACHMENT_PICKER";
 export const PARSED_FILE_ATTACHMENT_REMOVED_EVENT =
   "PARSED_FILE_ATTACHMENT_REMOVED";
 
@@ -137,16 +138,16 @@ export function DnDFileUploaderProvider({
     );
   }
 
-  /**
-   * Handle pasted attachments.
-   * @param {CustomEvent<{files: File[]}>} event
-   */
-  async function handlePastedAttachment(event) {
-    const { files = [] } = event.detail;
-    if (!files.length) return;
+  function canAttachAsImage(file) {
+    return file?.type?.startsWith("image/");
+  }
+
+  async function prepareAttachments(incomingFiles = []) {
     const newAccepted = [];
-    for (const file of files) {
-      if (file.type.startsWith("image/")) {
+    let skippedUploadCount = 0;
+
+    for (const file of incomingFiles) {
+      if (canAttachAsImage(file)) {
         newAccepted.push({
           uid: v4(),
           file,
@@ -155,19 +156,54 @@ export function DnDFileUploaderProvider({
           error: null,
           type: "attachment",
         });
-      } else {
-        newAccepted.push({
-          uid: v4(),
-          file,
-          contentString: null,
-          status: "in_progress",
-          error: null,
-          type: "upload",
-        });
+        continue;
       }
+
+      if (!ready) {
+        skippedUploadCount += 1;
+        continue;
+      }
+
+      newAccepted.push({
+        uid: v4(),
+        file,
+        contentString: null,
+        status: "in_progress",
+        error: null,
+        type: "upload",
+      });
     }
+
+    return { newAccepted, skippedUploadCount };
+  }
+
+  async function queueIncomingFiles(incomingFiles = []) {
+    const { newAccepted, skippedUploadCount } =
+      await prepareAttachments(incomingFiles);
+
+    if (skippedUploadCount > 0) {
+      showToast(
+        skippedUploadCount === 1
+          ? "Document uploads are still starting up. Image attachments are available now."
+          : "Some document uploads are still starting up. Image attachments are available now.",
+        "warning"
+      );
+    }
+
+    if (!newAccepted.length) return;
+
     setFiles((prev) => [...prev, ...newAccepted]);
     embedEligibleAttachments(newAccepted);
+  }
+
+  /**
+   * Handle pasted attachments.
+   * @param {CustomEvent<{files: File[]}>} event
+   */
+  async function handlePastedAttachment(event) {
+    const { files = [] } = event.detail;
+    if (!files.length) return;
+    queueIncomingFiles(files);
   }
 
   /**
@@ -177,33 +213,7 @@ export function DnDFileUploaderProvider({
    */
   async function onDrop(acceptedFiles, _rejections) {
     setDragging(false);
-
-    /** @type {Attachment[]} */
-    const newAccepted = [];
-    for (const file of acceptedFiles) {
-      if (file.type.startsWith("image/")) {
-        newAccepted.push({
-          uid: v4(),
-          file,
-          contentString: await toBase64(file),
-          status: "success",
-          error: null,
-          type: "attachment",
-        });
-      } else {
-        newAccepted.push({
-          uid: v4(),
-          file,
-          contentString: null,
-          status: "in_progress",
-          error: null,
-          type: "upload",
-        });
-      }
-    }
-
-    setFiles((prev) => [...prev, ...newAccepted]);
-    embedEligibleAttachments(newAccepted);
+    queueIncomingFiles(acceptedFiles);
   }
 
   /**
@@ -419,16 +429,56 @@ export function DnDFileUploaderProvider({
 }
 
 export default function DnDFileUploaderWrapper({ children }) {
-  const { onDrop, ready, dragging, setDragging } =
-    useContext(DndUploaderContext);
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop,
-    disabled: !ready,
+  const { onDrop, dragging, setDragging } = useContext(DndUploaderContext);
+  const { getRootProps, getInputProps, open, isDragActive } = useDropzone({
+    onDrop: (acceptedFiles, rejections, event) => {
+      setDragging(false);
+      onDrop(acceptedFiles, rejections, event);
+    },
     noClick: true,
     noKeyboard: true,
     onDragEnter: () => setDragging(true),
     onDragLeave: () => setDragging(false),
+    onDropAccepted: () => setDragging(false),
+    onDropRejected: () => setDragging(false),
   });
+
+  useEffect(() => {
+    setDragging(isDragActive);
+  }, [isDragActive, setDragging]);
+
+  useEffect(() => {
+    function handleOpenAttachmentPicker() {
+      open();
+    }
+
+    window.addEventListener(
+      OPEN_ATTACHMENT_PICKER_EVENT,
+      handleOpenAttachmentPicker
+    );
+    return () =>
+      window.removeEventListener(
+        OPEN_ATTACHMENT_PICKER_EVENT,
+        handleOpenAttachmentPicker
+      );
+  }, [open]);
+
+  useEffect(() => {
+    function handleWindowDrop() {
+      setDragging(false);
+    }
+
+    function handleWindowDragEnd() {
+      setDragging(false);
+    }
+
+    window.addEventListener("drop", handleWindowDrop);
+    window.addEventListener("dragend", handleWindowDragEnd);
+    return () => {
+      window.removeEventListener("drop", handleWindowDrop);
+      window.removeEventListener("dragend", handleWindowDragEnd);
+    };
+  }, [setDragging]);
 
   return (
     <div

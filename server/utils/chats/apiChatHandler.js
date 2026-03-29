@@ -2,7 +2,10 @@ const { v4: uuidv4 } = require("uuid");
 const { DocumentManager } = require("../DocumentManager");
 const { WorkspaceChats } = require("../../models/workspaceChats");
 const { getVectorDbClass, getLLMProvider } = require("../helpers");
-const { buildMessagesWithPromptHandling, fillSourceWindow } = require("../helpers/chat");
+const {
+  buildMessagesWithPromptHandling,
+  fillSourceWindow,
+} = require("../helpers/chat");
 const { writeResponseChunk } = require("../helpers/chat/responses");
 const {
   chatPrompt,
@@ -14,8 +17,10 @@ const {
   EphemeralAgentHandler,
   EphemeralEventListener,
 } = require("../agents/ephemeral");
+const { WorkspaceParsedFiles } = require("../../models/workspaceParsedFiles");
 const { Telemetry } = require("../../models/telemetry");
 const { CollectorApi } = require("../collectorApi");
+const { buildAttachedContextManifest } = require("./contextManifest");
 const fs = require("fs");
 const path = require("path");
 const { hotdirPath, normalizePath, isWithin } = require("../files");
@@ -651,6 +656,27 @@ async function streamChat({
         });
       });
     });
+
+  const parsedFiles = await WorkspaceParsedFiles.getContextFiles(
+    workspace,
+    thread || null,
+    user || null
+  );
+  const attachedContextManifest = buildAttachedContextManifest(parsedFiles);
+  if (attachedContextManifest) {
+    contextTexts.push(attachedContextManifest);
+  }
+  parsedFiles.forEach((doc) => {
+    if (doc.pageContent) {
+      contextTexts.push(doc.pageContent);
+      const { pageContent, ...metadata } = doc;
+      sources.push({
+        text:
+          pageContent.slice(0, 1_000) + "...continued on in source document...",
+        ...metadata,
+      });
+    }
+  });
 
   const processedAttachments = await processDocumentAttachments(attachments);
   const parsedAttachments = processedAttachments.parsedDocuments;

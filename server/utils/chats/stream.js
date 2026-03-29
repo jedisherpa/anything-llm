@@ -3,8 +3,12 @@ const { DocumentManager } = require("../DocumentManager");
 const { WorkspaceChats } = require("../../models/workspaceChats");
 const { WorkspaceParsedFiles } = require("../../models/workspaceParsedFiles");
 const { getVectorDbClass, getLLMProvider } = require("../helpers");
-const { buildMessagesWithPromptHandling, fillSourceWindow } = require("../helpers/chat");
+const {
+  buildMessagesWithPromptHandling,
+  fillSourceWindow,
+} = require("../helpers/chat");
 const { writeResponseChunk } = require("../helpers/chat/responses");
+const { buildAttachedContextManifest } = require("./contextManifest");
 const { grepAgents } = require("./agents");
 const {
   grepCommand,
@@ -139,6 +143,10 @@ async function streamChatWithWorkspace(
     thread || null,
     user || null
   );
+  const attachedContextManifest = buildAttachedContextManifest(parsedFiles);
+  if (attachedContextManifest) {
+    contextTexts.push(attachedContextManifest);
+  }
   parsedFiles.forEach((doc) => {
     const { pageContent, ...metadata } = doc;
     contextTexts.push(doc.pageContent);

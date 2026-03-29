@@ -1,6 +1,10 @@
 import { useState, useEffect, useContext, useRef } from "react";
 import ChatHistory from "./ChatHistory";
-import { CLEAR_ATTACHMENTS_EVENT, DndUploaderContext } from "./DnDWrapper";
+import {
+  CLEAR_ATTACHMENTS_EVENT,
+  DndUploaderContext,
+  OPEN_ATTACHMENT_PICKER_EVENT,
+} from "./DnDWrapper";
 import PromptInput, {
   PROMPT_INPUT_EVENT,
   PROMPT_INPUT_ID,
@@ -26,7 +30,6 @@ import useChatContainerQuickScroll from "@/hooks/useChatContainerQuickScroll";
 import { PENDING_HOME_MESSAGE } from "@/utils/constants";
 import { clearPromptInputDraft } from "@/hooks/usePromptInputStorage";
 import { safeJsonParse } from "@/utils/request";
-import { useTranslation } from "react-i18next";
 import paths from "@/utils/paths";
 import TextSizeMenu from "./TextSizeMenu";
 import SourcesSidebar, { SourcesSidebarProvider } from "./SourcesSidebar";
@@ -45,10 +48,10 @@ const AGENT_HANDLE_PATTERN =
 
 export default function ChatContainer({ workspace, knownHistory = [] }) {
   const navigate = useNavigate();
-  const { t } = useTranslation();
   const { threadSlug = null } = useParams();
   const [loadingResponse, setLoadingResponse] = useState(false);
   const [chatHistory, setChatHistory] = useState(knownHistory);
+  const [composerViewportInset, setComposerViewportInset] = useState(196);
   const [socketId, setSocketId] = useState(null);
   const [websocket, setWebsocket] = useState(null);
   const [chatMode, setChatMode] = useState(workspace?.chatMode || "chat");
@@ -103,7 +106,9 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const currentMessage = buildAlignedPrompt(
-      document.getElementById(PROMPT_INPUT_ID)?.value || ""
+      document.getElementById(PROMPT_INPUT_ID)?.value || "",
+      undefined,
+      chatHistory
     );
     if (!currentMessage) return false;
 
@@ -194,7 +199,11 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
     }
 
     if (!text || text === "") return false;
-    text = buildAlignedPrompt(text);
+    text = buildAlignedPrompt(
+      text,
+      undefined,
+      history.length > 0 ? history : chatHistory
+    );
 
     // Clear the localStorage draft so that if the PromptInput remounts
     // (e.g. /reset causing empty→chat or chat→empty transitions),
@@ -495,7 +504,9 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
               )
             }
             onUploadDocument={() =>
-              document.getElementById("dnd-chat-file-uploader")?.click()
+              window.dispatchEvent(
+                new CustomEvent(OPEN_ATTACHMENT_PICKER_EVENT)
+              )
             }
           />
         </DnDFileUploaderWrapper>
@@ -506,7 +517,10 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
 
   return (
     <SourcesSidebarProvider>
-      <div style={{ height: "100%" }} className="relative flex flex-1 min-w-0 h-full z-[2]">
+      <div
+        style={{ height: "100%" }}
+        className="relative flex flex-1 min-w-0 h-full z-[2]"
+      >
         <div className="workspace-prism-chat-panel flex-1 min-w-0 transition-all duration-500 relative text-white light:text-slate-900 h-full overflow-hidden">
           <div className="absolute top-3 right-4 md:right-6 z-30 hidden md:block">
             <TextSizeMenu
@@ -537,6 +551,7 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
                     sendCommand={sendCommand}
                     updateHistory={setChatHistory}
                     regenerateAssistantMessage={regenerateAssistantMessage}
+                    composerViewportInset={composerViewportInset}
                   />
                 </MetricsProvider>
                 <PromptInput
@@ -549,6 +564,7 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
                   threadSlug={threadSlug}
                   chatMode={chatMode}
                   onChatModeChange={handleChatModeChange}
+                  onHeightChange={setComposerViewportInset}
                 />
               </div>
             </div>

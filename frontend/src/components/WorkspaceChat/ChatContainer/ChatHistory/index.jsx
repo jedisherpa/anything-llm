@@ -33,6 +33,7 @@ export default forwardRef(function (
     sendCommand,
     updateHistory,
     regenerateAssistantMessage,
+    composerViewportInset = 196,
   },
   ref
 ) {
@@ -45,6 +46,7 @@ export default forwardRef(function (
   const isStreaming = history[history.length - 1]?.animate;
   const { showScrollbar } = Appearance.getSettings();
   const { textSizeClass } = useTextSize();
+  const historyBottomInset = Math.max(composerViewportInset + 20, 180);
 
   useEffect(() => {
     if (!isUserScrolling && (isAtBottom || isStreaming)) {
@@ -210,10 +212,11 @@ export default forwardRef(function (
   return (
     <ThoughtExpansionProvider>
       <div
-        className={`markdown text-white/80 light:text-theme-text-primary font-light ${textSizeClass} h-full md:h-[83%] pb-[100px] pt-6 md:pt-0 md:pb-20 md:mx-0 overflow-y-scroll flex flex-col items-center justify-start ${showScrollbar ? "show-scrollbar" : "no-scroll"}`}
+        className={`markdown text-white/80 light:text-theme-text-primary font-light ${textSizeClass} flex-1 min-h-0 pt-6 md:pt-0 md:mx-0 overflow-y-scroll flex flex-col items-center justify-start ${showScrollbar ? "show-scrollbar" : "no-scroll"}`}
         id="chat-history"
         ref={chatHistoryRef}
         onScroll={handleScroll}
+        style={{ paddingBottom: `${historyBottomInset}px` }}
       >
         <div className="w-full max-w-[750px]">
           {compiledHistory.map((item, index) =>

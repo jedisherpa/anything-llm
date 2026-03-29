@@ -9,6 +9,7 @@ import {
 import DnDFileUploaderWrapper, {
   DndUploaderContext,
   DnDFileUploaderProvider,
+  OPEN_ATTACHMENT_PICKER_EVENT,
   PASTE_ATTACHMENT_EVENT,
 } from "@/components/WorkspaceChat/ChatContainer/DnDWrapper";
 import { useTranslation } from "react-i18next";
@@ -324,7 +325,7 @@ function HomeContent({ workspace, setWorkspace, threadSlug, setThreadSlug }) {
           onConnectLLM={() => navigate(paths.settings.llmPreference())}
           onEditWorkspace={handleEditWorkspace}
           onUploadDocument={() =>
-            document.getElementById("dnd-chat-file-uploader")?.click()
+            window.dispatchEvent(new CustomEvent(OPEN_ATTACHMENT_PICKER_EVENT))
           }
         />
       </DnDFileUploaderWrapper>
