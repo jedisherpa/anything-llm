@@ -67,6 +67,91 @@ const System = {
       .then((res) => res.results)
       .catch(() => null);
   },
+  prismReadiness: async function (workspaceSlug = null) {
+    const url = new URL(`${fullApiUrl()}/system/prism-readiness`);
+    if (workspaceSlug) url.searchParams.append("slug", workspaceSlug);
+
+    return await fetch(url.toString(), {
+      headers: baseHeaders(),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Could not inspect Prism readiness.");
+        return res.json();
+      })
+      .then((res) => res.readiness)
+      .catch((error) => ({
+        error: error.message,
+      }));
+  },
+  prismDependencySequence: async function (workspaceSlug = null) {
+    const url = new URL(`${fullApiUrl()}/system/prism/dependency-sequence`);
+    if (workspaceSlug) url.searchParams.append("slug", workspaceSlug);
+
+    return await fetch(url.toString(), {
+      headers: baseHeaders(),
+    })
+      .then((res) => {
+        if (!res.ok)
+          throw new Error("Could not inspect Prism dependency sequence.");
+        return res.json();
+      })
+      .then((res) => res.sequence)
+      .catch((error) => ({
+        error: error.message,
+      }));
+  },
+  prismBootstrapPgvector: async function ({
+    connectionString,
+    tableName,
+    embeddingEngine,
+    embeddingModel,
+  }) {
+    return await fetch(`${API_BASE}/system/prism/bootstrap-pgvector`, {
+      method: "POST",
+      headers: baseHeaders(),
+      body: JSON.stringify({
+        connectionString,
+        tableName,
+        embeddingEngine,
+        embeddingModel,
+      }),
+    })
+      .then(safeJsonParse)
+      .catch((error) => ({
+        success: false,
+        error: error.message || "Failed to bootstrap pgvector.",
+      }));
+  },
+  prismSetupDraft: async function () {
+    return await fetch(`${API_BASE}/system/prism/setup-draft`, {
+      headers: baseHeaders(),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Could not load Prism setup draft.");
+        return res.json();
+      })
+      .then((res) => ({
+        draft: res?.draft || null,
+        error: null,
+      }))
+      .catch((error) => ({
+        draft: null,
+        error: error.message,
+      }));
+  },
+  savePrismSetupDraft: async function (draft = null) {
+    return await fetch(`${API_BASE}/system/prism/setup-draft`, {
+      method: "POST",
+      headers: baseHeaders(),
+      body: JSON.stringify({ draft }),
+    })
+      .then(safeJsonParse)
+      .catch((error) => ({
+        success: false,
+        draft: null,
+        error: error.message || "Failed to save Prism setup draft.",
+      }));
+  },
   localFiles: async function () {
     return await fetch(`${API_BASE}/system/local-files`, {
       headers: baseHeaders(),
@@ -601,6 +686,80 @@ const System = {
       .catch((e) => {
         console.error(e);
         return false;
+      });
+  },
+  prismProviderSlots: async function () {
+    return fetch(`${API_BASE}/system/prism/provider-slots`, {
+      method: "GET",
+      headers: baseHeaders(),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(
+            res.statusText || "Error fetching Prism provider slots."
+          );
+        }
+        return res.json();
+      })
+      .catch((e) => {
+        console.error(e);
+        return { slots: [], error: e.message };
+      });
+  },
+  updatePrismProviderSlots: async function (slots = []) {
+    return fetch(`${API_BASE}/system/prism/provider-slots`, {
+      method: "POST",
+      headers: baseHeaders(),
+      body: JSON.stringify({ slots }),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(
+            res.statusText || "Error saving Prism provider slots."
+          );
+        }
+        return res.json();
+      })
+      .catch((e) => {
+        console.error(e);
+        return { success: false, slots: [], error: e.message };
+      });
+  },
+  prismToolCredentials: async function () {
+    return fetch(`${API_BASE}/system/prism/tool-credentials`, {
+      method: "GET",
+      headers: baseHeaders(),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(
+            res.statusText || "Error fetching Prism tool credentials."
+          );
+        }
+        return res.json();
+      })
+      .catch((e) => {
+        console.error(e);
+        return { credentials: [], error: e.message };
+      });
+  },
+  updatePrismToolCredentials: async function (credentials = []) {
+    return fetch(`${API_BASE}/system/prism/tool-credentials`, {
+      method: "POST",
+      headers: baseHeaders(),
+      body: JSON.stringify({ credentials }),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(
+            res.statusText || "Error saving Prism tool credentials."
+          );
+        }
+        return res.json();
+      })
+      .catch((e) => {
+        console.error(e);
+        return { success: false, credentials: [], error: e.message };
       });
   },
   customModels: async function (

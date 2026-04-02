@@ -17,6 +17,7 @@ const { AgentHandler } = require(".");
 const {
   WorkspaceAgentInvocation,
 } = require("../../models/workspaceAgentInvocation");
+const { buildQueryAwareAgentPrompt } = require("./queryContext");
 
 /**
  * This is an instance and functional Agent handler, but it does not utilize
@@ -81,6 +82,17 @@ class EphemeralAgentHandler extends AgentHandler {
 
   log(text, ...args) {
     console.log(`\x1b[36m[EphemeralAgentHandler]\x1b[0m ${text}`, ...args);
+  }
+
+  async buildInitialAgentContent(prompt = "") {
+    return await buildQueryAwareAgentPrompt({
+      workspace: this.#workspace,
+      user: this.#userId ? { id: this.#userId } : null,
+      thread: this.#threadId ? { id: this.#threadId } : null,
+      apiSessionId: this.#sessionId,
+      prompt: this.initialAgentPrompt(prompt),
+      log: this.log.bind(this),
+    });
   }
 
   closeAlert() {
@@ -439,11 +451,13 @@ class EphemeralAgentHandler extends AgentHandler {
         this.aibitat.introspect?.(
           "Constellation fallback: continuing with standard routing."
         );
-        return this.aibitat.start({
-          from: USER_AGENT.name,
-          to: this.channel ?? WORKSPACE_AGENT.name,
-          content: this.#prompt,
-        });
+        return this.buildInitialAgentContent(this.#prompt).then((content) =>
+          this.aibitat.start({
+            from: USER_AGENT.name,
+            to: this.channel ?? WORKSPACE_AGENT.name,
+            content,
+          })
+        );
       });
     }
 
@@ -455,11 +469,31 @@ class EphemeralAgentHandler extends AgentHandler {
         this.aibitat.introspect?.(
           "Council pack fallback: continuing with standard routing."
         );
-        return this.aibitat.start({
-          from: USER_AGENT.name,
-          to: this.channel ?? WORKSPACE_AGENT.name,
-          content: this.#prompt,
-        });
+        return this.buildInitialAgentContent(this.#prompt).then((content) =>
+          this.aibitat.start({
+            from: USER_AGENT.name,
+            to: this.channel ?? WORKSPACE_AGENT.name,
+            content,
+          })
+        );
+      });
+    }
+
+    if (this.shouldRunDirectImportedLens(this.#prompt)) {
+      return this.runDirectImportedLens(this.#prompt).catch((error) => {
+        this.log(
+          `Direct imported lens execution failed (${error.message}). Falling back to standard flow.`
+        );
+        this.aibitat.introspect?.(
+          "Imported lens fallback: continuing with standard routing."
+        );
+        return this.buildInitialAgentContent(this.#prompt).then((content) =>
+          this.aibitat.start({
+            from: USER_AGENT.name,
+            to: this.channel ?? WORKSPACE_AGENT.name,
+            content,
+          })
+        );
       });
     }
 
@@ -471,19 +505,23 @@ class EphemeralAgentHandler extends AgentHandler {
         this.aibitat.introspect?.(
           "Lens deliberation fallback: continuing with standard @agent flow."
         );
-        return this.aibitat.start({
-          from: USER_AGENT.name,
-          to: this.channel ?? WORKSPACE_AGENT.name,
-          content: this.#prompt,
-        });
+        return this.buildInitialAgentContent(this.#prompt).then((content) =>
+          this.aibitat.start({
+            from: USER_AGENT.name,
+            to: this.channel ?? WORKSPACE_AGENT.name,
+            content,
+          })
+        );
       });
     }
 
-    return this.aibitat.start({
-      from: USER_AGENT.name,
-      to: this.channel ?? WORKSPACE_AGENT.name,
-      content: this.#prompt,
-    });
+    return this.buildInitialAgentContent(this.#prompt).then((content) =>
+      this.aibitat.start({
+        from: USER_AGENT.name,
+        to: this.channel ?? WORKSPACE_AGENT.name,
+        content,
+      })
+    );
   }
 
   /**

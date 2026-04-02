@@ -264,6 +264,13 @@ h1 {
   font-size: 1.1rem;
 }
 
+.panel-copy,
+.panel-meta {
+  margin: 0 0 14px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
 .startup-banner {
   display: grid;
   gap: 12px;
@@ -323,6 +330,89 @@ h1 {
   margin: 0;
   overflow-wrap: anywhere;
   color: var(--fg);
+}
+
+.readiness-panel {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.readiness-panel__column {
+  min-width: 0;
+}
+
+.check-list {
+  display: grid;
+  gap: 12px;
+}
+
+.check-card {
+  border: 1px solid rgba(209, 163, 33, 0.14);
+  border-radius: 18px;
+  padding: 14px 15px;
+  background: rgba(13, 13, 12, 0.66);
+}
+
+.check-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.check-card__title {
+  margin: 0;
+  font-size: 0.98rem;
+}
+
+.check-card__detail,
+.check-card__hint {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.45;
+  font-size: 0.92rem;
+}
+
+.check-card__hint {
+  margin-top: 6px;
+}
+
+.check-state {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.check-state--ready {
+  color: #d8f1c7;
+  background: rgba(92, 143, 44, 0.22);
+  border-color: rgba(132, 193, 77, 0.28);
+}
+
+.check-state--attention {
+  color: #f1d07b;
+  background: rgba(209, 163, 33, 0.18);
+  border-color: rgba(209, 163, 33, 0.28);
+}
+
+.check-state--missing {
+  color: #ffcfbc;
+  background: rgba(229, 141, 115, 0.16);
+  border-color: rgba(229, 141, 115, 0.28);
+}
+
+.check-state--not-configured {
+  color: #d8d0be;
+  background: rgba(128, 118, 94, 0.18);
+  border-color: rgba(128, 118, 94, 0.24);
 }
 
 .actions {
@@ -431,6 +521,10 @@ button:active {
 @media (max-width: 720px) {
   .shell {
     padding: 28px 16px 24px;
+  }
+
+  .readiness-panel {
+    grid-template-columns: 1fr;
   }
 
   .status-grid {

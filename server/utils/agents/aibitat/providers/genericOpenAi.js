@@ -21,8 +21,8 @@ class GenericOpenAiProvider extends InheritMultiple([Provider, UnTooled]) {
     super();
     const { model = "gpt-3.5-turbo" } = config;
     const client = new OpenAI({
-      baseURL: process.env.GENERIC_OPEN_AI_BASE_PATH,
-      apiKey: process.env.GENERIC_OPEN_AI_API_KEY ?? null,
+      baseURL: config.basePath || process.env.GENERIC_OPEN_AI_BASE_PATH,
+      apiKey: config.apiKey || process.env.GENERIC_OPEN_AI_API_KEY || null,
       maxRetries: 3,
       defaultHeaders: {
         "User-Agent": getAnythingLLMUserAgent(),
@@ -34,9 +34,11 @@ class GenericOpenAiProvider extends InheritMultiple([Provider, UnTooled]) {
     this.model = model;
     this.verbose = true;
     this._supportsToolCalling = null;
-    this.maxTokens = process.env.GENERIC_OPEN_AI_MAX_TOKENS
-      ? toValidNumber(process.env.GENERIC_OPEN_AI_MAX_TOKENS, 1024)
-      : 1024;
+    this.maxTokens = config.tokenLimit
+      ? toValidNumber(config.tokenLimit, 1024)
+      : process.env.GENERIC_OPEN_AI_MAX_TOKENS
+          ? toValidNumber(process.env.GENERIC_OPEN_AI_MAX_TOKENS, 1024)
+          : 1024;
   }
 
   get client() {

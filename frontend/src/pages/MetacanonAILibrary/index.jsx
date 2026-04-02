@@ -1,5 +1,6 @@
 import Sidebar, { SidebarMobileHeader } from "@/components/Sidebar";
 import PrismHoverTarget from "@/components/PrismHoverTarget";
+import LensWorkbenchModal from "@/components/Metacanon/LensWorkbenchModal";
 import {
   buildFeaturedCouncilId,
   buildFeaturedLensId,
@@ -289,7 +290,45 @@ function normalizeDraftLens(item = {}) {
     handle,
     title,
     colorHex: getMetacanonLensAccent(item),
+    preferredBackends: Array.from(
+      new Set(
+        (Array.isArray(item.preferredBackends) ? item.preferredBackends : [])
+          .map((value) => String(value || "").trim())
+          .filter(Boolean)
+      )
+    ),
+    fallbackBackends: Array.from(
+      new Set(
+        (Array.isArray(item.fallbackBackends) ? item.fallbackBackends : [])
+          .map((value) => String(value || "").trim())
+          .filter(Boolean)
+      )
+    ),
   };
+}
+
+function buildExecutionRoutesFromLenses(lenses = []) {
+  return Object.fromEntries(
+    lenses
+      .map(normalizeDraftLens)
+      .map((lens) => [
+        lens.handle,
+        Array.from(
+          new Set([
+            ...(lens.preferredBackends || []),
+            ...(lens.fallbackBackends || []),
+          ])
+        ),
+      ])
+      .filter(
+        ([handle, backends]) =>
+          String(handle || "")
+            .trim()
+            .startsWith("@") &&
+          Array.isArray(backends) &&
+          backends.length > 0
+      )
+  );
 }
 
 function getDraftConstellation(
@@ -324,6 +363,7 @@ function getDraftConstellation(
     ),
     leadHandle: leadLens?.handle || null,
     leadTitle: leadLens?.title || null,
+    executionRoutes: buildExecutionRoutesFromLenses(normalizedLenses),
     colorHex: getMetacanonLensAccent({
       colorHex: leadLens?.colorHex || normalizedLenses[0]?.colorHex,
     }),
@@ -359,6 +399,7 @@ function buildCouncilAlignment(council = {}) {
     collectionLabel: METACANON_TERMS.councils,
     lensHandles: council.lensHandles || [],
     lensTitles: (council.lenses || []).map((lens) => getLensDisplayTitle(lens)),
+    executionRoutes: buildExecutionRoutesFromLenses(council.lenses || []),
     colorHex:
       council.lenses?.[0]?.colorHex ||
       getMetacanonLensAccent(council.lenses?.[0] || {}),
@@ -419,6 +460,12 @@ function buildSavedPackAlignment(pack = {}) {
     lensTitles: pack.lensTitles || [],
     leadHandle: pack.leadHandle || null,
     leadTitle: pack.leadTitle || null,
+    executionRoutes: (() => {
+      if (pack.executionRoutes && typeof pack.executionRoutes === "object") {
+        return pack.executionRoutes;
+      }
+      return {};
+    })(),
     colorHex: pack.colorHex || "#d4a63e",
   };
 }
@@ -993,6 +1040,7 @@ export default function MetacanonAILibraryPage() {
   const [loadingCollection, setLoadingCollection] = useState(false);
   const [selectedDetail, setSelectedDetail] = useState(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
+  const [lensWorkbenchOpen, setLensWorkbenchOpen] = useState(false);
 
   useEffect(() => {
     setSavedPacks(loadCouncilPacks());
@@ -1165,6 +1213,52 @@ export default function MetacanonAILibraryPage() {
   const lensItems = useMemo(() => {
     return libraryCollections.lenses || [];
   }, [libraryCollections]);
+
+  const refreshLibrarySlice = async ({
+    refreshManifest = false,
+    tabs = [],
+    selectedLensId = null,
+  } = {}) => {
+    try {
+      const nextTabs = Array.from(
+        new Set(tabs.filter(Boolean).concat(selectedLensId ? ["lenses"] : []))
+      );
+
+      const [manifestPayload, ...collections] = await Promise.all([
+        refreshManifest ? fetchLibraryManifest() : Promise.resolve(null),
+        ...nextTabs.map((nextTab) => fetchLibraryCollection(nextTab)),
+      ]);
+
+      if (manifestPayload) {
+        setLibraryManifest(manifestPayload);
+      }
+
+      if (nextTabs.length > 0) {
+        setLibraryCollections((current) => {
+          const next = { ...current };
+          nextTabs.forEach((nextTab, index) => {
+            next[nextTab] = collections[index];
+          });
+          return next;
+        });
+      }
+
+      if (selectedLensId) {
+        setTab("lenses");
+        setSelectedId(selectedLensId);
+      }
+    } catch (error) {
+      console.error(error);
+      showToast("Failed to refresh the lens library.", "error");
+    }
+  };
+
+  const openLensWorkbench = async () => {
+    if (!libraryCollections.lenses) {
+      await refreshLibrarySlice({ tabs: ["lenses"] });
+    }
+    setLensWorkbenchOpen(true);
+  };
 
   const lensFilterOptions = useMemo(() => {
     const byCollection = new Map();
@@ -1416,6 +1510,7 @@ export default function MetacanonAILibraryPage() {
       lensTitles: draftConstellation.lensTitles,
       leadHandle: draftConstellation.leadHandle,
       leadTitle: draftConstellation.leadTitle,
+      executionRoutes: draftConstellation.executionRoutes,
       colorHex: draftConstellation.colorHex,
     });
 
@@ -1441,6 +1536,7 @@ export default function MetacanonAILibraryPage() {
       lensTitles: draftConstellation.lensTitles,
       leadHandle: draftConstellation.leadHandle,
       leadTitle: draftConstellation.leadTitle,
+      executionRoutes: draftConstellation.executionRoutes,
       colorHex: draftConstellation.colorHex,
     });
 
@@ -1479,6 +1575,20 @@ export default function MetacanonAILibraryPage() {
         constellation.projectManagerTitle,
         ...constellation.members.map((member) => member.lensTitle),
       ].filter(Boolean),
+      executionRoutes: buildExecutionRoutesFromLenses([
+        {
+          handle: constellation.projectManagerHandle,
+          title: constellation.projectManagerTitle,
+          preferredBackends: constellation.preferredBackends,
+          fallbackBackends: constellation.fallbackBackends,
+        },
+        ...constellation.members.map((member) => ({
+          handle: member.lensHandle,
+          title: member.lensTitle,
+          preferredBackends: member.preferredBackends,
+          fallbackBackends: member.fallbackBackends,
+        })),
+      ]),
     });
 
     setSavedPacks(loadCouncilPacks());
@@ -1829,6 +1939,13 @@ export default function MetacanonAILibraryPage() {
                     >
                       Open Lens Composer
                     </Link>
+                    <button
+                      type="button"
+                      onClick={openLensWorkbench}
+                      className="rounded-full border border-theme-primary-button px-4 py-2 text-sm font-medium text-theme-primary-button transition-all duration-200 hover:bg-theme-primary-button hover:text-black"
+                    >
+                      Edit / Create Lens
+                    </button>
                   </div>
                 </div>
               </div>
@@ -2539,6 +2656,18 @@ export default function MetacanonAILibraryPage() {
             </div>
           </div>
         </div>
+        <LensWorkbenchModal
+          open={lensWorkbenchOpen}
+          lenses={lensItems}
+          onClose={() => setLensWorkbenchOpen(false)}
+          onSaved={(item) => {
+            refreshLibrarySlice({
+              refreshManifest: true,
+              tabs: ["lenses"],
+              selectedLensId: item?.id || null,
+            });
+          }}
+        />
       </div>
     </div>
   );

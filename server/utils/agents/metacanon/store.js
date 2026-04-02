@@ -1,11 +1,17 @@
 const fs = require("fs");
 const path = require("path");
+const {
+  listCustomLenses,
+  getCustomLensById,
+  clearCustomLensCache,
+} = require("./customLenses");
 
 const INDEX_PATH = path.resolve(__dirname, "library.generated.json");
 const ALIAS_PATH = path.resolve(__dirname, "library.aliases.generated.json");
 const COLLECTIONS_ROOT = path.resolve(__dirname, "library-collections");
 const ITEMS_ROOT = path.resolve(__dirname, "library-items");
 
+let baseIndexCache = null;
 let indexCache = null;
 let aliasCache = null;
 const itemCache = new Map();
@@ -34,10 +40,46 @@ function readJsonFile(filePath, label) {
 
 function loadIndex() {
   if (!indexCache) {
-    indexCache = readJsonFile(INDEX_PATH, "library index");
+    if (!baseIndexCache) {
+      baseIndexCache = readJsonFile(INDEX_PATH, "library index");
+    }
+    indexCache = buildMergedIndex(baseIndexCache);
     hydrateIndexes(indexCache);
   }
   return indexCache;
+}
+
+function buildMergedIndex(baseIndex = {}) {
+  const mergedIndex = JSON.parse(JSON.stringify(baseIndex || {}));
+  const baseLenses = Array.isArray(mergedIndex.lookup?.lenses)
+    ? mergedIndex.lookup.lenses
+    : [];
+  const lensesById = new Map(
+    baseLenses.map((lens) => [String(lens.id || ""), lens])
+  );
+
+  listCustomLenses().forEach((lens) => {
+    lensesById.set(String(lens.id || ""), {
+      ...lens,
+      title: lens.title || lens.displayTitle || "Custom Lens",
+      handle: lens.handle,
+      detailPath: lens.detailPath || `custom-lenses/${lens.id}.json`,
+    });
+  });
+
+  const mergedLenses = Array.from(lensesById.values()).sort((left, right) =>
+    String(left.title || "").localeCompare(String(right.title || ""))
+  );
+
+  mergedIndex.lookup = {
+    ...(mergedIndex.lookup || {}),
+    lenses: mergedLenses,
+  };
+  mergedIndex.counts = {
+    ...(mergedIndex.counts || {}),
+    lenses: mergedLenses.length,
+  };
+  return mergedIndex;
 }
 
 function loadAliases() {
@@ -104,23 +146,19 @@ function hydrateIndexes(index = {}) {
     itemIdAliases.lenses.set(String(legacyId), String(nextId));
   });
 
-  Object.entries(lensHandleAliasesMap).forEach(
-    ([legacyHandle, nextHandle]) => {
-      const target = lensHandleMap.get(String(nextHandle).toLowerCase());
-      if (!target) return;
-      lensHandleMap.set(String(legacyHandle).toLowerCase(), target);
-      lensHandleAliases.add(String(legacyHandle).toLowerCase());
-    }
-  );
+  Object.entries(lensHandleAliasesMap).forEach(([legacyHandle, nextHandle]) => {
+    const target = lensHandleMap.get(String(nextHandle).toLowerCase());
+    if (!target) return;
+    lensHandleMap.set(String(legacyHandle).toLowerCase(), target);
+    lensHandleAliases.add(String(legacyHandle).toLowerCase());
+  });
 
-  Object.entries(constellationIdAliases).forEach(
-    ([legacyId, nextId]) => {
-      const target = constellationIdMap.get(String(nextId));
-      if (!target) return;
-      constellationIdMap.set(String(legacyId), target);
-      itemIdAliases.constellations.set(String(legacyId), String(nextId));
-    }
-  );
+  Object.entries(constellationIdAliases).forEach(([legacyId, nextId]) => {
+    const target = constellationIdMap.get(String(nextId));
+    if (!target) return;
+    constellationIdMap.set(String(legacyId), target);
+    itemIdAliases.constellations.set(String(legacyId), String(nextId));
+  });
 
   Object.entries(constellationHandleAliasesMap).forEach(
     ([legacyHandle, nextHandle]) => {
@@ -160,7 +198,18 @@ function getLibraryCollection(tab = "") {
   if (!fs.existsSync(filePath)) return [];
 
   const payload = readJsonFile(filePath, `library collection "${safeTab}"`);
-  const items = Array.isArray(payload?.items) ? payload.items : [];
+  let items = Array.isArray(payload?.items) ? payload.items : [];
+  if (safeTab === "lenses") {
+    const itemsById = new Map(
+      items.map((item) => [String(item.id || ""), item])
+    );
+    listCustomLenses().forEach((lens) => {
+      itemsById.set(String(lens.id || ""), lens);
+    });
+    items = Array.from(itemsById.values()).sort((left, right) =>
+      String(left.title || "").localeCompare(String(right.title || ""))
+    );
+  }
   collectionCache.set(safeTab, items);
   return items;
 }
@@ -187,6 +236,14 @@ function getLibraryItem(tab = "", id = "") {
   const resolvedId = resolveItemIdAlias(tab, id);
   const cacheKey = `${tab}:${resolvedId}`;
   if (itemCache.has(cacheKey)) return itemCache.get(cacheKey);
+
+  if (tab === "lenses") {
+    const customLens = getCustomLensById(resolvedId);
+    if (customLens) {
+      itemCache.set(cacheKey, customLens);
+      return customLens;
+    }
+  }
 
   const filePath = resolveItemPath(tab, resolvedId);
   if (!filePath || !fs.existsSync(filePath)) return null;
@@ -248,6 +305,22 @@ function getConstellationAliasHandles() {
   return [...constellationHandleAliases];
 }
 
+function clearMetacanonStoreCaches() {
+  baseIndexCache = null;
+  indexCache = null;
+  aliasCache = null;
+  itemCache.clear();
+  collectionCache.clear();
+  lensHandleMap.clear();
+  lensIdMap.clear();
+  constellationHandleMap.clear();
+  constellationIdMap.clear();
+  lensHandleAliases.clear();
+  constellationHandleAliases.clear();
+  Object.values(itemIdAliases).forEach((map) => map.clear());
+  clearCustomLensCache();
+}
+
 module.exports = {
   getLibraryManifest,
   getLibraryCollection,
@@ -261,4 +334,5 @@ module.exports = {
   getLensManifestById,
   getConstellationManifestByHandle,
   getConstellationManifestById,
+  clearMetacanonStoreCaches,
 };

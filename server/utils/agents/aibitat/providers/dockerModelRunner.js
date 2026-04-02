@@ -25,7 +25,7 @@ class DockerModelRunnerProvider extends InheritMultiple([Provider, UnTooled]) {
       config?.model || process.env.DOCKER_MODEL_RUNNER_LLM_MODEL_PREF || null;
     const client = new OpenAI({
       baseURL: parseDockerModelRunnerEndpoint(
-        process.env.DOCKER_MODEL_RUNNER_BASE_PATH
+        config?.basePath || process.env.DOCKER_MODEL_RUNNER_BASE_PATH
       ),
       apiKey: null,
       maxRetries: 3,

@@ -1,13 +1,13 @@
 const TRANSLATIONS = {
   onboarding: {
     home: {
-      title: "Welcome to",
-      getStarted: "Explore the Artifact",
+      title: "Welcome to Prism AI",
+      getStarted: "Begin setup",
     },
     llm: {
-      title: "Awaken Prism",
+      title: "Set up Prism AI",
       description:
-        "Choose the language model service that will power Prism's voice, reasoning, and alignment.",
+        "Configure storage, embeddings, and your local model in one integrated installer sequence.",
     },
     userSetup: {
       title: "User Setup",
@@ -34,14 +34,14 @@ const TRANSLATIONS = {
         "These settings can be reconfigured at any time in the settings.",
     },
     survey: {
-      title: "Welcome to PrismAI",
-      description: "Help us shape PrismAI around your needs. Optional.",
+      title: "Welcome to Prism AI",
+      description: "Help us shape Prism AI around your needs. Optional.",
       email: "What's your email?",
-      useCase: "What will you use AnythingLLM for?",
+      useCase: "What will you use Prism AI for?",
       useCaseWork: "For work",
       useCasePersonal: "For personal use",
       useCaseOther: "Other",
-      comment: "How did you hear about AnythingLLM?",
+      comment: "How did you hear about Prism AI?",
       commentPlaceholder:
         "Reddit, Twitter, GitHub, YouTube, etc. - Let us know how you found us!",
       skip: "Skip Survey",

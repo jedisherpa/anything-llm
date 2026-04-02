@@ -5,6 +5,7 @@ mod database;
 mod logs;
 mod paths;
 mod processes;
+mod readiness;
 mod runtime;
 mod startup;
 
@@ -31,7 +32,8 @@ use crate::{
     },
     runtime::{
         ManagedChildren, OpenSourceDocument, OpenSourceMaterials, OpenSourceMetadata,
-        RuntimeConfig, RuntimeMode, RuntimeSecrets, RuntimeStatus, StartupPhase,
+        ReleaseReadiness, RuntimeConfig, RuntimeMode, RuntimeSecrets, RuntimeStatus,
+        StartupPhase,
     },
     startup::wait_for_server_ready,
 };
@@ -47,6 +49,8 @@ const OPEN_SOURCE_LICENSES_MENU_ID: &str = "open_source_licenses";
 const OPEN_LOGS_MENU_ID: &str = "open_logs";
 const OPEN_SOURCE_WINDOW_LABEL: &str = "open_source_licenses";
 const APPLICATIONS_FOLDER: &str = "/Applications";
+const DOCKER_DESKTOP_URL: &str = "https://www.docker.com/products/docker-desktop/";
+const POSTGRES_APP_URL: &str = "https://postgresapp.com/";
 const DATA_DIR_OVERRIDE_ENV: &str = "PRISMAI_DATA_DIR";
 const DATA_DIR_OVERRIDE_ARG: &str = "--prismai-data-dir";
 
@@ -114,12 +118,28 @@ impl AppState {
         })
     }
 
+    fn get_runtime_config(&self) -> RuntimeConfig {
+        read_runtime_config(&self.config_path)
+    }
+
     fn get_runtime_mode(&self) -> RuntimeMode {
-        read_runtime_config(&self.config_path).mode
+        self.get_runtime_config().mode
+    }
+
+    fn execution_engine_url(&self) -> Option<String> {
+        self.get_runtime_config().execution_engine_url
     }
 
     fn set_runtime_mode(&self, mode: RuntimeMode) -> Result<(), String> {
-        write_runtime_config(&self.config_path, &RuntimeConfig { mode })
+        let mut config = self.get_runtime_config();
+        config.mode = mode;
+        write_runtime_config(&self.config_path, &config)
+    }
+
+    fn set_execution_engine_url(&self, execution_engine_url: Option<String>) -> Result<(), String> {
+        let mut config = self.get_runtime_config();
+        config.execution_engine_url = execution_engine_url;
+        write_runtime_config(&self.config_path, &config)
     }
 
     fn set_startup_error(&self, error: Option<String>) {
@@ -177,6 +197,7 @@ impl AppState {
             startup_phase,
             startup_detail,
             startup_error,
+            execution_engine_url: self.execution_engine_url(),
         }
     }
 
@@ -225,11 +246,13 @@ impl AppState {
                 app_url_for_port(server_port)
             )),
         );
+        let configured_execution_engine_url = self.execution_engine_url();
         let server = spawn_server(
             &self.core_dir,
             &self.storage_dir,
             &self.node_bin,
             &self.runtime_secrets,
+            configured_execution_engine_url.as_deref(),
             server_port,
             collector_port,
             &self.server_log_path,
@@ -312,6 +335,11 @@ fn get_runtime_status(state: tauri::State<'_, AppState>) -> RuntimeStatus {
 }
 
 #[tauri::command]
+fn get_release_readiness(state: tauri::State<'_, AppState>) -> ReleaseReadiness {
+    readiness::collect_release_readiness(&state)
+}
+
+#[tauri::command]
 fn set_runtime_mode(
     mode: String,
     app: tauri::AppHandle,
@@ -323,7 +351,7 @@ fn set_runtime_mode(
 }
 
 #[tauri::command]
-fn open_anythingllm_in_browser(app: tauri::AppHandle) -> Result<(), String> {
+fn open_prismai_in_browser(app: tauri::AppHandle) -> Result<(), String> {
     open_app_in_browser(&app)
 }
 
@@ -344,6 +372,58 @@ fn open_logs_folder(
         None,
     )
     .map_err(|err| format!("Failed to open PrismAI logs folder: {err}"))
+}
+
+fn dependency_app_candidates(app_name: &str) -> Vec<PathBuf> {
+    let mut candidates = vec![PathBuf::from(APPLICATIONS_FOLDER).join(app_name)];
+    if let Ok(home) = std::env::var("HOME") {
+        candidates.push(PathBuf::from(home).join("Applications").join(app_name));
+    }
+    candidates
+}
+
+fn find_dependency_app(app_name: &str) -> Option<PathBuf> {
+    dependency_app_candidates(app_name)
+        .into_iter()
+        .find(|candidate| candidate.exists())
+}
+
+fn open_dependency_target(app: &tauri::AppHandle, action: &str) -> Result<String, String> {
+    match action.trim() {
+        "docker_open" => {
+            if let Some(path) = find_dependency_app("Docker.app") {
+                open(&app.shell_scope(), path.display().to_string(), None)
+                    .map_err(|err| format!("Failed to open Docker Desktop: {err}"))?;
+                return Ok("Opened Docker Desktop.".to_string());
+            }
+
+            open(&app.shell_scope(), DOCKER_DESKTOP_URL.to_string(), None)
+                .map_err(|err| format!("Failed to open Docker Desktop installer page: {err}"))?;
+            Ok("Docker Desktop is not installed. Opened the installer page instead.".to_string())
+        }
+        "docker_install" => {
+            open(&app.shell_scope(), DOCKER_DESKTOP_URL.to_string(), None)
+                .map_err(|err| format!("Failed to open Docker Desktop installer page: {err}"))?;
+            Ok("Opened the Docker Desktop installer page.".to_string())
+        }
+        "postgres_open" => {
+            if let Some(path) = find_dependency_app("Postgres.app") {
+                open(&app.shell_scope(), path.display().to_string(), None)
+                    .map_err(|err| format!("Failed to open Postgres.app: {err}"))?;
+                return Ok("Opened Postgres.app.".to_string());
+            }
+
+            open(&app.shell_scope(), POSTGRES_APP_URL.to_string(), None)
+                .map_err(|err| format!("Failed to open Postgres.app installer page: {err}"))?;
+            Ok("Postgres.app is not installed. Opened the installer page instead.".to_string())
+        }
+        "postgres_install" => {
+            open(&app.shell_scope(), POSTGRES_APP_URL.to_string(), None)
+                .map_err(|err| format!("Failed to open Postgres.app installer page: {err}"))?;
+            Ok("Opened the Postgres.app installer page.".to_string())
+        }
+        other => Err(format!("Unknown dependency action: {other}")),
+    }
 }
 
 #[tauri::command]
@@ -377,6 +457,29 @@ fn open_open_source_document(
 #[tauri::command]
 fn restart_app(app: tauri::AppHandle) -> Result<(), String> {
     restart_application(&app)
+}
+
+#[tauri::command]
+fn run_dependency_action(app: tauri::AppHandle, action: String) -> Result<String, String> {
+    open_dependency_target(&app, &action)
+}
+
+#[tauri::command]
+fn set_execution_engine_url(
+    url: String,
+    state: tauri::State<'_, AppState>,
+) -> Result<RuntimeStatus, String> {
+    state.set_execution_engine_url(normalize_execution_engine_url(&url))?;
+    Ok(state.get_runtime_status())
+}
+
+fn normalize_execution_engine_url(url: &str) -> Option<String> {
+    let normalized = url.trim().trim_end_matches('/').trim();
+    if normalized.is_empty() {
+        None
+    } else {
+        Some(normalized.to_string())
+    }
 }
 
 fn parse_runtime_mode(mode: &str) -> Result<RuntimeMode, String> {
@@ -760,13 +863,25 @@ fn main() {
         })
         .invoke_handler(tauri::generate_handler![
             get_runtime_status,
+            get_release_readiness,
             set_runtime_mode,
-            open_anythingllm_in_browser,
+            open_prismai_in_browser,
             open_applications_folder,
             open_logs_folder,
             get_open_source_materials,
             open_open_source_document,
-            restart_app
+            restart_app,
+            run_dependency_action,
+            set_execution_engine_url,
+            metacanon_ai::tauri_commands::metacanon_deliberate,
+            metacanon_ai::tauri_commands::metacanon_provider_health,
+            metacanon_ai::tauri_commands::metacanon_get_compute_options,
+            metacanon_ai::tauri_commands::metacanon_set_global_provider,
+            metacanon_ai::tauri_commands::metacanon_create_sub_sphere,
+            metacanon_ai::tauri_commands::metacanon_list_sub_spheres,
+            metacanon_ai::tauri_commands::metacanon_query_sub_sphere,
+            metacanon_ai::tauri_commands::metacanon_engine_health,
+            metacanon_ai::tauri_commands::metacanon_engine_sub_spheres
         ])
         .build(tauri::generate_context!())
         .expect("failed to build PrismAI desktop app")

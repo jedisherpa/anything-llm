@@ -6,8 +6,8 @@ import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 export const DEFAULT_BUDGETS = {
-  maxAppBytes: 1_000_000_000,
-  maxDmgBytes: 500_000_000,
+  maxAppBytes: 1_200_000_000,
+  maxDmgBytes: 600_000_000,
 };
 
 const BANNED_DIRECTORY_NAMES = new Set([

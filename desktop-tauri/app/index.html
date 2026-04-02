@@ -89,6 +89,26 @@
         <pre id="startupError" class="warning hidden"></pre>
       </section>
 
+      <section class="panel readiness-panel">
+        <div class="readiness-panel__column">
+          <h2>Bundled Stack</h2>
+          <p class="panel-copy">
+            What this PrismAI build currently bundles versus what is still tracked externally for
+            the next notarized release.
+          </p>
+          <div id="bundleMetadataSummary" class="panel-meta">Loading bundle metadata...</div>
+          <div id="bundleComponentList" class="check-list"></div>
+        </div>
+        <div class="readiness-panel__column">
+          <h2>Machine Readiness</h2>
+          <p class="panel-copy">
+            Best-effort checks for the local infrastructure PrismAI will need during setup and
+            release verification.
+          </p>
+          <div id="dependencyCheckList" class="check-list"></div>
+        </div>
+      </section>
+
       <section class="actions">
         <button id="openBrowserBtn">Open PrismAI In Browser</button>
         <button id="openApplicationsBtn" class="secondary hidden">Open Applications Folder</button>

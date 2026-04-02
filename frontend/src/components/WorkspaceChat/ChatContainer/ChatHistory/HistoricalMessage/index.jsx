@@ -36,6 +36,14 @@ const HistoricalMessage = ({
   saveEditedMessage,
   forkThread,
   metrics = {},
+  executionMode = null,
+  trustedSessionId = null,
+  sessionExpiresAt = null,
+  subSphereId = null,
+  selectedWorktreeRoot = null,
+  artifactRefs = [],
+  requiresApproval = false,
+  pendingActionId = null,
 }) => {
   const { t } = useTranslation();
   const { isEditing } = useEditMessage({ chatId, role });
@@ -160,6 +168,16 @@ const HistoricalMessage = ({
             )}
 
             <ChatAttachments attachments={attachments} />
+            <ExecutionSummaryCard
+              executionMode={executionMode}
+              trustedSessionId={trustedSessionId}
+              sessionExpiresAt={sessionExpiresAt}
+              subSphereId={subSphereId}
+              selectedWorktreeRoot={selectedWorktreeRoot}
+              artifactRefs={artifactRefs}
+              requiresApproval={requiresApproval}
+              pendingActionId={pendingActionId}
+            />
           </div>
         )}
 
@@ -203,6 +221,69 @@ export default memo(
     );
   }
 );
+
+function ExecutionSummaryCard({
+  executionMode = null,
+  trustedSessionId = null,
+  sessionExpiresAt = null,
+  subSphereId = null,
+  selectedWorktreeRoot = null,
+  artifactRefs = [],
+  requiresApproval = false,
+  pendingActionId = null,
+}) {
+  if (executionMode !== "execute") return null;
+
+  return (
+    <div
+      className="mt-4 rounded-[18px] border border-theme-modal-border bg-theme-bg-secondary px-4 py-3 text-[12px] leading-5 text-theme-text-secondary"
+      data-testid="execute-artifact-summary"
+    >
+      <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-theme-text-secondary">
+        Execute Result
+      </div>
+      {trustedSessionId ? (
+        <div className="mt-2">
+          Trusted session:{" "}
+          <span className="font-medium text-theme-text-primary">
+            {trustedSessionId}
+          </span>
+        </div>
+      ) : null}
+      {selectedWorktreeRoot ? (
+        <div>Scoped root: {selectedWorktreeRoot}</div>
+      ) : null}
+      {subSphereId ? <div>Sub-sphere: {subSphereId}</div> : null}
+      {sessionExpiresAt ? <div>Session expiry: {sessionExpiresAt}</div> : null}
+      {requiresApproval && pendingActionId ? (
+        <div className="mt-2 rounded-[12px] border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-amber-200 light:text-amber-700">
+          Pending approval: {pendingActionId}
+        </div>
+      ) : null}
+      {Array.isArray(artifactRefs) && artifactRefs.length ? (
+        <div className="mt-3 grid gap-2">
+          <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-theme-text-secondary">
+            Artifacts
+          </div>
+          {artifactRefs.map((artifact, index) => (
+            <div
+              key={artifact.artifact_id || artifact.value || index}
+              className="rounded-[12px] border border-theme-modal-border px-3 py-2"
+            >
+              <div className="font-medium text-theme-text-primary">
+                {artifact.label || artifact.kind || `Artifact ${index + 1}`}
+              </div>
+              {artifact.kind ? <div>Type: {artifact.kind}</div> : null}
+              {artifact.value ? (
+                <div className="break-all">Path: {artifact.value}</div>
+              ) : null}
+            </div>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
 
 function ChatAttachments({ attachments = [] }) {
   if (!attachments.length) return null;

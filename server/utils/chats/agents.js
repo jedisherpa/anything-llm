@@ -3,6 +3,7 @@ const {
   WorkspaceAgentInvocation,
 } = require("../../models/workspaceAgentInvocation");
 const { writeResponseChunk } = require("../helpers/chat/responses");
+const { getVectorDbClass } = require("../helpers");
 
 async function grepAgents({
   uuid,
@@ -14,6 +15,26 @@ async function grepAgents({
 }) {
   const agentHandles = WorkspaceAgentInvocation.parseAgents(message);
   if (agentHandles.length > 0) {
+    if (workspace?.chatMode === "query") {
+      const VectorDb = getVectorDbClass();
+      const hasVectorizedSpace = await VectorDb.hasNamespace(workspace.slug);
+      const embeddingsCount = await VectorDb.namespaceCount(workspace.slug);
+
+      if (!hasVectorizedSpace || embeddingsCount === 0) {
+        writeResponseChunk(response, {
+          id: uuid,
+          type: "textResponse",
+          textResponse:
+            workspace?.queryRefusalResponse ??
+            "There is no relevant information in this workspace to answer your query.",
+          sources: [],
+          close: true,
+          error: null,
+        });
+        return true;
+      }
+    }
+
     const { invocation: newInvocation } = await WorkspaceAgentInvocation.new({
       prompt: message,
       workspace: workspace,

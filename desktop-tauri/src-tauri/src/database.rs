@@ -34,10 +34,6 @@ fn sqlite_alias_root() -> PathBuf {
 
 pub(crate) fn ensure_database_alias(storage_dir: &Path) -> Result<PathBuf, String> {
     let target = storage_dir.join("anythingllm.db");
-    if !target.exists() {
-        fs::File::create(&target)
-            .map_err(|err| format!("Failed to create desktop database file: {err}"))?;
-    }
     let alias_root = sqlite_alias_root();
     fs::create_dir_all(&alias_root)
         .map_err(|err| format!("Failed to create database alias directory: {err}"))?;
@@ -83,6 +79,16 @@ pub(crate) fn ensure_runtime_database(
     bootstrap_log_path: &Path,
 ) -> Result<(), String> {
     let target = storage_dir.join("anythingllm.db");
+    if target.exists() {
+        let metadata = target
+            .metadata()
+            .map_err(|err| format!("Failed to inspect desktop database file: {err}"))?;
+        if metadata.len() == 0 {
+            fs::remove_file(&target).map_err(|err| {
+                format!("Failed to remove empty desktop database file before migration: {err}")
+            })?;
+        }
+    }
     let should_restore_template = !target.exists()
         || target
             .metadata()
@@ -107,6 +113,11 @@ pub(crate) fn ensure_runtime_database(
         }
     }
 
+    if !target.exists() {
+        fs::File::create(&target)
+            .map_err(|err| format!("Failed to create desktop database file: {err}"))?;
+    }
+
     let server_dir = core_dir.join("server");
     let prisma_cli = server_dir
         .join("node_modules")
@@ -129,8 +140,7 @@ pub(crate) fn ensure_runtime_database(
         ));
     }
 
-    let database_alias = ensure_database_alias(storage_dir)?;
-    let database_url = sqlite_database_url(&database_alias);
+    let database_url = sqlite_database_url(&target);
 
     let mut migrate = Command::new(node_bin);
     migrate
@@ -169,6 +179,8 @@ pub(crate) fn ensure_runtime_database(
         .env("DATABASE_URL", &database_url)
         .env("STORAGE_DIR", storage_dir);
     run_bootstrap_command(seed, "desktop database seed", bootstrap_log_path)?;
+
+    ensure_database_alias(storage_dir)?;
 
     Ok(())
 }

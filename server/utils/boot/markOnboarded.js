@@ -1,4 +1,5 @@
 const { SystemSettings } = require("../../models/systemSettings");
+const prisma = require("../prisma");
 
 /**
  * Mark the onboarding as completed for legacy users prior to this change where onboarding is now a flag in the DB.
@@ -35,18 +36,67 @@ async function markOnboarded() {
  * @returns {Promise<boolean>}
  */
 async function isLegacyOnboarded() {
+  // Desktop launches always inject some runtime defaults and secrets. On clean
+  // profiles that is not proof of prior onboarding, so only trust persisted
+  // usage signals from storage for the desktop lane.
+  if (isDesktopPackagedRuntime()) {
+    if ((await SystemSettings.isMultiUserMode()) === true) return true;
+    return await hasPersistedDesktopUsage();
+  }
+
   // LLM Provider is set, so we can assume onboarding is complete since this is default null in SystemSettings.js
-  if (!!process.env.LLM_PROVIDER) return true;
+  if (Boolean(process.env.LLM_PROVIDER)) return true;
 
   // Vector DB is set, so we can assume onboarding is complete since this is default null in SystemSettings.js (default is lancedb in frontend)
-  if (!!process.env.VECTOR_DB) return true;
+  if (Boolean(process.env.VECTOR_DB)) return true;
 
-  // Check if the AUTH_TOKEN/JWT_SECRET is set, so we can assume onboarding is complete since this is default null in SystemSettings.js
-  if (!!process.env.AUTH_TOKEN || !!process.env.JWT_SECRET) return true;
-
+  // AUTH_TOKEN historically indicated a configured instance.
+  // Do not treat JWT_SECRET as proof of onboarding because the desktop shell
+  // now injects runtime secrets on every clean launch.
+  if (Boolean(process.env.AUTH_TOKEN)) return true;
   // Check multi-user mode is enabled, if it is, then they are already using the app.
   if ((await SystemSettings.isMultiUserMode()) === true) return true;
   return false;
+}
+
+function isDesktopPackagedRuntime() {
+  return Boolean(process.env.STORAGE_DIR && process.env.__CFBundleIdentifier);
+}
+
+async function hasPersistedDesktopUsage() {
+  const [
+    workspaceCount,
+    documentCount,
+    chatCount,
+    userCount,
+    customSettingsCount,
+  ] = await Promise.all([
+    prisma.workspaces.count(),
+    prisma.workspace_documents.count(),
+    prisma.workspace_chats.count(),
+    prisma.users.count(),
+    prisma.system_settings.count({
+      where: {
+        label: {
+          notIn: [
+            "logo_filename",
+            "multi_user_mode",
+            "onboarding_complete",
+            "telemetry_id",
+            "prism_setup_assistant_draft",
+          ],
+        },
+      },
+    }),
+  ]);
+
+  return (
+    workspaceCount > 0 ||
+    documentCount > 0 ||
+    chatCount > 0 ||
+    userCount > 0 ||
+    customSettingsCount > 0
+  );
 }
 
 module.exports = markOnboarded;

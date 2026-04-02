@@ -8,7 +8,6 @@ import { userFromStorage } from "@/utils/request";
 import System from "@/models/system";
 import UserMenu from "../UserMenu";
 import { KeyboardShortcutWrapper } from "@/utils/keyboardShortcuts";
-
 // Used only for Multi-user mode only as we permission specific pages based on auth role.
 // When in single user mode we just bypass any authchecks.
 function useIsAuthenticated() {
@@ -20,10 +19,8 @@ function useIsAuthenticated() {
   useEffect(() => {
     const validateSession = async () => {
       const onboardingComplete = await System.isOnboardingComplete();
-      const {
-        MultiUserMode = false,
-        RequiresAuth = false,
-      } = (await System.keys()) ?? {};
+      const { MultiUserMode = false, RequiresAuth = false } =
+        (await System.keys()) ?? {};
       setMultiUserMode(MultiUserMode);
 
       // Check for the onboarding redirect condition

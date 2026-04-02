@@ -13,6 +13,7 @@ import {
   readFileSync,
   readdirSync,
   realpathSync,
+  renameSync,
   rmSync,
   statSync,
   writeFileSync,
@@ -44,6 +45,7 @@ const frontendDistDir = join(frontendDir, "dist");
 const prismaSchemaPath = join(serverDir, "prisma", "schema.prisma");
 const prismaRuntimeSchemaPath = join(serverDir, "prisma", "runtime.prisma");
 const runtimeRoot = join(coreRoot, "desktop-tauri", "runtime");
+const bundleMetadataPath = join(runtimeRoot, "bundle-metadata.json");
 const runtimeCoreDir = join(runtimeRoot, "core");
 const runtimeTemplateDir = join(runtimeRoot, "template");
 const runtimeTemplateDbPath = join(runtimeTemplateDir, "anythingllm.db");
@@ -72,6 +74,20 @@ const defaultTemplateSourceDbPath = process.env.HOME
       "anythingllm.db"
     )
   : "";
+const worktreesRoot = resolve(coreRoot, "..", "..");
+const umbrellaRuntimeCargoPath = join(
+  worktreesRoot,
+  "codex-master-folder",
+  "umbrella-runtime",
+  "Cargo.toml"
+);
+const sphereThreadEnginePackagePath = join(
+  worktreesRoot,
+  "sphere-thread-engine",
+  "engine",
+  "engine",
+  "package.json"
+);
 const shouldSkipInstall = process.argv.includes("--skip-install");
 const shouldForceInstall = process.argv.includes("--install");
 const shouldSkipRuntimeProdInstall = process.argv.includes(
@@ -423,7 +439,21 @@ function verifyFrontendSyncParity() {
 }
 
 function resetRuntimeDir() {
-  forceRemovePath(runtimeRoot);
+  if (existsSync(runtimeRoot)) {
+    const staleRuntimeRoot = join(
+      coreRoot,
+      "desktop-tauri",
+      `runtime-stale-${Date.now()}`
+    );
+    renameSync(runtimeRoot, staleRuntimeRoot);
+    try {
+      forceRemovePath(staleRuntimeRoot);
+    } catch (error) {
+      console.warn(
+        `Deferred cleanup for stale runtime tree ${staleRuntimeRoot}: ${error.message}`
+      );
+    }
+  }
   mkdirSync(runtimeCoreDir, { recursive: true });
   mkdirSync(runtimeBinDir, { recursive: true });
   mkdirSync(runtimeTemplateDir, { recursive: true });
@@ -447,6 +477,8 @@ function copyRuntimeSubset(name, sourceDir, targetDir, includeEntries) {
     }
     copyTree(source, destination);
   }
+
+  removeFinderMetadata(targetDir);
 
   console.log(`Copied fail-closed ${name} runtime subset into ${targetDir}`);
 }
@@ -768,7 +800,41 @@ function removeFinderMetadata(dir) {
     return;
   }
 
-  run("/usr/bin/find", [dir, "-name", ".DS_Store", "-delete"], coreRoot);
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const absolutePath = join(dir, entry.name);
+    if (entry.isDirectory()) {
+      removeFinderMetadata(absolutePath);
+      continue;
+    }
+
+    if (!entry.isFile()) {
+      continue;
+    }
+
+    if (entry.name.toLowerCase() !== ".ds_store") {
+      continue;
+    }
+
+    try {
+      rmSync(absolutePath, { force: true });
+    } catch (error) {
+      console.warn(
+        `Unable to remove Finder metadata ${absolutePath}: ${error.message}`
+      );
+    }
+  }
+
+  try {
+    run(
+      "/usr/bin/find",
+      [dir, "-name", ".DS_Store", "-exec", "/bin/rm", "-f", "{}", "+"],
+      coreRoot
+    );
+  } catch (error) {
+    console.warn(
+      `Finder metadata shell scrub did not complete cleanly in ${dir}: ${error.message}`
+    );
+  }
 }
 
 function loadUpstreamMetadata() {
@@ -795,6 +861,105 @@ function loadUpstreamMetadata() {
   };
 }
 
+function readJsonIfExists(filePath) {
+  if (!existsSync(filePath)) return null;
+  return JSON.parse(readFileSync(filePath, "utf8"));
+}
+
+function readCargoVersion(filePath) {
+  if (!existsSync(filePath)) return null;
+  const content = readFileSync(filePath, "utf8");
+  const match = content.match(/^\s*version\s*=\s*"([^"]+)"/m);
+  return match ? match[1] : null;
+}
+
+function loadGitMetadata(repoDir) {
+  if (!existsSync(repoDir)) {
+    return {
+      commit: null,
+      dirty: false,
+    };
+  }
+
+  try {
+    return {
+      commit: runCapture("git", ["-C", repoDir, "rev-parse", "HEAD"], repoDir),
+      dirty:
+        runCapture("git", ["-C", repoDir, "status", "--porcelain"], repoDir)
+          .length > 0,
+    };
+  } catch {
+    return {
+      commit: null,
+      dirty: false,
+    };
+  }
+}
+
+function buildBundleMetadata() {
+  const upstream = loadUpstreamMetadata();
+  const desktopPackage = readJsonIfExists(join(coreRoot, "desktop-tauri", "package.json"));
+  const sphereThreadEngine = readJsonIfExists(sphereThreadEnginePackagePath);
+  const umbrellaRuntimeVersion = readCargoVersion(umbrellaRuntimeCargoPath);
+  const sphereGit = loadGitMetadata(dirname(dirname(sphereThreadEnginePackagePath)));
+  const umbrellaGit = loadGitMetadata(dirname(umbrellaRuntimeCargoPath));
+  const governanceDocCount = existsSync(governanceDocsDir)
+    ? readdirSync(governanceDocsDir).filter((entry) => !entry.startsWith(".")).length
+    : 0;
+
+  return {
+    generatedAt: new Date().toISOString(),
+    desktopVersion: desktopPackage?.version || null,
+    components: [
+      {
+        id: "desktop_shell",
+        label: "PrismAI Desktop Shell",
+        version: desktopPackage?.version || "unknown",
+        commit: upstream.commit,
+        source: "desktop-tauri",
+        bundled: true,
+        detail: "Tauri shell and startup loader bundled in PrismAI.app.",
+      },
+      {
+        id: "anythingllm_core",
+        label: "AnythingLLM Core Runtime",
+        version: upstream.version,
+        commit: upstream.commit,
+        source: "desktop runtime bundle",
+        bundled: true,
+        detail: "Bundled Node server, collector, and frontend assets.",
+      },
+      {
+        id: "metacanon_governance_docs",
+        label: "Metacanon Governance Documents",
+        version: governanceDocCount > 0 ? `${governanceDocCount} docs` : "not found",
+        commit: null,
+        source: "desktop runtime bundle",
+        bundled: governanceDocCount > 0,
+        detail: "Governance and lens-library source documents included in the runtime bundle.",
+      },
+      {
+        id: "sphere_thread_engine",
+        label: "Sphere Thread Engine",
+        version: sphereThreadEngine?.version || "not detected",
+        commit: sphereGit.commit,
+        source: "sibling worktree",
+        bundled: false,
+        detail: "Tracked for release readiness, but not yet bundled into the desktop runtime.",
+      },
+      {
+        id: "umbrella_runtime",
+        label: "Umbrella Runtime",
+        version: umbrellaRuntimeVersion || "not detected",
+        commit: umbrellaGit.commit,
+        source: "sibling worktree",
+        bundled: false,
+        detail: "Tracked for release readiness, but not yet bundled into the desktop runtime.",
+      },
+    ],
+  };
+}
+
 function bundleOpenSourceMaterials() {
   const upstream = loadUpstreamMetadata();
   const notice = [
@@ -817,6 +982,11 @@ function bundleOpenSourceMaterials() {
   writeFileSync(
     join(runtimeOpenSourceDir, "metadata.json"),
     `${JSON.stringify(upstream, null, 2)}\n`,
+    "utf8"
+  );
+  writeFileSync(
+    bundleMetadataPath,
+    `${JSON.stringify(buildBundleMetadata(), null, 2)}\n`,
     "utf8"
   );
 }
@@ -902,6 +1072,83 @@ function validateTemplateSourceDatabase(dbPath) {
   }
 }
 
+function sanitizeTemplateDatabase(dbPath) {
+  const sql = `
+    DELETE FROM system_settings
+    WHERE label NOT IN ('multi_user_mode', 'logo_filename');
+    INSERT INTO system_settings (label, value)
+    SELECT 'multi_user_mode', 'false'
+    WHERE NOT EXISTS (
+      SELECT 1 FROM system_settings WHERE label = 'multi_user_mode'
+    );
+    INSERT INTO system_settings (label, value)
+    SELECT 'logo_filename', 'anything-llm.png'
+    WHERE NOT EXISTS (
+      SELECT 1 FROM system_settings WHERE label = 'logo_filename'
+    );
+    UPDATE system_settings
+    SET value = 'false'
+    WHERE label = 'multi_user_mode';
+    UPDATE system_settings
+    SET value = 'anything-llm.png'
+    WHERE label = 'logo_filename';
+    VACUUM;
+  `;
+
+  const result = spawnSync("sqlite3", [dbPath, sql], {
+    encoding: "utf8",
+  });
+
+  if (result.error || result.status !== 0) {
+    throw new Error(
+      `Failed to sanitize template database at ${dbPath}: ${
+        result.error?.message || result.stderr || result.stdout
+      }`
+    );
+  }
+}
+
+function validateSanitizedTemplateDatabase(dbPath) {
+  const result = spawnSync(
+    "sqlite3",
+    [dbPath, "select label,coalesce(value,'') from system_settings order by label;"],
+    {
+      encoding: "utf8",
+    }
+  );
+
+  if (result.error || result.status !== 0) {
+    throw new Error(`Failed to validate sanitized template database at ${dbPath}`);
+  }
+
+  const rows = result.stdout
+    .trim()
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  const expectedRows = [
+    "logo_filename|anything-llm.png",
+    "multi_user_mode|false",
+  ];
+
+  if (rows.length !== expectedRows.length) {
+    throw new Error(
+      `Sanitized template database at ${dbPath} has unexpected system settings: ${rows.join(
+        ", "
+      )}`
+    );
+  }
+
+  for (const expected of expectedRows) {
+    if (!rows.includes(expected)) {
+      throw new Error(
+        `Sanitized template database at ${dbPath} is missing required setting ${expected}`
+      );
+    }
+  }
+}
+
 function prepareRuntimeTemplateDatabase() {
   forceRemovePath(templateWorkspaceDir);
   mkdirSync(templateStorageDir, { recursive: true });
@@ -913,6 +1160,9 @@ function prepareRuntimeTemplateDatabase() {
     try {
       validateTemplateSourceDatabase(preferredTemplateSource);
       cpSync(preferredTemplateSource, templateDbPath);
+      sanitizeTemplateDatabase(templateDbPath);
+      validateTemplateSourceDatabase(templateDbPath);
+      validateSanitizedTemplateDatabase(templateDbPath);
       return;
     } catch (error) {
       console.warn(
@@ -938,6 +1188,7 @@ function main() {
   syncFrontendIntoServerPublic();
   verifyFrontendSyncParity();
   copyPortableRuntime();
+  removeFinderMetadata(runtimeRoot);
 
   const audit = auditRuntimeTree(runtimeRoot);
   if (!audit.passed) {

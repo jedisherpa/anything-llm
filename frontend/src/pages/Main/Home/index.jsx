@@ -5,7 +5,7 @@ import { SidebarMobileHeader } from "@/components/Sidebar";
 import {
   PROMPT_INPUT_EVENT,
   PROMPT_INPUT_ID,
-} from "@/components/WorkspaceChat/ChatContainer/PromptInput";
+} from "@/components/WorkspaceChat/ChatContainer/PromptInput/constants";
 import DnDFileUploaderWrapper, {
   DndUploaderContext,
   DnDFileUploaderProvider,
@@ -16,15 +16,20 @@ import { useTranslation } from "react-i18next";
 import {
   LAST_VISITED_WORKSPACE,
   PENDING_HOME_MESSAGE,
+  PRISM_HOME_FIRST_RUN_HINT_DISMISSED,
 } from "@/utils/constants";
 import Workspace from "@/models/workspace";
 import paths from "@/utils/paths";
 import showToast from "@/utils/toast";
 import { safeJsonParse } from "@/utils/request";
 import useUser from "@/hooks/useUser";
+import System from "@/models/system";
 import TextSizeMenu from "@/components/WorkspaceChat/ChatContainer/TextSizeMenu";
 import { ChatTooltips } from "@/components/WorkspaceChat/ChatContainer/ChatTooltips";
 import MetacanonHomeStage from "@/components/Metacanon/HomeStage";
+import RuntimeReadinessModal from "@/components/Metacanon/RuntimeReadinessModal";
+import PrismSetupAssistantModal from "@/components/Metacanon/PrismSetupAssistantModal";
+import { loadPrismSetupDraft } from "@/utils/prismSetupState";
 
 async function getTargetWorkspace() {
   const lastVisited = safeJsonParse(
@@ -57,7 +62,25 @@ export default function Home() {
   const [threadSlug, setThreadSlug] = useState(null);
   const [workspaceLoading, setWorkspaceLoading] = useState(true);
   const [dragging, setDragging] = useState(false);
+  const [showFirstRunHint, setShowFirstRunHint] = useState(() => {
+    try {
+      return (
+        localStorage.getItem(PRISM_HOME_FIRST_RUN_HINT_DISMISSED) !== "true"
+      );
+    } catch {
+      return true;
+    }
+  });
   const pendingFilesRef = useRef([]);
+
+  function dismissFirstRunHint() {
+    setShowFirstRunHint(false);
+    try {
+      localStorage.setItem(PRISM_HOME_FIRST_RUN_HINT_DISMISSED, "true");
+    } catch {
+      // Ignore localStorage failures while dismissing the hint.
+    }
+  }
 
   useEffect(() => {
     async function init() {
@@ -83,7 +106,7 @@ export default function Home() {
         new CustomEvent(PASTE_ATTACHMENT_EVENT, { detail: { files } })
       );
     }
-  }, [workspace, threadSlug]);
+  }, [t, workspace, threadSlug]);
 
   // Handle paste events when no thread exists yet
   useEffect(() => {
@@ -147,6 +170,8 @@ export default function Home() {
           setWorkspace={setWorkspace}
           threadSlug={threadSlug}
           setThreadSlug={setThreadSlug}
+          showFirstRunHint={showFirstRunHint}
+          dismissFirstRunHint={dismissFirstRunHint}
         />
       </DnDFileUploaderProvider>
     );
@@ -170,17 +195,29 @@ export default function Home() {
         setWorkspace={setWorkspace}
         threadSlug={null}
         setThreadSlug={setThreadSlug}
+        showFirstRunHint={showFirstRunHint}
+        dismissFirstRunHint={dismissFirstRunHint}
       />
     </DndUploaderContext.Provider>
   );
 }
 
-function HomeContent({ workspace, setWorkspace, threadSlug, setThreadSlug }) {
+function HomeContent({
+  workspace,
+  setWorkspace,
+  threadSlug,
+  setThreadSlug,
+  showFirstRunHint,
+  dismissFirstRunHint,
+}) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [chatMode, setChatMode] = useState(workspace?.chatMode || "chat");
+  const [showReadinessModal, setShowReadinessModal] = useState(false);
+  const [showSetupModal, setShowSetupModal] = useState(false);
+  const [checkedSetupGate, setCheckedSetupGate] = useState(false);
   const { files, parseAttachments } = useContext(DndUploaderContext);
+  const chatMode = workspace?.chatMode || "chat";
 
   useEffect(() => {
     window.dispatchEvent(
@@ -191,13 +228,27 @@ function HomeContent({ workspace, setWorkspace, threadSlug, setThreadSlug }) {
   }, []);
 
   useEffect(() => {
-    setChatMode(workspace?.chatMode || "chat");
-  }, [workspace?.chatMode, workspace?.slug]);
+    let cancelled = false;
+
+    async function inspectSetupGate() {
+      const onboardingComplete = await System.isOnboardingComplete();
+      const draft = await loadPrismSetupDraft();
+      if (cancelled) return;
+
+      if (onboardingComplete && draft?.formState) {
+        setShowSetupModal(true);
+      }
+      setCheckedSetupGate(true);
+    }
+
+    inspectSetupGate();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   async function handleChatModeChange(nextMode) {
     if (!nextMode || nextMode === chatMode) return;
-    const previousMode = chatMode;
-    setChatMode(nextMode);
 
     if (!workspace?.slug) return;
 
@@ -207,7 +258,6 @@ function HomeContent({ workspace, setWorkspace, threadSlug, setThreadSlug }) {
     );
 
     if (!updatedWorkspace) {
-      setChatMode(previousMode);
       showToast(message || "Failed to update chat mode.", "error");
       return;
     }
@@ -221,6 +271,7 @@ function HomeContent({ workspace, setWorkspace, threadSlug, setThreadSlug }) {
 
   async function submitMessage(message, attachments = []) {
     if (!message || loading) return;
+    dismissFirstRunHint?.();
     setLoading(true);
     try {
       let targetWorkspace = workspace;
@@ -327,8 +378,24 @@ function HomeContent({ workspace, setWorkspace, threadSlug, setThreadSlug }) {
           onUploadDocument={() =>
             window.dispatchEvent(new CustomEvent(OPEN_ATTACHMENT_PICKER_EVENT))
           }
+          onOpenReadiness={() => setShowReadinessModal(true)}
+          onOpenSetup={() => setShowSetupModal(true)}
+          showFirstRunHint={showFirstRunHint}
+          onDismissFirstRunHint={dismissFirstRunHint}
+          setupNeedsAttention={!checkedSetupGate || showSetupModal}
         />
       </DnDFileUploaderWrapper>
+      <RuntimeReadinessModal
+        isOpen={showReadinessModal}
+        onClose={() => setShowReadinessModal(false)}
+        workspaceSlug={workspace?.slug}
+        onOpenSetup={() => setShowSetupModal(true)}
+      />
+      <PrismSetupAssistantModal
+        isOpen={showSetupModal}
+        onClose={() => setShowSetupModal(false)}
+        onApplied={() => setShowReadinessModal(true)}
+      />
       <ChatTooltips />
     </div>
   );

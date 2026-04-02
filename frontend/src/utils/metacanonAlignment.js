@@ -170,12 +170,27 @@ export function buildCouncilPackPrompt({
   name = "Saved Constellation",
   lensHandles = [],
   leadHandle = "",
+  executionRoutes = {},
   userQuery = "",
 }) {
+  const normalizedExecutionRoutes =
+    executionRoutes && typeof executionRoutes === "object"
+      ? executionRoutes
+      : {};
+  const routeLines = Object.entries(normalizedExecutionRoutes)
+    .map(([handle, backends]) => {
+      const normalizedHandle = String(handle || "").trim();
+      const normalizedBackends = uniqueStrings(backends);
+      if (!normalizedHandle || normalizedBackends.length === 0) return null;
+      return `Route: ${normalizedHandle} -> ${normalizedBackends.join(", ")}`;
+    })
+    .filter(Boolean)
+    .join("\n");
+
   return `@council
 Pack: ${name}
 ${leadHandle ? `Lead: ${String(leadHandle).trim()}\n` : ""}Lenses: ${uniqueStrings(lensHandles).join(", ")}
-User query:
+${routeLines ? `${routeLines}\n` : ""}User query:
 ${String(userQuery || "").trim()}`;
 }
 
@@ -215,6 +230,18 @@ export function normalizeMetacanonAlignment(alignment = {}) {
     lensTitles: uniqueStrings(nextAlignment.lensTitles),
     leadHandle: String(nextAlignment.leadHandle || "").trim() || null,
     leadTitle: String(nextAlignment.leadTitle || "").trim() || null,
+    executionRoutes:
+      nextAlignment.executionRoutes &&
+      typeof nextAlignment.executionRoutes === "object"
+        ? Object.fromEntries(
+            Object.entries(nextAlignment.executionRoutes).map(
+              ([handle, backends]) => [
+                String(handle || "").trim(),
+                uniqueStrings(backends),
+              ]
+            )
+          )
+        : {},
   };
 }
 
@@ -266,6 +293,7 @@ export function buildPromptForAlignment(
       name: alignment.title,
       lensHandles: alignment.lensHandles,
       leadHandle: alignment.leadHandle,
+      executionRoutes: alignment.executionRoutes,
       userQuery: trimmed,
     });
   }

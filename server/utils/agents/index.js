@@ -23,6 +23,8 @@ const {
 const ImportedPlugin = require("./imported");
 const { AgentFlows } = require("../agentFlows");
 const MCPCompatibilityLayer = require("../MCP");
+const { buildQueryAwareAgentPrompt } = require("./queryContext");
+const { resolvePrismRouteConfig } = require("./prismProviderRouting");
 
 class AgentHandler {
   #invocationUUID;
@@ -471,10 +473,30 @@ class AgentHandler {
     if (introspectionMessage) {
       this.aibitat.introspect?.(introspectionMessage);
     }
-    return this.aibitat.start({
-      from: USER_AGENT.name,
-      to: WORKSPACE_AGENT.name,
-      content: fallbackPrompt,
+    return this.buildInitialAgentContent(fallbackPrompt).then((content) =>
+      this.aibitat.start({
+        from: USER_AGENT.name,
+        to: WORKSPACE_AGENT.name,
+        content,
+      })
+    );
+  }
+
+  initialAgentPrompt(prompt = "") {
+    if (!this.channel || this.channel === WORKSPACE_AGENT.name) return prompt;
+    return this.stripInvocationHandles(prompt) || prompt;
+  }
+
+  async buildInitialAgentContent(prompt = "") {
+    return await buildQueryAwareAgentPrompt({
+      workspace: this.invocation.workspace,
+      user: this.invocation.user_id ? { id: this.invocation.user_id } : null,
+      thread: this.invocation.thread_id
+        ? { id: this.invocation.thread_id }
+        : null,
+      apiSessionId: this.invocation.api_session_id || null,
+      prompt: this.initialAgentPrompt(prompt),
+      log: this.log.bind(this),
     });
   }
 
@@ -581,6 +603,17 @@ class AgentHandler {
     return handles.length > 0 && !!getConstellationByHandle(handles[0]);
   }
 
+  shouldRunDirectImportedLens(prompt = "") {
+    const handles = WorkspaceAgentInvocation.parseAgents(prompt);
+    return (
+      handles.length === 1 &&
+      handles[0] !== WORKSPACE_AGENT.name &&
+      handles[0] !== METACANON_COUNCIL_HANDLE &&
+      !getConstellationByHandle(handles[0]) &&
+      !!getImportedLensByHandle(handles[0])
+    );
+  }
+
   shouldRunCouncilPack(prompt = "") {
     const handles = WorkspaceAgentInvocation.parseAgents(prompt);
     return handles.length > 0 && handles[0] === METACANON_COUNCIL_HANDLE;
@@ -606,14 +639,89 @@ class AgentHandler {
     handles.forEach((handle) => this.ensureImportedLensAgentLoaded(handle));
   }
 
-  async executeLensAgent(handle = "", input = "") {
+  assertRouteSelectionReady(selection = null) {
+    if (!selection?.provider) return;
+
+    switch (selection.provider) {
+      case "openai":
+        if (!selection.apiKey)
+          throw new Error(
+            `Prism route ${selection.routeId || selection.slotLabel || selection.slotId} needs an OpenAI API key.`
+          );
+        break;
+      case "anthropic":
+        if (!selection.apiKey)
+          throw new Error(
+            `Prism route ${selection.routeId || selection.slotLabel || selection.slotId} needs an Anthropic API key.`
+          );
+        break;
+      case "openrouter":
+        if (!selection.apiKey)
+          throw new Error(
+            `Prism route ${selection.routeId || selection.slotLabel || selection.slotId} needs an OpenRouter API key.`
+          );
+        break;
+      case "xai":
+        if (!selection.apiKey)
+          throw new Error(
+            `Prism route ${selection.routeId || selection.slotLabel || selection.slotId} needs an xAI API key.`
+          );
+        break;
+      case "docker-model-runner":
+        if (!selection.basePath)
+          throw new Error(
+            `Prism route ${selection.routeId || selection.slotLabel || selection.slotId} needs a Docker Model Runner base path.`
+          );
+        break;
+      case "generic-openai":
+        if (!selection.basePath)
+          throw new Error(
+            `Prism route ${selection.routeId || selection.slotLabel || selection.slotId} needs a base URL.`
+          );
+        break;
+      default:
+        break;
+    }
+  }
+
+  async resolveRouteSelection(agentConfig = {}, explicitBackends = []) {
+    const selection = await resolvePrismRouteConfig({
+      explicitBackends,
+      preferredBackends: agentConfig.preferredBackends,
+      fallbackBackends: agentConfig.fallbackBackends,
+    });
+
+    if (!selection) return null;
+    this.assertRouteSelectionReady(selection);
+    return selection;
+  }
+
+  async executeLensAgent(handle = "", input = "", explicitBackends = []) {
     this.ensureImportedLensAgentLoaded(handle);
     const agentConfig = this.aibitat.getAgentConfig(handle);
+    const routeSelection = await this.resolveRouteSelection(
+      agentConfig,
+      explicitBackends
+    );
     if (!agentConfig) throw new Error(`Lens ${handle} is not available.`);
     const provider = this.aibitat.getProviderForConfig({
       ...this.aibitat.defaultProvider,
       ...agentConfig,
+      ...(routeSelection
+        ? {
+            provider: routeSelection.provider,
+            model: routeSelection.model || agentConfig.model,
+            apiKey: routeSelection.apiKey,
+            basePath: routeSelection.basePath,
+            tokenLimit: routeSelection.tokenLimit,
+          }
+        : {}),
     });
+    if (routeSelection) {
+      this.aibitat.introspect?.(
+        `Routing ${handle} through ${routeSelection.slotLabel || routeSelection.provider}.`
+      );
+    }
     provider.attachHandlerProps(this.aibitat.handlerProps);
     const functions = this.agentFunctionsForConfig(agentConfig);
     const messages = [
@@ -665,7 +773,8 @@ class AgentHandler {
       );
       orchestrationBrief = await this.executeLensAgent(
         projectManager.handle,
-        `Constellation: ${constellation.name}\nPurpose: ${constellation.purpose}\nUser query:\n${userQuery}\n\nTask: As the project manager, create a concise orchestration brief for this constellation. Specify the key tensions to examine, the most important questions to answer, and what a strong final output should contain.`
+        `Constellation: ${constellation.name}\nPurpose: ${constellation.purpose}\nUser query:\n${userQuery}\n\nTask: As the project manager, create a concise orchestration brief for this constellation. Specify the key tensions to examine, the most important questions to answer, and what a strong final output should contain.`,
+        executionPlan.executionRoutes?.[projectManager.handle] || []
       );
     }
 
@@ -674,7 +783,8 @@ class AgentHandler {
       this.aibitat.introspect?.(`Running ${member.role}.`);
       const result = await this.executeLensAgent(
         member.lens.handle,
-        `Constellation: ${constellation.name}\nPurpose: ${constellation.purpose}\nAssigned role: ${member.role}\nUser query:\n${userQuery}\n\nProject manager brief:\n${orchestrationBrief || "No explicit orchestration brief provided."}\n\nTask: Respond from this lens with a concise analysis, recommendations, blind spots, and 1-3 clarification questions.`
+        `Constellation: ${constellation.name}\nPurpose: ${constellation.purpose}\nAssigned role: ${member.role}\nUser query:\n${userQuery}\n\nProject manager brief:\n${orchestrationBrief || "No explicit orchestration brief provided."}\n\nTask: Respond from this lens with a concise analysis, recommendations, blind spots, and 1-3 clarification questions.`,
+        executionPlan.executionRoutes?.[member.lens.handle] || []
       );
       memberOutputs.push({
         role: member.role,
@@ -695,7 +805,8 @@ class AgentHandler {
         )
         .join(
           "\n\n"
-        )}\n\nTask: Produce the final response for the user. Integrate the constellation's perspectives into one coherent answer with practical guidance, meaningful blind spots, and end with human clarification questions.`
+        )}\n\nTask: Produce the final response for the user. Integrate the constellation's perspectives into one coherent answer with practical guidance, meaningful blind spots, and end with human clarification questions.`,
+      executionPlan.executionRoutes?.[finalHandle] || []
     );
 
     this.aibitat.newMessage({
@@ -707,8 +818,29 @@ class AgentHandler {
     return this.aibitat;
   }
 
+  async runDirectImportedLens(prompt = "") {
+    const handle = WorkspaceAgentInvocation.parseAgents(prompt)[0];
+    const userQuery = this.stripInvocationHandles(prompt) || prompt;
+
+    this.aibitat.newMessage({
+      from: USER_AGENT.name,
+      to: WORKSPACE_AGENT.name,
+      content: prompt,
+    });
+
+    this.aibitat.introspect?.(`Imported lens engaged: ${handle}.`);
+    const result = await this.executeLensAgent(handle, userQuery);
+    this.aibitat.newMessage({
+      from: handle,
+      to: USER_AGENT.name,
+      content: result,
+    });
+    this.aibitat.terminate(USER_AGENT.name);
+    return this.aibitat;
+  }
+
   async runCouncilPack(prompt = "") {
-    const { packName, handles, userQuery, leadHandle } =
+    const { packName, handles, userQuery, leadHandle, executionRoutes } =
       parseCouncilPackPrompt(prompt);
     handles.forEach((handle) => this.ensureImportedLensAgentLoaded(handle));
     const resolvedHandles = handles.filter((handle) =>
@@ -743,7 +875,8 @@ class AgentHandler {
         resolvedLeadHandle,
         `Council pack: ${packName}\nLead lens: ${leadLabel}\nUser query:\n${userQuery || this.stripInvocationHandles(prompt)}\n\nLens roster:\n${resolvedHandles.join(
           ", "
-        )}\n\nTask: As the lead lens, create a concise orchestration brief for this council pack. State the key tensions to examine, the criteria for a strong answer, and what the other lenses should pay attention to.`
+        )}\n\nTask: As the lead lens, create a concise orchestration brief for this council pack. State the key tensions to examine, the criteria for a strong answer, and what the other lenses should pay attention to.`,
+        executionRoutes?.[resolvedLeadHandle] || []
       );
     }
 
@@ -761,7 +894,8 @@ class AgentHandler {
             .join("\n\n") || "None yet."
         }\n\nLead lens brief:\n${
           orchestrationBrief || "No explicit lead brief provided."
-        }\n\nTask: Contribute this lens's perspective concisely. Include analysis, recommendations, blind spots, and 1-3 clarification questions.`
+        }\n\nTask: Contribute this lens's perspective concisely. Include analysis, recommendations, blind spots, and 1-3 clarification questions.`,
+        executionRoutes?.[handle] || []
       );
       councilOutputs.push({ handle, label, content: result });
     }
@@ -775,7 +909,8 @@ class AgentHandler {
         .map((output) => `[${output.label}]\n${output.content}`)
         .join(
           "\n\n"
-        )}\n\nTask: Produce one unified final response for the user. Keep it structured, practical, and end with human clarification questions.`
+        )}\n\nTask: Produce one unified final response for the user. Keep it structured, practical, and end with human clarification questions.`,
+      executionRoutes?.["@prism"] || []
     );
 
     this.aibitat.newMessage({
@@ -1066,6 +1201,20 @@ class AgentHandler {
       });
     }
 
+    if (this.shouldRunDirectImportedLens(this.invocation.prompt)) {
+      return this.runDirectImportedLens(this.invocation.prompt).catch(
+        (error) => {
+          this.log(
+            `Direct imported lens execution failed (${error.message}). Falling back to standard flow.`
+          );
+          return this.startFallbackAgentFlow(
+            this.invocation.prompt,
+            "Imported lens fallback: continuing with standard workspace-agent routing."
+          );
+        }
+      );
+    }
+
     if (this.shouldRunLensDeliberation(this.invocation.prompt)) {
       return this.runLensDeliberation(this.invocation.prompt).catch((error) => {
         this.log(
@@ -1078,11 +1227,14 @@ class AgentHandler {
       });
     }
 
-    return this.aibitat.start({
-      from: USER_AGENT.name,
-      to: this.channel ?? WORKSPACE_AGENT.name,
-      content: this.invocation.prompt,
-    });
+    return this.buildInitialAgentContent(this.invocation.prompt).then(
+      (content) =>
+        this.aibitat.start({
+          from: USER_AGENT.name,
+          to: this.channel ?? WORKSPACE_AGENT.name,
+          content,
+        })
+    );
   }
 }
 

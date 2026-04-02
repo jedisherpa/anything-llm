@@ -75,7 +75,7 @@ export default function DataConnectors() {
   );
 
   return (
-    <div className="flex upload-modal -mt-10 relative min-h-[80vh] w-[70vw]">
+    <div className="flex upload-modal -mt-10 relative min-h-[80vh] w-[78vw] max-w-[1180px]">
       <div className="w-full p-4 top-0 z-20">
         <div className="w-full flex items-center sticky top-0 z-50">
           <MagnifyingGlass

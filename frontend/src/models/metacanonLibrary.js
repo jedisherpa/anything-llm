@@ -33,6 +33,21 @@ function normalizePack(pack = {}) {
     lensTitles: Array.from(new Set(pack.lensTitles || [])),
     leadHandle: pack.leadHandle || null,
     leadTitle: pack.leadTitle || null,
+    executionRoutes:
+      pack.executionRoutes && typeof pack.executionRoutes === "object"
+        ? Object.fromEntries(
+            Object.entries(pack.executionRoutes).map(([handle, backends]) => [
+              String(handle || "").trim(),
+              Array.from(
+                new Set(
+                  (Array.isArray(backends) ? backends : [])
+                    .map((value) => String(value || "").trim())
+                    .filter(Boolean)
+                )
+              ),
+            ])
+          )
+        : {},
     collectionLabel: pack.collectionLabel || "Saved Constellation",
     colorHex: pack.colorHex || null,
     createdAt: pack.createdAt || new Date().toISOString(),
@@ -384,6 +399,29 @@ export async function fetchLibraryItem(tab = "", id = "") {
   if (!response.ok) {
     throw new Error("Failed to load Metacanon library item.");
   }
+  return response.json();
+}
+
+export async function saveCustomLens(payload = {}) {
+  const response = await fetch(`${API_BASE}/metacanonai/library/custom-lens`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    let message = "Failed to save custom lens.";
+    try {
+      const errorPayload = await response.json();
+      message = errorPayload?.error || message;
+    } catch {
+      // ignore malformed error payloads
+    }
+    throw new Error(message);
+  }
+
   return response.json();
 }
 

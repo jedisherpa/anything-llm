@@ -20,7 +20,7 @@ class OpenRouterProvider extends InheritMultiple([Provider, UnTooled]) {
     super();
     const client = new OpenAI({
       baseURL: "https://openrouter.ai/api/v1",
-      apiKey: process.env.OPENROUTER_API_KEY,
+      apiKey: config.apiKey || process.env.OPENROUTER_API_KEY,
       maxRetries: 3,
       defaultHeaders: {
         "HTTP-Referer": "https://anythingllm.com",

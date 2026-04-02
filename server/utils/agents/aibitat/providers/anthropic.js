@@ -14,7 +14,7 @@ class AnthropicProvider extends Provider {
   constructor(config = {}) {
     const {
       options = {
-        apiKey: process.env.ANTHROPIC_API_KEY,
+        apiKey: config.apiKey || process.env.ANTHROPIC_API_KEY,
         maxRetries: 3,
       },
       model = "claude-3-5-sonnet-20240620",

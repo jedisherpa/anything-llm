@@ -33,7 +33,7 @@ export default forwardRef(function (
     sendCommand,
     updateHistory,
     regenerateAssistantMessage,
-    composerViewportInset = 196,
+    onExecuteSessionAction = null,
   },
   ref
 ) {
@@ -46,7 +46,7 @@ export default forwardRef(function (
   const isStreaming = history[history.length - 1]?.animate;
   const { showScrollbar } = Appearance.getSettings();
   const { textSizeClass } = useTextSize();
-  const historyBottomInset = Math.max(composerViewportInset + 20, 180);
+  const historyBottomInset = 40;
 
   useEffect(() => {
     if (!isUserScrolling && (isAtBottom || isStreaming)) {
@@ -203,10 +203,11 @@ export default forwardRef(function (
           key={`status-group-${index}`}
           messages={item}
           isThinking={!hasSubsequentMessages && lastMessageInfo.isAnimating}
+          onExecuteSessionAction={onExecuteSessionAction}
         />
       );
     },
-    [compiledHistory.length, lastMessageInfo]
+    [compiledHistory.length, lastMessageInfo, onExecuteSessionAction]
   );
 
   return (
@@ -218,7 +219,7 @@ export default forwardRef(function (
         onScroll={handleScroll}
         style={{ paddingBottom: `${historyBottomInset}px` }}
       >
-        <div className="w-full max-w-[750px]">
+        <div className="w-full max-w-[750px] min-h-full">
           {compiledHistory.map((item, index) =>
             Array.isArray(item) ? renderStatusResponse(item, index) : item
           )}
@@ -334,6 +335,14 @@ function buildMessages({
           saveEditedMessage={saveEditedMessage}
           forkThread={forkThread}
           metrics={props.metrics}
+          executionMode={props.executionMode}
+          trustedSessionId={props.trustedSessionId}
+          sessionExpiresAt={props.sessionExpiresAt}
+          subSphereId={props.subSphereId}
+          selectedWorktreeRoot={props.selectedWorktreeRoot}
+          artifactRefs={props.artifactRefs || []}
+          requiresApproval={props.requiresApproval}
+          pendingActionId={props.pendingActionId}
         />
       );
     }

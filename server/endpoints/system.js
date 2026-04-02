@@ -63,6 +63,20 @@ const {
 const { TemporaryAuthToken } = require("../models/temporaryAuthToken");
 const { SystemPromptVariables } = require("../models/systemPromptVariables");
 const { VALID_COMMANDS } = require("../utils/chats");
+const {
+  getPrismReadiness,
+  getPrismDependencySequence,
+  resolveEmbeddingDimensions,
+} = require("../utils/prismReadiness");
+const {
+  getPrismProviderSlots,
+  savePrismProviderSlots,
+  getPrismToolCredentials,
+  savePrismToolCredentials,
+} = require("../utils/prismCredentialVault");
+const { PGVector } = require("../utils/vectorDbProviders/pgvector");
+
+const PRISM_SETUP_DRAFT_LABEL = "prism_setup_assistant_draft";
 
 function systemEndpoints(app) {
   if (!app) return;
@@ -116,6 +130,256 @@ function systemEndpoints(app) {
     }
   });
 
+  app.get("/system/prism-readiness", async (request, response) => {
+    try {
+      const { slug = null } = queryParams(request);
+      const readiness = await getPrismReadiness({
+        workspaceSlug: slug ? decodeURIComponent(slug) : null,
+      });
+      response.status(200).json({ readiness });
+    } catch (error) {
+      console.error("Failed to compute Prism readiness.", error);
+      response.status(500).json({
+        readiness: null,
+        error: error.message || "Failed to compute Prism readiness.",
+      });
+    }
+  });
+
+  app.get("/system/prism/dependency-sequence", async (request, response) => {
+    try {
+      const { slug = null } = queryParams(request);
+      const sequence = await getPrismDependencySequence({
+        workspaceSlug: slug ? decodeURIComponent(slug) : null,
+      });
+      response.status(200).json({ sequence });
+    } catch (error) {
+      console.error("Failed to compute Prism dependency sequence.", error);
+      response.status(500).json({
+        sequence: null,
+        error: error.message || "Failed to compute Prism dependency sequence.",
+      });
+    }
+  });
+
+  app.post(
+    "/system/prism/bootstrap-pgvector",
+    [validatedRequest],
+    async (request, response) => {
+      try {
+        const {
+          connectionString = "",
+          tableName = "",
+          embeddingEngine = "native",
+          embeddingModel = "",
+        } = reqBody(request);
+
+        if (!connectionString.trim()) {
+          response.status(400).json({
+            success: false,
+            error: "A PostgreSQL connection string is required.",
+          });
+          return;
+        }
+
+        if (!tableName.trim()) {
+          response.status(400).json({
+            success: false,
+            error: "A pgvector table name is required.",
+          });
+          return;
+        }
+
+        const dimensions = resolveEmbeddingDimensions(
+          embeddingEngine,
+          embeddingModel
+        );
+        if (!dimensions) {
+          response.status(400).json({
+            success: false,
+            error:
+              "Prism could not infer embedding dimensions for the selected embedder/model. Choose a supported setup-assistant embedder first.",
+          });
+          return;
+        }
+
+        const result = await PGVector.bootstrapConnection({
+          connectionString: connectionString.trim(),
+          tableName: tableName.trim(),
+          dimensions,
+        });
+
+        if (!result.success) {
+          response.status(400).json(result);
+          return;
+        }
+
+        response.status(200).json({
+          ...result,
+          detail: `pgvector is ready on table ${result.tableName} with ${result.dimensions} dimensions.`,
+        });
+      } catch (error) {
+        console.error("Failed to bootstrap pgvector.", error);
+        response.status(500).json({
+          success: false,
+          error: error.message || "Failed to bootstrap pgvector.",
+        });
+      }
+    }
+  );
+
+  app.get("/system/prism/setup-draft", async (_, response) => {
+    try {
+      const rawDraft = (
+        await SystemSettings.get({ label: PRISM_SETUP_DRAFT_LABEL })
+      )?.value;
+      let draft = null;
+
+      if (rawDraft) {
+        try {
+          draft = JSON.parse(rawDraft);
+        } catch {
+          draft = null;
+        }
+      }
+
+      response.status(200).json({ draft });
+    } catch (error) {
+      console.error("Failed to fetch Prism setup draft.", error);
+      response.status(500).json({
+        draft: null,
+        error: error.message || "Failed to fetch Prism setup draft.",
+      });
+    }
+  });
+
+  app.post("/system/prism/setup-draft", async (request, response) => {
+    try {
+      const { draft = null } = reqBody(request);
+      const normalizedDraft =
+        draft && typeof draft === "object"
+          ? {
+              step: Number.isInteger(draft.step) ? draft.step : 0,
+              formState:
+                draft.formState && typeof draft.formState === "object"
+                  ? draft.formState
+                  : {},
+              updatedAt:
+                typeof draft.updatedAt === "string"
+                  ? draft.updatedAt
+                  : new Date().toISOString(),
+            }
+          : null;
+      const { success, error } = await SystemSettings._updateSettings({
+        [PRISM_SETUP_DRAFT_LABEL]: normalizedDraft
+          ? JSON.stringify(normalizedDraft)
+          : null,
+      });
+
+      if (!success) {
+        response.status(400).json({
+          success: false,
+          draft: normalizedDraft,
+          error,
+        });
+        return;
+      }
+
+      response.status(200).json({
+        success: true,
+        draft: normalizedDraft,
+        error: null,
+      });
+    } catch (error) {
+      console.error("Failed to save Prism setup draft.", error);
+      response.status(500).json({
+        success: false,
+        draft: null,
+        error: error.message || "Failed to save Prism setup draft.",
+      });
+    }
+  });
+
+  app.get(
+    "/system/prism/provider-slots",
+    [validatedRequest],
+    async (_, response) => {
+      try {
+        const slots = await getPrismProviderSlots();
+        response.status(200).json({ slots });
+      } catch (error) {
+        console.error("Failed to fetch Prism provider slots.", error);
+        response.status(500).json({
+          slots: [],
+          error: error.message || "Failed to fetch Prism provider slots.",
+        });
+      }
+    }
+  );
+
+  app.post(
+    "/system/prism/provider-slots",
+    [validatedRequest],
+    async (request, response) => {
+      try {
+        const { slots = [] } = reqBody(request);
+        const result = await savePrismProviderSlots(slots);
+        if (!result.success) {
+          response.status(400).json(result);
+          return;
+        }
+        response.status(200).json(result);
+      } catch (error) {
+        console.error("Failed to save Prism provider slots.", error);
+        response.status(500).json({
+          success: false,
+          slots: [],
+          error: error.message || "Failed to save Prism provider slots.",
+        });
+      }
+    }
+  );
+
+  app.get(
+    "/system/prism/tool-credentials",
+    [validatedRequest],
+    async (_, response) => {
+      try {
+        const credentials = await getPrismToolCredentials();
+        response.status(200).json({ credentials });
+      } catch (error) {
+        console.error("Failed to fetch Prism tool credentials.", error);
+        response.status(500).json({
+          credentials: [],
+          error: error.message || "Failed to fetch Prism tool credentials.",
+        });
+      }
+    }
+  );
+
+  app.post(
+    "/system/prism/tool-credentials",
+    [validatedRequest],
+    async (request, response) => {
+      try {
+        const { credentials = [] } = reqBody(request);
+        const result = await savePrismToolCredentials(credentials);
+        if (!result.success) {
+          response.status(400).json(result);
+          return;
+        }
+        response.status(200).json(result);
+      } catch (error) {
+        console.error("Failed to save Prism tool credentials.", error);
+        response.status(500).json({
+          success: false,
+          credentials: [],
+          error: error.message || "Failed to save Prism tool credentials.",
+        });
+      }
+    }
+  );
+
   app.post(
     "/system/speech-to-text",
     [validatedRequest, flexUserRoleValid([ROLES.all]), handleFileUpload],
@@ -131,9 +395,11 @@ function systemEndpoints(app) {
           });
         }
 
-        const { success, reason, documents = [] } = await Collector.parseDocument(
-          request.file.originalname
-        );
+        const {
+          success,
+          reason,
+          documents = [],
+        } = await Collector.parseDocument(request.file.originalname);
 
         if (!success || documents.length === 0) {
           return response.status(500).json({
@@ -597,8 +863,11 @@ function systemEndpoints(app) {
         }
 
         const { originalname } = request.file;
-        const { success, reason, documents = [] } =
-          await Collector.parseDocument(originalname);
+        const {
+          success,
+          reason,
+          documents = [],
+        } = await Collector.parseDocument(originalname);
 
         cleanupTargets.push(
           ...documents

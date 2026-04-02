@@ -1,4 +1,3 @@
-/* eslint-disable unused-imports/no-unused-vars */
 const { EventEmitter } = require("events");
 const { APIError } = require("./error.js");
 const Providers = require("./providers/index.js");
@@ -961,9 +960,9 @@ ${this.getHistory({ to: route.to })
 
     switch (config.provider) {
       case "openai":
-        return new Providers.OpenAIProvider({ model: config.model });
+        return new Providers.OpenAIProvider(config);
       case "anthropic":
-        return new Providers.AnthropicProvider({ model: config.model });
+        return new Providers.AnthropicProvider(config);
       case "lmstudio":
         return new Providers.LMStudioProvider({ model: config.model });
       case "ollama":
@@ -979,11 +978,11 @@ ${this.getHistory({ to: route.to })
       case "localai":
         return new Providers.LocalAIProvider({ model: config.model });
       case "openrouter":
-        return new Providers.OpenRouterProvider({ model: config.model });
+        return new Providers.OpenRouterProvider(config);
       case "mistral":
         return new Providers.MistralProvider({ model: config.model });
       case "generic-openai":
-        return new Providers.GenericOpenAiProvider({ model: config.model });
+        return new Providers.GenericOpenAiProvider(config);
       case "perplexity":
         return new Providers.PerplexityProvider({ model: config.model });
       case "textgenwebui":
@@ -1003,7 +1002,7 @@ ${this.getHistory({ to: route.to })
       case "apipie":
         return new Providers.ApiPieProvider({ model: config.model });
       case "xai":
-        return new Providers.XAIProvider({ model: config.model });
+        return new Providers.XAIProvider(config);
       case "zai":
         return new Providers.ZAIProvider({ model: config.model });
       case "novita":
@@ -1023,7 +1022,7 @@ ${this.getHistory({ to: route.to })
       case "cohere":
         return new Providers.CohereProvider({ model: config.model });
       case "docker-model-runner":
-        return new Providers.DockerModelRunnerProvider({ model: config.model });
+        return new Providers.DockerModelRunnerProvider(config);
       case "privatemode":
         return new Providers.PrivatemodeProvider({ model: config.model });
       case "sambanova":

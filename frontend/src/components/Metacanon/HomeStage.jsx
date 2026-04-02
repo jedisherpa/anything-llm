@@ -9,14 +9,14 @@ const CATHEDRAL_DODECAHEDRON_LINES = [
   { x1: 379.2, y1: 448.9, x2: 489.8, y2: 338.0, depth: -1.595 },
   { x1: 379.2, y1: 448.9, x2: 242.8, y2: 394.5, depth: -1.451 },
   { x1: 379.2, y1: 448.9, x2: 420.9, y2: 576.9, depth: -1.356 },
-  { x1: 421.8, y1: 215.0, x2: 489.8, y2: 338.0, depth: -1.224 },
-  { x1: 489.8, y1: 338.0, x2: 599.8, y2: 397.4, depth: -1.129 },
+  { x1: 421.8, y1: 215.0, x2: 489.8, y2: 338, depth: -1.224 },
+  { x1: 489.8, y1: 338, x2: 599.8, y2: 397.4, depth: -1.129 },
   { x1: 269.1, y1: 250.0, x2: 242.8, y2: 394.5, depth: -0.992 },
   { x1: 421.8, y1: 215.0, x2: 269.1, y2: 250.0, depth: -0.851 },
   { x1: 200.2, y1: 488.9, x2: 242.8, y2: 394.5, depth: -0.754 },
   { x1: 557.2, y1: 545.0, x2: 420.9, y2: 576.9, depth: -0.744 },
   { x1: 557.2, y1: 545.0, x2: 599.8, y2: 397.4, depth: -0.603 },
-  { x1: 310.3, y1: 601.6, x2: 420.9, y2: 576.9, depth: -0.600 },
+  { x1: 310.3, y1: 601.6, x2: 420.9, y2: 576.9, depth: -0.6 },
   { x1: 421.8, y1: 215.0, x2: 489.7, y2: 198.4, depth: -0.385 },
   { x1: 599.8, y1: 311.1, x2: 599.8, y2: 397.4, depth: -0.232 },
   { x1: 200.2, y1: 488.9, x2: 310.3, y2: 601.6, depth: -0.228 },
@@ -24,23 +24,25 @@ const CATHEDRAL_DODECAHEDRON_LINES = [
   { x1: 557.2, y1: 545.0, x2: 530.9, y2: 550.0, depth: 0.153 },
   { x1: 599.8, y1: 311.1, x2: 489.7, y2: 198.4, depth: 0.228 },
   { x1: 200.2, y1: 488.9, x2: 200.2, y2: 402.6, depth: 0.232 },
-  { x1: 378.2, y1: 585.0, x2: 310.3, y2: 601.6, depth: 0.385 },
-  { x1: 379.1, y1: 223.1, x2: 489.7, y2: 198.4, depth: 0.600 },
+  { x1: 378.2, y1: 585, x2: 310.3, y2: 601.6, depth: 0.385 },
+  { x1: 379.1, y1: 223.1, x2: 489.7, y2: 198.4, depth: 0.6 },
   { x1: 242.8, y1: 255.0, x2: 200.2, y2: 402.6, depth: 0.603 },
   { x1: 242.8, y1: 255.0, x2: 379.1, y2: 223.1, depth: 0.744 },
   { x1: 599.8, y1: 311.1, x2: 557.2, y2: 405.5, depth: 0.754 },
   { x1: 378.2, y1: 585.0, x2: 530.9, y2: 550.0, depth: 0.851 },
   { x1: 557.2, y1: 405.5, x2: 530.9, y2: 550.0, depth: 0.992 },
   { x1: 200.2, y1: 402.6, x2: 310.2, y2: 462.0, depth: 1.129 },
-  { x1: 378.2, y1: 585.0, x2: 310.2, y2: 462.0, depth: 1.224 },
+  { x1: 378.2, y1: 585.0, x2: 310.2, y2: 462, depth: 1.224 },
   { x1: 420.8, y1: 351.1, x2: 379.1, y2: 223.1, depth: 1.356 },
   { x1: 420.8, y1: 351.1, x2: 557.2, y2: 405.5, depth: 1.451 },
   { x1: 420.8, y1: 351.1, x2: 310.2, y2: 462.0, depth: 1.595 },
 ];
 
 function getDodecahedronLineClass(depth) {
-  if (depth < -0.7) return "metacanon-cathedral-backform__line metacanon-cathedral-backform__line--far";
-  if (depth > 0.7) return "metacanon-cathedral-backform__line metacanon-cathedral-backform__line--near";
+  if (depth < -0.7)
+    return "metacanon-cathedral-backform__line metacanon-cathedral-backform__line--far";
+  if (depth > 0.7)
+    return "metacanon-cathedral-backform__line metacanon-cathedral-backform__line--near";
   return "metacanon-cathedral-backform__line metacanon-cathedral-backform__line--mid";
 }
 
@@ -84,6 +86,11 @@ export default function MetacanonHomeStage({
   onConnectLLM,
   onEditWorkspace,
   onUploadDocument,
+  onOpenReadiness,
+  onOpenSetup,
+  showFirstRunHint = false,
+  onDismissFirstRunHint = null,
+  setupNeedsAttention = false,
 }) {
   const { resolvedTheme } = useTheme();
   const themeCopy =
@@ -128,7 +135,75 @@ export default function MetacanonHomeStage({
             <p className="metacanon-home-subtitle mt-3 text-[15px] font-normal tracking-[0.22em] text-theme-home-text-secondary uppercase">
               {themeCopy.tagline}
             </p>
+            {setupNeedsAttention ? (
+              <div className="mt-3 rounded-full border border-theme-primary-button/30 bg-theme-primary-button/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-theme-primary-button">
+                Guided setup needs attention
+              </div>
+            ) : null}
           </div>
+
+          {showFirstRunHint ? (
+            <div className="mt-5 w-full max-w-[816px] rounded-[22px] border border-theme-sidebar-border bg-theme-sidebar-item-default/70 px-5 py-4 text-left shadow-[0_18px_50px_rgba(0,0,0,0.18)] backdrop-blur">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-home-text-secondary">
+                    First run
+                  </div>
+                  <div className="mt-1 text-[15px] font-medium text-theme-text-primary">
+                    Talk naturally. Prism will handle the routing.
+                  </div>
+                  <div className="mt-2 space-y-1 text-[13px] leading-6 text-theme-text-secondary">
+                    <div>
+                      Use{" "}
+                      <span className="font-semibold text-theme-text-primary">
+                        CHAT
+                      </span>{" "}
+                      for open-ended help and drafting.
+                    </div>
+                    <div>
+                      Use{" "}
+                      <span className="font-semibold text-theme-text-primary">
+                        QUERY
+                      </span>{" "}
+                      when you want Prism to search this workspace.
+                    </div>
+                    <div>
+                      Use{" "}
+                      <span className="font-semibold text-theme-text-primary">
+                        Align
+                      </span>{" "}
+                      when you want a lens or constellation voice.
+                    </div>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={onDismissFirstRunHint}
+                  className="rounded-full border border-theme-sidebar-border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-theme-text-secondary transition hover:bg-theme-sidebar-item-hover hover:text-theme-text-primary"
+                >
+                  Dismiss
+                </button>
+              </div>
+              <div className="mt-4">
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    type="button"
+                    onClick={onOpenSetup}
+                    className="rounded-full bg-theme-primary-button px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-black transition hover:opacity-90"
+                  >
+                    Run guided setup
+                  </button>
+                  <button
+                    type="button"
+                    onClick={onOpenReadiness}
+                    className="rounded-full border border-theme-sidebar-border px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-theme-text-secondary transition hover:bg-theme-sidebar-item-hover hover:text-theme-text-primary"
+                  >
+                    Check setup status
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : null}
 
           <div className="mt-5 flex w-full justify-center">
             <PromptInput
@@ -150,6 +225,8 @@ export default function MetacanonHomeStage({
             onConnectLLM={onConnectLLM}
             onEditWorkspace={onEditWorkspace}
             onUploadDocument={onUploadDocument}
+            onOpenReadiness={onOpenReadiness}
+            onOpenSetup={onOpenSetup}
           />
         </div>
 
@@ -160,7 +237,9 @@ export default function MetacanonHomeStage({
               compact={true}
             />
           </div>
-          <div className="metacanon-home-manifesto">{themeCopy.inscription}</div>
+          <div className="metacanon-home-manifesto">
+            {themeCopy.inscription}
+          </div>
         </div>
       </div>
     </div>

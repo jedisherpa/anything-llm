@@ -12,6 +12,8 @@ import { MagnifyingGlass } from "@phosphor-icons/react/dist/csr/MagnifyingGlass"
 import { X } from "@phosphor-icons/react/dist/csr/X";
 
 import CTAButton from "@/components/lib/CTAButton";
+import ProviderSlotsPanel from "@/components/Prism/ProviderSlotsPanel";
+import ToolApiKeysModal from "@/components/Prism/ToolApiKeysModal";
 import paths from "@/utils/paths";
 import { Link } from "react-router-dom";
 import Workspace from "@/models/workspace";
@@ -65,9 +67,14 @@ async function syncWorkspacesToGlobalSelection(
 
 export default function GeneralLLMPreference() {
   const [saving, setSaving] = useState(false);
+  const [savingProviderSlots, setSavingProviderSlots] = useState(false);
+  const [savingToolCredentials, setSavingToolCredentials] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [providerSlots, setProviderSlots] = useState([]);
+  const [toolCredentials, setToolCredentials] = useState([]);
+  const [toolModalOpen, setToolModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredLLMs, setFilteredLLMs] = useState([]);
   const [selectedLLM, setSelectedLLM] = useState(null);
@@ -131,9 +138,16 @@ export default function GeneralLLMPreference() {
 
   useEffect(() => {
     async function fetchKeys() {
-      const _settings = await System.keys();
+      const [_settings, providerSlotsPayload, toolCredentialsPayload] =
+        await Promise.all([
+          System.keys(),
+          System.prismProviderSlots(),
+          System.prismToolCredentials(),
+        ]);
       setSettings(_settings);
       setSelectedLLM(_settings?.LLMProvider);
+      setProviderSlots(providerSlotsPayload?.slots || []);
+      setToolCredentials(toolCredentialsPayload?.credentials || []);
       setLoading(false);
     }
     fetchKeys();
@@ -166,6 +180,46 @@ export default function GeneralLLMPreference() {
   );
   const SelectedOptionsComponent =
     selectedLLM && PROVIDER_OPTIONS_COMPONENTS[selectedLLM];
+
+  const saveProviderSlots = async () => {
+    setSavingProviderSlots(true);
+    const { success, error, slots } =
+      await System.updatePrismProviderSlots(providerSlots);
+
+    if (!success) {
+      showToast(
+        `Failed to save Prism provider lanes: ${error || "Unknown error"}`,
+        "error"
+      );
+      setSavingProviderSlots(false);
+      return;
+    }
+
+    setProviderSlots(slots || []);
+    setSavingProviderSlots(false);
+    showToast("Prism provider lanes saved.", "success");
+  };
+
+  const saveToolCredentials = async () => {
+    setSavingToolCredentials(true);
+    const { success, error, credentials } =
+      await System.updatePrismToolCredentials(toolCredentials);
+
+    if (!success) {
+      showToast(
+        `Failed to save tool API keys: ${error || "Unknown error"}`,
+        "error"
+      );
+      setSavingToolCredentials(false);
+      return;
+    }
+
+    setToolCredentials(credentials || []);
+    setSavingToolCredentials(false);
+    setToolModalOpen(false);
+    showToast("Tool API keys saved.", "success");
+  };
+
   return (
     <div className="metacanon-page-shell prism-settings-route w-screen h-screen overflow-hidden bg-theme-bg-container flex">
       <Sidebar />
@@ -320,8 +374,23 @@ export default function GeneralLLMPreference() {
                   <SelectedOptionsComponent settings={settings} />
                 ) : null}
               </div>
+              <ProviderSlotsPanel
+                slots={providerSlots}
+                setSlots={setProviderSlots}
+                onSave={saveProviderSlots}
+                saving={savingProviderSlots}
+                onOpenToolKeys={() => setToolModalOpen(true)}
+              />
             </div>
           </form>
+          <ToolApiKeysModal
+            open={toolModalOpen}
+            credentials={toolCredentials}
+            setCredentials={setToolCredentials}
+            onClose={() => setToolModalOpen(false)}
+            onSave={saveToolCredentials}
+            saving={savingToolCredentials}
+          />
         </div>
       )}
     </div>

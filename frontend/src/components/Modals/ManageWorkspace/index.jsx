@@ -82,8 +82,8 @@ const ManageWorkspace = ({ hideModal = noop, providedSlug = null }) => {
 
   return (
     <ModalWrapper isOpen={true}>
-      <div className="relative max-h-full w-fit transition duration-300 md:overflow-y-auto py-10">
-        <div className="relative metacanon-modal-panel bg-theme-bg-secondary rounded-[12px] shadow border-2 border-theme-modal-border">
+      <div className="relative max-h-full w-full max-w-[1240px] transition duration-300 md:overflow-y-auto py-10 px-6">
+        <div className="relative w-full metacanon-modal-panel bg-theme-bg-secondary rounded-[12px] shadow border-2 border-theme-modal-border">
           <div className="flex items-start justify-between p-2 rounded-t border-theme-modal-border relative">
             <button
               onClick={hideModal}

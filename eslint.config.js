@@ -2,9 +2,9 @@ import globals from "./server/node_modules/globals/index.js"
 import eslintRecommended from "./server/node_modules/@eslint/js/src/index.js"
 import eslintConfigPrettier from "./server/node_modules/eslint-config-prettier/index.js"
 import prettier from "./server/node_modules/eslint-plugin-prettier/eslint-plugin-prettier.js"
-import react from "./server/node_modules/eslint-plugin-react/index.js"
-import reactRefresh from "./server/node_modules/eslint-plugin-react-refresh/index.js"
-import reactHooks from "./server/node_modules/eslint-plugin-react-hooks/index.js"
+import react from "./frontend/node_modules/eslint-plugin-react/index.js"
+import reactRefresh from "./frontend/node_modules/eslint-plugin-react-refresh/index.js"
+import reactHooks from "./frontend/node_modules/eslint-plugin-react-hooks/index.js"
 import ftFlow from "./server/node_modules/eslint-plugin-ft-flow/dist/index.js"
 import hermesParser from "./server/node_modules/hermes-eslint/dist/index.js"
 
@@ -33,14 +33,9 @@ export default [
     settings: { react: { version: "18.2" } },
     plugins: {
       ftFlow,
-      react,
-      "jsx-runtime": jsxRuntime,
-      "react-hooks": reactHooks,
       prettier
     },
     rules: {
-      ...reactRecommended.rules,
-      ...reactHooks.configs.recommended.rules,
       ...ftFlow.recommended,
       "no-unused-vars": "warn",
       "no-undef": "warn",
@@ -54,10 +49,18 @@ export default [
     files: ["frontend/src/**/*.js"],
     plugins: {
       ftFlow,
+      react,
+      "jsx-runtime": jsxRuntime,
+      "react-hooks": reactHooks,
       prettier
     },
     rules: {
-      "prettier/prettier": "warn"
+      ...reactRecommended.rules,
+      ...reactHooks.configs.recommended.rules,
+      ...jsxRuntime.rules,
+      "prettier/prettier": "warn",
+      "react-hooks/set-state-in-effect": "off",
+      "react-hooks/refs": "off"
     }
   },
   {
@@ -83,9 +86,13 @@ export default [
       prettier
     },
     rules: {
+      ...reactRecommended.rules,
+      ...reactHooks.configs.recommended.rules,
       ...jsxRuntime.rules,
       "react/prop-types": "off", // FIXME
-      "react-refresh/only-export-components": "warn"
+      "react-refresh/only-export-components": "warn",
+      "react-hooks/set-state-in-effect": "off",
+      "react-hooks/refs": "off"
     }
   }
 ]

@@ -161,6 +161,42 @@ async function chatSync({
   message = processedMessage;
 
   if (EphemeralAgentHandler.isAgentInvocation({ message })) {
+    if (chatMode === "query") {
+      const VectorDb = getVectorDbClass();
+      const hasVectorizedSpace = await VectorDb.hasNamespace(workspace.slug);
+      const embeddingsCount = await VectorDb.namespaceCount(workspace.slug);
+
+      if (!hasVectorizedSpace || embeddingsCount === 0) {
+        const textResponse =
+          workspace?.queryRefusalResponse ??
+          "There is no relevant information in this workspace to answer your query.";
+
+        await WorkspaceChats.new({
+          workspaceId: workspace.id,
+          prompt: String(message),
+          response: {
+            text: textResponse,
+            sources: [],
+            attachments,
+            type: chatMode,
+            thoughts: [],
+          },
+          include: false,
+          apiSessionId: sessionId,
+        });
+
+        return {
+          id: uuid,
+          type: "textResponse",
+          sources: [],
+          close: true,
+          error: null,
+          textResponse,
+          thoughts: [],
+        };
+      }
+    }
+
     await Telemetry.sendTelemetry("agent_chat_started");
 
     // Initialize the EphemeralAgentHandler to handle non-continuous
@@ -521,6 +557,45 @@ async function streamChat({
   message = processedMessage;
 
   if (EphemeralAgentHandler.isAgentInvocation({ message })) {
+    if (chatMode === "query") {
+      const VectorDb = getVectorDbClass();
+      const hasVectorizedSpace = await VectorDb.hasNamespace(workspace.slug);
+      const embeddingsCount = await VectorDb.namespaceCount(workspace.slug);
+
+      if (!hasVectorizedSpace || embeddingsCount === 0) {
+        const textResponse =
+          workspace?.queryRefusalResponse ??
+          "There is no relevant information in this workspace to answer your query.";
+
+        writeResponseChunk(response, {
+          id: uuid,
+          type: "textResponse",
+          textResponse,
+          sources: [],
+          attachments: [],
+          close: true,
+          error: null,
+          metrics: {},
+        });
+
+        await WorkspaceChats.new({
+          workspaceId: workspace.id,
+          prompt: String(message),
+          response: {
+            text: textResponse,
+            sources: [],
+            attachments,
+            type: chatMode,
+            thoughts: [],
+          },
+          include: false,
+          threadId: thread?.id || null,
+          apiSessionId: sessionId,
+        });
+        return;
+      }
+    }
+
     await Telemetry.sendTelemetry("agent_chat_started");
 
     // Initialize the EphemeralAgentHandler to handle non-continuous

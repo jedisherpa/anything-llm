@@ -191,7 +191,7 @@ export default function DocumentSettings({ workspace, systemSettings }) {
   };
 
   return (
-    <div className="flex upload-modal -mt-6 z-10 relative">
+    <div className="flex upload-modal -mt-6 z-10 relative min-h-[78vh] w-[78vw] max-w-[1180px]">
       <Directory
         files={availableDocs}
         setFiles={setAvailableDocs}

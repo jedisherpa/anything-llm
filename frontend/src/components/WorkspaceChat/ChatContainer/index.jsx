@@ -5,10 +5,8 @@ import {
   DndUploaderContext,
   OPEN_ATTACHMENT_PICKER_EVENT,
 } from "./DnDWrapper";
-import PromptInput, {
-  PROMPT_INPUT_EVENT,
-  PROMPT_INPUT_ID,
-} from "./PromptInput";
+import PromptInput from "./PromptInput";
+import { PROMPT_INPUT_EVENT, PROMPT_INPUT_ID } from "./PromptInput/constants";
 import Workspace from "@/models/workspace";
 import handleChat, { ABORT_STREAM_EVENT } from "@/utils/chat";
 import { isMobile } from "react-device-detect";
@@ -45,20 +43,27 @@ import showToast from "@/utils/toast";
 
 const AGENT_HANDLE_PATTERN =
   /^\s*(?:\/(?:agent|lens|constellation|council)\b|@(?:agent|council|constellation-[a-z0-9_-]+|[a-z0-9_-]+))\b/i;
+const EXECUTE_INTENT_PATTERN =
+  /\b(save\s+(?:it|this|that)|save\s+to|desktop\b|write\s+(?:a|the)?\s*(?:file|report|summary|markdown|md)\b|export\b|run\s+(?:tests?|build|command|script|check)\b|inspect\s+(?:the\s+)?(?:repo|repository|worktree|codebase)\b|edit\s+(?:the\s+)?file\b|search\s+(?:the\s+)?internet\b|browse\s+(?:the\s+)?web\b|go\s+online\b|look\s+(?:this|that|it)?\s*up\s+online\b|research\b)/i;
 
 export default function ChatContainer({ workspace, knownHistory = [] }) {
   const navigate = useNavigate();
   const { threadSlug = null } = useParams();
   const [loadingResponse, setLoadingResponse] = useState(false);
   const [chatHistory, setChatHistory] = useState(knownHistory);
-  const [composerViewportInset, setComposerViewportInset] = useState(196);
   const [socketId, setSocketId] = useState(null);
   const [websocket, setWebsocket] = useState(null);
   const [chatMode, setChatMode] = useState(workspace?.chatMode || "chat");
+  const [executionMode, setExecutionMode] = useState("chat");
+  const [executionWorktreeRoot, setExecutionWorktreeRoot] = useState("");
+  const [trustedSession, setTrustedSession] = useState(null);
+  const [executionStatus, setExecutionStatus] = useState(null);
   const { files, parseAttachments } = useContext(DndUploaderContext);
   const { chatHistoryRef } = useChatContainerQuickScroll();
   const pendingMessageChecked = useRef(false);
   const previousLoadingResponse = useRef(false);
+  const lastSettledAssistantRef = useRef(null);
+  const agentTurnLoadingRef = useRef(false);
 
   const { listening, resetTranscript } = useSpeechRecognition({
     clearTranscriptOnListen: true,
@@ -67,6 +72,119 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
   useEffect(() => {
     setChatMode(workspace?.chatMode || "chat");
   }, [workspace?.chatMode, workspace?.slug]);
+
+  useEffect(() => {
+    setExecutionMode("chat");
+    setExecutionWorktreeRoot("");
+    setTrustedSession(null);
+    setExecutionStatus(null);
+  }, [workspace?.slug, threadSlug]);
+
+  useEffect(() => {
+    const latestExecuteMessage = [...knownHistory]
+      .reverse()
+      .find(
+        (entry) =>
+          entry?.role === "assistant" &&
+          entry?.executionMode === "execute" &&
+          (entry?.trustedSessionId || entry?.selectedWorktreeRoot)
+      );
+
+    if (!latestExecuteMessage) return;
+
+    setExecutionMode("execute");
+    setExecutionWorktreeRoot(latestExecuteMessage.selectedWorktreeRoot || "");
+    setTrustedSession({
+      trustedSessionId: latestExecuteMessage.trustedSessionId || null,
+      sessionExpiresAt: latestExecuteMessage.sessionExpiresAt || null,
+      subSphereId: latestExecuteMessage.subSphereId || null,
+      selectedWorktreeRoot: latestExecuteMessage.selectedWorktreeRoot || "",
+    });
+  }, [knownHistory]);
+
+  async function fetchExecutionStatus(nextTrustedSessionId = null) {
+    if (executionMode !== "execute" || !workspace?.slug) {
+      setExecutionStatus(null);
+      return null;
+    }
+
+    const result = threadSlug
+      ? await Workspace.threads.executionStatus(
+          { workspaceSlug: workspace.slug, threadSlug },
+          {
+            trustedSessionId:
+              nextTrustedSessionId ?? trustedSession?.trustedSessionId ?? null,
+          }
+        )
+      : await Workspace.executionStatus(
+          { slug: workspace.slug },
+          {
+            trustedSessionId:
+              nextTrustedSessionId ?? trustedSession?.trustedSessionId ?? null,
+          }
+        );
+
+    setExecutionStatus(result?.ok ? result : { error: result?.error || null });
+    return result;
+  }
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadExecutionStatus() {
+      const result = await (threadSlug || workspace?.slug
+        ? fetchExecutionStatus()
+        : null);
+      if (!cancelled && result == null) {
+        setExecutionStatus(null);
+      }
+    }
+
+    loadExecutionStatus().catch((error) => {
+      if (!cancelled) {
+        setExecutionStatus({
+          error: error.message || "Failed to load execute status.",
+        });
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    executionMode,
+    workspace?.slug,
+    threadSlug,
+    trustedSession?.trustedSessionId,
+  ]);
+
+  async function handleExecutionConfigUpdate({ demoModeEnabled }) {
+    try {
+      const result = threadSlug
+        ? await Workspace.threads.updateExecutionConfig(
+            { workspaceSlug: workspace.slug, threadSlug },
+            { demoModeEnabled }
+          )
+        : await Workspace.updateExecutionConfig(
+            { slug: workspace.slug },
+            { demoModeEnabled }
+          );
+
+      if (result?.error || result?.message) {
+        throw new Error(result.error || result.message);
+      }
+
+      await fetchExecutionStatus();
+      showToast("Execute configuration updated.", "success");
+      return result;
+    } catch (error) {
+      showToast(
+        error.message || "Failed to update execute configuration.",
+        "error"
+      );
+      throw error;
+    }
+  }
 
   async function handleChatModeChange(nextMode) {
     if (!workspace?.slug || !nextMode || nextMode === chatMode) return;
@@ -89,6 +207,140 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
     );
   }
 
+  function handleExecutionModeChange(nextMode) {
+    if (!nextMode) return;
+    setExecutionMode(nextMode === "execute" ? "execute" : "chat");
+  }
+
+  function updateTrustedSession(chatResult, selectedWorktreeRoot) {
+    const nextTrustedSessionId = chatResult?.trustedSessionId;
+    const sessionExpiresAt = chatResult?.sessionExpiresAt;
+    const subSphereId = chatResult?.subSphereId;
+    const sessionWorktreeRoot =
+      chatResult?.selectedWorktreeRoot ?? selectedWorktreeRoot;
+
+    if (!nextTrustedSessionId && !sessionExpiresAt && !subSphereId) return;
+
+    setTrustedSession((current) => ({
+      trustedSessionId:
+        nextTrustedSessionId ?? current?.trustedSessionId ?? null,
+      sessionExpiresAt: sessionExpiresAt ?? current?.sessionExpiresAt ?? null,
+      subSphereId: subSphereId ?? current?.subSphereId ?? null,
+      selectedWorktreeRoot:
+        sessionWorktreeRoot ??
+        current?.selectedWorktreeRoot ??
+        executionWorktreeRoot.trim() ??
+        "",
+    }));
+  }
+
+  function ensureExecutionTarget() {
+    if (executionMode !== "execute") return true;
+    if (executionWorktreeRoot.trim()) return true;
+    showToast("Execute mode requires a selected worktree root.", "error");
+    return false;
+  }
+
+  function shouldHandoffToExecute(message) {
+    const value = String(message || "").trim();
+    if (!value) return false;
+    if (executionMode === "execute") return false;
+    if (value.startsWith("/") || value.startsWith("@")) return false;
+    return EXECUTE_INTENT_PATTERN.test(value);
+  }
+
+  function handoffToExecute(message) {
+    setExecutionMode("execute");
+    setMessageEmit(message || "", "replace");
+    showToast(
+      "This task needs Execute mode. Prism switched modes so you can pick a worktree and run it with approvals.",
+      "info"
+    );
+  }
+
+  const handleExecuteSessionAction = async ({
+    action,
+    pendingActionId = null,
+    reason = null,
+  }) => {
+    if (!trustedSession?.trustedSessionId) {
+      showToast("No active trusted session is available.", "error");
+      return;
+    }
+
+    try {
+      const result = threadSlug
+        ? await Workspace.threads.executeSessionAction(
+            { workspaceSlug: workspace.slug, threadSlug },
+            {
+              trustedSessionId: trustedSession.trustedSessionId,
+              action,
+              pendingActionId,
+              reason,
+            }
+          )
+        : await Workspace.executeSessionAction(
+            { slug: workspace.slug },
+            {
+              trustedSessionId: trustedSession.trustedSessionId,
+              action,
+              pendingActionId,
+              reason,
+            }
+          );
+
+      if (result?.error || result?.message) {
+        throw new Error(result.error || result.message);
+      }
+
+      if (result?.session) {
+        setTrustedSession({
+          trustedSessionId: result.session.trustedSessionId,
+          sessionExpiresAt: result.session.expiresAt ?? null,
+          subSphereId: result.session.subSphereId ?? null,
+          selectedWorktreeRoot:
+            result.session.selectedWorktreeRoot ??
+            executionWorktreeRoot.trim() ??
+            "",
+        });
+      }
+
+      const statusText =
+        result?.action_result?.status_text || "Execute session updated.";
+      setChatHistory((prev) => [
+        ...prev,
+        {
+          uuid: v4(),
+          type: "statusResponse",
+          content: statusText,
+          role: "assistant",
+          sources: [],
+          closed: true,
+          error: null,
+          animate: false,
+          pending: false,
+          trustedSessionId:
+            result?.session?.trustedSessionId ??
+            trustedSession.trustedSessionId,
+          sessionExpiresAt:
+            result?.session?.expiresAt ??
+            trustedSession.sessionExpiresAt ??
+            null,
+          subSphereId:
+            result?.session?.subSphereId ?? trustedSession.subSphereId,
+          selectedWorktreeRoot:
+            result?.session?.selectedWorktreeRoot ??
+            trustedSession.selectedWorktreeRoot,
+        },
+      ]);
+      showToast(statusText, "success");
+      await fetchExecutionStatus(result?.session?.trustedSessionId ?? null);
+    } catch (error) {
+      showToast(error.message || "Failed to update execute session.", "error");
+      throw error;
+    }
+  };
+
   /**
    * Emit an update to the state of the prompt input without directly
    * passing a prop in so that it does not re-render constantly.
@@ -105,12 +357,18 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (!ensureExecutionTarget()) return false;
     const currentMessage = buildAlignedPrompt(
       document.getElementById(PROMPT_INPUT_ID)?.value || "",
       undefined,
       chatHistory
     );
     if (!currentMessage) return false;
+    if (shouldHandoffToExecute(currentMessage)) {
+      handoffToExecute(currentMessage);
+      return false;
+    }
+    agentTurnLoadingRef.current = AGENT_HANDLE_PATTERN.test(currentMessage);
 
     // Clear the localStorage draft for this thread/workspace so that if the
     // PromptInput remounts (empty→chat transition), it won't restore stale text
@@ -204,6 +462,11 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
       undefined,
       history.length > 0 ? history : chatHistory
     );
+    if (shouldHandoffToExecute(text)) {
+      handoffToExecute(text);
+      return false;
+    }
+    agentTurnLoadingRef.current = AGENT_HANDLE_PATTERN.test(text);
 
     // Clear the localStorage draft so that if the PromptInput remounts
     // (e.g. /reset causing empty→chat or chat→empty transitions),
@@ -298,16 +561,32 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
         workspaceSlug: workspace.slug,
         threadSlug,
         prompt: promptMessage.userMessage,
-        chatHandler: (chatResult) =>
-          handleChat(
+        chatHandler: (chatResult) => {
+          if (executionMode === "execute") {
+            updateTrustedSession(chatResult, executionWorktreeRoot.trim());
+          }
+
+          return handleChat(
             chatResult,
             setLoadingResponse,
             setChatHistory,
             remHistory,
             _chatHistory,
             setSocketId
-          ),
+          );
+        },
         attachments,
+        executionMode,
+        trustedSessionId:
+          executionMode === "execute"
+            ? (trustedSession?.trustedSessionId ?? null)
+            : null,
+        executionContext:
+          executionMode === "execute"
+            ? {
+                selectedWorktreeRoot: executionWorktreeRoot.trim(),
+              }
+            : null,
       });
       return;
     }
@@ -315,13 +594,10 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
   }, [loadingResponse, chatHistory, workspace]);
 
   useEffect(() => {
-    const promptMessage =
-      chatHistory.length > 0 ? chatHistory[chatHistory.length - 1] : null;
-    const isAgentInvocation = AGENT_HANDLE_PATTERN.test(
-      promptMessage?.userMessage || ""
-    );
-
-    if (isAgentInvocation) {
+    if (agentTurnLoadingRef.current) {
+      if (!loadingResponse && !socketId && !websocket) {
+        agentTurnLoadingRef.current = false;
+      }
       previousLoadingResponse.current = loadingResponse;
       return;
     }
@@ -340,6 +616,38 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
     }
 
     previousLoadingResponse.current = loadingResponse;
+  }, [chatHistory, loadingResponse, socketId, websocket]);
+
+  useEffect(() => {
+    if (loadingResponse) return;
+
+    const lastSettledAssistant = [...chatHistory]
+      .reverse()
+      .find(
+        (message) =>
+          message?.role === "assistant" &&
+          !!message?.content &&
+          !message?.pending &&
+          !message?.animate
+      );
+
+    if (!lastSettledAssistant) return;
+
+    const responseKey =
+      lastSettledAssistant.chatId ||
+      lastSettledAssistant.uuid ||
+      `${chatHistory.length}:${lastSettledAssistant.content}`;
+
+    if (lastSettledAssistantRef.current === responseKey) return;
+    lastSettledAssistantRef.current = responseKey;
+
+    signalPrismResponse({ source: "chat-history" });
+    agentTurnLoadingRef.current = false;
+
+    if (socketId || websocket) {
+      setAgentSessionActive(false);
+      window.dispatchEvent(new CustomEvent(AGENT_SESSION_END));
+    }
   }, [chatHistory, loadingResponse, socketId, websocket]);
 
   // TODO: Simplify this WSS stuff
@@ -416,7 +724,11 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
           }
           setAgentSessionActive(false);
           window.dispatchEvent(new CustomEvent(AGENT_SESSION_END));
-          if (socket?.agentSessionReady && !socket?.agentSessionFailed) {
+          if (
+            socket?.agentSessionReady &&
+            !socket?.agentSessionFailed &&
+            !socket?.agentSessionTerminalResponseSeen
+          ) {
             setChatHistory((prev) => [
               ...prev.filter((msg) => !!msg.content),
               {
@@ -435,6 +747,7 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
           setLoadingResponse(false);
           setWebsocket(null);
           setSocketId(null);
+          agentTurnLoadingRef.current = false;
         });
         setWebsocket(socket);
         window.dispatchEvent(new CustomEvent(CLEAR_ATTACHMENTS_EVENT));
@@ -457,6 +770,7 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
         setLoadingResponse(false);
         setWebsocket(null);
         setSocketId(null);
+        agentTurnLoadingRef.current = false;
       }
     }
     handleWSS();
@@ -495,6 +809,12 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
             threadSlug={threadSlug}
             chatMode={chatMode}
             onChatModeChange={handleChatModeChange}
+            executionMode={executionMode}
+            onExecutionModeChange={handleExecutionModeChange}
+            executionWorktreeRoot={executionWorktreeRoot}
+            onExecutionWorktreeRootChange={setExecutionWorktreeRoot}
+            trustedSession={trustedSession}
+            executionStatus={executionStatus}
             hasAvailableWorkspace={!!workspace}
             onCreateAgent={() => navigate(paths.settings.agentSkills())}
             onConnectLLM={() => navigate(paths.settings.llmPreference())}
@@ -541,8 +861,8 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
           </div>
           {isMobile && <SidebarMobileHeader />}
           <DnDFileUploaderWrapper>
-            <div className="flex flex-col h-full w-full pb-20 md:pb-0">
-              <div className="contents">
+            <div className="flex flex-col h-full w-full">
+              <div className="flex flex-1 min-h-0 flex-col">
                 <MetricsProvider>
                   <ChatHistory
                     ref={chatHistoryRef}
@@ -551,7 +871,7 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
                     sendCommand={sendCommand}
                     updateHistory={setChatHistory}
                     regenerateAssistantMessage={regenerateAssistantMessage}
-                    composerViewportInset={composerViewportInset}
+                    onExecuteSessionAction={handleExecuteSessionAction}
                   />
                 </MetricsProvider>
                 <PromptInput
@@ -564,7 +884,14 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
                   threadSlug={threadSlug}
                   chatMode={chatMode}
                   onChatModeChange={handleChatModeChange}
-                  onHeightChange={setComposerViewportInset}
+                  executionMode={executionMode}
+                  onExecutionModeChange={handleExecutionModeChange}
+                  executionWorktreeRoot={executionWorktreeRoot}
+                  onExecutionWorktreeRootChange={setExecutionWorktreeRoot}
+                  trustedSession={trustedSession}
+                  executionStatus={executionStatus}
+                  onExecutionStatusRefresh={() => fetchExecutionStatus()}
+                  onExecutionConfigUpdate={handleExecutionConfigUpdate}
                 />
               </div>
             </div>

@@ -3,22 +3,31 @@ const path = require("path");
 const { v5: uuidv5 } = require("uuid");
 const { Document } = require("../../models/documents");
 const { DocumentSyncQueue } = require("../../models/documentSyncQueue");
-const documentsPath =
-  process.env.NODE_ENV === "development"
-    ? path.resolve(__dirname, `../../storage/documents`)
-    : path.resolve(process.env.STORAGE_DIR, `documents`);
-const directUploadsPath =
-  process.env.NODE_ENV === "development"
-    ? path.resolve(__dirname, `../../storage/direct-uploads`)
-    : path.resolve(process.env.STORAGE_DIR, `direct-uploads`);
-const vectorCachePath =
-  process.env.NODE_ENV === "development"
-    ? path.resolve(__dirname, `../../storage/vector-cache`)
-    : path.resolve(process.env.STORAGE_DIR, `vector-cache`);
-const hotdirPath =
-  process.env.NODE_ENV === "development"
-    ? path.resolve(__dirname, `../../../collector/hotdir`)
-    : path.resolve(process.env.STORAGE_DIR, `..`, `collector`, `hotdir`);
+function resolveStoragePath(subdir, devRelativePath) {
+  if (process.env.STORAGE_DIR) {
+    return path.resolve(process.env.STORAGE_DIR, subdir);
+  }
+
+  return process.env.NODE_ENV === "development"
+    ? path.resolve(__dirname, devRelativePath)
+    : path.resolve(process.env.STORAGE_DIR, subdir);
+}
+
+const documentsPath = resolveStoragePath(
+  "documents",
+  "../../storage/documents"
+);
+const directUploadsPath = resolveStoragePath(
+  "direct-uploads",
+  "../../storage/direct-uploads"
+);
+const vectorCachePath = resolveStoragePath(
+  "vector-cache",
+  "../../storage/vector-cache"
+);
+const hotdirPath = process.env.STORAGE_DIR
+  ? path.resolve(process.env.STORAGE_DIR, "..", "collector", "hotdir")
+  : path.resolve(__dirname, "../../../collector/hotdir");
 
 // Should take in a folder that is a subfolder of documents
 // eg: youtube-subject/video-123.json
@@ -183,7 +192,26 @@ async function cachedVectorInformation(filename = null, checkOnly = false) {
     `Cached vectorized results of ${filename} found! Using cached data to save on embed costs.`
   );
   const rawData = fs.readFileSync(file, "utf8");
-  return { exists: true, chunks: JSON.parse(rawData) };
+  const parsed = JSON.parse(rawData);
+
+  if (Array.isArray(parsed)) {
+    return {
+      exists: true,
+      chunks: parsed,
+      metadata: {},
+      legacy: true,
+    };
+  }
+
+  return {
+    exists: true,
+    chunks: Array.isArray(parsed?.chunks) ? parsed.chunks : [],
+    metadata:
+      parsed && typeof parsed.metadata === "object" && parsed.metadata !== null
+        ? parsed.metadata
+        : {},
+    legacy: false,
+  };
 }
 
 // vectorData: pre-chunked vectorized data for a given file that includes the proper metadata and chunk-size limit so it can be iterated and dumped into Pinecone, etc
@@ -197,7 +225,22 @@ async function storeVectorResult(vectorData = [], filename = null) {
 
   const digest = uuidv5(filename, uuidv5.URL);
   const writeTo = path.resolve(vectorCachePath, `${digest}.json`);
-  fs.writeFileSync(writeTo, JSON.stringify(vectorData), "utf8");
+  const firstVector =
+    Array.isArray(vectorData) &&
+    vectorData[0] &&
+    Array.isArray(vectorData[0]) &&
+    vectorData[0][0] &&
+    Array.isArray(vectorData[0][0].values)
+      ? vectorData[0][0].values
+      : null;
+  const payload = {
+    metadata: {
+      embeddingEngine: process.env.EMBEDDING_ENGINE || "native",
+      vectorDimensions: Array.isArray(firstVector) ? firstVector.length : null,
+    },
+    chunks: vectorData,
+  };
+  fs.writeFileSync(writeTo, JSON.stringify(payload), "utf8");
   return;
 }
 

@@ -157,6 +157,7 @@ function convertToChatHistory(history = []) {
         sentAt: moment(createdAt).unix(),
         feedbackScore,
         metrics: data?.metrics || {},
+        ...(data?.execution || {}),
       },
     ]);
   }

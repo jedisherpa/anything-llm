@@ -8,7 +8,6 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { AGENT_SESSION_END, AGENT_SESSION_START } from "@/utils/chat/agent";
 import {
   PRISM_STATE_ERROR,
   PRISM_STATE_RESET,
@@ -18,16 +17,19 @@ import {
 
 const PrismContext = createContext(null);
 
-const RESPONSE_PULSE_MS = 1600;
+const RESPONSE_PULSE_MS = 4000;
 const ERROR_PULSE_MS = 2200;
+const THINKING_GUARD_MS = 5000;
 
 export function PrismProvider({ children }) {
   const [hoverCount, setHoverCount] = useState(0);
-  const [activeSessions, setActiveSessions] = useState(0);
+  const [chatThinking, setChatThinking] = useState(false);
+  const [agentThinking, setAgentThinking] = useState(false);
   const [transientState, setTransientState] = useState(null);
   const hoverTargetsRef = useRef(new Set());
   const responseTimerRef = useRef(null);
   const errorTimerRef = useRef(null);
+  const lastSettledAtRef = useRef(0);
 
   const clearTransientTimers = useCallback(() => {
     clearTimeout(responseTimerRef.current);
@@ -53,36 +55,40 @@ export function PrismProvider({ children }) {
     [clearTransientTimers]
   );
 
-  const beginThinking = useCallback(() => {
+  const beginThinking = useCallback((source = "agent") => {
+    if (Date.now() - lastSettledAtRef.current < THINKING_GUARD_MS) return;
     clearTransientTimers();
     setTransientState(null);
-    setActiveSessions((count) => count + 1);
+    if (source === "chat") setChatThinking(true);
+    else setAgentThinking(true);
   }, [clearTransientTimers]);
 
   const completeThinking = useCallback(() => {
-    setActiveSessions((count) => {
-      const nextCount = Math.max(count - 1, 0);
-      if (nextCount === 0) {
-        scheduleTransientState("response", RESPONSE_PULSE_MS);
-      }
-      return nextCount;
-    });
+    setAgentThinking(false);
+    setChatThinking(false);
+    scheduleTransientState("response", RESPONSE_PULSE_MS);
   }, [scheduleTransientState]);
 
   const pulseResponse = useCallback(() => {
-    setActiveSessions(0);
+    lastSettledAtRef.current = Date.now();
+    setChatThinking(false);
+    setAgentThinking(false);
     scheduleTransientState("response", RESPONSE_PULSE_MS);
   }, [scheduleTransientState]);
 
   const signalError = useCallback(() => {
-    setActiveSessions(0);
+    lastSettledAtRef.current = Date.now();
+    setChatThinking(false);
+    setAgentThinking(false);
     scheduleTransientState("error", ERROR_PULSE_MS);
   }, [scheduleTransientState]);
 
   const resetState = useCallback(() => {
     clearTransientTimers();
+    lastSettledAtRef.current = 0;
     setTransientState(null);
-    setActiveSessions(0);
+    setChatThinking(false);
+    setAgentThinking(false);
   }, [clearTransientTimers]);
 
   const setHoverTarget = useCallback((targetId, isActive) => {
@@ -98,23 +104,17 @@ export function PrismProvider({ children }) {
   useEffect(() => {
     if (typeof window === "undefined") return undefined;
 
-    const handleAgentStart = () => beginThinking();
-    const handleAgentEnd = () => pulseResponse();
-    const handleThinking = () => beginThinking();
+    const handleThinking = () => beginThinking("chat");
     const handleResponse = () => pulseResponse();
     const handleError = () => signalError();
     const handleReset = () => resetState();
 
-    window.addEventListener(AGENT_SESSION_START, handleAgentStart);
-    window.addEventListener(AGENT_SESSION_END, handleAgentEnd);
     window.addEventListener(PRISM_STATE_THINKING, handleThinking);
     window.addEventListener(PRISM_STATE_RESPONSE, handleResponse);
     window.addEventListener(PRISM_STATE_ERROR, handleError);
     window.addEventListener(PRISM_STATE_RESET, handleReset);
 
     return () => {
-      window.removeEventListener(AGENT_SESSION_START, handleAgentStart);
-      window.removeEventListener(AGENT_SESSION_END, handleAgentEnd);
       window.removeEventListener(PRISM_STATE_THINKING, handleThinking);
       window.removeEventListener(PRISM_STATE_RESPONSE, handleResponse);
       window.removeEventListener(PRISM_STATE_ERROR, handleError);
@@ -129,10 +129,10 @@ export function PrismProvider({ children }) {
   const state =
     transientState === "error"
       ? "error"
-      : activeSessions > 0
-        ? "thinking"
-        : transientState === "response"
-          ? "response"
+      : transientState === "response"
+        ? "response"
+        : chatThinking || agentThinking
+          ? "thinking"
           : hoverCount > 0
             ? "hover"
             : "idle";

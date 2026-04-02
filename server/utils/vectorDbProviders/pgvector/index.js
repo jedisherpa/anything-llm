@@ -62,6 +62,14 @@ class PGVector extends VectorDatabase {
     return `CREATE TABLE IF NOT EXISTS "${PGVector.tableName()}" (id UUID PRIMARY KEY, namespace TEXT, embedding vector(${Number(dimensions)}), metadata JSONB, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`;
   }
 
+  createTableForNameSql(tableName = null, dimensions = 384) {
+    const safeTableName = String(tableName || PGVector.tableName()).replace(
+      /"/g,
+      '""'
+    );
+    return `CREATE TABLE IF NOT EXISTS "${safeTableName}" (id UUID PRIMARY KEY, namespace TEXT, embedding vector(${Number(dimensions)}), metadata JSONB, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`;
+  }
+
   /**
    * Recursively sanitize values intended for JSONB to prevent Postgres errors
    * like "unsupported Unicode escape sequence". This primarily removes the
@@ -261,6 +269,45 @@ class PGVector extends VectorDatabase {
     }
   }
 
+  static async bootstrapConnection({
+    connectionString = null,
+    tableName = null,
+    dimensions = 384,
+  }) {
+    if (!connectionString) throw new Error("No connection string provided");
+    const instance = new PGVector();
+    const targetTable = tableName || PGVector.tableName();
+    let pgClient = null;
+
+    try {
+      pgClient = instance.client(connectionString);
+      await pgClient.connect();
+      await pgClient.query(instance.createExtensionSql);
+      await pgClient.query(
+        instance.createTableForNameSql(targetTable, dimensions)
+      );
+      await instance.validateExistingEmbeddingTableSchema(
+        pgClient,
+        targetTable
+      );
+      return {
+        success: true,
+        error: null,
+        tableName: targetTable,
+        dimensions: Number(dimensions),
+      };
+    } catch (err) {
+      return {
+        success: false,
+        error: err.message,
+        tableName: targetTable,
+        dimensions: Number(dimensions),
+      };
+    } finally {
+      if (pgClient) await pgClient.end();
+    }
+  }
+
   /**
    * Test the connection to the database directly.
    * @returns {{error: string | null, success: boolean}}
@@ -412,6 +459,122 @@ class PGVector extends VectorDatabase {
     return result;
   }
 
+  lexicalSearchTerms(input = "") {
+    const STOP_WORDS = new Set([
+      "a",
+      "an",
+      "and",
+      "about",
+      "for",
+      "from",
+      "in",
+      "is",
+      "me",
+      "of",
+      "on",
+      "please",
+      "tell",
+      "the",
+      "to",
+      "what",
+      "who",
+    ]);
+
+    return String(input || "")
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, " ")
+      .split(/\s+/)
+      .map((term) => term.trim())
+      .filter((term) => term.length >= 2 && !STOP_WORDS.has(term));
+  }
+
+  async lexicalSearchResponse({
+    client,
+    namespace,
+    input,
+    topN = 4,
+    filterIdentifiers = [],
+  }) {
+    const result = {
+      contextTexts: [],
+      sourceDocuments: [],
+      scores: [],
+    };
+
+    const response = await client.query(
+      `SELECT metadata,
+              ts_rank_cd(
+                to_tsvector('english', coalesce(metadata->>'text', '')),
+                websearch_to_tsquery('english', $2)
+              ) AS rank
+         FROM "${PGVector.tableName()}"
+        WHERE namespace = $1
+          AND to_tsvector('english', coalesce(metadata->>'text', '')) @@ websearch_to_tsquery('english', $2)
+        ORDER BY rank DESC
+        LIMIT $3`,
+      [namespace, input, topN]
+    );
+
+    response.rows.forEach((item) => {
+      if (filterIdentifiers.includes(sourceIdentifier(item.metadata))) {
+        this.logger(
+          "A source was filtered from lexical context as its parent document is pinned."
+        );
+        return;
+      }
+
+      result.contextTexts.push(item.metadata.text);
+      result.sourceDocuments.push({
+        ...item.metadata,
+        score: Number(item.rank) || 0,
+      });
+      result.scores.push(Number(item.rank) || 0);
+    });
+
+    if (result.contextTexts.length > 0) {
+      return result;
+    }
+
+    const terms = this.lexicalSearchTerms(input);
+    if (terms.length === 0) {
+      return result;
+    }
+
+    const likeClauses = terms
+      .map(
+        (_, index) =>
+          `lower(coalesce(metadata->>'text', '')) LIKE $${index + 2}`
+      )
+      .join(" AND ");
+    const values = [namespace, ...terms.map((term) => `%${term}%`), topN];
+    const fallbackResponse = await client.query(
+      `SELECT metadata
+         FROM "${PGVector.tableName()}"
+        WHERE namespace = $1
+          AND ${likeClauses}
+        LIMIT $${values.length}`,
+      values
+    );
+
+    fallbackResponse.rows.forEach((item) => {
+      if (filterIdentifiers.includes(sourceIdentifier(item.metadata))) {
+        this.logger(
+          "A source was filtered from lexical fallback context as its parent document is pinned."
+        );
+        return;
+      }
+
+      result.contextTexts.push(item.metadata.text);
+      result.sourceDocuments.push({
+        ...item.metadata,
+        score: 1,
+      });
+      result.scores.push(1);
+    });
+
+    return result;
+  }
+
   normalizeVector(vector) {
     const magnitude = Math.sqrt(
       vector.reduce((sum, val) => sum + val * val, 0)
@@ -556,30 +719,60 @@ class PGVector extends VectorDatabase {
       connection = await this.connect();
 
       this.logger("Adding new vectorized document into namespace", namespace);
+      const EmbedderEngine = getEmbeddingEngineSelection();
+      const isCompatibleCache = (cacheResult) => {
+        if (!cacheResult?.exists) return false;
+        if (cacheResult.legacy) return false;
+        const cachedEngine = cacheResult?.metadata?.embeddingEngine || null;
+        const activeEngine = process.env.EMBEDDING_ENGINE || "native";
+        if (cachedEngine !== activeEngine) return false;
+
+        const cachedDimensions = Number(
+          cacheResult?.metadata?.vectorDimensions || 0
+        );
+        const cachedVector =
+          Array.isArray(cacheResult?.chunks) &&
+          Array.isArray(cacheResult.chunks[0]) &&
+          cacheResult.chunks[0][0] &&
+          Array.isArray(cacheResult.chunks[0][0].values)
+            ? cacheResult.chunks[0][0].values
+            : null;
+        const resolvedDimensions =
+          cachedDimensions ||
+          (Array.isArray(cachedVector) ? cachedVector.length : 0);
+        return resolvedDimensions > 0;
+      };
+
       if (!skipCache) {
         const cacheResult = await cachedVectorInformation(fullFilePath);
         let vectorDimensions;
         if (cacheResult.exists) {
-          const { chunks } = cacheResult;
-          const documentVectors = [];
-          const submissions = [];
+          if (!isCompatibleCache(cacheResult)) {
+            this.logger(
+              "Ignoring incompatible cached vectors and re-embedding document."
+            );
+          } else {
+            const { chunks } = cacheResult;
+            const documentVectors = [];
+            const submissions = [];
 
-          for (const chunk of chunks.flat()) {
-            if (!vectorDimensions) vectorDimensions = chunk.values.length;
-            const id = uuidv4();
-            const { id: _id, ...metadata } = chunk.metadata;
-            documentVectors.push({ docId, vectorId: id });
-            submissions.push({ id: id, vector: chunk.values, metadata });
+            for (const chunk of chunks.flat()) {
+              if (!vectorDimensions) vectorDimensions = chunk.values.length;
+              const id = uuidv4();
+              const { id: _id, ...metadata } = chunk.metadata;
+              documentVectors.push({ docId, vectorId: id });
+              submissions.push({ id: id, vector: chunk.values, metadata });
+            }
+
+            await this.updateOrCreateCollection({
+              connection,
+              submissions,
+              namespace,
+              dimensions: vectorDimensions,
+            });
+            await DocumentVectors.bulkInsert(documentVectors);
+            return { vectorized: true, error: null };
           }
-
-          await this.updateOrCreateCollection({
-            connection,
-            submissions,
-            namespace,
-            dimensions: vectorDimensions,
-          });
-          await DocumentVectors.bulkInsert(documentVectors);
-          return { vectorized: true, error: null };
         }
       }
 
@@ -588,7 +781,6 @@ class PGVector extends VectorDatabase {
       // because we then cannot atomically control our namespace to granularly find/remove documents
       // from vectordb.
       const { SystemSettings } = require("../../../models/systemSettings");
-      const EmbedderEngine = getEmbeddingEngineSelection();
       const textSplitter = new TextSplitter({
         chunkSize: TextSplitter.determineMaxChunkSize(
           await SystemSettings.getValueOrFallback({
@@ -737,24 +929,57 @@ class PGVector extends VectorDatabase {
         };
       }
 
-      const queryVector = await LLMConnector.embedTextInput(input);
-      const result = await this.similarityResponse({
+      try {
+        const queryVector = await LLMConnector.embedTextInput(input);
+        const result = await this.similarityResponse({
+          client: connection,
+          namespace,
+          queryVector,
+          similarityThreshold,
+          topN,
+          filterIdentifiers,
+        });
+
+        if (result.contextTexts.length > 0) {
+          const { contextTexts, sourceDocuments } = result;
+          const sources = sourceDocuments.map((metadata, i) => {
+            return { metadata: { ...metadata, text: contextTexts[i] } };
+          });
+          return {
+            contextTexts,
+            sources: this.curateSources(sources),
+            message: false,
+          };
+        }
+
+        this.logger(
+          `Vector similarity returned no results for namespace ${namespace}. Falling back to lexical search.`
+        );
+      } catch (error) {
+        this.logger(
+          `Vector similarity failed for namespace ${namespace}. Falling back to lexical search. ${error.message}`
+        );
+      }
+
+      const lexicalResult = await this.lexicalSearchResponse({
         client: connection,
         namespace,
-        queryVector,
-        similarityThreshold,
+        input,
         topN,
         filterIdentifiers,
       });
-
-      const { contextTexts, sourceDocuments } = result;
+      const { contextTexts, sourceDocuments } = lexicalResult;
       const sources = sourceDocuments.map((metadata, i) => {
         return { metadata: { ...metadata, text: contextTexts[i] } };
       });
+
       return {
         contextTexts,
         sources: this.curateSources(sources),
-        message: false,
+        message:
+          contextTexts.length === 0
+            ? "Invalid query - no documents found for workspace!"
+            : false,
       };
     } catch (err) {
       return { error: err.message, success: false };

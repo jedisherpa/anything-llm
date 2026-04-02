@@ -9,6 +9,7 @@ const {
 } = require("../helpers/chat");
 const { writeResponseChunk } = require("../helpers/chat/responses");
 const { buildAttachedContextManifest } = require("./contextManifest");
+const { PrismExecutionHandler } = require("./prismExecutionHandler");
 const { grepAgents } = require("./agents");
 const {
   grepCommand,
@@ -28,8 +29,27 @@ async function streamChatWithWorkspace(
   user = null,
   thread = null,
   attachments = [],
-  { promptHandling = null, precisionMode = false } = {}
+  {
+    promptHandling = null,
+    precisionMode = false,
+    executionMode = "chat",
+    trustedSessionId = null,
+    executionContext = null,
+  } = {}
 ) {
+  if (executionMode === "execute") {
+    await PrismExecutionHandler.streamExecution({
+      response,
+      workspace,
+      message,
+      user,
+      thread,
+      attachments,
+      trustedSessionId,
+      executionContext,
+    });
+    return;
+  }
   const uuid = uuidv4();
   const updatedMessage = await grepCommand(message, user);
 

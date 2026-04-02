@@ -47,7 +47,9 @@ function getImportedLensHandles() {
   return safeRead("lens index", [], () =>
     uniqueStrings([
       ...getLensIndex().map((lens) => lens.handle),
-      ...(typeof getLensAliasHandles === "function" ? getLensAliasHandles() : []),
+      ...(typeof getLensAliasHandles === "function"
+        ? getLensAliasHandles()
+        : []),
     ])
   );
 }
@@ -130,6 +132,9 @@ function getImportedLensDefinition(handle = "", functions = []) {
       lensId: lens.id,
       lensTitle: lens.title,
       board: lens.board,
+      preferredBackends:
+        detail.preferredBackends || lens.preferredBackends || [],
+      fallbackBackends: detail.fallbackBackends || lens.fallbackBackends || [],
       functions: [...functions],
     },
   };
@@ -162,13 +167,49 @@ function getConstellationExecutionPlan(constellationOrHandle = "") {
     .map((member) => {
       if (!member?.lensHandle) return null;
       const lens = getImportedLensByHandle(member.lensHandle);
+      const detail = getImportedLensDetailByHandle(member.lensHandle);
       if (!lens) return null;
       return {
         ...member,
         lens,
+        preferredBackends:
+          detail?.preferredBackends || lens.preferredBackends || [],
+        fallbackBackends:
+          detail?.fallbackBackends || lens.fallbackBackends || [],
       };
     })
     .filter(Boolean);
+
+  const projectManagerDetail = projectManager?.handle
+    ? getImportedLensDetailByHandle(projectManager.handle)
+    : null;
+  const executionRoutes = Object.fromEntries(
+    uniqueStrings([
+      projectManager?.handle,
+      ...members.map((member) => member.lens.handle),
+    ])
+      .map((handle) => {
+        const member =
+          projectManager?.handle === handle
+            ? {
+                preferredBackends:
+                  projectManagerDetail?.preferredBackends ||
+                  projectManager?.preferredBackends ||
+                  [],
+                fallbackBackends:
+                  projectManagerDetail?.fallbackBackends ||
+                  projectManager?.fallbackBackends ||
+                  [],
+              }
+            : members.find((entry) => entry.lens.handle === handle);
+        const routeBackends = uniqueStrings([
+          ...(member?.preferredBackends || []),
+          ...(member?.fallbackBackends || []),
+        ]);
+        return [handle, routeBackends];
+      })
+      .filter(([_, backends]) => backends.length > 0)
+  );
 
   return {
     constellation,
@@ -178,6 +219,7 @@ function getConstellationExecutionPlan(constellationOrHandle = "") {
       projectManager?.handle,
       ...members.map((member) => member.lens.handle),
     ]),
+    executionRoutes,
   };
 }
 
@@ -189,6 +231,7 @@ function parseCouncilPackPrompt(prompt = "") {
   let leadHandle = "";
   let readingQuery = false;
   const queryLines = [];
+  const executionRoutes = {};
 
   lines.forEach((line, index) => {
     const trimmed = line.trim();
@@ -212,7 +255,10 @@ function parseCouncilPackPrompt(prompt = "") {
     }
 
     if (/^lead:\s*/i.test(trimmed)) {
-      leadHandle = trimmed.replace(/^lead:\s*/i, "").trim().toLowerCase();
+      leadHandle = trimmed
+        .replace(/^lead:\s*/i, "")
+        .trim()
+        .toLowerCase();
       return;
     }
 
@@ -220,6 +266,23 @@ function parseCouncilPackPrompt(prompt = "") {
       const inlineQuery = trimmed.replace(/^user query:\s*/i, "");
       if (inlineQuery) queryLines.push(inlineQuery);
       readingQuery = true;
+      return;
+    }
+
+    if (/^route:\s*/i.test(trimmed)) {
+      const routeLine = trimmed.replace(/^route:\s*/i, "");
+      const [handlePart, backendPart] = routeLine.split(/\s*->\s*/);
+      const handle = String(handlePart || "")
+        .trim()
+        .toLowerCase();
+      const backends = uniqueStrings(
+        String(backendPart || "")
+          .split(",")
+          .map((value) => value.trim())
+      );
+      if (handle.startsWith("@") && backends.length > 0) {
+        executionRoutes[handle] = backends;
+      }
       return;
     }
 
@@ -233,6 +296,7 @@ function parseCouncilPackPrompt(prompt = "") {
     handles: uniqueStrings(handles),
     leadHandle: leadHandle.startsWith("@") ? leadHandle : "",
     userQuery: queryLines.join("\n").trim(),
+    executionRoutes,
   };
 }
 

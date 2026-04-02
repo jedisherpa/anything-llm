@@ -12,6 +12,10 @@ export const USER_PROMPT_INPUT_MAP = "anythingllm_user_prompt_input_map";
 export const PENDING_HOME_MESSAGE = "anythingllm_pending_home_message";
 export const ACTIVE_METACANON_ALIGNMENT =
   "anythingllm_active_metacanon_alignment";
+export const PRISM_HOME_FIRST_RUN_HINT_DISMISSED =
+  "anythingllm_prism_home_first_run_hint_dismissed";
+export const PRISM_WORKSPACE_FIRST_RUN_HINT_DISMISSED =
+  "anythingllm_prism_workspace_first_run_hint_dismissed";
 
 export const APPEARANCE_SETTINGS = "anythingllm_appearance_settings";
 

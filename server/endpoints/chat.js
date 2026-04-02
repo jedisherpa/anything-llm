@@ -4,6 +4,9 @@ const { validatedRequest } = require("../utils/middleware/validatedRequest");
 const { Telemetry } = require("../models/telemetry");
 const { streamChatWithWorkspace } = require("../utils/chats/stream");
 const {
+  PrismExecutionHandler,
+} = require("../utils/chats/prismExecutionHandler");
+const {
   ROLES,
   flexUserRoleValid,
 } = require("../utils/middleware/multiUserProtected");
@@ -21,6 +24,162 @@ const { getModelTag } = require("./utils");
 function chatEndpoints(app) {
   if (!app) return;
 
+  app.get(
+    "/workspace/:slug/execute-session/status",
+    [validatedRequest, flexUserRoleValid([ROLES.all]), validWorkspaceSlug],
+    async (request, response) => {
+      try {
+        const trustedSessionId =
+          String(request.query?.trustedSessionId ?? "").trim() || null;
+        const workspace = response.locals.workspace;
+        const result = await PrismExecutionHandler.getStatus({
+          workspace,
+          thread: null,
+          trustedSessionId,
+        });
+        response.status(200).json(result);
+      } catch (e) {
+        response.status(500).json({
+          error: e.message,
+        });
+      }
+    }
+  );
+
+  app.get(
+    "/workspace/:slug/thread/:threadSlug/execute-session/status",
+    [
+      validatedRequest,
+      flexUserRoleValid([ROLES.all]),
+      validWorkspaceAndThreadSlug,
+    ],
+    async (request, response) => {
+      try {
+        const trustedSessionId =
+          String(request.query?.trustedSessionId ?? "").trim() || null;
+        const workspace = response.locals.workspace;
+        const thread = response.locals.thread;
+        const result = await PrismExecutionHandler.getStatus({
+          workspace,
+          thread,
+          trustedSessionId,
+        });
+        response.status(200).json(result);
+      } catch (e) {
+        response.status(500).json({
+          error: e.message,
+        });
+      }
+    }
+  );
+
+  app.post(
+    "/workspace/:slug/execute-session/config",
+    [validatedRequest, flexUserRoleValid([ROLES.all]), validWorkspaceSlug],
+    async (request, response) => {
+      try {
+        const { demoModeEnabled } = reqBody(request);
+        const result = await PrismExecutionHandler.updateConfig({
+          demoModeEnabled,
+        });
+        response.status(200).json(result);
+      } catch (e) {
+        response.status(500).json({
+          error: e.message,
+        });
+      }
+    }
+  );
+
+  app.post(
+    "/workspace/:slug/thread/:threadSlug/execute-session/config",
+    [
+      validatedRequest,
+      flexUserRoleValid([ROLES.all]),
+      validWorkspaceAndThreadSlug,
+    ],
+    async (request, response) => {
+      try {
+        const { demoModeEnabled } = reqBody(request);
+        const result = await PrismExecutionHandler.updateConfig({
+          demoModeEnabled,
+        });
+        response.status(200).json(result);
+      } catch (e) {
+        response.status(500).json({
+          error: e.message,
+        });
+      }
+    }
+  );
+
+  app.post(
+    "/workspace/:slug/execute-session/action",
+    [validatedRequest, flexUserRoleValid([ROLES.all]), validWorkspaceSlug],
+    async (request, response) => {
+      try {
+        const {
+          trustedSessionId,
+          action,
+          pendingActionId = null,
+          reason = null,
+        } = reqBody(request);
+        const workspace = response.locals.workspace;
+
+        const result = await PrismExecutionHandler.applySessionAction({
+          workspace,
+          thread: null,
+          trustedSessionId,
+          action,
+          pendingActionId,
+          reason,
+        });
+
+        response.status(200).json(result);
+      } catch (e) {
+        response.status(500).json({
+          error: e.message,
+        });
+      }
+    }
+  );
+
+  app.post(
+    "/workspace/:slug/thread/:threadSlug/execute-session/action",
+    [
+      validatedRequest,
+      flexUserRoleValid([ROLES.all]),
+      validWorkspaceAndThreadSlug,
+    ],
+    async (request, response) => {
+      try {
+        const {
+          trustedSessionId,
+          action,
+          pendingActionId = null,
+          reason = null,
+        } = reqBody(request);
+        const workspace = response.locals.workspace;
+        const thread = response.locals.thread;
+
+        const result = await PrismExecutionHandler.applySessionAction({
+          workspace,
+          thread,
+          trustedSessionId,
+          action,
+          pendingActionId,
+          reason,
+        });
+
+        response.status(200).json(result);
+      } catch (e) {
+        response.status(500).json({
+          error: e.message,
+        });
+      }
+    }
+  );
+
   app.post(
     "/workspace/:slug/stream-chat",
     [validatedRequest, flexUserRoleValid([ROLES.all]), validWorkspaceSlug],
@@ -32,6 +191,9 @@ function chatEndpoints(app) {
           attachments = [],
           promptHandling = null,
           precisionMode = false,
+          executionMode = "chat",
+          trustedSessionId = null,
+          executionContext = null,
         } = reqBody(request);
         const workspace = response.locals.workspace;
 
@@ -73,7 +235,13 @@ function chatEndpoints(app) {
           user,
           null,
           attachments,
-          { promptHandling, precisionMode }
+          {
+            promptHandling,
+            precisionMode,
+            executionMode,
+            trustedSessionId,
+            executionContext,
+          }
         );
         await Telemetry.sendTelemetry("sent_chat", {
           multiUserMode: multiUserMode(response),
@@ -124,6 +292,9 @@ function chatEndpoints(app) {
           attachments = [],
           promptHandling = null,
           precisionMode = false,
+          executionMode = "chat",
+          trustedSessionId = null,
+          executionContext = null,
         } = reqBody(request);
         const workspace = response.locals.workspace;
         const thread = response.locals.thread;
@@ -166,7 +337,13 @@ function chatEndpoints(app) {
           user,
           thread,
           attachments,
-          { promptHandling, precisionMode }
+          {
+            promptHandling,
+            precisionMode,
+            executionMode,
+            trustedSessionId,
+            executionContext,
+          }
         );
 
         // If thread was renamed emit event to frontend via special `action` response.

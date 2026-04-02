@@ -17,12 +17,15 @@ impl Default for RuntimeMode {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub(crate) struct RuntimeConfig {
     pub(crate) mode: RuntimeMode,
+    #[serde(default)]
+    pub(crate) execution_engine_url: Option<String>,
 }
 
 impl Default for RuntimeConfig {
     fn default() -> Self {
         Self {
             mode: RuntimeMode::Desktop,
+            execution_engine_url: None,
         }
     }
 }
@@ -38,6 +41,49 @@ pub(crate) struct RuntimeStatus {
     pub(crate) startup_phase: StartupPhase,
     pub(crate) startup_detail: Option<String>,
     pub(crate) startup_error: Option<String>,
+    pub(crate) execution_engine_url: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub(crate) struct BundledComponent {
+    pub(crate) id: String,
+    pub(crate) label: String,
+    pub(crate) version: String,
+    pub(crate) commit: Option<String>,
+    pub(crate) source: String,
+    pub(crate) bundled: bool,
+    pub(crate) detail: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub(crate) struct BundleMetadata {
+    pub(crate) generated_at: Option<String>,
+    pub(crate) desktop_version: Option<String>,
+    pub(crate) components: Vec<BundledComponent>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub(crate) enum ReleaseCheckState {
+    Ready,
+    Attention,
+    Missing,
+    NotConfigured,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub(crate) struct ReleaseCheck {
+    pub(crate) id: String,
+    pub(crate) label: String,
+    pub(crate) state: ReleaseCheckState,
+    pub(crate) detail: String,
+    pub(crate) hint: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub(crate) struct ReleaseReadiness {
+    pub(crate) bundle_metadata: BundleMetadata,
+    pub(crate) dependency_checks: Vec<ReleaseCheck>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]

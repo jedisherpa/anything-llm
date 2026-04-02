@@ -310,26 +310,56 @@ class LanceDb extends VectorDatabase {
       if (!pageContent || pageContent.length == 0) return false;
 
       this.logger("Adding new vectorized document into namespace", namespace);
+      const EmbedderEngine = getEmbeddingEngineSelection();
+      const isCompatibleCache = (cacheResult) => {
+        if (!cacheResult?.exists) return false;
+        if (cacheResult.legacy) return false;
+        const cachedEngine = cacheResult?.metadata?.embeddingEngine || null;
+        const activeEngine = process.env.EMBEDDING_ENGINE || "native";
+        if (cachedEngine !== activeEngine) return false;
+
+        const cachedDimensions = Number(
+          cacheResult?.metadata?.vectorDimensions || 0
+        );
+        const cachedVector =
+          Array.isArray(cacheResult?.chunks) &&
+          Array.isArray(cacheResult.chunks[0]) &&
+          cacheResult.chunks[0][0] &&
+          Array.isArray(cacheResult.chunks[0][0].values)
+            ? cacheResult.chunks[0][0].values
+            : null;
+        const resolvedDimensions =
+          cachedDimensions ||
+          (Array.isArray(cachedVector) ? cachedVector.length : 0);
+        return resolvedDimensions > 0;
+      };
+
       if (!skipCache) {
         const cacheResult = await cachedVectorInformation(fullFilePath);
         if (cacheResult.exists) {
-          const { client } = await this.connect();
-          const { chunks } = cacheResult;
-          const documentVectors = [];
-          const submissions = [];
+          if (!isCompatibleCache(cacheResult)) {
+            this.logger(
+              "Ignoring incompatible cached vectors and re-embedding document."
+            );
+          } else {
+            const { client } = await this.connect();
+            const { chunks } = cacheResult;
+            const documentVectors = [];
+            const submissions = [];
 
-          for (const chunk of chunks) {
-            chunk.forEach((chunk) => {
-              const id = uuidv4();
-              const { id: _id, ...metadata } = chunk.metadata;
-              documentVectors.push({ docId, vectorId: id });
-              submissions.push({ id: id, vector: chunk.values, ...metadata });
-            });
+            for (const chunk of chunks) {
+              chunk.forEach((chunk) => {
+                const id = uuidv4();
+                const { id: _id, ...metadata } = chunk.metadata;
+                documentVectors.push({ docId, vectorId: id });
+                submissions.push({ id: id, vector: chunk.values, ...metadata });
+              });
+            }
+
+            await this.updateOrCreateCollection(client, submissions, namespace);
+            await DocumentVectors.bulkInsert(documentVectors);
+            return { vectorized: true, error: null };
           }
-
-          await this.updateOrCreateCollection(client, submissions, namespace);
-          await DocumentVectors.bulkInsert(documentVectors);
-          return { vectorized: true, error: null };
         }
       }
 
@@ -337,7 +367,6 @@ class LanceDb extends VectorDatabase {
       // We have to do this manually as opposed to using LangChains `xyz.fromDocuments`
       // because we then cannot atomically control our namespace to granularly find/remove documents
       // from vectordb.
-      const EmbedderEngine = getEmbeddingEngineSelection();
       const textSplitter = new TextSplitter({
         chunkSize: TextSplitter.determineMaxChunkSize(
           await SystemSettings.getValueOrFallback({
@@ -445,6 +474,7 @@ class LanceDb extends VectorDatabase {
         });
 
     const { contextTexts, sourceDocuments } = result;
+
     const sources = sourceDocuments.map((metadata, i) => {
       return { metadata: { ...metadata, text: contextTexts[i] } };
     });

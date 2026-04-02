@@ -233,7 +233,7 @@ function loadSourceMetadata() {
 
   return {
     upstreamVersion: pkg.version,
-    upstreamRepositoryUrl: pkg.repository?.url || "https://github.com/mintplex-labs/anything-llm",
+    upstreamRepositoryUrl: pkg.repository?.url || "https://github.com/mintplex-labs/anything-llm (PrismAI edition)",
     gitSha,
     gitDirty,
   };

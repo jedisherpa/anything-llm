@@ -17,6 +17,8 @@ export default function QuickActions({
   onEditWorkspace,
   onUploadDocument,
   onConnectLLM,
+  onOpenReadiness,
+  onOpenSetup,
 }) {
   const { t } = useTranslation();
   const { user } = useUser();
@@ -45,6 +47,16 @@ export default function QuickActions({
         label={t("main-page.quickActions.uploadDocument")}
         onClick={onUploadDocument}
         // Any user can upload documents.
+        show={true}
+      />
+      <QuickActionButton
+        label="System Status"
+        onClick={onOpenReadiness}
+        show={true}
+      />
+      <QuickActionButton
+        label="Guided Setup"
+        onClick={onOpenSetup}
         show={true}
       />
     </div>

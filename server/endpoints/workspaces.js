@@ -39,6 +39,32 @@ const { getModelTag } = require("./utils");
 const { searchWorkspaceAndThreads } = require("../utils/helpers/search");
 const { workspaceParsedFilesEndpoints } = require("./workspacesParsedFiles");
 
+const ttsInflightRequests = new Map();
+
+async function synthesizeTTSWithRetry(
+  text,
+  { retries = 1, retryDelayMs = 600 } = {}
+) {
+  const TTSProvider = getTTSProvider();
+  let lastError = null;
+
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const buffer = await TTSProvider.ttsBuffer(text);
+      return {
+        buffer,
+        mime: TTSProvider.mimeType || "audio/mpeg",
+      };
+    } catch (error) {
+      lastError = error;
+      if (attempt === retries) break;
+      await new Promise((resolve) => setTimeout(resolve, retryDelayMs));
+    }
+  }
+
+  throw lastError;
+}
+
 function workspaceEndpoints(app) {
   if (!app) return;
   const responseCache = new Map();
@@ -619,10 +645,19 @@ function workspaceEndpoints(app) {
         const text = safeJsonParse(wsChat.response, null)?.text;
         if (!text) return response.sendStatus(204).end();
 
-        const TTSProvider = getTTSProvider();
-        const buffer = await TTSProvider.ttsBuffer(text);
+        const inflightSynthesis = ttsInflightRequests.get(cacheKey);
+        const synthesisPromise =
+          inflightSynthesis ||
+          synthesizeTTSWithRetry(text).finally(() => {
+            ttsInflightRequests.delete(cacheKey);
+          });
+
+        if (!inflightSynthesis) {
+          ttsInflightRequests.set(cacheKey, synthesisPromise);
+        }
+
+        const { buffer, mime } = await synthesisPromise;
         if (buffer === null) return response.sendStatus(204).end();
-        const mime = TTSProvider.mimeType || "audio/mpeg";
 
         responseCache.set(cacheKey, { buffer, mime });
         response.writeHead(200, {

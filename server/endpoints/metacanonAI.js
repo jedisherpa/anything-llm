@@ -18,7 +18,9 @@ const {
   getLibraryManifest,
   getLibraryItem,
   getLibraryCollection,
+  clearMetacanonStoreCaches,
 } = require("../utils/agents/metacanon/store");
+const { saveCustomLens } = require("../utils/agents/metacanon/customLenses");
 
 const PROTECTED_ROUTE = [
   validatedRequest,
@@ -214,6 +216,53 @@ function metacanonAIEndpoints(app) {
         response.status(200).json(item);
       } catch (error) {
         response.status(400).json({ error: error.message });
+      }
+    }
+  );
+
+  app.post(
+    "/metacanonai/library/custom-lens",
+    REPO_WRITE_ROUTE,
+    async (request, response) => {
+      try {
+        const {
+          sourceId = "",
+          id = "",
+          title = "",
+          handle = "",
+          content = "",
+          preferredBackends = [],
+          fallbackBackends = [],
+        } = reqBody(request);
+
+        const baseLens =
+          getLibraryItem("lenses", String(sourceId || id || "").trim()) || null;
+
+        const item = saveCustomLens(
+          {
+            id: String(id || sourceId || baseLens?.id || "").trim(),
+            sourceId: String(sourceId || baseLens?.id || "").trim() || null,
+            title,
+            handle,
+            content,
+            boardSlug: baseLens?.boardSlug,
+            board: baseLens?.board,
+            collectionKind: baseLens?.collectionKind,
+            collectionLabel: baseLens?.collectionLabel,
+            councilId: baseLens?.councilId,
+            councilName: baseLens?.councilName,
+            phase: baseLens?.phase,
+            preferredBackends,
+            fallbackBackends,
+            createdAt: baseLens?.createdAt,
+          },
+          baseLens
+        );
+
+        clearMetacanonStoreCaches();
+        response.status(200).json({ success: true, item });
+      } catch (error) {
+        response.status(400).json({ success: false, error: error.message });
       }
     }
   );

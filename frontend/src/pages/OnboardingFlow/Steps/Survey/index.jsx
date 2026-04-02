@@ -9,6 +9,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Workspace from "@/models/workspace";
+import System from "@/models/system";
 
 async function sendQuestionnaire({ email, useCase, comment }) {
   if (import.meta.env.DEV) {
@@ -55,12 +56,12 @@ export default function Survey({ setHeader, setForwardBtn, setBackBtn }) {
 
   function handleForward() {
     if (!!window?.localStorage?.getItem(COMPLETE_QUESTIONNAIRE)) {
-      navigate(paths.home());
+      finishOnboarding();
       return;
     }
 
     if (!formRef.current) {
-      skipSurvey();
+      void skipSurvey();
       return;
     }
 
@@ -76,11 +77,16 @@ export default function Survey({ setHeader, setForwardBtn, setBackBtn }) {
       return;
     }
 
-    skipSurvey();
+    void skipSurvey();
   }
 
-  function skipSurvey() {
+  async function finishOnboarding() {
+    await System.markOnboardingComplete();
     navigate(paths.home());
+  }
+
+  async function skipSurvey() {
+    await finishOnboarding();
   }
 
   function handleBack() {
@@ -117,7 +123,7 @@ export default function Survey({ setHeader, setForwardBtn, setBackBtn }) {
       comment: formData.get("comment") || null,
     });
 
-    navigate(paths.home());
+    await finishOnboarding();
   };
 
   if (!!window?.localStorage?.getItem(COMPLETE_QUESTIONNAIRE)) {
@@ -129,12 +135,9 @@ export default function Survey({ setHeader, setForwardBtn, setBackBtn }) {
             <p className="text-white text-lg">
               {t("onboarding.survey.thankYou")}
             </p>
-            <a
-              href={paths.mailToMintplex()}
-              className="text-sky-400 underline text-xs"
-            >
-              team@mintplexlabs.com
-            </a>
+            <span className="text-sky-400 text-xs">
+              Thank you for your feedback.
+            </span>
           </div>
         </div>
       </div>

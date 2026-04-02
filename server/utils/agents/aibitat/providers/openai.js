@@ -13,7 +13,7 @@ class OpenAIProvider extends Provider {
   constructor(config = {}) {
     const {
       options = {
-        apiKey: process.env.OPEN_AI_KEY,
+        apiKey: config.apiKey || process.env.OPEN_AI_KEY,
         maxRetries: 3,
       },
       model = "gpt-4o",

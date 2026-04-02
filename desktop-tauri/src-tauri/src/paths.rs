@@ -43,7 +43,7 @@ pub(crate) fn resolve_data_dir(app: &tauri::App) -> Result<PathBuf, String> {
     app_data_dir(&app.config()).ok_or_else(|| "Unable to resolve app data directory.".to_string())
 }
 
-fn bundled_runtime_root(app: &tauri::App) -> Option<PathBuf> {
+pub(crate) fn bundled_runtime_root(app: &tauri::App) -> Option<PathBuf> {
     let resolver = app.path_resolver();
     [
         resolver.resolve_resource("runtime"),

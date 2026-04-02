@@ -28,11 +28,31 @@ function signalAgentResponse(detail = {}) {
   signalPrismResponse({ source: "agent-stream", ...detail });
 }
 
+function closeTerminalAgentSocket(socket) {
+  if (!socket || socket.agentSessionClosedByClient) return;
+  socket.agentSessionTerminalResponseSeen = true;
+  socket.agentSessionClosedByClient = true;
+  try {
+    socket.close();
+  } catch {
+    // no-op
+  }
+}
+
+function finalizeAgentPresence() {
+  setAgentSessionActive(false);
+  window.dispatchEvent(new CustomEvent(AGENT_SESSION_END));
+  signalAgentResponse({ state: "response" });
+}
+
 export default function handleSocketResponse(socket, event, setChatHistory) {
   const data = safeJsonParse(event.data, null);
   if (data === null) return;
 
   if (data.type === "agentSessionReady") {
+    if (socket.agentSessionTerminalResponseSeen) {
+      return;
+    }
     socket.agentSessionReady = true;
     socket.agentSessionFailed = false;
     if (socket.agentSessionInitTimeout) {
@@ -47,7 +67,8 @@ export default function handleSocketResponse(socket, event, setChatHistory) {
   // No message type is defined then this is a generic message
   // that we need to print to the user as a system response
   if (!data.hasOwnProperty("type") && !socket.supportsAgentStreaming) {
-    signalAgentResponse({ type: "genericMessage" });
+    finalizeAgentPresence();
+    closeTerminalAgentSocket(socket);
     return setChatHistory((prev) => {
       return [
         ...prev.filter((msg) => !!msg.content),
@@ -66,6 +87,13 @@ export default function handleSocketResponse(socket, event, setChatHistory) {
   }
 
   if (!handledEvents.includes(data.type) || !data.content) return;
+  if (
+    socket.agentSessionTerminalResponseSeen &&
+    data.type !== "wssFailure" &&
+    data.type !== "fileDownload"
+  ) {
+    return;
+  }
   socket.agentSessionHadActivity = true;
 
   if (data.type === "reportStreamEvent") {
@@ -73,16 +101,26 @@ export default function handleSocketResponse(socket, event, setChatHistory) {
     // If we get this message we know the provider supports agentic streaming
     socket.supportsAgentStreaming = true;
 
+    if (
+      data.content?.type === "statusResponse" &&
+      /done thinking|agent session complete/i.test(
+        String(data.content?.content || "")
+      )
+    ) {
+      finalizeAgentPresence();
+    }
+
     return setChatHistory((prev) => {
       if (data.content.type === "removeStatusResponse")
         return [...prev.filter((msg) => msg.uuid !== data.content.uuid)];
 
-      const knownMessage = data.content.uuid
+        const knownMessage = data.content.uuid
         ? prev.find((msg) => msg.uuid === data.content.uuid)
         : null;
       if (!knownMessage) {
         if (data.content.type === "fullTextResponse") {
-          signalAgentResponse({ type: "fullTextResponse" });
+          finalizeAgentPresence();
+          closeTerminalAgentSocket(socket);
           return [
             ...prev.filter((msg) => !!msg.content),
             {
@@ -104,7 +142,7 @@ export default function handleSocketResponse(socket, event, setChatHistory) {
         // Providers like Gemini send large chunks and can complete in a single chunk before the update logic can convert it.
         // Other providers send many small chunks so the second chunk triggers the update logic to fix the type.
         if (data.content.type === "textResponseChunk") {
-          signalAgentResponse({ type: "textResponseChunk", initial: true });
+          finalizeAgentPresence();
           return [
             ...prev.filter((msg) => !!msg.content),
             {
@@ -150,6 +188,7 @@ export default function handleSocketResponse(socket, event, setChatHistory) {
         }
 
         if (type === "textResponseChunk") {
+          finalizeAgentPresence();
           return prev
             .map((msg) =>
               msg.uuid === uuid
@@ -163,6 +202,20 @@ export default function handleSocketResponse(socket, event, setChatHistory) {
                   : null
             )
             .filter((msg) => !!msg);
+        }
+
+        if (type === "fullTextResponse") {
+          finalizeAgentPresence();
+          closeTerminalAgentSocket(socket);
+          return prev.map((msg) =>
+            msg.uuid === uuid
+              ? {
+                  ...msg,
+                  type: "textResponse",
+                  content,
+                }
+              : msg
+          );
         }
 
         // Generic text response - will be put in the agent thought bubble
@@ -229,7 +282,7 @@ export default function handleSocketResponse(socket, event, setChatHistory) {
     data.type === "statusResponse" &&
     /done thinking/i.test(String(data.content || ""))
   ) {
-    signalAgentResponse({ type: "statusResponse", state: "doneThinking" });
+    finalizeAgentPresence();
   }
 
   return setChatHistory((prev) => {

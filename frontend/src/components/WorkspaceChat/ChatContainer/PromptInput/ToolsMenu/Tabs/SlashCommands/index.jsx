@@ -9,7 +9,7 @@ import EditPresetModal from "./SlashPresets/EditPresetModal";
 import PublishEntityModal from "@/components/CommunityHub/PublishEntityModal";
 import showToast from "@/utils/toast";
 import { useIsAgentSessionActive } from "@/utils/chat/agent";
-import { PROMPT_INPUT_EVENT } from "@/components/WorkspaceChat/ChatContainer/PromptInput";
+import { PROMPT_INPUT_EVENT } from "@/components/WorkspaceChat/ChatContainer/PromptInput/constants";
 import useToolsMenuItems from "../../useToolsMenuItems";
 import SlashCommandRow from "./SlashCommandRow";
 
@@ -41,14 +41,14 @@ export default function SlashCommandsTab({
   const [selectedPreset, setSelectedPreset] = useState(null);
   const [presetToPublish, setPresetToPublish] = useState(null);
 
-  useEffect(() => {
-    fetchPresets();
+  const fetchPresets = useCallback(async () => {
+    const nextPresets = await System.getSlashCommandPresets();
+    setPresets(nextPresets);
   }, []);
 
-  const fetchPresets = async () => {
-    const presets = await System.getSlashCommandPresets();
-    setPresets(presets);
-  };
+  useEffect(() => {
+    fetchPresets();
+  }, [fetchPresets]);
 
   // Build the list of selectable items for keyboard navigation and rendering
   // Command names must stay as static English strings since the backend
@@ -66,6 +66,12 @@ export default function SlashCommandsTab({
           {
             command: "/reset",
             description: t("chat_window.preset_reset_description"),
+            autoSubmit: true,
+          },
+          {
+            command: "/status",
+            description:
+              "Show the current workspace, model, vector backend, and readiness status.",
             autoSubmit: true,
           },
           {
@@ -105,7 +111,7 @@ export default function SlashCommandsTab({
         preset,
       })),
     ];
-  }, [isActiveAgentSession, presets]);
+  }, [isActiveAgentSession, presets, t]);
 
   const handleUseCommand = useCallback(
     (command, autoSubmit = false) => {

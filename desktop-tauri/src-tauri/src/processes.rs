@@ -135,6 +135,7 @@ pub(crate) fn spawn_server(
     storage_dir: &Path,
     node_bin: &str,
     runtime_secrets: &RuntimeSecrets,
+    execution_engine_url: Option<&str>,
     server_port: u16,
     collector_port: u16,
     log_path: &Path,
@@ -163,6 +164,13 @@ pub(crate) fn spawn_server(
         .env("JWT_SECRET", jwt_secret)
         .env("SIG_KEY", sig_key)
         .env("SIG_SALT", sig_salt);
+
+    if let Some(execution_engine_url) = execution_engine_url
+        .map(str::trim)
+        .filter(|value| !value.is_empty())
+    {
+        command.env("PRISM_EXECUTION_ENGINE_URL", execution_engine_url);
+    }
     apply_stdio(&mut command, log_path)?;
     command
         .spawn()
