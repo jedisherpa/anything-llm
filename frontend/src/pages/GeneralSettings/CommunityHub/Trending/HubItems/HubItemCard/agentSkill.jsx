@@ -9,35 +9,32 @@ export default function AgentSkillHubCard({ item }) {
       <Link
         key={item.id}
         to={paths.communityHub.importItem(item.importId)}
-        className="bg-black/70 light:bg-slate-100 rounded-lg p-3 hover:bg-black/60 light:hover:bg-slate-200 transition-all duration-200 cursor-pointer group border border-transparent hover:border-slate-400"
+        className="bg-theme-settings-input-bg light:bg-theme-bg-secondary rounded-[16px] p-4 hover:bg-theme-action-menu-item-hover transition-all duration-200 cursor-pointer group border border-theme-sidebar-border hover:border-theme-sidebar-border/80"
       >
         <div className="flex gap-x-2 items-center">
-          <p className="text-white text-sm font-medium">{item.name}</p>
+          <p className="text-theme-text-primary text-sm font-medium">{item.name}</p>
           <VisibilityIcon visibility={item.visibility} />
         </div>
         <div className="flex flex-col gap-2">
-          <p className="text-white/60 text-xs mt-1">{item.description}</p>
+          <p className="text-theme-text-secondary text-xs mt-1">{item.description}</p>
 
-          <p className="font-mono text-xs mt-1 text-white/60">
+          <p className="font-mono text-xs mt-1 text-theme-text-secondary">
             {item.verified ? (
-              <span className="text-green-500">Verified</span>
+              <span className="metacanon-lens-card__badge rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.14em]">Verified</span>
             ) : (
-              <span className="text-red-500">Unverified</span>
+              <span className="text-theme-text-secondary/60">Unverified</span>
             )}{" "}
             Skill
           </p>
-          <p className="font-mono text-xs mt-1 text-white/60">
+          <p className="font-mono text-xs mt-1 text-theme-text-secondary">
             {item.manifest.files?.length || 0}{" "}
             {pluralize("file", item.manifest.files?.length || 0)} found
           </p>
         </div>
         <div className="flex justify-end mt-2">
-          <Link
-            to={paths.communityHub.importItem(item.importId)}
-            className="text-primary-button hover:text-primary-button/80 text-sm font-medium px-3 py-1.5 rounded-md bg-black/30 light:bg-slate-200 group-hover:bg-black/50 light:group-hover:bg-slate-300 transition-all"
-          >
+          <span className="text-primary-button hover:text-primary-button/80 text-sm font-medium px-3 py-1.5 rounded-[14px] bg-theme-settings-input-bg group-hover:bg-theme-action-menu-item-hover transition-all border border-theme-sidebar-border">
             Import →
-          </Link>
+          </span>
         </div>
       </Link>
     </>

@@ -76,6 +76,51 @@ const appRoutes = [
         },
       },
       {
+        path: "/metacanonai/setup-status",
+        lazy: async () => {
+          const { default: SetupStatusPage } = await import(
+            "@/pages/MetacanonAI/SetupStatus"
+          );
+          return { element: <PrivateRoute Component={SetupStatusPage} /> };
+        },
+      },
+      {
+        path: "/metacanonai/council",
+        lazy: async () => {
+          const { default: CouncilPage } = await import(
+            "@/pages/MetacanonAI/Council"
+          );
+          return { element: <PrivateRoute Component={CouncilPage} /> };
+        },
+      },
+      {
+        path: "/metacanonai/files",
+        lazy: async () => {
+          const { default: FilesPage } = await import(
+            "@/pages/MetacanonAI/Files"
+          );
+          return { element: <PrivateRoute Component={FilesPage} /> };
+        },
+      },
+      {
+        path: "/metacanonai/sphere-threads",
+        lazy: async () => {
+          const { default: SphereThreadsPage } = await import(
+            "@/pages/MetacanonAI/SphereThreads"
+          );
+          return { element: <PrivateRoute Component={SphereThreadsPage} /> };
+        },
+      },
+      {
+        path: "/metacanonai/telegram",
+        lazy: async () => {
+          const { default: TelegramPage } = await import(
+            "@/pages/MetacanonAI/Telegram"
+          );
+          return { element: <PrivateRoute Component={TelegramPage} /> };
+        },
+      },
+      {
         path: "/workspace/:slug/settings/:tab",
         lazy: async () => {
           const { default: WorkspaceSettings } = await import(

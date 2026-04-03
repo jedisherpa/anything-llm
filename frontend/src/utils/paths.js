@@ -70,6 +70,21 @@ export default {
   metacanonAIRepoLab: () => {
     return "/metacanonai/repo-lab";
   },
+  metacanonAISetupStatus: () => {
+    return "/metacanonai/setup-status";
+  },
+  metacanonAICouncil: () => {
+    return "/metacanonai/council";
+  },
+  metacanonAIFiles: () => {
+    return "/metacanonai/files";
+  },
+  metacanonAISphereThreads: () => {
+    return "/metacanonai/sphere-threads";
+  },
+  metacanonAITelegram: () => {
+    return "/metacanonai/telegram";
+  },
   chatModes: () => {
     return "https://docs.anythingllm.com/features/chat-modes";
   },

@@ -534,6 +534,18 @@ export default function AdminAgents() {
                 handleClick={handleFlowClick}
               />
 
+              {/* Tool Intelligence Section */}
+              <div className="text-theme-text-primary flex items-center gap-x-2 mt-4">
+                <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 6h18M3 12h18M3 18h18" />
+                  <circle cx="7" cy="6" r="2" fill="currentColor" />
+                  <circle cx="17" cy="12" r="2" fill="currentColor" />
+                  <circle cx="10" cy="18" r="2" fill="currentColor" />
+                </svg>
+                <p className="text-lg font-medium">Tool Intelligence</p>
+              </div>
+              <ToolIntelligencePanel />
+
               <MCPServerHeader
                 setMcpServers={setMcpServers}
                 setSelectedMcpServer={setSelectedMcpServer}
@@ -622,6 +634,82 @@ export default function AdminAgents() {
         </div>
       </form>
     </SkillLayout>
+  );
+}
+
+function ToolIntelligencePanel() {
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState(null);
+
+  const testSelection = () => {
+    if (!query.trim()) return;
+    // Simulated tool scoring — replace with MCP tool_select call
+    const mockTools = [
+      { tool_id: "file_read", score: 0.6, reasoning: "matched: file" },
+      { tool_id: "file_write", score: 0.5, reasoning: "matched: file, save" },
+      { tool_id: "web_search", score: 0.4, reasoning: "matched: search" },
+      { tool_id: "deliberate", score: 0.3, reasoning: "matched: analyze" },
+      { tool_id: "file_list", score: 0.2, reasoning: "matched: file" },
+    ].filter((t) => {
+      const q = query.toLowerCase();
+      return t.reasoning.split(", ").some((kw) => q.includes(kw.replace("matched: ", "")));
+    });
+
+    setResults({
+      scored_tools: mockTools.length > 0 ? mockTools : [{ tool_id: "deliberate", score: 0.3, reasoning: "default fallback" }],
+      batches: [{ batch_index: 0, tool_ids: mockTools.map((t) => t.tool_id), parallel_safe: true }],
+      threshold: 0.2,
+    });
+  };
+
+  return (
+    <div className="flex flex-col gap-2 mt-2">
+      <div className="flex gap-2">
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && testSelection()}
+          placeholder="Test query: &quot;search files and write report&quot;"
+          className="flex-1 rounded-[14px] border border-theme-sidebar-border bg-theme-settings-input-bg px-3 py-1.5 text-xs text-theme-text-primary focus:outline-none focus:border-theme-primary-button/50"
+        />
+        <button
+          onClick={testSelection}
+          className="rounded-[14px] bg-theme-primary-button/20 px-3 py-1.5 text-xs font-semibold text-theme-primary-button hover:bg-theme-primary-button/30 transition-all"
+        >
+          Score
+        </button>
+      </div>
+      {results && (
+        <div className="flex flex-col gap-1.5">
+          {results.scored_tools.map((tool) => (
+            <div
+              key={tool.tool_id}
+              className="flex items-center justify-between rounded-[14px] border border-theme-sidebar-border bg-theme-settings-input-bg px-3 py-2"
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-medium text-theme-text-primary">{tool.tool_id}</span>
+                <span className="text-[10px] text-theme-text-secondary">{tool.reasoning}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-16 h-1.5 rounded-full bg-theme-sidebar-border overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-theme-primary-button"
+                    style={{ width: `${tool.score * 100}%` }}
+                  />
+                </div>
+                <span className="text-[10px] font-mono text-theme-text-secondary w-8 text-right">
+                  {(tool.score * 100).toFixed(0)}%
+                </span>
+              </div>
+            </div>
+          ))}
+          <div className="text-[10px] text-theme-text-secondary mt-1">
+            {results.batches.length} batch(es) | threshold: {results.threshold} | {results.scored_tools.length} tools selected
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 

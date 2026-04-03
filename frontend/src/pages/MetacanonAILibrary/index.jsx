@@ -560,6 +560,8 @@ export default function MetacanonAILibraryPage() {
   const [loadingCollection, setLoadingCollection] = useState(false);
   const [selectedDetail, setSelectedDetail] = useState(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
+  const [showCreateLens, setShowCreateLens] = useState(false);
+  const [newLens, setNewLens] = useState({ name: "", handle: "", objective: "", content: "", tags: "" });
 
   useEffect(() => {
     setSavedPacks(loadCouncilPacks());
@@ -1067,7 +1069,7 @@ export default function MetacanonAILibraryPage() {
           ) : null}
 
           <div className="flex flex-col gap-4">
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 items-center">
               {TABS.map((tabOption) => (
                 <TabButton
                   key={tabOption.id}
@@ -1077,6 +1079,14 @@ export default function MetacanonAILibraryPage() {
                   onClick={() => setActiveTab(tabOption.id)}
                 />
               ))}
+              {tab === "lenses" && (
+                <button
+                  onClick={() => setShowCreateLens(true)}
+                  className="ml-auto rounded-[14px] bg-theme-primary-button px-4 py-2 text-xs font-semibold text-white hover:opacity-90 transition-all"
+                >
+                  + Create New Lens
+                </button>
+              )}
             </div>
             <div className="flex flex-col gap-4 md:flex-row md:items-end">
               <div className="flex-1">
@@ -1256,6 +1266,89 @@ export default function MetacanonAILibraryPage() {
           </div>
         </div>
       </div>
+
+      {/* Create New Lens Modal */}
+      {showCreateLens && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="rounded-[20px] border border-theme-sidebar-border bg-theme-bg-sidebar p-6 w-full max-w-lg shadow-[0_28px_72px_rgba(0,0,0,0.32)]">
+            <h2 className="text-lg font-semibold text-theme-text-primary mb-1">Create New Lens</h2>
+            <p className="text-xs text-theme-text-secondary mb-4">
+              Define a custom specialist lens with its own objective and capability tags.
+            </p>
+            <div className="flex flex-col gap-3">
+              <div>
+                <label className="text-xs font-medium text-theme-text-secondary block mb-1">Lens Name</label>
+                <input
+                  type="text"
+                  value={newLens.name}
+                  onChange={(e) => setNewLens({ ...newLens, name: e.target.value })}
+                  placeholder="My Security Lens"
+                  className="w-full rounded-[14px] border border-theme-sidebar-border bg-theme-settings-input-bg px-4 py-2.5 text-sm text-theme-text-primary focus:outline-none focus:border-theme-primary-button/50"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-theme-text-secondary block mb-1">Handle</label>
+                <input
+                  type="text"
+                  value={newLens.handle}
+                  onChange={(e) => setNewLens({ ...newLens, handle: e.target.value })}
+                  placeholder="@my-security-lens"
+                  className="w-full rounded-[14px] border border-theme-sidebar-border bg-theme-settings-input-bg px-4 py-2.5 text-sm text-theme-text-primary font-mono focus:outline-none focus:border-theme-primary-button/50"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-theme-text-secondary block mb-1">Objective</label>
+                <textarea
+                  value={newLens.objective}
+                  onChange={(e) => setNewLens({ ...newLens, objective: e.target.value })}
+                  placeholder="Evaluate security posture of proposed changes..."
+                  rows={2}
+                  className="w-full rounded-[14px] border border-theme-sidebar-border bg-theme-settings-input-bg px-4 py-2.5 text-sm text-theme-text-primary focus:outline-none focus:border-theme-primary-button/50 resize-none"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-theme-text-secondary block mb-1">Capability Tags (comma-separated)</label>
+                <input
+                  type="text"
+                  value={newLens.tags}
+                  onChange={(e) => setNewLens({ ...newLens, tags: e.target.value })}
+                  placeholder="security, analysis, compliance"
+                  className="w-full rounded-[14px] border border-theme-sidebar-border bg-theme-settings-input-bg px-4 py-2.5 text-sm text-theme-text-primary focus:outline-none focus:border-theme-primary-button/50"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-theme-text-secondary block mb-1">Lens Content (system prompt)</label>
+                <textarea
+                  value={newLens.content}
+                  onChange={(e) => setNewLens({ ...newLens, content: e.target.value })}
+                  placeholder="You are a specialist lens focused on..."
+                  rows={5}
+                  className="w-full rounded-[14px] border border-theme-sidebar-border bg-theme-settings-input-bg px-4 py-2.5 text-sm text-theme-text-primary font-mono focus:outline-none focus:border-theme-primary-button/50 resize-none"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-3 mt-5">
+              <button
+                onClick={() => { setShowCreateLens(false); setNewLens({ name: "", handle: "", objective: "", content: "", tags: "" }); }}
+                className="rounded-[14px] border border-theme-sidebar-border px-4 py-2 text-sm text-theme-text-secondary hover:text-theme-text-primary transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  // In production: save via MetaCanon runtime add_lens_to_sub_sphere + save_lens_to_library
+                  setShowCreateLens(false);
+                  setNewLens({ name: "", handle: "", objective: "", content: "", tags: "" });
+                }}
+                disabled={!newLens.name.trim() || !newLens.objective.trim()}
+                className="rounded-[14px] bg-theme-primary-button px-5 py-2 text-sm font-semibold text-white hover:opacity-90 transition-all disabled:opacity-40"
+              >
+                Create Lens
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

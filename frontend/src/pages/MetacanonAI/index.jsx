@@ -10,6 +10,11 @@ import { FlowArrow } from "@phosphor-icons/react/dist/csr/FlowArrow";
 import { Robot } from "@phosphor-icons/react/dist/csr/Robot";
 import { Wrench } from "@phosphor-icons/react/dist/csr/Wrench";
 import { Books } from "@phosphor-icons/react/dist/csr/Books";
+import { CheckCircle } from "@phosphor-icons/react/dist/csr/CheckCircle";
+import { UsersThree } from "@phosphor-icons/react/dist/csr/UsersThree";
+import { FolderOpen } from "@phosphor-icons/react/dist/csr/FolderOpen";
+import { ShieldCheck } from "@phosphor-icons/react/dist/csr/ShieldCheck";
+import { TelegramLogo } from "@phosphor-icons/react/dist/csr/TelegramLogo";
 
 import { isMobile } from "react-device-detect";
 import { Link } from "react-router-dom";
@@ -177,6 +182,56 @@ export default function MetacanonAIPage() {
       icon: <BracketsCurly className="h-6 w-6 text-theme-text-primary" />,
       targetId: "metacanon-repo-lab",
       enabled: isDev && canManage,
+    },
+    {
+      title: "Setup Status",
+      description:
+        "Check system dependencies and feature readiness. See what's installed, what's missing, and how to set up each component.",
+      cta: "Check setup",
+      href: paths.metacanonAISetupStatus(),
+      icon: <CheckCircle className="h-5 w-5 text-theme-text-primary" />,
+      targetId: "metacanon-setup-status",
+      enabled: canManage,
+    },
+    {
+      title: "Council Deliberation",
+      description:
+        "Convene a council of specialist agents to deliberate on complex queries. View member outputs and synthesis.",
+      cta: "Open council",
+      href: paths.metacanonAICouncil(),
+      icon: <UsersThree className="h-5 w-5 text-theme-text-primary" />,
+      targetId: "metacanon-council",
+      enabled: true,
+    },
+    {
+      title: "Agent Files",
+      description:
+        "Browse and manage files in the agent sandbox. View, create, and organize files produced by agent tools.",
+      cta: "Open file manager",
+      href: paths.metacanonAIFiles(),
+      icon: <FolderOpen className="h-5 w-5 text-theme-text-primary" />,
+      targetId: "metacanon-files",
+      enabled: true,
+    },
+    {
+      title: "Sphere Threads",
+      description:
+        "View encrypted agent-to-agent communication channels. Monitor sphere thread key registration and message exchange.",
+      cta: "View threads",
+      href: paths.metacanonAISphereThreads(),
+      icon: <ShieldCheck className="h-5 w-5 text-theme-text-primary" />,
+      targetId: "metacanon-sphere-threads",
+      enabled: canManage,
+    },
+    {
+      title: "Telegram Bot",
+      description:
+        "Configure the Telegram bot integration: bot token, allowed chats, webhook settings, and proof links.",
+      cta: "Configure bot",
+      href: paths.metacanonAITelegram(),
+      icon: <TelegramLogo className="h-5 w-5 text-theme-text-primary" />,
+      targetId: "metacanon-telegram",
+      enabled: canManage,
     },
     {
       title: "Interface & Theme",
