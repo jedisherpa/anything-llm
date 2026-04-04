@@ -472,11 +472,25 @@ export default function DnDFileUploaderWrapper({ children }) {
       setDragging(false);
     }
 
+    function handleDocumentDragLeave(e) {
+      // relatedTarget is null when the cursor leaves the document/window entirely.
+      // Fall back to checking clientX/Y for WebKit builds where relatedTarget may
+      // not be reliable (e.g. Tauri WKWebView).
+      if (
+        e.relatedTarget === null ||
+        (e.clientX <= 0 && e.clientY <= 0)
+      ) {
+        setDragging(false);
+      }
+    }
+
     window.addEventListener("drop", handleWindowDrop);
     window.addEventListener("dragend", handleWindowDragEnd);
+    document.addEventListener("dragleave", handleDocumentDragLeave);
     return () => {
       window.removeEventListener("drop", handleWindowDrop);
       window.removeEventListener("dragend", handleWindowDragEnd);
+      document.removeEventListener("dragleave", handleDocumentDragLeave);
     };
   }, [setDragging]);
 

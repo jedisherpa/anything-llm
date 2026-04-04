@@ -46,7 +46,7 @@ export default forwardRef(function (
   const isStreaming = history[history.length - 1]?.animate;
   const { showScrollbar } = Appearance.getSettings();
   const { textSizeClass } = useTextSize();
-  const historyBottomInset = 40;
+  const historyBottomInset = 200;
 
   useEffect(() => {
     if (!isUserScrolling && (isAtBottom || isStreaming)) {

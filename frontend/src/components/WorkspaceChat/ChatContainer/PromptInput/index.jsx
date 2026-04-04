@@ -431,7 +431,7 @@ export default function PromptInput({
             />
 
             <div
-              className={`${centered ? "metacanon-composer-shell" : "bg-zinc-800 light:bg-white light:border light:border-slate-300"} flex flex-col overflow-hidden rounded-[24px] px-6 pwa:rounded-3xl`}
+              className={`${centered ? "metacanon-composer-shell" : "bg-zinc-800 light:bg-white light:border light:border-slate-300"} flex flex-col overflow-y-auto max-h-[70vh] rounded-[24px] px-6 pwa:rounded-3xl`}
             >
               <AttachmentManager attachments={attachments} />
               {typeof onChatModeChange === "function" ? (
