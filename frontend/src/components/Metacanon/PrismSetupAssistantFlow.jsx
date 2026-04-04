@@ -152,7 +152,7 @@ function GuidanceCard({ title, body, status = null, actions = [] }) {
               className={[
                 "rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] transition",
                 action.variant === "primary"
-                  ? "bg-theme-primary-button text-black hover:opacity-90"
+                  ? "bg-theme-primary-button text-white hover:opacity-90"
                   : "border border-theme-sidebar-border text-theme-text-primary hover:border-theme-primary-button hover:text-theme-primary-button",
               ].join(" ")}
             >
@@ -207,7 +207,10 @@ function buildInitialState(settings = {}) {
     pgConnectionString: settings?.PGVectorConnectionString || "",
     pgTableName: settings?.PGVectorTableName || DEFAULT_PGVECTOR_TABLE,
     embedder: settings?.EmbeddingEngine || "native",
-    embeddingModel: settings?.EmbeddingModelPref || OPENAI_EMBEDDING_MODELS[1],
+    embeddingModel:
+      (settings?.EmbeddingEngine || "native") === "native"
+        ? (settings?.EmbeddingModelPref || "Xenova/all-MiniLM-L6-v2")
+        : (settings?.EmbeddingModelPref || OPENAI_EMBEDDING_MODELS[1]),
     openAiKey: settings?.OpenAiKey || "",
     dockerBasePath:
       settings?.DockerModelRunnerBasePath || DOCKER_DEFAULT_BASE_PATH,
@@ -234,12 +237,18 @@ function normalizeFormState(state = {}) {
     return fallback;
   };
 
+  const resolvedEmbedder =
+    state?.embedder === "openai" ? "openai" : "native";
+  const embeddingModelFallback =
+    resolvedEmbedder === "openai"
+      ? OPENAI_EMBEDDING_MODELS[1]
+      : "Xenova/all-MiniLM-L6-v2";
   return {
     vectorBackend: state?.vectorBackend === "pgvector" ? "pgvector" : "lancedb",
     pgConnectionString: asText(state?.pgConnectionString),
     pgTableName: asText(state?.pgTableName, DEFAULT_PGVECTOR_TABLE),
-    embedder: state?.embedder === "openai" ? "openai" : "native",
-    embeddingModel: asText(state?.embeddingModel, OPENAI_EMBEDDING_MODELS[1]),
+    embedder: resolvedEmbedder,
+    embeddingModel: asText(state?.embeddingModel, embeddingModelFallback),
     openAiKey: asText(state?.openAiKey),
     dockerBasePath: asText(state?.dockerBasePath, DOCKER_DEFAULT_BASE_PATH),
     dockerModel: asText(state?.dockerModel),
@@ -512,7 +521,7 @@ export default function PrismSetupAssistantFlow({
 
     if (!result?.success) {
       showToast(
-        `Failed to bootstrap pgvector: ${result?.error || "Unknown error"}`,
+        `Failed to bootstrap pgvector for model "${formState.embeddingModel}": ${result?.error || "Unknown error"}`,
         "error"
       );
       setBootstrappingPgvector(false);
@@ -568,10 +577,10 @@ export default function PrismSetupAssistantFlow({
   };
 
   const shellClassName = isModal
-    ? "metacanon-modal-panel relative my-4 flex max-h-[calc(100vh-5rem)] w-[min(92vw,980px)] self-start flex-col overflow-hidden rounded-[28px] px-6 pb-7 pt-6 md:max-h-[calc(100vh-6rem)] md:px-8 md:pb-8 md:pt-7"
+    ? "metacanon-modal-panel relative my-4 flex max-h-[calc(100vh-2rem)] w-[min(92vw,980px)] self-start flex-col rounded-[28px] px-6 pb-0 pt-6 md:max-h-[calc(100vh-3rem)] md:px-8 md:pb-0 md:pt-7"
     : "relative flex w-full max-w-[920px] flex-col px-2 pb-6";
   const bodyClassName = isModal
-    ? "mt-6 min-h-0 flex-1 overflow-y-auto pr-1"
+    ? "mt-6 min-h-0 flex-1 overflow-y-auto pr-1 pb-4"
     : "mt-6";
 
   return (
@@ -809,7 +818,7 @@ export default function PrismSetupAssistantFlow({
                           type="button"
                           onClick={bootstrapPgvector}
                           disabled={bootstrappingPgvector}
-                          className="rounded-full bg-theme-primary-button px-4 py-2 text-sm font-semibold text-black transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                          className="rounded-full bg-theme-primary-button px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
                         >
                           {bootstrappingPgvector
                             ? "Bootstrapping..."
@@ -1079,7 +1088,7 @@ export default function PrismSetupAssistantFlow({
                       disabled={
                         installingDockerModel || !formState.dockerModel.trim()
                       }
-                      className="rounded-full bg-theme-primary-button px-4 py-2 text-sm font-semibold text-black transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                      className="rounded-full bg-theme-primary-button px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       {installingDockerModel
                         ? `Installing... ${installProgress}%`
@@ -1176,7 +1185,7 @@ export default function PrismSetupAssistantFlow({
             ) : null}
           </div>
 
-          <div className="mt-4 flex shrink-0 items-center justify-between gap-4 border-t border-theme-sidebar-border pt-5">
+          <div className="mt-4 flex shrink-0 items-center justify-between gap-4 border-t border-theme-sidebar-border px-6 pb-7 pt-5 md:px-8 md:pb-8">
             <div className="text-sm text-rose-300">{validationError || ""}</div>
             <div className="flex flex-wrap items-center gap-3">
               {step > 0 || onBack ? (
@@ -1212,7 +1221,7 @@ export default function PrismSetupAssistantFlow({
                     }
                   }}
                   disabled={!!validationError}
-                  className="inline-flex items-center gap-2 rounded-full bg-theme-primary-button px-4 py-2 text-sm font-semibold text-black transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex items-center gap-2 rounded-full bg-theme-primary-button px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Next
                   <ArrowRight size={16} weight="bold" />
@@ -1222,7 +1231,7 @@ export default function PrismSetupAssistantFlow({
                   type="button"
                   onClick={applySetup}
                   disabled={saving}
-                  className="rounded-full bg-theme-primary-button px-4 py-2 text-sm font-semibold text-black transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="rounded-full bg-theme-primary-button px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   {saving ? "Applying setup..." : "Apply setup"}
                 </button>

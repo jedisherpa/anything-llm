@@ -23,8 +23,11 @@ const {
 const ImportedPlugin = require("./imported");
 const { AgentFlows } = require("../agentFlows");
 const MCPCompatibilityLayer = require("../MCP");
+const { METACANON_PREFIX, loadMetaCanonPlugin } = require("../MCP/metacanon-tools-loader");
 const { buildQueryAwareAgentPrompt } = require("./queryContext");
 const { resolvePrismRouteConfig } = require("./prismProviderRouting");
+const { TokenManager } = require("../helpers/tiktoken");
+const { MODEL_MAP } = require("../AiProviders/modelMap");
 
 class AgentHandler {
   #invocationUUID;
@@ -728,12 +731,21 @@ class AgentHandler {
       { role: "system", content: agentConfig.role },
       { role: "user", content: input },
     ];
-    return await this.aibitat.handleExecution(
-      provider,
-      messages,
-      functions,
-      handle
-    );
+    const LENS_TIMEOUT_MS = 180_000;
+    return await Promise.race([
+      this.aibitat.handleExecution(provider, messages, functions, handle),
+      new Promise((_, reject) =>
+        setTimeout(
+          () =>
+            reject(
+              new Error(
+                `Lens ${handle} timed out after ${LENS_TIMEOUT_MS / 1000}s`
+              )
+            ),
+          LENS_TIMEOUT_MS
+        )
+      ),
+    ]);
   }
 
   async runMetacanonConstellation(prompt = "") {
@@ -901,17 +913,87 @@ class AgentHandler {
     }
 
     this.aibitat.introspect?.("Synthesizing council pack output.");
-    const finalResponse = await this.executeLensAgent(
-      "@prism",
+
+    // Fix B: Smart truncation — only truncate when the assembled synthesis prompt
+    // exceeds the model's context window. Uses the actual tokenizer when possible.
+    const prismAgentConfig = this.aibitat.getAgentConfig("@prism");
+    const synthProvider = prismAgentConfig?.provider || this.aibitat.defaultProvider?.provider || null;
+    const synthModel = prismAgentConfig?.model || this.aibitat.defaultProvider?.model || null;
+    const contextWindowTokens =
+      (synthProvider && synthModel && MODEL_MAP.get(synthProvider, synthModel)) ||
+      30_000; // conservative default (~GPT-4o class)
+    // Reserve ~20% of the context window for the system prompt + task instruction overhead
+    const outputBudgetTokens = Math.floor(contextWindowTokens * 0.8);
+
+    const buildSynthesisOutputBlock = (outputs) =>
+      outputs.map((o) => `[${o.label}]\n${o.content}`).join("\n\n");
+
+    let truncatedOutputs = councilOutputs;
+    const tokenizer = new TokenManager(synthModel || "gpt-4o");
+    const fixedPartsTokens = tokenizer.countFromString(
       `Council pack: ${packName}\nUser query:\n${userQuery || this.stripInvocationHandles(prompt)}\n\nLead lens: ${leadLabel}\nLead lens brief:\n${
         orchestrationBrief || "No explicit lead brief provided."
-      }\n\nCouncil outputs:\n${councilOutputs
-        .map((output) => `[${output.label}]\n${output.content}`)
-        .join(
-          "\n\n"
-        )}\n\nTask: Produce one unified final response for the user. Keep it structured, practical, and end with human clarification questions.`,
-      executionRoutes?.["@prism"] || []
+      }\n\nCouncil outputs:\n\n\nTask: Produce one unified final response for the user. Keep it structured, practical, and end with human clarification questions.`
     );
+    const outputBlockTokens = tokenizer.countFromString(
+      buildSynthesisOutputBlock(councilOutputs)
+    );
+
+    if (fixedPartsTokens + outputBlockTokens > outputBudgetTokens) {
+      const availableForOutputs = Math.max(
+        outputBudgetTokens - fixedPartsTokens,
+        councilOutputs.length * 100 // floor: at least 100 tokens per lens
+      );
+      const tokensPerLens = Math.floor(availableForOutputs / councilOutputs.length);
+      this.aibitat.introspect?.(
+        `Council synthesis prompt exceeds context budget (${fixedPartsTokens + outputBlockTokens} > ${outputBudgetTokens} tokens). Truncating each lens output to ~${tokensPerLens} tokens.`
+      );
+      truncatedOutputs = councilOutputs.map((o) => {
+        const tokens = tokenizer.tokensFromString(o.content);
+        if (tokens.length <= tokensPerLens) return o;
+        // bytesFromTokens wraps encoder.decode() which returns a string in js-tiktoken v1.x.
+        // No Buffer/charCode conversion needed — use it directly.
+        const truncatedText = tokenizer.bytesFromTokens(tokens.slice(0, tokensPerLens));
+        return { ...o, content: truncatedText + "\n[... truncated for synthesis]" };
+      });
+    }
+
+    const synthesisPrompt = `Council pack: ${packName}\nUser query:\n${userQuery || this.stripInvocationHandles(prompt)}\n\nLead lens: ${leadLabel}\nLead lens brief:\n${
+      orchestrationBrief || "No explicit lead brief provided."
+    }\n\nCouncil outputs:\n${buildSynthesisOutputBlock(truncatedOutputs)}\n\nTask: Produce one unified final response for the user. Keep it structured, practical, and end with human clarification questions.`;
+
+    // Fix C: Try/catch with two-stage fallback on synthesis failure.
+    let finalResponse;
+    try {
+      finalResponse = await this.executeLensAgent(
+        "@prism",
+        synthesisPrompt,
+        executionRoutes?.["@prism"] || []
+      );
+    } catch (synthError) {
+      this.aibitat.introspect?.(
+        `Council synthesis failed (${synthError.message}). Attempting simplified fallback synthesis.`
+      );
+      // Stage 1 fallback: simplified prompt — user query + first 500 chars of each lens output
+      try {
+        const simplifiedPrompt = `User query:\n${userQuery || this.stripInvocationHandles(prompt)}\n\nCouncil summaries:\n${councilOutputs
+          .map((o) => `[${o.label}]\n${o.content.slice(0, 500)}`)
+          .join("\n\n")}\n\nTask: Provide a brief integrated response to the user query based on the council summaries above.`;
+        finalResponse = await this.executeLensAgent(
+          "@prism",
+          simplifiedPrompt,
+          executionRoutes?.["@prism"] || []
+        );
+      } catch (fallbackError) {
+        // Stage 2 fallback: return raw concatenated outputs
+        this.aibitat.introspect?.(
+          `Simplified synthesis also failed (${fallbackError.message}). Returning raw council outputs.`
+        );
+        finalResponse = councilOutputs
+          .map((o) => `**${o.label}:**\n${o.content}`)
+          .join("\n\n---\n\n");
+      }
+    }
 
     this.aibitat.newMessage({
       from: "@prism",
@@ -1026,6 +1108,23 @@ class AgentHandler {
         this.log(
           `Attached flow ${plugin.name} (${plugin.flowName}) plugin to Agent cluster`
         );
+        continue;
+      }
+
+      // Load MetaCanon plugin. This is marked by `@@mc_` in the array of functions to load.
+      if (name.startsWith(METACANON_PREFIX)) {
+        const toolName = name.replace(METACANON_PREFIX, "");
+        const plugin = loadMetaCanonPlugin(toolName, this.aibitat);
+        if (!plugin) {
+          this.log(
+            `MetaCanon tool ${toolName} not found. Skipping inclusion to agent cluster.`
+          );
+          continue;
+        }
+
+        this.replaceAgentFunctionReference(name, plugin.name);
+        this.aibitat.use(plugin.plugin());
+        this.log(`Attached MetaCanon::${plugin.name} tool to Agent cluster`);
         continue;
       }
 

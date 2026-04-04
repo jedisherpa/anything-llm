@@ -1,6 +1,6 @@
 {
   "name": "anythingllm-sovereign-desktop",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "private": true,
   "description": "PrismAI desktop wrapper with Prism branding and local-first defaults.",
   "packageManager": "yarn@1.22.22",

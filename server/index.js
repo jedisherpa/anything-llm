@@ -156,3 +156,9 @@ app.all("*", function (_, response) {
 // In non-https mode we need to boot at the end since the server has not yet
 // started and is `.listen`ing.
 if (!process.env.ENABLE_HTTPS) bootHTTP(app, process.env.SERVER_PORT || 3001);
+
+// Run MetaCanon auto-genesis concurrently with server boot to wire constitutional
+// values into the runtime. Fires after app.listen() is called but does not wait
+// for the listen callback — genesis completes asynchronously during startup.
+const { autoGenesis } = require("./utils/metacanon-runtime/auto-genesis");
+autoGenesis().catch((err) => console.error("[AutoGenesis]", err.message));

@@ -54,7 +54,6 @@ async function copyCommand(command = "", label = "Command copied.") {
     showToast(label, "success");
   } catch {
     showToast("Failed to copy command.", "error");
-    return;
   }
 }
 
@@ -168,7 +167,7 @@ export default function RuntimeReadinessModal({
 
   return (
     <ModalWrapper isOpen={isOpen}>
-      <div className="metacanon-modal-panel relative flex max-h-[calc(100vh-2rem)] w-[min(92vw,960px)] flex-col overflow-hidden rounded-[28px] px-6 pb-7 pt-6 md:px-8 md:pb-8 md:pt-7">
+      <div className="metacanon-modal-panel relative flex max-h-[calc(100vh-2rem)] w-[min(92vw,960px)] flex-col overflow-clip rounded-[28px] px-6 pb-7 pt-6 md:px-8 md:pb-8 md:pt-7">
         <button
           type="button"
           onClick={onClose}
@@ -303,7 +302,7 @@ export default function RuntimeReadinessModal({
                     onClose();
                     onOpenSetup();
                   }}
-                  className="rounded-full bg-theme-primary-button px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-black transition hover:opacity-90"
+                  className="rounded-full bg-theme-primary-button px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-white transition hover:opacity-90"
                 >
                   Run guided setup
                 </button>

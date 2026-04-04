@@ -146,7 +146,7 @@ export default function LensWorkbenchModal({
 
   return (
     <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/70 px-4 py-6 backdrop-blur-sm">
-      <div className="flex max-h-[92vh] w-full max-w-6xl overflow-hidden rounded-[28px] border border-theme-sidebar-border bg-theme-bg-secondary shadow-2xl">
+      <div className="flex max-h-[92vh] w-full max-w-6xl overflow-clip rounded-[28px] border border-theme-sidebar-border bg-theme-bg-secondary shadow-2xl">
         <div className="hidden w-[360px] shrink-0 border-r border-theme-sidebar-border bg-theme-bg-primary md:flex md:flex-col">
           <div className="border-b border-theme-sidebar-border px-5 py-5">
             <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-theme-primary-button">
@@ -171,7 +171,7 @@ export default function LensWorkbenchModal({
             <button
               type="button"
               onClick={switchToCreate}
-              className="rounded-full bg-theme-primary-button px-4 py-2 text-sm font-semibold text-black"
+              className="rounded-full bg-theme-primary-button px-4 py-2 text-sm font-semibold text-white"
             >
               Create New Lens
             </button>
@@ -344,7 +344,7 @@ export default function LensWorkbenchModal({
               type="button"
               onClick={handleSave}
               disabled={saving}
-              className="rounded-full bg-theme-primary-button px-4 py-2 text-sm font-semibold text-black disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-full bg-theme-primary-button px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
             >
               {saving
                 ? "Saving Lens..."
