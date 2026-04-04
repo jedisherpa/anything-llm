@@ -174,7 +174,12 @@ function systemEndpoints(app) {
           embeddingModel = "",
         } = reqBody(request);
 
-        if (!connectionString.trim()) {
+        let normalizedConnectionString = connectionString.trim();
+        if (normalizedConnectionString && !normalizedConnectionString.includes("://")) {
+          normalizedConnectionString = `postgresql://${normalizedConnectionString}`;
+        }
+
+        if (!normalizedConnectionString) {
           response.status(400).json({
             success: false,
             error: "A PostgreSQL connection string is required.",
@@ -204,7 +209,7 @@ function systemEndpoints(app) {
         }
 
         const result = await PGVector.bootstrapConnection({
-          connectionString: connectionString.trim(),
+          connectionString: normalizedConnectionString,
           tableName: tableName.trim(),
           dimensions,
         });

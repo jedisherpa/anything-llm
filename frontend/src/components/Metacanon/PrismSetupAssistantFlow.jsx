@@ -506,6 +506,11 @@ export default function PrismSetupAssistantFlow({
       showToast("Add the PostgreSQL connection string first.", "warning");
       return;
     }
+    if (!formState.pgConnectionString.includes("://")) {
+      // Auto-fix: prepend postgresql:// — the server will do this too, but
+      // updating the form state gives the user immediate feedback.
+      updateField("pgConnectionString", `postgresql://${formState.pgConnectionString.trim()}`);
+    }
     if (!formState.pgTableName.trim()) {
       showToast("Add the pgvector table name first.", "warning");
       return;

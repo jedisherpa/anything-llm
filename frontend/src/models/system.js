@@ -116,7 +116,10 @@ const System = {
         embeddingModel,
       }),
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) return res.json().then((data) => ({ success: false, ...data }));
+        return res.json();
+      })
       .catch((error) => ({
         success: false,
         error: error.message || "Failed to bootstrap pgvector.",
