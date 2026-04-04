@@ -62,19 +62,31 @@ OSA
 
 persist_finder_layout() {
   local attempt=1
-  while [[ $attempt -le 3 ]]; do
-    apply_finder_layout
-    sync
+  local DS_STORE_TEMPLATE="$ROOT_DIR/desktop-tauri/packaging/installer-template.DS_Store"
 
-    if [[ -f "$MOUNT_POINT/.DS_Store" ]]; then
-      return 0
+  while [[ $attempt -le 3 ]]; do
+    if apply_finder_layout 2>/dev/null; then
+      sync
+      if [[ -f "$MOUNT_POINT/.DS_Store" ]]; then
+        return 0
+      fi
+    else
+      echo "Finder AppleScript failed on attempt $attempt (timeout or no GUI)." >&2
     fi
 
     sleep 2
     attempt=$((attempt + 1))
   done
 
-  echo "Finder did not persist the DMG layout metadata (.DS_Store missing)." >&2
+  # Fallback: use pre-built .DS_Store template if Finder is unavailable
+  if [[ -f "$DS_STORE_TEMPLATE" ]]; then
+    echo "Using pre-built .DS_Store template as fallback." >&2
+    cp "$DS_STORE_TEMPLATE" "$MOUNT_POINT/.DS_Store"
+    sync
+    return 0
+  fi
+
+  echo "Finder did not persist the DMG layout metadata and no template available." >&2
   exit 1
 }
 
