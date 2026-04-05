@@ -394,6 +394,8 @@ function LensRoster({
                   className="text-[10px] bg-transparent border border-white/10 rounded px-1.5 py-0.5 text-theme-text-secondary min-w-0 flex-1"
                   value={
                     slot.lens?.handle &&
+                    // Only single-element route arrays are supported in the current UI;
+                    // index [0] is the sole active route for this lens slot.
                     executionRoutes[slot.lens.handle]?.[0]
                       ? executionRoutes[slot.lens.handle][0]
                       : ""
@@ -629,7 +631,7 @@ export default function MetacanonLensComposerPage() {
   useEffect(() => {
     System.prismProviderSlots()
       .then(({ slots = [] }) => setProviderSlots(slots))
-      .catch(() => {});
+      .catch((e) => console.warn("[LensComposer] Failed to load provider slots:", e.message));
   }, []);
 
   useEffect(() => {

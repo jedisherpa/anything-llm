@@ -109,8 +109,8 @@ function getLensAgentDefinitions(functions = []) {
     definition: {
       role,
       soul,
-      preferredBackends: preferredBackends || [],
-      fallbackBackends: fallbackBackends || [],
+      preferredBackends,
+      fallbackBackends,
       functions: [...functions],
     },
   }));
