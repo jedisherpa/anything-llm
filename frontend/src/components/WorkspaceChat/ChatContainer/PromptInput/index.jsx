@@ -431,7 +431,7 @@ export default function PromptInput({
             />
 
             <div
-              className={`${centered ? "metacanon-composer-shell" : "bg-zinc-800 light:bg-white border border-white/20 light:border-slate-200"} flex flex-col overflow-y-auto max-h-[70vh] rounded-[24px] px-6 pwa:rounded-3xl`}
+              className={`${centered ? "metacanon-composer-shell" : "metacanon-composer-shell metacanon-composer-shell--workspace"} flex flex-col overflow-y-auto max-h-[70vh] rounded-[16px] px-4 pwa:rounded-2xl`}
             >
               <AttachmentManager attachments={attachments} />
               {executionMode === "execute" ? (
