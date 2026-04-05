@@ -13,7 +13,6 @@ import {
 import {
   getLensUiCollectionLabel,
   getLensUiTitle,
-  METACANON_TERMS,
 } from "@/utils/metacanonTerminology";
 import paths from "@/utils/paths";
 import showToast from "@/utils/toast";
@@ -22,9 +21,15 @@ import { useEffect, useMemo, useState } from "react";
 
 const featuredLenses = metacanonLibrarySummary.featuredLenses || [];
 
-function FeaturedLensRow({ lens, active, onToggle }) {
-  const title = getLensUiTitle(lens);
-  const collectionLabel = getLensUiCollectionLabel(lens);
+function cleanPillName(name = "") {
+  return name
+    .replace(/^The\s+/i, "")
+    .replace(/-/g, " ")
+    .trim();
+}
+
+function FeaturedLensPill({ lens, active, onToggle }) {
+  const title = cleanPillName(getLensUiTitle(lens));
   const cardStyle = {
     "--lens-color": getMetacanonLensAccent(lens),
   };
@@ -36,23 +41,12 @@ function FeaturedLensRow({ lens, active, onToggle }) {
         onClick={() => onToggle(lens, active)}
         style={cardStyle}
         data-active={active ? "true" : "false"}
-        className="metacanon-lens-card w-full rounded-[14px] px-[12px] py-[10px] text-left transition-all duration-200"
+        className="prism-sidebar-pill metacanon-lens-pill w-full"
       >
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <div className="metacanon-lens-card__meta text-[10px] font-semibold uppercase tracking-[0.16em]">
-              {collectionLabel}
-            </div>
-            <div className="metacanon-lens-card__title mt-1 truncate text-[15px] leading-tight">
-              {title}
-            </div>
-          </div>
-          {active ? (
-            <div className="metacanon-lens-card__badge shrink-0 rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.14em]">
-              Aligned
-            </div>
-          ) : null}
-        </div>
+        <span className="prism-sidebar-pill__label">{title}</span>
+        {active && (
+          <span className="prism-sidebar-pill__badge">Aligned</span>
+        )}
       </button>
     </PrismHoverTarget>
   );
@@ -95,13 +89,6 @@ export default function SidebarFeaturedLenses() {
     [customFeaturedLenses]
   );
 
-  const groupedLenses = visibleLenses.reduce((groups, lens) => {
-    const label = getLensUiCollectionLabel(lens);
-    if (!groups.has(label)) groups.set(label, []);
-    groups.get(label).push(lens);
-    return groups;
-  }, new Map());
-
   function toggleLens(lens, isActive) {
     if (isActive) {
       clearActiveMetacanonAlignment();
@@ -130,7 +117,7 @@ export default function SidebarFeaturedLenses() {
       <div className="prism-sidebar-module__header">
         <div className="prism-sidebar-module__heading">
           <div className="metacanon-sidebar-section-label text-[11px] font-semibold uppercase">
-            Featured {METACANON_TERMS.lenses}
+            Quick Lenses
           </div>
         </div>
         <Link
@@ -141,33 +128,20 @@ export default function SidebarFeaturedLenses() {
         </Link>
       </div>
       {visibleLenses.length > 0 ? (
-        <div className="flex flex-col gap-y-3">
-          {Array.from(groupedLenses.entries()).map(([label, lenses]) => (
-            <div key={label} className="flex flex-col gap-y-2">
-              <div className="px-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-theme-text-secondary">
-                {label}
-              </div>
-              <div className="flex flex-col gap-y-2">
-                {lenses.map((lens) => (
-                  <FeaturedLensRow
-                    key={lens.featureId || lens.id}
-                    lens={lens}
-                    active={
-                      activeAlignment?.id === lens.id ||
-                      activeAlignment?.handle === lens.handle
-                    }
-                    onToggle={toggleLens}
-                  />
-                ))}
-              </div>
-            </div>
+        <div className="flex flex-col gap-y-1.5">
+          {visibleLenses.map((lens) => (
+            <FeaturedLensPill
+              key={lens.featureId || lens.id}
+              lens={lens}
+              active={
+                activeAlignment?.id === lens.id ||
+                activeAlignment?.handle === lens.handle
+              }
+              onToggle={toggleLens}
+            />
           ))}
         </div>
-      ) : (
-        <div className="prism-sidebar-empty">
-          Add lenses from the library to make this section yours.
-        </div>
-      )}
+      ) : null}
     </div>
   );
 }

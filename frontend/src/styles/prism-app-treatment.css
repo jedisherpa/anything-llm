@@ -2311,6 +2311,118 @@
   border-color: rgba(255, 215, 0, 0.34);
 }
 
+/* --- Compact sidebar pill --- */
+.prism-sidebar-pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  min-height: 30px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--sidebar-border) 64%, transparent);
+  background: color-mix(in srgb, var(--sidebar-bg) 72%, transparent);
+  font-size: 12px;
+  line-height: 1;
+  color: var(--theme-text-primary);
+  transition: background 160ms ease, border-color 160ms ease;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.prism-sidebar-pill:hover {
+  border-color: color-mix(in srgb, var(--gold-border) 52%, transparent);
+  background: color-mix(in srgb, var(--gold-bg) 40%, transparent);
+}
+
+.prism-sidebar-pill[data-active="true"] {
+  border-color: color-mix(in srgb, var(--gold-border) 72%, transparent);
+  background: color-mix(in srgb, var(--gold-bg) 54%, transparent);
+}
+
+.prism-sidebar-pill__label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: inherit;
+  padding: 0;
+  flex: 1;
+}
+
+.prism-sidebar-pill__badge {
+  flex-shrink: 0;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--gold-text) 90%, var(--theme-text-primary) 10%);
+}
+
+.prism-sidebar-pill__drag {
+  flex-shrink: 0;
+  cursor: grab;
+  color: var(--theme-text-secondary);
+}
+
+/* Actions hidden by default, shown on hover */
+.prism-sidebar-pill__actions {
+  display: none;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.prism-sidebar-pill:hover .prism-sidebar-pill__actions {
+  display: flex;
+}
+
+/* Scale down action links inside pills */
+.prism-sidebar-pill .prism-sidebar-module__link {
+  min-height: 22px;
+  padding: 0 6px;
+  font-size: 9px;
+}
+
+/* Lens-specific: left accent border */
+.metacanon-lens-pill {
+  border-left: 3px solid var(--lens-color);
+}
+
+/* Inline theme switcher (sidebar) */
+.metacanon-theme-switcher--sidebar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 2px;
+}
+
+.metacanon-theme-switcher--sidebar .metacanon-theme-switcher__button {
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  border: 1px solid color-mix(in srgb, var(--sidebar-border) 56%, transparent);
+  background: color-mix(in srgb, var(--sidebar-bg) 60%, transparent);
+  color: var(--theme-text-secondary);
+  transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+
+.metacanon-theme-switcher--sidebar .metacanon-theme-switcher__button[data-open="true"],
+.metacanon-theme-switcher--sidebar .metacanon-theme-switcher__button--active {
+  border-color: color-mix(in srgb, var(--gold-border) 64%, transparent);
+  background: color-mix(in srgb, var(--gold-bg) 48%, transparent);
+  color: var(--theme-text-primary);
+}
+
 .prism-data-table {
   border: 1px solid color-mix(in srgb, var(--sidebar-border) 88%, transparent);
   border-radius: 20px;

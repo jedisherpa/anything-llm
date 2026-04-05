@@ -1177,14 +1177,10 @@ function SendPromptButton({
         ref={formRef}
         type="submit"
         disabled={isDisabled || !promptInput.trim().length}
-        className={`border-none flex justify-center items-center rounded-full w-10 h-10 transition-all ${
+        className={`border-none flex justify-center items-center rounded-full w-10 h-10 transition-all metacanon-send-button ${
           promptInput.trim().length && !isDisabled
-            ? centered
-              ? "metacanon-send-button cursor-pointer"
-              : "cursor-pointer bg-white hover:bg-zinc-200 light:bg-slate-800 light:hover:bg-slate-600"
-            : centered
-              ? "metacanon-send-button metacanon-send-button--disabled cursor-not-allowed"
-              : "cursor-not-allowed bg-zinc-600 light:bg-slate-400"
+            ? "cursor-pointer"
+            : "metacanon-send-button--disabled cursor-not-allowed"
         }`}
         data-tooltip-id="send-prompt"
         data-tooltip-content={
@@ -1195,9 +1191,7 @@ function SendPromptButton({
         aria-label={t("chat_window.send")}
       >
         <ArrowUp
-          className={`metacanon-send-button-icon w-[18px] h-[18px] pointer-events-none ${
-            centered ? "" : "text-zinc-800 light:text-white"
-          }`}
+          className="metacanon-send-button-icon w-[18px] h-[18px] pointer-events-none"
           weight="bold"
         />
 

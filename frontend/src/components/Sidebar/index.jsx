@@ -15,6 +15,7 @@ import SearchBox from "./SearchBox";
 import { Tooltip } from "react-tooltip";
 import { createPortal } from "react-dom";
 import { MetacanonSidebarBrand } from "@/components/Metacanon/Branding";
+import MetacanonThemeSwitcher from "@/components/Metacanon/ThemeSwitcher";
 import SidebarFeaturedLenses from "./FeaturedLenses";
 import SidebarFeaturedCouncils from "./FeaturedCouncils";
 import SidebarPinnedConstellations from "./PinnedConstellations";
@@ -61,6 +62,12 @@ export default function Sidebar() {
                       <SearchBox user={user} showNewWsModal={showNewWsModal} />
                     </div>
                     <div className="flex flex-col gap-y-[14px] pt-4">
+                      <div className="px-1">
+                        <MetacanonThemeSwitcher
+                          showLabel={false}
+                          className="metacanon-theme-switcher--sidebar w-full justify-center"
+                        />
+                      </div>
                       <div className="metacanon-sidebar-section-label px-2 text-[11px] font-semibold uppercase tracking-[0.26em]">
                         Workspaces
                       </div>
