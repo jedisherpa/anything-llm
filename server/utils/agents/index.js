@@ -788,6 +788,73 @@ class AgentHandler {
     ]);
   }
 
+  /**
+   * Same as executeLensAgent but returns { content, routeUsed } instead of
+   * just the content string. Used by deliberation methods to attach per-lens
+   * routing information to the emitted deliberationComplete payload.
+   *
+   * @param {string} handle
+   * @param {string} input
+   * @param {string[]} explicitBackends
+   * @returns {Promise<{ content: string, routeUsed: { provider: string|null, model: string|null, slotLabel: string|null } }>}
+   */
+  async executeLensAgentWithRoute(handle = "", input = "", explicitBackends = []) {
+    this.ensureImportedLensAgentLoaded(handle);
+    const agentConfig = this.aibitat.getAgentConfig(handle);
+    const routeSelection = await this.resolveRouteSelection(
+      agentConfig,
+      explicitBackends
+    );
+    if (!agentConfig) throw new Error(`Lens ${handle} is not available.`);
+    const provider = this.aibitat.getProviderForConfig({
+      ...this.aibitat.defaultProvider,
+      ...agentConfig,
+      ...(routeSelection
+        ? {
+            provider: routeSelection.provider,
+            model: routeSelection.model || agentConfig.model,
+            apiKey: routeSelection.apiKey,
+            basePath: routeSelection.basePath,
+            tokenLimit: routeSelection.tokenLimit,
+          }
+        : {}),
+    });
+    if (routeSelection) {
+      this.aibitat.introspect?.(
+        `Routing ${handle} through ${routeSelection.slotLabel || routeSelection.provider}.`
+      );
+    }
+    provider.attachHandlerProps(this.aibitat.handlerProps);
+    const functions = this.agentFunctionsForConfig(agentConfig);
+    const messages = [
+      { role: "system", content: agentConfig.role },
+      { role: "user", content: input },
+    ];
+    const LENS_TIMEOUT_MS = 180_000;
+    const content = await Promise.race([
+      this.aibitat.handleExecution(provider, messages, functions, handle),
+      new Promise((_, reject) =>
+        setTimeout(
+          () =>
+            reject(
+              new Error(
+                `Lens ${handle} timed out after ${LENS_TIMEOUT_MS / 1000}s`
+              )
+            ),
+          LENS_TIMEOUT_MS
+        )
+      ),
+    ]);
+    const routeUsed = routeSelection
+      ? {
+          provider: routeSelection.provider || null,
+          model: routeSelection.model || null,
+          slotLabel: routeSelection.slotLabel || null,
+        }
+      : { provider: null, model: null, slotLabel: null };
+    return { content, routeUsed };
+  }
+
   async runMetacanonConstellation(prompt = "") {
     const handles = WorkspaceAgentInvocation.parseAgents(prompt);
     const constellationHandle = handles[0];
@@ -833,16 +900,18 @@ class AgentHandler {
     const memberOutputs = [];
     for (const member of members) {
       this.aibitat.introspect?.(`Running ${member.role}.`);
-      const result = await this.executeLensAgent(
-        member.lens.handle,
-        `Constellation: ${constellation.name}\nPurpose: ${constellation.purpose}\nAssigned role: ${member.role}\nUser query:\n${userQuery}\n\nProject manager brief:\n${orchestrationBrief || "No explicit orchestration brief provided."}\n\nTask: Respond from this lens with a concise analysis, recommendations, blind spots, and 1-3 clarification questions.`,
-        executionPlan.executionRoutes?.[member.lens.handle] || []
-      );
+      const { content: memberContent, routeUsed: memberRoute } =
+        await this.executeLensAgentWithRoute(
+          member.lens.handle,
+          `Constellation: ${constellation.name}\nPurpose: ${constellation.purpose}\nAssigned role: ${member.role}\nUser query:\n${userQuery}\n\nProject manager brief:\n${orchestrationBrief || "No explicit orchestration brief provided."}\n\nTask: Respond from this lens with a concise analysis, recommendations, blind spots, and 1-3 clarification questions.`,
+          executionPlan.executionRoutes?.[member.lens.handle] || []
+        );
       memberOutputs.push({
         role: member.role,
         handle: member.lens.handle,
         title: member.lens.title,
-        content: result,
+        content: memberContent,
+        routeUsed: memberRoute,
       });
     }
 
@@ -871,6 +940,7 @@ class AgentHandler {
         handle: o.handle,
         label: `${o.role} | ${o.title}`,
         content: o.content,
+        routeUsed: o.routeUsed || { provider: null, model: null, slotLabel: null },
       })),
       synthesis: {
         handle: finalHandle,
@@ -958,18 +1028,24 @@ class AgentHandler {
       const lens = this.aibitat.getAgentConfig(handle);
       const label = lens?.lensTitle || handle;
       this.aibitat.introspect?.(`Running ${label}.`);
-      const result = await this.executeLensAgent(
+      const { content: councilContent, routeUsed: councilRoute } =
+        await this.executeLensAgentWithRoute(
+          handle,
+          `Council pack: ${packName}\nUser query:\n${userQuery || this.stripInvocationHandles(prompt)}\n\nPrior council outputs:\n${
+            councilOutputs
+              .map((output) => `[${output.label}]\n${output.content}`)
+              .join("\n\n") || "None yet."
+          }\n\nLead lens brief:\n${
+            orchestrationBrief || "No explicit lead brief provided."
+          }\n\nTask: Contribute this lens's perspective concisely. Include analysis, recommendations, blind spots, and 1-3 clarification questions.`,
+          executionRoutes?.[handle] || []
+        );
+      councilOutputs.push({
         handle,
-        `Council pack: ${packName}\nUser query:\n${userQuery || this.stripInvocationHandles(prompt)}\n\nPrior council outputs:\n${
-          councilOutputs
-            .map((output) => `[${output.label}]\n${output.content}`)
-            .join("\n\n") || "None yet."
-        }\n\nLead lens brief:\n${
-          orchestrationBrief || "No explicit lead brief provided."
-        }\n\nTask: Contribute this lens's perspective concisely. Include analysis, recommendations, blind spots, and 1-3 clarification questions.`,
-        executionRoutes?.[handle] || []
-      );
-      councilOutputs.push({ handle, label, content: result });
+        label,
+        content: councilContent,
+        routeUsed: councilRoute,
+      });
     }
 
     this.aibitat.introspect?.("Synthesizing council pack output.");
@@ -1065,6 +1141,7 @@ class AgentHandler {
         handle: o.handle,
         label: o.label,
         content: o.content,
+        routeUsed: o.routeUsed || { provider: null, model: null, slotLabel: null },
       })),
       synthesis: {
         handle: "@prism",
@@ -1097,28 +1174,32 @@ class AgentHandler {
     this.aibitat.introspect?.("Lens deliberation engine engaged.");
     this.aibitat.introspect?.(LENS_DELIBERATION_OVERVIEW);
     this.aibitat.introspect?.("Running Watcher scan.");
-    const watcher = await this.executeLensAgent(
-      "@watcher",
-      `User query:\n${userQuery}\n\nTask: Provide a concise vigilance report covering risk patterns, safety/compliance concerns, likely blind spots, and 1-3 clarification questions.`
-    );
+    const { content: watcher, routeUsed: watcherRoute } =
+      await this.executeLensAgentWithRoute(
+        "@watcher",
+        `User query:\n${userQuery}\n\nTask: Provide a concise vigilance report covering risk patterns, safety/compliance concerns, likely blind spots, and 1-3 clarification questions.`
+      );
 
     this.aibitat.introspect?.("Running Auditor review.");
-    const auditor = await this.executeLensAgent(
-      "@auditor",
-      `User query:\n${userQuery}\n\nWatcher report:\n${watcher}\n\nTask: Audit for integrity, alignment, policy boundaries, and material-impact flags. Provide calibrated findings, blind spots, and 1-3 clarification questions.`
-    );
+    const { content: auditor, routeUsed: auditorRoute } =
+      await this.executeLensAgentWithRoute(
+        "@auditor",
+        `User query:\n${userQuery}\n\nWatcher report:\n${watcher}\n\nTask: Audit for integrity, alignment, policy boundaries, and material-impact flags. Provide calibrated findings, blind spots, and 1-3 clarification questions.`
+      );
 
     this.aibitat.introspect?.("Running Synthesizer expansion.");
-    const synthesizer = await this.executeLensAgent(
-      "@synthesizer",
-      `User query:\n${userQuery}\n\nWatcher report:\n${watcher}\n\nAuditor report:\n${auditor}\n\nTask: Generate concise, context-aware options and second-order consequences. Include blind spots and 1-3 clarification questions.`
-    );
+    const { content: synthesizer, routeUsed: synthesizerRoute } =
+      await this.executeLensAgentWithRoute(
+        "@synthesizer",
+        `User query:\n${userQuery}\n\nWatcher report:\n${watcher}\n\nAuditor report:\n${auditor}\n\nTask: Generate concise, context-aware options and second-order consequences. Include blind spots and 1-3 clarification questions.`
+      );
 
     this.aibitat.introspect?.("Running Torus integration.");
-    const torus = await this.executeLensAgent(
-      "@torus",
-      `User query:\n${userQuery}\n\nCouncil inputs:\n[Watcher]\n${watcher}\n\n[Auditor]\n${auditor}\n\n[Synthesizer]\n${synthesizer}\n\nTask: Integrate these analyses topologically into a coherent synthesis with variance-aware confidence statements, blind spots, and 1-3 clarification questions.`
-    );
+    const { content: torus, routeUsed: torusRoute } =
+      await this.executeLensAgentWithRoute(
+        "@torus",
+        `User query:\n${userQuery}\n\nCouncil inputs:\n[Watcher]\n${watcher}\n\n[Auditor]\n${auditor}\n\n[Synthesizer]\n${synthesizer}\n\nTask: Integrate these analyses topologically into a coherent synthesis with variance-aware confidence statements, blind spots, and 1-3 clarification questions.`
+      );
 
     this.aibitat.introspect?.("Running Prism unification.");
     const prism = await this.executeLensAgent(
@@ -1133,10 +1214,10 @@ class AgentHandler {
       query: userQuery,
       timestamp: new Date().toISOString(),
       lensOutputs: [
-        { handle: "@watcher", label: "Watcher", content: watcher },
-        { handle: "@auditor", label: "Auditor", content: auditor },
-        { handle: "@synthesizer", label: "Synthesizer", content: synthesizer },
-        { handle: "@torus", label: "Torus", content: torus },
+        { handle: "@watcher", label: "Watcher", content: watcher, routeUsed: watcherRoute },
+        { handle: "@auditor", label: "Auditor", content: auditor, routeUsed: auditorRoute },
+        { handle: "@synthesizer", label: "Synthesizer", content: synthesizer, routeUsed: synthesizerRoute },
+        { handle: "@torus", label: "Torus", content: torus, routeUsed: torusRoute },
       ],
       synthesis: {
         handle: "@prism",

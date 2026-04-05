@@ -21,8 +21,11 @@ function parseAgentName(content = "") {
 /**
  * A single agent pill. Two visual states: "running" (shimmer) and "done" (muted gold).
  * When an onClick handler is provided the pill becomes interactive.
+ * Optionally renders a small slot-label badge and a tooltip.
+ *
+ * @param {{ name: string, state: string, onClick?: Function, badge?: string|null, tooltip?: string|null }} props
  */
-function AgentPill({ name, state, onClick }) {
+function AgentPill({ name, state, onClick, badge, tooltip }) {
   const stateClass =
     state === "running"
       ? "metacanon-agent-pill metacanon-agent-pill--running"
@@ -30,8 +33,9 @@ function AgentPill({ name, state, onClick }) {
   const isClickable = typeof onClick === "function";
   return (
     <span
-      className={`inline-flex items-center text-[10px] px-2.5 py-1 rounded-full ${stateClass} ${isClickable ? "hover:opacity-80 transition-opacity" : ""}`}
+      className={`inline-flex items-center gap-x-1 text-[10px] px-2.5 py-1 rounded-full ${stateClass} ${isClickable ? "hover:opacity-80 transition-opacity" : ""}`}
       style={{ cursor: isClickable ? "pointer" : "default" }}
+      title={tooltip || undefined}
       onClick={isClickable ? onClick : undefined}
       role={isClickable ? "button" : undefined}
       tabIndex={isClickable ? 0 : undefined}
@@ -42,8 +46,29 @@ function AgentPill({ name, state, onClick }) {
       }
     >
       {name}
+      {badge && (
+        <span className="inline-flex items-center rounded-full bg-white/10 light:bg-slate-200 px-1.5 py-0 text-[8px] font-semibold uppercase tracking-wide opacity-80">
+          {badge}
+        </span>
+      )}
     </span>
   );
+}
+
+/**
+ * Look up the routeUsed for a pill name in deliberationData.lensOutputs.
+ * Returns { slotLabel, provider, model } or null if not found / no routeUsed.
+ */
+function findRouteUsedForPill(pillName = "", deliberationData = null) {
+  if (!deliberationData?.lensOutputs?.length) return null;
+  const normalized = pillName.toLowerCase();
+  for (const lens of deliberationData.lensOutputs) {
+    const label = (lens.label || "").toLowerCase();
+    if (label.includes(normalized) || normalized.includes(label)) {
+      return lens.routeUsed || null;
+    }
+  }
+  return null;
 }
 
 /**
@@ -216,13 +241,22 @@ export default function StatusResponse({
               {!isExpanded ? (
                 /* Collapsed: single-line preview */
                 <div className="text-zinc-200 light:text-slate-800 font-mono text-sm leading-[18px]">
-                  {currentAgentName ? (
-                    <AgentPill
-                      name={currentAgentName}
-                      state={isThinking ? "running" : "done"}
-                      onClick={deliberationData ? () => handlePillClick(currentAgentName) : undefined}
-                    />
-                  ) : (
+                  {currentAgentName ? (() => {
+                    const route = findRouteUsedForPill(currentAgentName, deliberationData);
+                    const badge = route?.slotLabel || null;
+                    const tooltip = badge
+                      ? `${route.model || route.provider || "model"} via ${badge}`
+                      : null;
+                    return (
+                      <AgentPill
+                        name={currentAgentName}
+                        state={isThinking ? "running" : "done"}
+                        onClick={deliberationData ? () => handlePillClick(currentAgentName) : undefined}
+                        badge={badge}
+                        tooltip={tooltip}
+                      />
+                    );
+                  })() : (
                     <span className="block w-full truncate">
                       {currentThought?.content}
                     </span>
@@ -242,14 +276,23 @@ export default function StatusResponse({
                   )}
                   {allPills.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 pt-1">
-                      {allPills.map((pill, index) => (
-                        <AgentPill
-                          key={`pill-${pill.uuid || index}`}
-                          name={pill.name}
-                          state={pill.state}
-                          onClick={deliberationData ? () => handlePillClick(pill.name) : undefined}
-                        />
-                      ))}
+                      {allPills.map((pill, index) => {
+                        const route = findRouteUsedForPill(pill.name, deliberationData);
+                        const badge = route?.slotLabel || null;
+                        const tooltip = badge
+                          ? `${route.model || route.provider || "model"} via ${badge}`
+                          : null;
+                        return (
+                          <AgentPill
+                            key={`pill-${pill.uuid || index}`}
+                            name={pill.name}
+                            state={pill.state}
+                            onClick={deliberationData ? () => handlePillClick(pill.name) : undefined}
+                            badge={badge}
+                            tooltip={tooltip}
+                          />
+                        );
+                      })}
                     </div>
                   )}
                 </div>
