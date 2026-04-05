@@ -217,6 +217,7 @@ function buildInitialState(settings = {}) {
     dockerModel: settings?.DockerModelRunnerModelPref || "",
     dockerTokenLimit:
       settings?.DockerModelRunnerModelTokenLimit?.toString?.() || "8192",
+    skipLocalModel: false,
   });
 }
 
@@ -253,6 +254,7 @@ function normalizeFormState(state = {}) {
     dockerBasePath: asText(state?.dockerBasePath, DOCKER_DEFAULT_BASE_PATH),
     dockerModel: asText(state?.dockerModel),
     dockerTokenLimit: asText(state?.dockerTokenLimit, "8192"),
+    skipLocalModel: !!state?.skipLocalModel,
   };
 }
 
@@ -447,6 +449,10 @@ export default function PrismSetupAssistantFlow({
     }
 
     if (step === 2) {
+      if (formState.skipLocalModel) {
+        // User opted to skip Docker/local model -- no Docker fields required.
+        return null;
+      }
       if (!selectedDockerModelInstalled) {
         return "Install or choose a local Docker model before continuing.";
       }
@@ -543,12 +549,15 @@ export default function PrismSetupAssistantFlow({
       VectorDB: formState.vectorBackend,
       EmbeddingEngine: formState.embedder,
       EmbeddingModelPref: formState.embeddingModel,
-      LLMProvider: "docker-model-runner",
-      DockerModelRunnerBasePath:
-        formState.dockerBasePath || DOCKER_DEFAULT_BASE_PATH,
-      DockerModelRunnerModelPref: formState.dockerModel,
-      DockerModelRunnerModelTokenLimit: formState.dockerTokenLimit,
     };
+
+    if (!formState.skipLocalModel) {
+      payload.LLMProvider = "docker-model-runner";
+      payload.DockerModelRunnerBasePath =
+        formState.dockerBasePath || DOCKER_DEFAULT_BASE_PATH;
+      payload.DockerModelRunnerModelPref = formState.dockerModel;
+      payload.DockerModelRunnerModelTokenLimit = formState.dockerTokenLimit;
+    }
 
     if (formState.vectorBackend === "pgvector") {
       payload.PGVectorConnectionString = formState.pgConnectionString;
@@ -569,14 +578,27 @@ export default function PrismSetupAssistantFlow({
     }
 
     await persistDraft(null);
-    savePrismSetupCompleted({
+    const completionRecord = {
       completedAt: new Date().toISOString(),
       vectorBackend: formState.vectorBackend,
       embedder: formState.embedder,
       embeddingModel: formState.embeddingModel,
-      dockerModel: formState.dockerModel,
-    });
+      skippedLocalModel: !!formState.skipLocalModel,
+    };
+    if (!formState.skipLocalModel) {
+      completionRecord.dockerModel = formState.dockerModel;
+    }
+    savePrismSetupCompleted(completionRecord);
     showToast("Prism setup saved successfully.", "success");
+    if (formState.skipLocalModel) {
+      setTimeout(() => {
+        showToast(
+          "Next step: open Settings \u2192 LLM Preference to connect a chat model.",
+          "info",
+          { autoClose: 8000 }
+        );
+      }, 1200);
+    }
     setSaving(false);
     onApplied(formState);
   };
@@ -1122,6 +1144,34 @@ export default function PrismSetupAssistantFlow({
                   installation flow so the local model you install here is the
                   same one Prism AI will use after onboarding completes.
                 </div>
+
+                {!formState.skipLocalModel ? (
+                  <button
+                    type="button"
+                    onClick={() => updateField("skipLocalModel", true)}
+                    className="mt-2 text-sm font-medium text-theme-text-secondary underline decoration-theme-text-secondary/40 underline-offset-2 transition hover:text-theme-primary-button hover:decoration-theme-primary-button/60"
+                  >
+                    Skip -- I will configure a cloud provider in Settings
+                  </button>
+                ) : (
+                  <div className="rounded-[18px] border border-amber-400/35 bg-amber-400/10 px-4 py-4 text-sm leading-6 text-theme-text-primary">
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <span className="font-semibold">Local model skipped.</span>{" "}
+                        You can configure an LLM provider (OpenAI, Anthropic, etc.) in{" "}
+                        <span className="font-semibold">Settings &rarr; LLM Preference</span>{" "}
+                        after setup completes.
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => updateField("skipLocalModel", false)}
+                        className="shrink-0 rounded-full border border-theme-sidebar-border px-3 py-1.5 text-xs font-semibold text-theme-text-primary transition hover:border-theme-primary-button hover:text-theme-primary-button"
+                      >
+                        Undo skip
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : null}
 
@@ -1159,15 +1209,28 @@ export default function PrismSetupAssistantFlow({
                   </div>
                   <div className="rounded-[20px] border border-theme-sidebar-border bg-theme-sidebar-item-default px-4 py-4">
                     <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-theme-home-text-secondary">
-                      Local chat model
+                      Chat model
                     </div>
-                    <div className="mt-2 text-lg font-semibold text-theme-text-primary">
-                      {formState.dockerModel || "unset"}
-                    </div>
-                    <div className="mt-2 text-sm leading-6 text-theme-text-secondary">
-                      Docker Model Runner /{" "}
-                      {formState.dockerTokenLimit || "8192"} tokens
-                    </div>
+                    {formState.skipLocalModel ? (
+                      <>
+                        <div className="mt-2 text-lg font-semibold text-amber-300">
+                          Cloud provider
+                        </div>
+                        <div className="mt-2 text-sm leading-6 text-theme-text-secondary">
+                          Not configured yet. Go to Settings &rarr; LLM Preference after setup.
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="mt-2 text-lg font-semibold text-theme-text-primary">
+                          {formState.dockerModel || "unset"}
+                        </div>
+                        <div className="mt-2 text-sm leading-6 text-theme-text-secondary">
+                          Docker Model Runner /{" "}
+                          {formState.dockerTokenLimit || "8192"} tokens
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
 

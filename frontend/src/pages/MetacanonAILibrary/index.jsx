@@ -507,7 +507,7 @@ function TabButton({ active, label, onClick }) {
       className={`rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] transition-all ${
         active
           ? "border-primary-button bg-theme-sidebar-item-selected text-theme-text-primary"
-          : "border-theme-sidebar-border bg-transparent text-theme-text-secondary hover:bg-theme-sidebar-subitem-hover"
+          : "border-theme-sidebar-border bg-transparent text-theme-text-primary opacity-60 hover:opacity-90 hover:bg-theme-sidebar-subitem-hover"
       }`}
     >
       {label}
@@ -569,7 +569,7 @@ function ActionButton({
       className={`prism-library-action rounded-full px-2.5 py-1 text-[11px] transition-all disabled:cursor-not-allowed disabled:opacity-60 ${
         variant === "primary"
           ? "prism-library-action--primary border border-primary-button bg-primary-button text-white hover:opacity-90"
-          : "prism-library-action--secondary border border-theme-sidebar-border text-theme-text-secondary hover:text-theme-text-primary"
+          : "prism-library-action--secondary border border-theme-sidebar-border text-theme-text-primary hover:opacity-80"
       }`}
     >
       {label}
@@ -586,7 +586,7 @@ function ActionLink({ label, href, variant = "secondary" }) {
       className={`prism-library-action inline-flex rounded-full px-2.5 py-1 text-[11px] transition-all ${
         variant === "primary"
           ? "prism-library-action--primary border border-primary-button bg-primary-button text-white hover:opacity-90"
-          : "prism-library-action--secondary border border-theme-sidebar-border text-theme-text-secondary hover:text-theme-text-primary"
+          : "prism-library-action--secondary border border-theme-sidebar-border text-theme-text-primary hover:opacity-80"
       }`}
     >
       {label}
@@ -622,7 +622,7 @@ function SidebarSectionManager({
             {title}
           </div>
         </div>
-        <div className="rounded-full border border-theme-sidebar-border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-theme-text-secondary">
+        <div className="rounded-full border border-theme-sidebar-border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-theme-text-primary opacity-60">
           {items.length} live
         </div>
       </div>
@@ -672,7 +672,7 @@ function SidebarSectionManager({
                   <button
                     type="button"
                     onClick={() => onRemove(item)}
-                    className="rounded-full px-2 py-0.5 text-[10px] font-semibold text-theme-text-secondary transition-colors hover:text-theme-text-primary"
+                    className="rounded-full px-2 py-0.5 text-[10px] font-semibold text-theme-text-primary opacity-50 transition-all hover:opacity-100"
                   >
                     Remove
                   </button>
@@ -682,7 +682,7 @@ function SidebarSectionManager({
           ))}
         </div>
       ) : (
-        <div className="mt-2 rounded-[8px] border border-theme-sidebar-border/40 bg-theme-bg-container px-3 py-2 text-[11px] leading-4 text-theme-text-secondary">
+        <div className="mt-2 rounded-[8px] border border-theme-sidebar-border/40 bg-theme-bg-container px-3 py-2 text-[11px] leading-4 text-theme-text-primary opacity-50">
           {emptyLabel}
         </div>
       )}

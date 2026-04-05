@@ -2069,6 +2069,26 @@
   background: color-mix(in srgb, white 92%, var(--sidebar-bg) 8%);
 }
 
+/* ── Dark / Cathedral: library-page surface overrides ────────────── */
+
+:is([data-theme="dark"], [data-theme="cathedral"]) .prism-library-page .prism-library-stat,
+:is([data-theme="dark"], [data-theme="cathedral"]) .prism-library-page .prism-library-panel-card,
+:is([data-theme="dark"], [data-theme="cathedral"]) .prism-library-page .prism-library-input,
+:is([data-theme="dark"], [data-theme="cathedral"]) .prism-library-page .prism-library-summary {
+  background: color-mix(in srgb, var(--sidebar-bg) 82%, white 18%);
+}
+
+:is([data-theme="dark"], [data-theme="cathedral"]) .prism-library-page .prism-library-action--secondary {
+  background: color-mix(in srgb, var(--sidebar-bg) 72%, white 28%);
+  border-color: color-mix(in srgb, var(--sidebar-border) 60%, rgba(255,255,255,0.06));
+  color: var(--theme-text-primary);
+}
+
+:is([data-theme="dark"], [data-theme="cathedral"]) .prism-library-page .prism-library-action--secondary:hover {
+  background: color-mix(in srgb, var(--sidebar-bg) 60%, white 40%);
+  border-color: color-mix(in srgb, var(--sidebar-border) 80%, rgba(255,255,255,0.1));
+}
+
 [data-theme="dark"] :is(.prism-page-hero, .prism-page-panel, .prism-page-card, .prism-page-stat) {
   background:
     radial-gradient(circle at top left, color-mix(in srgb, var(--gold) 5%, transparent) 0%, transparent 24%),
