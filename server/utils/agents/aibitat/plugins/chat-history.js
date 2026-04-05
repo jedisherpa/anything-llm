@@ -12,6 +12,20 @@ const chatHistory = {
     return {
       name: this.name,
       setup: function (aibitat) {
+        // Capture any deliberationComplete event emitted before the terminal message.
+        // The websocket plugin writes to aibitat.socket; we intercept by monkey-patching
+        // the socket.send method to look for deliberationComplete payloads.
+        let _pendingDeliberationData = null;
+        const originalSocketSend = aibitat.socket?.send?.bind(aibitat.socket);
+        if (aibitat.socket && typeof originalSocketSend === "function") {
+          aibitat.socket.send = function (type, content) {
+            if (type === "deliberationComplete") {
+              _pendingDeliberationData = content;
+            }
+            return originalSocketSend(type, content);
+          };
+        }
+
         aibitat.onMessage(async () => {
           try {
             const lastResponses = aibitat.chats.slice(-2);
@@ -22,6 +36,10 @@ const chatHistory = {
             // the USER and the last being from anyone other than the user.
             if (prev.from !== "USER" || last.from === "USER") return;
 
+            // Consume any pending deliberation data emitted before this terminal message.
+            const deliberationData = _pendingDeliberationData;
+            _pendingDeliberationData = null;
+
             // If we have a post-reply flow we should save the chat using this special flow
             // so that post save cleanup and other unique properties can be run as opposed to regular chat.
             if (aibitat.hasOwnProperty("_replySpecialAttributes")) {
@@ -29,6 +47,7 @@ const chatHistory = {
                 prompt: prev.content,
                 response: last.content,
                 options: aibitat._replySpecialAttributes,
+                deliberationData,
               });
               delete aibitat._replySpecialAttributes;
               return;
@@ -37,11 +56,12 @@ const chatHistory = {
             await this._store(aibitat, {
               prompt: prev.content,
               response: last.content,
+              deliberationData,
             });
           } catch {}
         });
       },
-      _store: async function (aibitat, { prompt, response } = {}) {
+      _store: async function (aibitat, { prompt, response, deliberationData = null } = {}) {
         const invocation = aibitat.handlerProps.invocation;
         await WorkspaceChats.new({
           workspaceId: Number(invocation.workspace_id),
@@ -50,6 +70,7 @@ const chatHistory = {
             text: response,
             sources: [],
             type: "chat",
+            ...(deliberationData ? { deliberationData } : {}),
           },
           user: { id: invocation?.user_id || null },
           threadId: invocation?.thread_id || null,
@@ -57,7 +78,7 @@ const chatHistory = {
       },
       _storeSpecial: async function (
         aibitat,
-        { prompt, response, options = {} } = {}
+        { prompt, response, options = {}, deliberationData = null } = {}
       ) {
         const invocation = aibitat.handlerProps.invocation;
         await WorkspaceChats.new({
@@ -71,6 +92,7 @@ const chatHistory = {
               ? options.storedResponse(response)
               : response,
             type: options?.saveAsType ?? "chat",
+            ...(deliberationData ? { deliberationData } : {}),
           },
           user: { id: invocation?.user_id || null },
           threadId: invocation?.thread_id || null,

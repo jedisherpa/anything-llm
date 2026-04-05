@@ -19,6 +19,7 @@ export default function DeliberationViewerModal({
   deliberationData,
   onClose,
   onSave,
+  initialSelectedKey = null,
 }) {
   const lenses = deliberationData?.lensOutputs ?? [];
   const synthesis = deliberationData?.synthesis ?? null;
@@ -35,9 +36,15 @@ export default function DeliberationViewerModal({
       : null,
   ].filter(Boolean);
 
-  const [selectedKey, setSelectedKey] = useState(
-    sidebarItems.length > 0 ? sidebarItems[0].key : null
-  );
+  // If initialSelectedKey is provided and valid, use it; otherwise fall back to first item.
+  const defaultKey =
+    initialSelectedKey && sidebarItems.some((s) => s.key === initialSelectedKey)
+      ? initialSelectedKey
+      : sidebarItems.length > 0
+        ? sidebarItems[0].key
+        : null;
+
+  const [selectedKey, setSelectedKey] = useState(defaultKey);
 
   const selectedItem = sidebarItems.find((item) => item.key === selectedKey);
 

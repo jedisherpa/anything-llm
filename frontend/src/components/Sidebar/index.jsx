@@ -57,7 +57,7 @@ export default function Sidebar() {
                   <MetacanonSidebarBrand />
                 </div>
                 <div className="relative flex-1 min-h-0 flex flex-col w-full pt-[4px]">
-                  <div className="metacanon-sidebar-scroll flex-1 overflow-y-auto no-scroll pb-[90px]">
+                  <div className="metacanon-sidebar-scroll flex-1 overflow-y-auto no-scroll pb-[96px]">
                     <div className="metacanon-sidebar-search-rail sticky top-0 z-20">
                       <SearchBox user={user} showNewWsModal={showNewWsModal} />
                     </div>

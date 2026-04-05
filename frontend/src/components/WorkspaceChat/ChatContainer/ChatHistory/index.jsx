@@ -198,16 +198,24 @@ export default forwardRef(function (
   const renderStatusResponse = useCallback(
     (item, index) => {
       const hasSubsequentMessages = index < compiledHistory.length - 1;
+      // Look at the next compiled history entry. If it is a React element
+      // (i.e. an assistant HistoricalMessage), pull deliberationData off its props.
+      const nextEntry = compiledHistory[index + 1];
+      const deliberationForStatus =
+        nextEntry && !Array.isArray(nextEntry) && nextEntry?.props?.deliberationData
+          ? nextEntry.props.deliberationData
+          : null;
       return (
         <StatusResponse
           key={`status-group-${index}`}
           messages={item}
           isThinking={!hasSubsequentMessages && lastMessageInfo.isAnimating}
           onExecuteSessionAction={onExecuteSessionAction}
+          deliberationData={deliberationForStatus}
         />
       );
     },
-    [compiledHistory.length, lastMessageInfo, onExecuteSessionAction]
+    [compiledHistory, lastMessageInfo, onExecuteSessionAction]
   );
 
   return (

@@ -2128,7 +2128,7 @@ does not extend the close button beyond the viewport. */
 }
 
 .metacanon-sidebar-footer-tray {
-  background: transparent;
+  background: color-mix(in srgb, var(--sidebar-bg) 88%, transparent);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   box-shadow: 0 -12px 24px rgba(0, 0, 0, 0.04);
