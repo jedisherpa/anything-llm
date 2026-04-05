@@ -13,7 +13,7 @@ import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import PrismHoverTarget from "@/components/PrismHoverTarget";
 
-const THREAD_CALLOUT_DETAIL_WIDTH = 26;
+const THREAD_CALLOUT_DETAIL_WIDTH = 20;
 export default function ThreadItem({
   idx,
   activeIdx,
@@ -42,7 +42,7 @@ export default function ThreadItem({
   });
   return (
     <div
-      className="w-full relative flex h-[36px] items-center border-none rounded-[12px]"
+      className="w-full relative flex h-[28px] items-center border-none rounded-[12px]"
       role="listitem"
     >
       {/* Curved line Element and leader if required */}
@@ -107,7 +107,7 @@ export default function ThreadItem({
               aria-current={isActive ? "page" : ""}
             >
               <p
-                className={`text-left text-sm truncate max-w-[150px] ${
+                className={`text-left text-[11px] truncate max-w-[150px] ${
                   isActive
                     ? "font-medium text-[var(--thread-active)]"
                     : "font-medium text-theme-text-secondary"

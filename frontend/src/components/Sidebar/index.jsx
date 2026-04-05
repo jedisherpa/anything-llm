@@ -208,10 +208,10 @@ function NewWorkspaceButton({ user, showNewWsModal }) {
     <div className="flex gap-x-2 items-center justify-between">
       <button
         onClick={showNewWsModal}
-        className="flex flex-grow w-[75%] h-[44px] gap-x-2 py-[5px] px-4 bg-white rounded-lg text-sidebar justify-center items-center hover:bg-opacity-80 transition-all duration-300"
+        className="flex flex-grow w-[75%] h-[30px] gap-x-2 py-[5px] px-4 bg-white rounded-[10px] text-sidebar justify-center items-center hover:bg-opacity-80 transition-all duration-300"
       >
-        <Plus className="h-5 w-5" />
-        <p className="text-sidebar text-sm font-semibold">
+        <Plus className="h-[14px] w-[14px]" />
+        <p className="text-sidebar text-[11px] font-normal">
           {t("new-workspace.title")}
         </p>
       </button>

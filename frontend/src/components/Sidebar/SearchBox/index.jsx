@@ -209,10 +209,10 @@ function ShortWidthNewWorkspaceButton({ user, showNewWsModal }) {
           data-tooltip-content={t("new-workspace.title")}
           aria-label={t("new-workspace.title")}
           onClick={showNewWsModal}
-          className="metacanon-search-create-button border-none flex h-[42px] w-full items-center justify-center gap-x-2 rounded-[14px] px-4 transition-all duration-300"
+          className="metacanon-search-create-button border-none flex h-[30px] w-full items-center justify-center gap-x-2 rounded-[10px] px-4 transition-all duration-300"
         >
-          <Plus size={18} weight="bold" />
-          <span className="metacanon-search-create-button__label text-[12px] font-semibold leading-none">
+          <Plus size={14} weight="bold" />
+          <span className="metacanon-search-create-button__label text-[11px] font-normal leading-none">
             {t("new-workspace.title")}
           </span>
         </button>
