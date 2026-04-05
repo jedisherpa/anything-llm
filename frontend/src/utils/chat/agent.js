@@ -215,12 +215,15 @@ export default function handleSocketResponse(socket, event, setChatHistory) {
         if (type === "fullTextResponse") {
           finalizeAgentPresence();
           closeTerminalAgentSocket(socket);
+          const deliberationData = socket._pendingDeliberationData || null;
+          socket._pendingDeliberationData = null;
           return prev.map((msg) =>
             msg.uuid === uuid
               ? {
                   ...msg,
                   type: "textResponse",
                   content,
+                  deliberationData,
                 }
               : msg
           );
@@ -268,6 +271,7 @@ export default function handleSocketResponse(socket, event, setChatHistory) {
   }
 
   if (data.type === "wssFailure") {
+    socket._pendingDeliberationData = null;
     socket.agentSessionFailed = true;
     if (socket.agentSessionInitTimeout) {
       window.clearTimeout(socket.agentSessionInitTimeout);

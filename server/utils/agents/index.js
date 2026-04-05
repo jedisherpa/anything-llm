@@ -41,7 +41,7 @@ function buildDeliberationMarkdown(data) {
       : data.type === "constellation"
         ? "Constellation"
         : "Lens Deliberation";
-  const lensNames = data.lensOutputs.map((l) => l.label).join(", ");
+  const lensNames = (data.lensOutputs ?? []).map((l) => l.label).join(", ");
   const lines = [
     `# Deliberation: ${data.label || typeLabel}`,
     `**Date:** ${data.timestamp}`,
