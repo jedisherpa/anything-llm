@@ -491,7 +491,7 @@ function ConstellationModeTile({
     <div
       className={`rounded-[10px] border px-3 py-3 ${
         emphasis
-          ? "border-theme-button-primary bg-theme-sidebar-item-selected"
+          ? "border-primary-button bg-theme-sidebar-item-selected"
           : "border-theme-sidebar-border"
       }`}
     >
@@ -515,7 +515,7 @@ function TabButton({ active, label, onClick }) {
       onClick={onClick}
       className={`rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] transition-all ${
         active
-          ? "border-theme-button-primary bg-theme-sidebar-item-selected text-theme-text-primary"
+          ? "border-primary-button bg-theme-sidebar-item-selected text-theme-text-primary"
           : "border-theme-sidebar-border bg-transparent text-theme-text-secondary hover:bg-theme-sidebar-subitem-hover"
       }`}
     >
@@ -577,8 +577,8 @@ function ActionButton({
       disabled={disabled}
       className={`prism-library-action rounded-full px-3 py-1.5 text-xs transition-all disabled:cursor-not-allowed disabled:opacity-60 ${
         variant === "primary"
-          ? "prism-library-action--primary border border-theme-button-primary bg-theme-button-primary text-theme-button-primary-text hover:opacity-90"
-          : "prism-library-action--secondary text-theme-text-secondary hover:text-theme-text-primary"
+          ? "prism-library-action--primary border border-primary-button bg-primary-button text-white hover:opacity-90"
+          : "prism-library-action--secondary border border-theme-sidebar-border text-theme-text-secondary hover:text-theme-text-primary"
       }`}
     >
       {label}
@@ -594,8 +594,8 @@ function ActionLink({ label, href, variant = "secondary" }) {
       rel="noreferrer"
       className={`prism-library-action inline-flex rounded-full px-3 py-1.5 text-xs transition-all ${
         variant === "primary"
-          ? "prism-library-action--primary border border-theme-button-primary bg-theme-button-primary text-theme-button-primary-text hover:opacity-90"
-          : "prism-library-action--secondary text-theme-text-secondary hover:text-theme-text-primary"
+          ? "prism-library-action--primary border border-primary-button bg-primary-button text-white hover:opacity-90"
+          : "prism-library-action--secondary border border-theme-sidebar-border text-theme-text-secondary hover:text-theme-text-primary"
       }`}
     >
       {label}
@@ -664,7 +664,7 @@ function SidebarSectionManager({
               }}
               className={`rounded-[8px] border px-3 py-2 transition-all ${
                 draggedItemKey === getItemKey(item, index)
-                  ? "border-theme-button-primary bg-theme-sidebar-item-selected"
+                  ? "border-primary-button bg-theme-sidebar-item-selected"
                   : "border-theme-sidebar-border bg-theme-bg-container hover:bg-theme-sidebar-subitem-hover"
               }`}
             >
@@ -726,7 +726,7 @@ function ItemCard({
       onClick={onClick}
       className={`w-full rounded-[10px] border px-3 py-3 text-left transition-all ${
         active
-          ? "border-theme-button-primary bg-theme-sidebar-item-selected"
+          ? "border-primary-button bg-theme-sidebar-item-selected"
           : "border-theme-sidebar-border bg-theme-bg-container hover:bg-theme-sidebar-subitem-hover"
       }`}
     >
@@ -2069,7 +2069,7 @@ export default function MetacanonAILibraryPage() {
                             onClick={() => setDraftLeadHandle(lens.handle)}
                             className={`rounded-full px-2 py-0.5 transition-all ${
                               draftLeadHandle === lens.handle
-                                ? "bg-theme-button-primary text-theme-button-primary-text"
+                                ? "bg-primary-button text-white"
                                 : "bg-theme-bg-container text-theme-text-secondary hover:bg-theme-sidebar-subitem-hover hover:text-theme-text-primary"
                             }`}
                           >
