@@ -442,6 +442,7 @@ function LensChooser({
   items,
   onApplyLens,
   actionLabel = "Assign",
+  isInspect = false,
 }) {
   return (
     <div className="prism-composer-library prism-page-panel">
@@ -474,7 +475,11 @@ function LensChooser({
             </div>
             <button
               type="button"
-              className="prism-composer-add-button"
+              className={
+                isInspect
+                  ? "text-[10px] text-theme-text-secondary hover:text-theme-text-primary transition-colors underline-offset-2 hover:underline shrink-0"
+                  : "prism-composer-add-button"
+              }
               onClick={() => onApplyLens(lens)}
             >
               {actionLabel}
@@ -623,6 +628,7 @@ export default function MetacanonLensComposerPage() {
     suggestedTitle: "",
   });
   const [providerSlots, setProviderSlots] = useState([]);
+  const [shapeDialOpen, setShapeDialOpen] = useState(true);
 
   useEffect(() => {
     setSavedShapes(loadSavedShapes());
@@ -1098,43 +1104,71 @@ export default function MetacanonLensComposerPage() {
 
           <section className="prism-composer-grid">
             <div className="prism-composer-column prism-composer-column--selectors">
-              <SelectorRail
-                title={
-                  family === COMPOSER_FAMILIES.SHAPES
-                    ? "Shape Dial"
-                    : "Council Dial"
-                }
-                subtitle={
-                  family === COMPOSER_FAMILIES.SHAPES
-                    ? "Pick the formation size first."
-                    : "Jump between preset councils without backing out."
-                }
-                items={selectorItems}
-                activeValue={
-                  family === COMPOSER_FAMILIES.SHAPES
-                    ? shapeId
-                    : selectedCouncilPresetId
-                }
-                onSelect={(value) => {
-                  if (family === COMPOSER_FAMILIES.SHAPES) {
-                    setShapeId(value);
-                    setActiveSlot(1);
-                  } else {
-                    setSelectedCouncilPresetId(value);
-                    setActiveSlot(1);
-                  }
-                }}
-                renderLabel={(item) => (
-                  <div className="prism-composer-rail-copy">
-                    <div className="prism-composer-rail-title">
-                      {item.label}
+              <div className="prism-composer-rail">
+                <button
+                  type="button"
+                  className="prism-composer-rail-header w-full text-left flex items-center justify-between"
+                  onClick={() => family === COMPOSER_FAMILIES.SHAPES && setShapeDialOpen((prev) => !prev)}
+                  aria-expanded={family !== COMPOSER_FAMILIES.SHAPES || shapeDialOpen}
+                >
+                  <div>
+                    <div className="prism-composer-rail-eyebrow">
+                      {family === COMPOSER_FAMILIES.SHAPES ? "Shape Dial" : "Council Dial"}
                     </div>
-                    <div className="prism-composer-rail-meta">
-                      {item.caption}
+                    <div className="prism-composer-rail-subtitle">
+                      {family === COMPOSER_FAMILIES.SHAPES
+                        ? "Pick the formation size first."
+                        : "Jump between preset councils without backing out."}
                     </div>
                   </div>
-                )}
-              />
+                  {family === COMPOSER_FAMILIES.SHAPES ? (
+                    <span className="ml-2 text-[10px] text-theme-text-secondary opacity-60 shrink-0">
+                      {shapeDialOpen ? "▲" : "▼"}
+                    </span>
+                  ) : null}
+                </button>
+                {(family !== COMPOSER_FAMILIES.SHAPES || shapeDialOpen) ? (
+                  <div className="prism-composer-rail-list">
+                    {selectorItems.map((item) => {
+                      const activeVal = family === COMPOSER_FAMILIES.SHAPES ? shapeId : selectedCouncilPresetId;
+                      const isSelected = activeVal === item.value;
+                      return (
+                        <button
+                          type="button"
+                          key={item.value}
+                          className={`prism-composer-rail-item ${isSelected ? "is-active" : ""}`}
+                          onClick={() => {
+                            if (family === COMPOSER_FAMILIES.SHAPES) {
+                              setShapeId(item.value);
+                              setActiveSlot(1);
+                            } else {
+                              setSelectedCouncilPresetId(item.value);
+                              setActiveSlot(1);
+                            }
+                          }}
+                        >
+                          <div className="prism-composer-rail-copy w-full">
+                            <div className="prism-composer-rail-title">{item.label}</div>
+                            <div className="prism-composer-rail-meta">{item.caption}</div>
+                            {isSelected && family === COMPOSER_FAMILIES.COUNCILS && buildMode === COMPOSER_BUILD_MODES.PRESETS ? (
+                              <button
+                                type="button"
+                                className="mt-1.5 text-[10px] text-theme-text-secondary hover:text-theme-text-primary transition-colors underline-offset-2 hover:underline"
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  clonePresetIntoCustom();
+                                }}
+                              >
+                                Use as starting point
+                              </button>
+                            ) : null}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                ) : null}
+              </div>
 
               {family === COMPOSER_FAMILIES.SHAPES &&
               buildMode === COMPOSER_BUILD_MODES.PRESETS ? (
@@ -1148,13 +1182,25 @@ export default function MetacanonLensComposerPage() {
                     setActiveSlot(1);
                   }}
                   renderLabel={(item) => (
-                    <div className="prism-composer-rail-copy">
+                    <div className="prism-composer-rail-copy w-full">
                       <div className="prism-composer-rail-title">
                         {item.label}
                       </div>
-                      <div className="prism-composer-rail-meta">
+                      <div className="prism-composer-rail-meta line-clamp-1 text-[11px]">
                         {item.caption}
                       </div>
+                      {item.value === selectedShapePresetId ? (
+                        <button
+                          type="button"
+                          className="mt-1.5 text-[10px] text-theme-text-secondary hover:text-theme-text-primary transition-colors underline-offset-2 hover:underline"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            clonePresetIntoCustom();
+                          }}
+                        >
+                          Use as starting point
+                        </button>
+                      ) : null}
                     </div>
                   )}
                 />
@@ -1235,33 +1281,7 @@ export default function MetacanonLensComposerPage() {
                       : "Save a council mix to keep it here."
                   }
                 />
-              ) : (
-                <div className="prism-composer-preset-summary prism-page-panel">
-                  <div className="prism-composer-panel-header">
-                    <div>
-                      <div className="prism-composer-panel-eyebrow">
-                        Preset View
-                      </div>
-                      <div className="prism-composer-panel-title">
-                        {activeMix.name}
-                      </div>
-                    </div>
-                    <div className="prism-composer-panel-note">
-                      {activeMix.statusLabel}
-                    </div>
-                  </div>
-                  <div className="prism-composer-preset-copy">
-                    {activeMix.description}
-                  </div>
-                  <button
-                    type="button"
-                    className="prism-composer-action"
-                    onClick={clonePresetIntoCustom}
-                  >
-                    Use as starting point
-                  </button>
-                </div>
-              )}
+              ) : null}
             </div>
 
             <div className="prism-composer-column prism-composer-column--actions">
@@ -1298,6 +1318,7 @@ export default function MetacanonLensComposerPage() {
                       ? "Assign"
                       : "Add"
                 }
+                isInspect={buildMode === COMPOSER_BUILD_MODES.PRESETS}
                 onApplyLens={(lens) => {
                   if (buildMode === COMPOSER_BUILD_MODES.PRESETS) {
                     const slot = (activeMix.lenses || []).find(
