@@ -32,7 +32,7 @@ const { OllamaAILLM } = require("../../../AiProviders/ollama");
 const { withAiOnlyLens } = require("../prompts/aiOnlyLens");
 
 const DEFAULT_WORKSPACE_PROMPT =
-  "You are a helpful ai assistant who can assist the user and use tools available to help answer the users prompts and questions.";
+  "You are a helpful ai assistant who can assist the user and use tools available to help answer the users prompts and questions. Respond in conversational, domain-appropriate language. Avoid bullet lists, numbered lists, or heavy markdown formatting unless specifically requested. Write as a knowledgeable colleague would — in clear, flowing prose.";
 
 class Provider {
   _client;
