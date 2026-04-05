@@ -120,6 +120,14 @@ function normalizeCustomConstellation(payload = {}) {
       payload.leadTitle ||
       payload.projectManagerLensTitle ||
       null,
+    projectManagerHandle:
+      payload.leadHandle ||
+      payload.projectManagerLensHandle ||
+      null,
+    members: lenses.map((lens) => ({
+      lensHandle: lens.handle || null,
+      role: lens.role || lens.title || null,
+    })),
     executionRoutes,
     isCustom: true,
     relativePath: `storage/metacanon/custom-constellations/${id}.json`,
@@ -199,6 +207,7 @@ function saveCustomConstellation(payload = {}) {
 function deleteCustomConstellation(id = "") {
   const safeId = String(id || "").trim();
   if (!safeId) return false;
+  if (!safeId || safeId.includes('/') || safeId.includes('\\') || safeId.includes('..')) return false;
   const filePath = path.join(
     getCustomConstellationDirectory(),
     `${safeId}.json`
