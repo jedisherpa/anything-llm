@@ -477,7 +477,7 @@ export default function PromptInput({
               ) : null}
               {hasActiveAlignment ? (
                 <div
-                  className="metacanon-alignment-chip flex items-center justify-between gap-2 rounded-t-[16px] border-b border-white/[0.06] px-4 py-1.5"
+                  className="metacanon-alignment-chip flex items-center justify-between gap-2 px-0 py-1"
                   style={{ "--lens-color": activeAlignment.colorHex }}
                 >
                   <div className="flex min-w-0 items-center gap-2">

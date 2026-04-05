@@ -1858,21 +1858,9 @@ does not extend the close button beyond the viewport. */
 }
 
 .metacanon-alignment-chip {
-  background: color-mix(in srgb, var(--lens-color) 10%, var(--comp-bg) 90%);
-  border: 1px solid color-mix(in srgb, var(--lens-color) 22%, var(--comp-border) 78%);
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, white 5%, transparent),
-    0 8px 22px rgba(0, 0, 0, 0.12);
-}
-
-.metacanon-alignment-chip__clear {
-  background: color-mix(in srgb, var(--lens-color) 10%, transparent);
-  color: var(--text-2);
-}
-
-.metacanon-alignment-chip__clear:hover {
-  background: color-mix(in srgb, var(--lens-color) 18%, transparent);
-  color: var(--text-1);
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
 /* Inline mode pills — rendered inside the toolbar row */
