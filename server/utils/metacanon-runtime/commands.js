@@ -47,7 +47,11 @@ function createInstallerWebappCommands(options = {}) {
     },
 
     createTaskSubSphere(payload) {
-      return client.createTaskSubSphere(payload.name, payload.objective, payload.hitl_required);
+      return client.createTaskSubSphere(
+        payload.name,
+        payload.objective,
+        payload.hitl_required
+      );
     },
 
     getSubSphereList() {
@@ -74,7 +78,11 @@ function createInstallerWebappCommands(options = {}) {
       return client.approveHitlAction(subSphereId, pendingActionId);
     },
 
-    rejectHitlAction(subSphereId, pendingActionId, reason = "Rejected in Prism execute mode.") {
+    rejectHitlAction(
+      subSphereId,
+      pendingActionId,
+      reason = "Rejected in Prism execute mode."
+    ) {
       return client.rejectHitlAction(subSphereId, pendingActionId, reason);
     },
 
@@ -107,11 +115,19 @@ function createInstallerWebappCommands(options = {}) {
     },
 
     sendAgentMessage(payload) {
-      return client.sendAgentMessage(payload.platform, payload.agent_id, payload.message);
+      return client.sendAgentMessage(
+        payload.platform,
+        payload.agent_id,
+        payload.message
+      );
     },
 
     sendSubSpherePrismMessage(payload) {
-      return client.sendSubSpherePrismMessage(payload.platform, payload.sub_sphere_id, payload.message);
+      return client.sendSubSpherePrismMessage(
+        payload.platform,
+        payload.sub_sphere_id,
+        payload.message
+      );
     },
 
     getCommunicationStatus() {

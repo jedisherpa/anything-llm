@@ -91,7 +91,10 @@ function buildGenesisConfig(constitutionText) {
       "Validate actions against the constitution before execution",
       "Maintain full audit trail of delegated actions",
     ],
-    signing_secret: process.env.METACANON_SIGNING_SECRET || process.env.SIG_KEY || "prismai-default-signing-secret",
+    signing_secret:
+      process.env.METACANON_SIGNING_SECRET ||
+      process.env.SIG_KEY ||
+      "prismai-default-signing-secret",
   };
 }
 
@@ -108,13 +111,17 @@ async function autoGenesis() {
     return;
   }
 
-  console.log("[AutoGenesis] Starting auto-genesis with governance documents...");
+  console.log(
+    "[AutoGenesis] Starting auto-genesis with governance documents..."
+  );
 
   let constitutionText;
   try {
     constitutionText = readGovernanceDocuments();
   } catch (err) {
-    console.error(`[AutoGenesis] Failed to read governance documents: ${err.message}`);
+    console.error(
+      `[AutoGenesis] Failed to read governance documents: ${err.message}`
+    );
     return;
   }
 

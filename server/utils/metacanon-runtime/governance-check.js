@@ -11,7 +11,7 @@ const REQUIRED_DOCS = [
   "2_v2.0_Metacanon_Constitution_Second_Edition.pdf",
   "3_v3.0_Metacanon_Constitution.md",
   "4_Values_and_The_Values_Prism.pdf",
-  "5_AI_Only_Lens_Edition_v1.2.md"
+  "5_AI_Only_Lens_Edition_v1.2.md",
 ];
 
 /**
@@ -25,7 +25,7 @@ function verifyGovernanceDocuments(governanceDir) {
     missing: [],
     empty: [],
     total: REQUIRED_DOCS.length,
-    found: 0
+    found: 0,
   };
 
   for (const docName of REQUIRED_DOCS) {
@@ -45,7 +45,7 @@ function verifyGovernanceDocuments(governanceDir) {
         result.empty.push(docName);
         result.valid = false;
       }
-    } catch (err) {
+    } catch (_err) {
       result.missing.push(docName);
       result.valid = false;
     }
@@ -71,5 +71,5 @@ function verifyGovernanceDocuments(governanceDir) {
 
 module.exports = {
   verifyGovernanceDocuments,
-  REQUIRED_DOCS
+  REQUIRED_DOCS,
 };

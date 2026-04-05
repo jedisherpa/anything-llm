@@ -6,7 +6,13 @@ const TOOL_CREDENTIALS_LABEL = "prism_tool_credentials_v1";
 const LENS_ROUTING_LABEL = "prism_deliberation_lens_routing_v1";
 const PROVIDER_SLOT_COUNT = 5;
 
-const LENS_ROUTING_KEYS = ["watcher", "auditor", "synthesizer", "torus", "prism"];
+const LENS_ROUTING_KEYS = [
+  "watcher",
+  "auditor",
+  "synthesizer",
+  "torus",
+  "prism",
+];
 
 const DEFAULT_LENS_ROUTING = Object.fromEntries(
   LENS_ROUTING_KEYS.map((key) => [key, null])

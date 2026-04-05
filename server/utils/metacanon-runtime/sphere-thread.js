@@ -108,7 +108,10 @@ class SphereThreadCoordinator {
         this.client.bindAgentRoute(agentId, null, null, sphereId, false);
         boundAgents.push(agentId);
       } catch (error) {
-        console.error(`Failed to bind agent ${agentId} to sphere ${sphereId}:`, error.message);
+        console.error(
+          `Failed to bind agent ${agentId} to sphere ${sphereId}:`,
+          error.message
+        );
         // Continue binding other agents on partial failure
       }
     }
@@ -152,7 +155,9 @@ class SphereThreadCoordinator {
 
     // Verify sphere exists locally
     if (!this.deliberations.has(sphereId)) {
-      throw new Error(`Deliberation sphere ${sphereId} not found or not active.`);
+      throw new Error(
+        `Deliberation sphere ${sphereId} not found or not active.`
+      );
     }
 
     // Submit query to the sub-sphere

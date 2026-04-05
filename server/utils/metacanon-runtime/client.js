@@ -103,14 +103,19 @@ function createMetaCanonClient(nativeBridge) {
     setProviderPriority(priorityList) {
       return parseJsonResult(
         "set_provider_priority",
-        bridge.set_provider_priority(toJsonPayload(priorityList, "provider priority"))
+        bridge.set_provider_priority(
+          toJsonPayload(priorityList, "provider priority")
+        )
       );
     },
 
     updateProviderConfig(providerId, patch) {
       return parseJsonResult(
         "update_provider_config",
-        bridge.update_provider_config(providerId, toJsonPayload(patch, "provider config"))
+        bridge.update_provider_config(
+          providerId,
+          toJsonPayload(patch, "provider config")
+        )
       );
     },
 
@@ -122,7 +127,10 @@ function createMetaCanonClient(nativeBridge) {
     },
 
     getSubSphereList() {
-      return parseJsonResult("get_sub_sphere_list", bridge.get_sub_sphere_list());
+      return parseJsonResult(
+        "get_sub_sphere_list",
+        bridge.get_sub_sphere_list()
+      );
     },
 
     getSubSphereStatus(subSphereId) {
@@ -133,7 +141,10 @@ function createMetaCanonClient(nativeBridge) {
     },
 
     pauseSubSphere(subSphereId) {
-      return parseJsonResult("pause_sub_sphere", bridge.pause_sub_sphere(subSphereId));
+      return parseJsonResult(
+        "pause_sub_sphere",
+        bridge.pause_sub_sphere(subSphereId)
+      );
     },
 
     dissolveSubSphere(subSphereId, reason) {
