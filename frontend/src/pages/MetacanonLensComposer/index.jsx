@@ -20,6 +20,7 @@ import {
   fetchLibraryCollection,
   saveCustomConstellation as saveCustomConstellationToServer,
 } from "@/models/metacanonLibrary";
+import System from "@/models/system";
 import paths from "@/utils/paths";
 import showToast from "@/utils/toast";
 import { isMobile } from "react-device-detect";
@@ -287,7 +288,11 @@ function LensRoster({
   onSelectSlot,
   onRemoveLens,
   onMoveLens,
+  providerSlots = [],
+  executionRoutes = {},
+  onRouteChange,
 }) {
+  const [advancedOpen, setAdvancedOpen] = useState(false);
   const slots =
     mix.mode === "shape"
       ? buildShapeSlots(mix, template)
@@ -296,6 +301,10 @@ function LensRoster({
           lens,
           locked: false,
         }));
+
+  const enabledSlots = providerSlots.filter(
+    (slot) => slot.enabled && slot.provider
+  );
 
   return (
     <div className="prism-composer-roster prism-page-panel">
@@ -309,75 +318,115 @@ function LensRoster({
       </div>
       <div className="prism-composer-roster-list">
         {slots.map((slot, index) => (
-          <button
-            type="button"
-            key={`slot-${slot.index}`}
-            className={`prism-composer-roster-item ${
-              activeSlot === slot.index ? "is-active" : ""
-            }`}
-            onClick={() => onSelectSlot(slot.index)}
-          >
-            <div className="prism-composer-roster-slot">
-              <span className="prism-composer-roster-index">
-                {mix.mode === "shape" ? `S${slot.index}` : `L${slot.index}`}
-              </span>
-              {slot.locked ? (
-                <span className="prism-composer-roster-badge">PM</span>
-              ) : null}
-            </div>
-            <div className="prism-composer-roster-copy">
-              <div className="prism-composer-roster-title">
-                {slot.lens?.title || `Empty slot ${slot.index}`}
-              </div>
-              <div className="prism-composer-roster-meta">
-                {slot.lens?.collectionLabel ||
-                  (slot.locked ? "Project Manager Lens" : "Choose a lens")}
-              </div>
-            </div>
-            {slot.lens && !slot.locked ? (
-              <div className="prism-composer-roster-actions">
-                {mix.mode === "council" ? (
-                  <>
-                    <button
-                      type="button"
-                      className="prism-composer-inline-action"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        onMoveLens(index, Math.max(0, index - 1));
-                      }}
-                    >
-                      Up
-                    </button>
-                    <button
-                      type="button"
-                      className="prism-composer-inline-action"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        onMoveLens(
-                          index,
-                          Math.min(slots.length - 1, index + 1)
-                        );
-                      }}
-                    >
-                      Down
-                    </button>
-                  </>
+          <div key={`slot-${slot.index}`} className="flex flex-col">
+            <button
+              type="button"
+              className={`prism-composer-roster-item ${
+                activeSlot === slot.index ? "is-active" : ""
+              }`}
+              onClick={() => onSelectSlot(slot.index)}
+            >
+              <div className="prism-composer-roster-slot">
+                <span className="prism-composer-roster-index">
+                  {mix.mode === "shape" ? `S${slot.index}` : `L${slot.index}`}
+                </span>
+                {slot.locked ? (
+                  <span className="prism-composer-roster-badge">PM</span>
                 ) : null}
-                <button
-                  type="button"
-                  className="prism-composer-inline-action"
-                  onClick={(event) => {
+              </div>
+              <div className="prism-composer-roster-copy">
+                <div className="prism-composer-roster-title">
+                  {slot.lens?.title || `Empty slot ${slot.index}`}
+                </div>
+                <div className="prism-composer-roster-meta">
+                  {slot.lens?.collectionLabel ||
+                    (slot.locked ? "Project Manager Lens" : "Choose a lens")}
+                </div>
+              </div>
+              {slot.lens && !slot.locked ? (
+                <div className="prism-composer-roster-actions">
+                  {mix.mode === "council" ? (
+                    <>
+                      <button
+                        type="button"
+                        className="prism-composer-inline-action"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          onMoveLens(index, Math.max(0, index - 1));
+                        }}
+                      >
+                        Up
+                      </button>
+                      <button
+                        type="button"
+                        className="prism-composer-inline-action"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          onMoveLens(
+                            index,
+                            Math.min(slots.length - 1, index + 1)
+                          );
+                        }}
+                      >
+                        Down
+                      </button>
+                    </>
+                  ) : null}
+                  <button
+                    type="button"
+                    className="prism-composer-inline-action"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      onRemoveLens(slot.index);
+                    }}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ) : null}
+            </button>
+            {advancedOpen && slot.lens && enabledSlots.length > 0 ? (
+              <div className="flex items-center gap-2 px-3 pb-1.5 -mt-1">
+                <span className="text-[10px] text-theme-text-secondary opacity-60 shrink-0">
+                  Route
+                </span>
+                <select
+                  className="text-[10px] bg-transparent border border-white/10 rounded px-1.5 py-0.5 text-theme-text-secondary min-w-0 flex-1"
+                  value={
+                    slot.lens?.handle &&
+                    executionRoutes[slot.lens.handle]?.[0]
+                      ? executionRoutes[slot.lens.handle][0]
+                      : ""
+                  }
+                  onClick={(event) => event.stopPropagation()}
+                  onChange={(event) => {
                     event.stopPropagation();
-                    onRemoveLens(slot.index);
+                    if (slot.lens?.handle && onRouteChange) {
+                      onRouteChange(slot.lens.handle, event.target.value || null);
+                    }
                   }}
                 >
-                  Remove
-                </button>
+                  <option value="">Default</option>
+                  {enabledSlots.map((ps) => (
+                    <option key={ps.id} value={ps.id}>
+                      {ps.label}
+                    </option>
+                  ))}
+                </select>
               </div>
             ) : null}
-          </button>
+          </div>
         ))}
       </div>
+      {enabledSlots.length > 0 ? (
+        <button
+          type="button"
+          className="mt-2 w-full text-left text-[10px] text-theme-text-secondary opacity-60 hover:opacity-100 px-3 py-1.5 transition-opacity"
+          onClick={() => setAdvancedOpen((prev) => !prev)}
+        >
+          {advancedOpen ? "Hide" : "Advanced"}: Provider Routing
+        </button>
+      ) : null}
     </div>
   );
 }
@@ -570,10 +619,17 @@ export default function MetacanonLensComposerPage() {
     formattedContent: "",
     suggestedTitle: "",
   });
+  const [providerSlots, setProviderSlots] = useState([]);
 
   useEffect(() => {
     setSavedShapes(loadSavedShapes());
     setSavedCouncils(loadSavedCouncils());
+  }, []);
+
+  useEffect(() => {
+    System.prismProviderSlots()
+      .then(({ slots = [] }) => setProviderSlots(slots))
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -830,6 +886,31 @@ export default function MetacanonLensComposerPage() {
     });
   }
 
+  function setShapeExecutionRoute(lensHandle, slotId) {
+    setCustomShape((current) => {
+      if (!current) return current;
+      const next = { ...(current.executionRoutes || {}) };
+      if (slotId) {
+        next[lensHandle] = [slotId];
+      } else {
+        delete next[lensHandle];
+      }
+      return { ...current, executionRoutes: next };
+    });
+  }
+
+  function setCouncilExecutionRoute(lensHandle, slotId) {
+    setCustomCouncil((current) => {
+      const next = { ...(current.executionRoutes || {}) };
+      if (slotId) {
+        next[lensHandle] = [slotId];
+      } else {
+        delete next[lensHandle];
+      }
+      return { ...current, executionRoutes: next };
+    });
+  }
+
   function autocompleteShape() {
     if (!customShape) return;
     const slots = buildShapeSlots(customShape, activeTemplate);
@@ -867,6 +948,12 @@ export default function MetacanonLensComposerPage() {
   async function saveCurrentMix() {
     if (!activeMix) return;
 
+    // Capture executionRoutes from the live mix before normalizing.
+    const liveExecutionRoutes =
+      activeMix.executionRoutes && typeof activeMix.executionRoutes === "object"
+        ? activeMix.executionRoutes
+        : {};
+
     if (activeMix.mode === "shape") {
       const next = saveShapeMix(activeMix);
       setSavedShapes(loadSavedShapes());
@@ -875,6 +962,7 @@ export default function MetacanonLensComposerPage() {
       saveCustomConstellationToServer({
         ...next,
         kind: "custom-shape",
+        executionRoutes: liveExecutionRoutes,
       }).catch((err) =>
         console.warn("[LensComposer] Server-side constellation save failed:", err.message)
       );
@@ -888,6 +976,7 @@ export default function MetacanonLensComposerPage() {
     saveCustomConstellationToServer({
       ...next,
       kind: "custom-council",
+      executionRoutes: liveExecutionRoutes,
     }).catch((err) =>
       console.warn("[LensComposer] Server-side constellation save failed:", err.message)
     );
@@ -1081,6 +1170,13 @@ export default function MetacanonLensComposerPage() {
                       : removeCouncilLens
                   }
                   onMoveLens={moveCouncilLens}
+                  providerSlots={providerSlots}
+                  executionRoutes={activeMix?.executionRoutes || {}}
+                  onRouteChange={
+                    family === COMPOSER_FAMILIES.SHAPES
+                      ? setShapeExecutionRoute
+                      : setCouncilExecutionRoute
+                  }
                 />
               ) : null}
             </div>
