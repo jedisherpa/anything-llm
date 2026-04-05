@@ -931,24 +931,15 @@ export default function MetacanonLensComposerPage() {
                 </Link>
               </div>
             </div>
-            <div className="prism-composer-hero-stats">
-              <div className="prism-composer-stat-card">
-                <div className="prism-composer-stat-eyebrow">Shapes</div>
-                <div className="prism-composer-stat-value">
-                  {shapeTemplates.length}
-                </div>
-                <div className="prism-composer-stat-copy">
-                  Fixed-size productivity formations with locked PM lenses.
-                </div>
+            <div className="prism-composer-hero-stats flex flex-wrap items-center gap-x-4 gap-y-1">
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-lg font-bold text-theme-text-primary">{shapeTemplates.length}</span>
+                <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-text-secondary">Shapes</span>
               </div>
-              <div className="prism-composer-stat-card">
-                <div className="prism-composer-stat-eyebrow">Councils</div>
-                <div className="prism-composer-stat-value">
-                  {dataset.councilPresets.length}
-                </div>
-                <div className="prism-composer-stat-copy">
-                  Reflective multi-lens councils you can inspect instantly.
-                </div>
+              <span className="text-theme-text-secondary opacity-40">|</span>
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-lg font-bold text-theme-text-primary">{dataset.councilPresets.length}</span>
+                <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-text-secondary">Councils</span>
               </div>
             </div>
           </section>

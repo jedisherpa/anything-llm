@@ -470,20 +470,13 @@ function buildSavedPackAlignment(pack = {}) {
   };
 }
 
-function StatusTile({ label, value, description, className = "" }) {
+function StatusTile({ label, value, className = "" }) {
   return (
-    <div
-      className={`prism-page-stat prism-library-stat prism-library-stat-card ${className}`.trim()}
-    >
-      <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-text-secondary">
+    <div className={`flex items-baseline gap-1.5 ${className}`.trim()}>
+      <span className="text-lg font-bold text-theme-text-primary">{value}</span>
+      <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-text-secondary">
         {label}
-      </div>
-      <div className="mt-2 text-2xl font-semibold text-theme-text-primary">
-        {value}
-      </div>
-      <div className="mt-2 text-sm leading-6 text-theme-text-secondary">
-        {description}
-      </div>
+      </span>
     </div>
   );
 }
@@ -515,19 +508,18 @@ function ConstellationModeTile({
   );
 }
 
-function TabButton({ active, icon, label, onClick }) {
+function TabButton({ active, label, onClick }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition-all ${
+      className={`rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] transition-all ${
         active
           ? "border-theme-button-primary bg-theme-sidebar-item-selected text-theme-text-primary"
           : "border-theme-sidebar-border bg-transparent text-theme-text-secondary hover:bg-theme-sidebar-subitem-hover"
       }`}
     >
-      {icon}
-      <span>{label}</span>
+      {label}
     </button>
   );
 }
@@ -1949,40 +1941,30 @@ export default function MetacanonAILibraryPage() {
                   </div>
                 </div>
               </div>
-              <div className="prism-library-stat-grid grid min-w-[320px] grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-6">
+              <div className="prism-library-stat-grid flex flex-wrap items-center gap-x-4 gap-y-1">
                 <StatusTile
                   label="Lenses"
                   value={String(libraryManifest.counts.lenses)}
-                  description="Individual archetypes available."
-                  className="xl:col-span-2"
                 />
-
+                <span className="text-theme-text-secondary opacity-40">|</span>
                 <StatusTile
                   label="Presets"
                   value={String(libraryManifest.counts.constellations)}
-                  description="Reusable multi-lens alignments."
-                  className="xl:col-span-2"
                 />
-
+                <span className="text-theme-text-secondary opacity-40">|</span>
                 <StatusTile
                   label="Skills"
                   value={String(libraryManifest.counts.skills)}
-                  description="Reusable orchestration workflows."
-                  className="xl:col-span-2"
                 />
-
+                <span className="text-theme-text-secondary opacity-40">|</span>
                 <StatusTile
                   label="Councils"
                   value={String(libraryManifest.counts.councils)}
-                  description="Canonical twelve-lens formations."
-                  className="xl:col-span-3"
                 />
-
+                <span className="text-theme-text-secondary opacity-40">|</span>
                 <StatusTile
-                  label="Saved Constellations"
+                  label="Saved"
                   value={String(savedPacks.length)}
-                  description="Saved Constellations and Preset configurations."
-                  className="xl:col-span-3"
                 />
               </div>
             </div>

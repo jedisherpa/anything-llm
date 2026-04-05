@@ -228,7 +228,7 @@ export default function SidebarPinnedConstellations() {
           ) : null}
         </div>
         <Link
-          to={paths.metacanonAILibrary()}
+          to={paths.metacanonAIComposer()}
           className="prism-sidebar-module__link"
         >
           Manage

@@ -52,7 +52,7 @@ export default function Sidebar() {
             className="metacanon-sidebar-panel relative flex-1 min-h-0 min-w-[304px] border-0 border-r border-theme-sidebar-border px-[14px] pt-[14px] pb-[14px]"
           >
             <div className="flex flex-col h-full overflow-hidden">
-              <div className="flex-grow flex flex-col min-w-[235px] min-h-0">
+              <div className="flex-1 flex flex-col min-w-[235px] min-h-0">
                 <div className="mb-4 flex items-start gap-4">
                   <MetacanonSidebarBrand />
                 </div>
@@ -77,7 +77,7 @@ export default function Sidebar() {
                     </div>
                   </div>
                 </div>
-                <div className="metacanon-sidebar-footer-tray absolute bottom-0 left-0 right-0 z-10 border-t border-theme-sidebar-border pt-2 pb-1">
+                <div className="metacanon-sidebar-footer-tray absolute bottom-0 left-0 right-0 z-10 shrink-0 border-t border-theme-sidebar-border pt-2 pb-1">
                   <Footer />
                 </div>
               </div>
