@@ -41,17 +41,17 @@ function MetacanonMark({ className = "h-11 w-11" }) {
 function LabPanel({ title, eyebrow = null, children, className = "" }) {
   return (
     <section
-      className={`rounded-[22px] border border-theme-sidebar-border bg-theme-bg-sidebar px-5 py-5 shadow-[0_12px_36px_rgba(15,10,4,0.06)] ${className}`}
+      className={`rounded-[10px] border border-theme-sidebar-border bg-theme-bg-sidebar px-3 py-3 ${className}`}
     >
       {(eyebrow || title) && (
-        <div className="mb-4 flex flex-col gap-1">
+        <div className="mb-3 flex flex-col gap-1">
           {eyebrow ? (
             <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-theme-primary-button">
               {eyebrow}
             </div>
           ) : null}
           {title ? (
-            <h2 className="text-lg font-semibold text-theme-text-primary">
+            <h2 className="text-sm font-semibold text-theme-text-primary">
               {title}
             </h2>
           ) : null}
@@ -64,8 +64,8 @@ function LabPanel({ title, eyebrow = null, children, className = "" }) {
 
 function ChecklistItem({ index, title, detail }) {
   return (
-    <div className="flex gap-3 rounded-[18px] border border-theme-sidebar-border px-4 py-3">
-      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-theme-sidebar-footer-icon text-xs font-semibold text-theme-text-primary">
+    <div className="flex gap-3 rounded-[10px] border border-theme-sidebar-border px-3 py-2">
+      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-theme-sidebar-footer-icon text-xs font-semibold text-theme-text-primary">
         {index}
       </div>
       <div className="flex flex-col gap-1">
@@ -82,14 +82,14 @@ function ChecklistItem({ index, title, detail }) {
 
 function FrameSpec({ label, size, note }) {
   return (
-    <div className="rounded-[18px] border border-theme-sidebar-border px-4 py-4">
+    <div className="rounded-[10px] border border-theme-sidebar-border px-3 py-2">
       <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-text-secondary">
         {label}
       </div>
-      <div className="mt-2 text-xl font-semibold text-theme-text-primary">
+      <div className="mt-1 text-sm font-semibold text-theme-text-primary">
         {size}
       </div>
-      <div className="mt-1 text-sm leading-6 text-theme-text-secondary">
+      <div className="mt-0.5 text-xs leading-5 text-theme-text-secondary">
         {note}
       </div>
     </div>
@@ -98,9 +98,9 @@ function FrameSpec({ label, size, note }) {
 
 function TokenSwatch({ label, value, swatchClassName }) {
   return (
-    <div className="flex items-center gap-3 rounded-[16px] border border-theme-sidebar-border px-4 py-3">
+    <div className="flex items-center gap-3 rounded-[10px] border border-theme-sidebar-border px-3 py-2">
       <span
-        className={`h-10 w-10 rounded-[12px] border border-black/5 ${swatchClassName}`}
+        className={`h-7 w-7 rounded-[8px] border border-black/5 ${swatchClassName}`}
       />
       <div className="flex flex-col">
         <div className="text-sm font-semibold text-theme-text-primary">
@@ -116,8 +116,8 @@ function MiniSidebarPreview() {
   const { logo } = useLogo();
 
   return (
-    <div className="rounded-[24px] border border-theme-sidebar-border bg-[#111111] p-3 shadow-[0_10px_28px_rgba(0,0,0,0.28)]">
-      <div className="flex h-[420px] w-full max-w-[290px] flex-col rounded-[20px] border border-theme-sidebar-border bg-[#242424] p-3">
+    <div className="rounded-[10px] border border-theme-sidebar-border bg-[#111111] p-3">
+      <div className="flex h-[420px] w-full max-w-[290px] flex-col rounded-[10px] border border-theme-sidebar-border bg-[#242424] p-3">
         <div className="flex items-start gap-2">
           <PrismPresence
             surface="ui-lab-sidebar-preview"
@@ -133,7 +133,7 @@ function MiniSidebarPreview() {
             className="max-h-[42px] max-w-[170px] object-contain"
           />
         </div>
-        <div className="mt-4 flex items-center gap-2 rounded-[14px] bg-[#1B1B1B] px-3 py-2">
+        <div className="mt-4 flex items-center gap-2 rounded-[10px] bg-[#1B1B1B] px-3 py-2">
           <div className="h-2.5 w-2.5 rounded-full bg-[#FFD700]/75" />
           <div className="h-3 w-16 rounded-full bg-white/12" />
           <div className="ml-auto h-7 w-7 rounded-full bg-white/10" />
@@ -142,11 +142,11 @@ function MiniSidebarPreview() {
           {Array.from({ length: 5 }).map((_, index) => (
             <div
               key={index}
-              className="h-10 rounded-[12px] border border-[#FFD700]/15 bg-[#1A1A1A]"
+              className="h-10 rounded-[10px] border border-[#FFD700]/15 bg-[#1A1A1A]"
             />
           ))}
         </div>
-        <div className="mt-3 rounded-[18px] border border-theme-sidebar-border bg-[#1A1A1A] px-1.5 py-1.5">
+        <div className="mt-3 rounded-[10px] border border-theme-sidebar-border bg-[#1A1A1A] px-1.5 py-1.5">
           <Footer />
         </div>
       </div>
@@ -157,7 +157,7 @@ function MiniSidebarPreview() {
 function CardPreview() {
   return (
     <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-      <div className="rounded-[20px] border border-theme-sidebar-border bg-[#242424] px-5 py-5 shadow-[0_10px_26px_rgba(0,0,0,0.24)]">
+      <div className="rounded-[10px] border border-theme-sidebar-border bg-[#242424] px-3 py-3">
         <div className="flex items-center gap-3">
           <MetacanonMark className="h-10 w-10" />
           <div>
@@ -177,7 +177,7 @@ function CardPreview() {
           Primary direction
         </div>
       </div>
-      <div className="rounded-[20px] border border-theme-sidebar-border bg-theme-bg-sidebar px-5 py-5 shadow-[0_10px_26px_rgba(15,10,4,0.04)]">
+      <div className="rounded-[10px] border border-theme-sidebar-border bg-theme-bg-sidebar px-3 py-3">
         <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-text-secondary">
           Secondary card
         </div>
@@ -203,13 +203,13 @@ function CardPreview() {
 
 function ComposerPreview() {
   return (
-    <div className="rounded-[24px] border border-theme-sidebar-border bg-theme-bg-container px-5 py-5">
+    <div className="rounded-[10px] border border-theme-sidebar-border bg-theme-bg-container px-3 py-3">
       <div className="mx-auto flex max-w-[640px] flex-col items-center">
-        <div className="text-xl font-semibold text-theme-text-primary">
+        <div className="text-sm font-semibold text-theme-text-primary">
           Prompt Composer
         </div>
-        <div className="mt-8 w-full rounded-[24px] border border-theme-sidebar-border bg-theme-bg-sidebar px-4 py-4 shadow-[0_10px_30px_rgba(15,10,4,0.04)]">
-          <div className="min-h-[94px] rounded-[18px] border border-theme-sidebar-border bg-[#1A1A1A] px-4 py-4 text-sm text-theme-text-secondary">
+        <div className="mt-4 w-full rounded-[10px] border border-theme-sidebar-border bg-theme-bg-sidebar px-3 py-3">
+          <div className="min-h-[94px] rounded-[10px] border border-theme-sidebar-border bg-[#1A1A1A] px-3 py-3 text-xs text-theme-text-secondary">
             Send a message
           </div>
           <div className="mt-4 flex items-center justify-between gap-3">
@@ -361,28 +361,26 @@ export default function MetacanonUILabPage() {
         style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
         className="metacanon-page-frame relative md:mx-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
       >
-        <div className="flex flex-col w-full px-1 md:px-6 md:py-6 py-20 gap-6">
+        <div className="flex flex-col w-full px-1 md:px-6 md:py-6 py-6 gap-4">
           <LabPanel eyebrow="PrismAI" title="UI Lab">
             <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
               <div className="max-w-3xl">
-                <p className="text-base leading-7 text-theme-text-secondary">
-                  Keep this page open next to Figma. Build the frame there, send
-                  me the screenshot here, and we will match the live UI against
-                  these reference surfaces instead of guessing from text.
+                <p className="text-xs leading-5 text-theme-text-secondary">
+                  Keep open next to Figma — build the frame there, send the screenshot here, and match the live UI against reference surfaces.
                 </p>
               </div>
-              <div className="flex flex-col items-start gap-3 lg:items-end">
+              <div className="flex flex-col items-start gap-2 lg:items-end">
                 <MetacanonThemeSwitcher />
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap gap-2">
                   <Link
                     to={paths.metacanonAI()}
-                    className="rounded-full border border-theme-sidebar-border bg-theme-bg-sidebar px-4 py-2 text-sm font-medium text-theme-text-primary transition-all duration-300 hover:border-theme-primary-button"
+                    className="rounded-full border border-theme-sidebar-border bg-theme-bg-sidebar px-3 py-1.5 text-xs font-medium text-theme-text-primary transition-all duration-300 hover:border-theme-primary-button"
                   >
                     Back to Features
                   </Link>
                   <Link
                     to={paths.settings.branding()}
-                    className="rounded-full bg-[#E9D8AA] px-4 py-2 text-sm font-semibold text-theme-text-primary transition-all duration-300 hover:brightness-95"
+                    className="rounded-full bg-[#E9D8AA] px-3 py-1.5 text-xs font-semibold text-theme-text-primary transition-all duration-300 hover:brightness-95"
                   >
                     Open Branding
                   </Link>
@@ -391,7 +389,7 @@ export default function MetacanonUILabPage() {
             </div>
           </LabPanel>
 
-          <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.15fr_0.85fr]">
+          <div className="grid grid-cols-1 gap-3 xl:grid-cols-[1.15fr_0.85fr]">
             <LabPanel eyebrow="Figma Handoff" title="First File Checklist">
               <div className="grid grid-cols-1 gap-3">
                 {checklist.map((item, index) => (
@@ -411,11 +409,11 @@ export default function MetacanonUILabPage() {
                   <FrameSpec key={item.label} {...item} />
                 ))}
               </div>
-              <div className="mt-4 rounded-[18px] border border-theme-sidebar-border px-4 py-4">
+              <div className="mt-3 rounded-[10px] border border-theme-sidebar-border px-3 py-2">
                 <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-text-secondary">
                   Handoff note
                 </div>
-                <div className="mt-2 text-sm leading-6 text-theme-text-secondary">
+                <div className="mt-1 text-xs leading-5 text-theme-text-secondary">
                   If you want precision, annotate only what changed: "dock 6px
                   higher", "logo 15% wider", "chat shell corners 24px".
                 </div>
@@ -423,7 +421,7 @@ export default function MetacanonUILabPage() {
             </LabPanel>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.05fr_0.95fr]">
+          <div className="grid grid-cols-1 gap-3 xl:grid-cols-[1.05fr_0.95fr]">
             <LabPanel eyebrow="Live Surface" title="Sidebar Rail Preview">
               <MiniSidebarPreview />
             </LabPanel>
@@ -433,7 +431,7 @@ export default function MetacanonUILabPage() {
             </LabPanel>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_0.8fr]">
+          <div className="grid grid-cols-1 gap-3 xl:grid-cols-[1fr_0.8fr]">
             <LabPanel eyebrow="Live Surface" title="Card Treatments">
               <CardPreview />
             </LabPanel>

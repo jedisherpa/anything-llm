@@ -94,25 +94,25 @@ function FeatureCard({
       to={href}
       className="prism-page-card prism-page-card--interactive flex h-full flex-col justify-between"
     >
-      <div className="flex flex-col gap-4">
-        <div className="flex h-11 w-11 items-center justify-center rounded-[14px] bg-theme-sidebar-footer-icon">
+      <div className="flex flex-col gap-3">
+        <div className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-theme-sidebar-footer-icon">
           {icon}
         </div>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1">
           <div className="flex items-center justify-between gap-3">
-            <h2 className="text-base font-semibold text-theme-text-primary">
+            <h2 className="text-sm font-semibold text-theme-text-primary">
               {title}
             </h2>
             <span className="rounded-full border border-theme-sidebar-border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-theme-text-secondary">
               {badge}
             </span>
           </div>
-          <p className="text-sm leading-6 text-theme-text-secondary">
+          <p className="text-xs leading-5 text-theme-text-secondary">
             {description}
           </p>
         </div>
       </div>
-      <div className="mt-6 text-xs font-semibold uppercase tracking-[0.16em] text-theme-primary-button">
+      <div className="mt-3 text-xs font-semibold uppercase tracking-[0.16em] text-theme-primary-button">
         {cta}
       </div>
     </Link>
@@ -131,10 +131,10 @@ function StatusTile({ label, value, description }) {
       <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-text-secondary">
         {label}
       </div>
-      <div className="mt-2 text-2xl font-semibold text-theme-text-primary">
+      <div className="mt-1 text-base font-semibold text-theme-text-primary">
         {value}
       </div>
-      <div className="mt-2 text-sm leading-6 text-theme-text-secondary">
+      <div className="mt-1 text-xs leading-5 text-theme-text-secondary">
         {description}
       </div>
     </div>
@@ -291,26 +291,24 @@ export default function MetacanonAIPage() {
         style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
         className="metacanon-page-frame relative md:mx-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
       >
-        <div className="prism-route-content w-full px-1 py-20 md:px-6 md:py-6">
+        <div className="prism-route-content w-full px-1 py-6 md:px-6 md:py-6">
           <div className="prism-page-hero">
-            <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-              <div className="flex items-start gap-4">
-                <MetacanonMark />
-                <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div className="flex items-start gap-3">
+                <MetacanonMark className="h-8 w-8" />
+                <div className="flex flex-col gap-1">
                   <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-theme-primary-button">
                     PrismAI
                   </div>
-                  <h1 className="text-2xl md:text-[32px] font-semibold text-theme-text-primary">
+                  <h1 className="text-base font-semibold text-theme-text-primary">
                     Control Center
                   </h1>
-                  <p className="max-w-2xl text-sm md:text-base leading-7 text-theme-text-secondary">
-                    Manage the PrismAI edition of the app: Councils and Lenses,
-                    interface settings, branding, and the Prism runtime layers
-                    that shape your workspace.
+                  <p className="max-w-2xl text-xs leading-5 text-theme-text-secondary">
+                    Manage Councils, Lenses, interface settings, branding, and Prism runtime layers.
                   </p>
                 </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:min-w-[420px]">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:min-w-[360px]">
                 <StatusTile
                   label={METACANON_TERMS.councils}
                   value={String(councilCount)}
@@ -334,7 +332,7 @@ export default function MetacanonAIPage() {
 
           <div className="flex flex-col gap-3">
             <div className="prism-page-section-label">Control Surfaces</div>
-            <div className="grid grid-cols-1 xl:grid-cols-3 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 xl:grid-cols-3 md:grid-cols-2 gap-3">
               {featureCards.map((card) => (
                 <FeatureCard key={card.title} {...card} />
               ))}
