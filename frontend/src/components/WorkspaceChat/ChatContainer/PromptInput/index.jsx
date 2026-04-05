@@ -431,19 +431,9 @@ export default function PromptInput({
             />
 
             <div
-              className={`${centered ? "metacanon-composer-shell" : "bg-zinc-800 light:bg-white light:border light:border-slate-300"} flex flex-col overflow-y-auto max-h-[70vh] rounded-[24px] px-6 pwa:rounded-3xl`}
+              className={`${centered ? "metacanon-composer-shell" : "bg-zinc-800 light:bg-white border border-white/20 light:border-slate-200"} flex flex-col overflow-y-auto max-h-[70vh] rounded-[24px] px-6 pwa:rounded-3xl`}
             >
               <AttachmentManager attachments={attachments} />
-              {typeof onChatModeChange === "function" ? (
-                <div className="pt-4">
-                  <ChatModeToggle
-                    chatMode={chatMode}
-                    onChange={onChatModeChange}
-                    executionMode={executionMode}
-                    onExecutionModeChange={onExecutionModeChange}
-                  />
-                </div>
-              ) : null}
               {executionMode === "execute" ? (
                 <ExecutionTargetPanel
                   executionWorktreeRoot={executionWorktreeRoot}
@@ -540,6 +530,14 @@ export default function PromptInput({
                 className={`flex justify-between items-center ${centered ? "pt-[18px] pb-[22px]" : "pt-3.5 pb-3"}`}
               >
                 <div className="flex items-center gap-x-0.25">
+                  {typeof onChatModeChange === "function" ? (
+                    <ChatModePills
+                      chatMode={chatMode}
+                      onChange={onChatModeChange}
+                      executionMode={executionMode}
+                      onExecutionModeChange={onExecutionModeChange}
+                    />
+                  ) : null}
                   <div className="flex items-center gap-x-1">
                     <AttachItem
                       workspaceSlug={workspaceSlug}
@@ -589,69 +587,53 @@ export default function PromptInput({
   );
 }
 
-function ChatModeToggle({
+function ChatModePills({
   chatMode = "chat",
   onChange,
   executionMode = "chat",
   onExecutionModeChange,
 }) {
   const { t } = useTranslation();
-  const description =
-    executionMode === "execute"
-      ? "Governed local execution inside one selected repo or worktree with trusted-session state."
-      : chatMode === "chat"
-        ? "Conversational synthesis with model knowledge and retrieved context."
-        : "Direct retrieval from your documents with stricter vector grounding.";
   const activeMode = executionMode === "execute" ? "execute" : chatMode;
 
   return (
-    <div className="metacanon-chat-mode-shell rounded-[16px] px-3 py-3">
-      <div className="flex items-center justify-between gap-3">
-        <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-theme-text-secondary">
-          Chat, Query, Execute
-        </div>
-        <div className="metacanon-chat-mode-toggle flex items-center rounded-full p-1">
-          <button
-            type="button"
-            disabled={activeMode === "chat"}
-            onClick={() => {
-              onExecutionModeChange?.("chat");
-              onChange?.("chat");
-            }}
-            data-testid="chat-mode-chat-button"
-            className="metacanon-chat-mode-toggle__button rounded-full px-3 py-1.5 text-[12px] font-semibold uppercase tracking-[0.12em]"
-            data-active={activeMode === "chat" ? "true" : "false"}
-          >
-            {t("chat.mode.chat.title")}
-          </button>
-          <button
-            type="button"
-            disabled={activeMode === "query"}
-            onClick={() => {
-              onExecutionModeChange?.("chat");
-              onChange?.("query");
-            }}
-            data-testid="chat-mode-query-button"
-            className="metacanon-chat-mode-toggle__button rounded-full px-3 py-1.5 text-[12px] font-semibold uppercase tracking-[0.12em]"
-            data-active={activeMode === "query" ? "true" : "false"}
-          >
-            {t("chat.mode.query.title")}
-          </button>
-          <button
-            type="button"
-            disabled={activeMode === "execute"}
-            onClick={() => onExecutionModeChange?.("execute")}
-            data-testid="chat-mode-execute-button"
-            className="metacanon-chat-mode-toggle__button rounded-full px-3 py-1.5 text-[12px] font-semibold uppercase tracking-[0.12em]"
-            data-active={activeMode === "execute" ? "true" : "false"}
-          >
-            Execute
-          </button>
-        </div>
-      </div>
-      <div className="mt-2 text-[12px] leading-5 text-theme-text-secondary">
-        {description}
-      </div>
+    <div className="flex items-center gap-x-0.5 mr-1">
+      <button
+        type="button"
+        disabled={activeMode === "chat"}
+        onClick={() => {
+          onExecutionModeChange?.("chat");
+          onChange?.("chat");
+        }}
+        data-testid="chat-mode-chat-button"
+        className="metacanon-mode-pill rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.10em]"
+        data-active={activeMode === "chat" ? "true" : "false"}
+      >
+        {t("chat.mode.chat.title")}
+      </button>
+      <button
+        type="button"
+        disabled={activeMode === "query"}
+        onClick={() => {
+          onExecutionModeChange?.("chat");
+          onChange?.("query");
+        }}
+        data-testid="chat-mode-query-button"
+        className="metacanon-mode-pill rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.10em]"
+        data-active={activeMode === "query" ? "true" : "false"}
+      >
+        {t("chat.mode.query.title")}
+      </button>
+      <button
+        type="button"
+        disabled={activeMode === "execute"}
+        onClick={() => onExecutionModeChange?.("execute")}
+        data-testid="chat-mode-execute-button"
+        className="metacanon-mode-pill rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.10em]"
+        data-active={activeMode === "execute" ? "true" : "false"}
+      >
+        Execute
+      </button>
     </div>
   );
 }
