@@ -13,9 +13,15 @@ PRODUCT_NAME="$4"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 LOGO_PATH="$ROOT_DIR/desktop-tauri/app/prism-dodeca.png"
-BACKGROUND_TMP="$(mktemp /tmp/prismai-installer-background.XXXXXX.png)"
+# macOS BSD mktemp only replaces XXXXXX when it's at the end of the template,
+# so we generate bare tempfiles and append the desired extensions manually.
+BACKGROUND_TMP_BASE="$(mktemp /tmp/prismai-installer-background.XXXXXX)"
+BACKGROUND_TMP="${BACKGROUND_TMP_BASE}.png"
+mv "$BACKGROUND_TMP_BASE" "$BACKGROUND_TMP"
 STAGE_DIR="$(mktemp -d /tmp/prismai-dmg-stage.XXXXXX)"
-RW_DMG="$(mktemp /tmp/prismai-installer.XXXXXX.dmg)"
+RW_DMG_BASE="$(mktemp /tmp/prismai-installer.XXXXXX)"
+RW_DMG="${RW_DMG_BASE}.dmg"
+rm -f "$RW_DMG_BASE"
 CONVERT_BASE="$(mktemp /tmp/prismai-installer-final.XXXXXX)"
 DEVICE=""
 MOUNT_POINT=""
@@ -99,7 +105,8 @@ cp "$BACKGROUND_TMP" "$STAGE_DIR/.background/installer-background.png"
 COPYFILE_DISABLE=1 tar -C "$(dirname "$APP_PATH")" -cf - "$(basename "$APP_PATH")" | (
   cd "$STAGE_DIR" && COPYFILE_DISABLE=1 tar -xf -
 )
-xattr -cr "$STAGE_DIR/$PRODUCT_NAME.app"
+# NOTE: do NOT run `xattr -cr` here — it strips the notarization ticket from
+# stapled app bundles and also causes hdiutil to fail with "Operation not permitted".
 ln -s /Applications "$STAGE_DIR/Applications"
 
 hdiutil create \
