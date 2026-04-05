@@ -81,14 +81,14 @@ export default function MenuOption({
           <Link
             ref={ref}
             to={href}
-            className="metacanon-settings-option-link flex flex-grow items-center px-[12px] h-[32px] font-medium transition-colors"
+            className="metacanon-settings-option-link flex flex-grow items-center px-[10px] h-[28px] font-medium transition-colors"
             onClick={hasChildren ? handleClick : undefined}
           >
             {icon}
             <p
               className={`${
                 isChild ? "text-xs" : "text-sm"
-              } metacanon-settings-option-label leading-loose whitespace-nowrap overflow-hidden ml-2 ${
+              } metacanon-settings-option-label leading-normal whitespace-nowrap overflow-hidden ml-2 ${
                 isActive ? "font-semibold" : ""
               } ${!icon && "pl-5"}`}
             >

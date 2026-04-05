@@ -3,7 +3,14 @@ const { EncryptionManager } = require("./EncryptionManager");
 
 const PROVIDER_SLOTS_LABEL = "prism_provider_slots_v1";
 const TOOL_CREDENTIALS_LABEL = "prism_tool_credentials_v1";
+const LENS_ROUTING_LABEL = "prism_deliberation_lens_routing_v1";
 const PROVIDER_SLOT_COUNT = 5;
+
+const LENS_ROUTING_KEYS = ["watcher", "auditor", "synthesizer", "torus", "prism"];
+
+const DEFAULT_LENS_ROUTING = Object.fromEntries(
+  LENS_ROUTING_KEYS.map((key) => [key, null])
+);
 
 const DEFAULT_TOOL_CREDENTIALS = [
   {
@@ -190,6 +197,35 @@ async function savePrismToolCredentials(entries = []) {
   };
 }
 
+async function getPrismLensRouting() {
+  const raw = await SystemSettings.getValueOrFallback(
+    { label: LENS_ROUTING_LABEL },
+    JSON.stringify(DEFAULT_LENS_ROUTING)
+  );
+  const parsed = safeJsonParse(raw, DEFAULT_LENS_ROUTING);
+  return Object.fromEntries(
+    LENS_ROUTING_KEYS.map((key) => [key, parsed[key] ?? null])
+  );
+}
+
+async function savePrismLensRouting(routing = {}) {
+  const normalized = Object.fromEntries(
+    LENS_ROUTING_KEYS.map((key) => {
+      const val = routing[key];
+      if (val === null || val === undefined || val === "") {
+        return [key, null];
+      }
+      return [key, String(val).trim()];
+    })
+  );
+
+  const { success, error } = await SystemSettings._updateSettings({
+    [LENS_ROUTING_LABEL]: JSON.stringify(normalized),
+  });
+
+  return { success, error, routing: normalized };
+}
+
 async function getPrismToolCredentialMap() {
   const credentials = await getPrismToolCredentials();
   return credentials.reduce((acc, entry) => {
@@ -207,10 +243,13 @@ async function getPrismToolCredential(id = "") {
 module.exports = {
   PROVIDER_SLOT_COUNT,
   DEFAULT_TOOL_CREDENTIALS,
+  LENS_ROUTING_KEYS,
   getPrismProviderSlots,
   savePrismProviderSlots,
   getPrismToolCredentials,
   savePrismToolCredentials,
   getPrismToolCredentialMap,
   getPrismToolCredential,
+  getPrismLensRouting,
+  savePrismLensRouting,
 };

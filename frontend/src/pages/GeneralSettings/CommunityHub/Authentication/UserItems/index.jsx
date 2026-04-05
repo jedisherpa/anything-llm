@@ -16,23 +16,20 @@ export default function UserItems({ connectionKey }) {
   return (
     <div className="flex flex-col gap-y-8">
       {/* Created By Me Section */}
-      <div className="w-full flex flex-col gap-y-1 pb-6 border-white border-b-2 border-opacity-10">
+      <div className="prism-settings-page-header">
         <div className="flex items-center justify-between">
-          <p className="text-lg leading-6 font-bold text-white">
-            Created by me
-          </p>
+          <p className="prism-settings-page-title">Created by me</p>
           <a
             href={paths.communityHub.noPrivateItems()}
             target="_blank"
             rel="noreferrer"
-            className="text-primary-button hover:text-primary-button/80 text-sm"
+            className="text-primary-button hover:text-primary-button/80 text-xs"
           >
             Why can't I see my private items?
           </a>
         </div>
-        <p className="text-xs leading-[18px] font-base text-white text-opacity-60">
-          Items you have created and shared publicly on the AnythingLLM
-          Community Hub.
+        <p className="prism-settings-page-description">
+          Items you have created and shared publicly on the Community Hub.
         </p>
         <div className="flex flex-col gap-4 mt-4">
           {Object.keys(createdByMe).map((type) => {
@@ -59,15 +56,9 @@ export default function UserItems({ connectionKey }) {
       </div>
 
       {/* Team Items Section */}
-      <div className="w-full flex flex-col gap-y-1 pb-6 border-white border-b-2 border-opacity-10">
-        <div className="items-center">
-          <p className="text-lg leading-6 font-bold text-white">
-            Items by team
-          </p>
-        </div>
-        <p className="text-xs leading-[18px] font-base text-white text-opacity-60">
-          Public and private items shared with teams you belong to.
-        </p>
+      <div className="prism-settings-page-header">
+        <p className="prism-settings-page-title">Items by team</p>
+        <p className="prism-settings-page-description">Public and private items shared with teams you belong to.</p>
         <div className="flex flex-col gap-4 mt-4">
           {teamItems.map((team) => (
             <div key={team.teamId} className="flex flex-col gap-y-4">

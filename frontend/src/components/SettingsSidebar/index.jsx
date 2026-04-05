@@ -192,7 +192,7 @@ export default function SettingsSidebar() {
             </div>
             <div className="relative flex-1 min-h-0 flex flex-col w-full pt-[10px]">
               <div className="h-auto sidebar-items">
-                <div className="flex flex-col gap-y-2 pb-[86px] overflow-y-auto prism-sidebar-scroll-region">
+                <div className="flex flex-col gap-y-1 pb-[86px] overflow-y-auto prism-sidebar-scroll-region">
                   <SidebarOptions user={user} t={t} />
                   <div className="h-[1.5px] bg-[#3D4147] mx-3 mt-[14px]" />
                   <SupportEmail />

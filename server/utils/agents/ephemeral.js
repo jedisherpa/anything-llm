@@ -13,6 +13,7 @@ const {
   agentSkillsFromSystemSettings,
   getLensAgentDefinitions,
 } = require("./defaults");
+const { getPrismLensRouting } = require("../prismCredentialVault");
 const { AgentHandler } = require(".");
 const {
   WorkspaceAgentInvocation,
@@ -385,7 +386,8 @@ class EphemeralAgentHandler extends AgentHandler {
       ...(this.aibitat.agents.get(WORKSPACE_AGENT.name)?.functions || []),
     ];
     this.sharedFunctions = sharedFunctions;
-    getLensAgentDefinitions(sharedFunctions).forEach(({ name, definition }) => {
+    const lensRouting = await getPrismLensRouting().catch(() => ({}));
+    getLensAgentDefinitions(sharedFunctions, lensRouting).forEach(({ name, definition }) => {
       this.aibitat.agent(name, definition);
     });
 

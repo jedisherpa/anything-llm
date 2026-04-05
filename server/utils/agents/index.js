@@ -12,6 +12,7 @@ const {
   getLensAgentDefinitions,
   getImportedLensDefinition,
 } = require("./defaults");
+const { getPrismLensRouting } = require("../prismCredentialVault");
 const { LENS_DELIBERATION_OVERVIEW } = require("./aibitat/prompts/lensAgents");
 const {
   METACANON_COUNCIL_HANDLE,
@@ -1413,7 +1414,8 @@ class AgentHandler {
 
     this.aibitat.agent(USER_AGENT.name, userAgentDef);
     this.aibitat.agent(WORKSPACE_AGENT.name, workspaceAgentDef);
-    getLensAgentDefinitions(sharedFunctions).forEach(({ name, definition }) => {
+    const lensRouting = await getPrismLensRouting().catch(() => ({}));
+    getLensAgentDefinitions(sharedFunctions, lensRouting).forEach(({ name, definition }) => {
       this.aibitat.agent(name, definition);
     });
 

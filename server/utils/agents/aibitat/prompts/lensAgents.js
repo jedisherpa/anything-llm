@@ -103,17 +103,28 @@ const LENS_DELIBERATION_ORDER = [
 const LENS_DELIBERATION_OVERVIEW =
   "Watcher scans risk and drift, Auditor pressure-tests integrity and compliance, Synthesizer expands options, Torus integrates the council output, and Prism refracts the final unified response.";
 
-function getLensAgentDefinitions(functions = []) {
-  return LENS_AGENTS.map(({ name, role, soul, preferredBackends, fallbackBackends }) => ({
-    name,
-    definition: {
-      role,
-      soul,
-      preferredBackends,
-      fallbackBackends,
-      functions: [...functions],
-    },
-  }));
+/**
+ * Build lens agent definitions, optionally overriding preferredBackends
+ * from a routing map keyed by lens handle (without "@").
+ *
+ * @param {string[]} functions - Agent function names.
+ * @param {Object} lensRouting - Map of { watcher, auditor, synthesizer, torus, prism } ��� slotId | null.
+ */
+function getLensAgentDefinitions(functions = [], lensRouting = {}) {
+  return LENS_AGENTS.map(({ name, role, soul, preferredBackends, fallbackBackends }) => {
+    const handle = name.replace(/^@/, "");
+    const assignedSlot = lensRouting[handle] ?? null;
+    return {
+      name,
+      definition: {
+        role,
+        soul,
+        preferredBackends: assignedSlot ? [assignedSlot] : preferredBackends,
+        fallbackBackends,
+        functions: [...functions],
+      },
+    };
+  });
 }
 
 module.exports = {

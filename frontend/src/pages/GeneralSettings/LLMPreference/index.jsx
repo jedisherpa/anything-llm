@@ -13,6 +13,7 @@ import { X } from "@phosphor-icons/react/dist/csr/X";
 
 import CTAButton from "@/components/lib/CTAButton";
 import ProviderSlotsPanel from "@/components/Prism/ProviderSlotsPanel";
+import DeliberationLensRoutingPanel from "@/components/Prism/DeliberationLensRoutingPanel";
 import ToolApiKeysModal from "@/components/Prism/ToolApiKeysModal";
 import paths from "@/utils/paths";
 import { Link } from "react-router-dom";
@@ -69,11 +70,13 @@ export default function GeneralLLMPreference() {
   const [saving, setSaving] = useState(false);
   const [savingProviderSlots, setSavingProviderSlots] = useState(false);
   const [savingToolCredentials, setSavingToolCredentials] = useState(false);
+  const [savingLensRouting, setSavingLensRouting] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
   const [providerSlots, setProviderSlots] = useState([]);
   const [toolCredentials, setToolCredentials] = useState([]);
+  const [lensRouting, setLensRouting] = useState({});
   const [toolModalOpen, setToolModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredLLMs, setFilteredLLMs] = useState([]);
@@ -138,16 +141,18 @@ export default function GeneralLLMPreference() {
 
   useEffect(() => {
     async function fetchKeys() {
-      const [_settings, providerSlotsPayload, toolCredentialsPayload] =
+      const [_settings, providerSlotsPayload, toolCredentialsPayload, lensRoutingPayload] =
         await Promise.all([
           System.keys(),
           System.prismProviderSlots(),
           System.prismToolCredentials(),
+          System.prismLensRouting(),
         ]);
       setSettings(_settings);
       setSelectedLLM(_settings?.LLMProvider);
       setProviderSlots(providerSlotsPayload?.slots || []);
       setToolCredentials(toolCredentialsPayload?.credentials || []);
+      setLensRouting(lensRoutingPayload?.routing || {});
       setLoading(false);
     }
     fetchKeys();
@@ -198,6 +203,26 @@ export default function GeneralLLMPreference() {
     setProviderSlots(slots || []);
     setSavingProviderSlots(false);
     showToast("Prism provider lanes saved.", "success");
+  };
+
+  const saveLensRouting = async () => {
+    setSavingLensRouting(true);
+    const { success, error, routing } =
+      await System.updatePrismLensRouting(lensRouting);
+
+    if (!success) {
+      showToast(
+        `Failed to save lens routing: ${error || "Unknown error"}`,
+        "error"
+      );
+      setSavingLensRouting(false);
+      return;
+    }
+
+    setLensRouting(routing || {});
+    setSavingLensRouting(false);
+    showToast("Deliberation lens routing saved.", "success");
+    window.dispatchEvent(new CustomEvent(LLM_PREFERENCE_SAVED_EVENT));
   };
 
   const saveToolCredentials = async () => {
@@ -374,6 +399,13 @@ export default function GeneralLLMPreference() {
                 onSave={saveProviderSlots}
                 saving={savingProviderSlots}
                 onOpenToolKeys={() => setToolModalOpen(true)}
+              />
+              <DeliberationLensRoutingPanel
+                slots={providerSlots}
+                routing={lensRouting}
+                setRouting={setLensRouting}
+                onSave={saveLensRouting}
+                saving={savingLensRouting}
               />
             </div>
           </form>

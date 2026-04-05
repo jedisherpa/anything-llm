@@ -73,6 +73,8 @@ const {
   savePrismProviderSlots,
   getPrismToolCredentials,
   savePrismToolCredentials,
+  getPrismLensRouting,
+  savePrismLensRouting,
 } = require("../utils/prismCredentialVault");
 const { PGVector } = require("../utils/vectorDbProviders/pgvector");
 
@@ -380,6 +382,46 @@ function systemEndpoints(app) {
           success: false,
           credentials: [],
           error: error.message || "Failed to save Prism tool credentials.",
+        });
+      }
+    }
+  );
+
+  app.get(
+    "/system/prism/lens-routing",
+    [validatedRequest],
+    async (_, response) => {
+      try {
+        const routing = await getPrismLensRouting();
+        response.status(200).json({ routing });
+      } catch (error) {
+        console.error("Failed to fetch Prism lens routing.", error);
+        response.status(500).json({
+          routing: {},
+          error: error.message || "Failed to fetch Prism lens routing.",
+        });
+      }
+    }
+  );
+
+  app.post(
+    "/system/prism/lens-routing",
+    [validatedRequest],
+    async (request, response) => {
+      try {
+        const { routing = {} } = reqBody(request);
+        const result = await savePrismLensRouting(routing);
+        if (!result.success) {
+          response.status(400).json(result);
+          return;
+        }
+        response.status(200).json(result);
+      } catch (error) {
+        console.error("Failed to save Prism lens routing.", error);
+        response.status(500).json({
+          success: false,
+          routing: {},
+          error: error.message || "Failed to save Prism lens routing.",
         });
       }
     }
