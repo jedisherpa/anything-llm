@@ -142,7 +142,7 @@ function getItemDisplayTitle(item = {}, tab = "lenses") {
 
 function getItemSnippet(item = {}, tab = "lenses") {
   if (tab === "councils") {
-    return `${item.lensCount} ${METACANON_TERMS.lenses} aligned to ${getCouncilUiTitle(item)}${item.phase ? ` • ${item.phase}` : ""}`;
+    return `${item.lensCount} ${METACANON_TERMS.lenses}${item.phase ? ` • ${item.phase}` : ""}`;
   }
 
   if (tab === "lenses") {
@@ -489,7 +489,7 @@ function ConstellationModeTile({
 }) {
   return (
     <div
-      className={`rounded-[10px] border px-3 py-3 ${
+      className={`rounded-[10px] border px-3 py-2 ${
         emphasis
           ? "border-primary-button bg-theme-sidebar-item-selected"
           : "border-theme-sidebar-border"
@@ -498,11 +498,8 @@ function ConstellationModeTile({
       <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-theme-primary-button">
         {eyebrow}
       </div>
-      <div className="mt-1 text-sm font-semibold text-theme-text-primary">
+      <div className="mt-1 text-xs font-semibold text-theme-text-primary">
         {title}
-      </div>
-      <div className="mt-1 text-xs leading-5 text-theme-text-secondary">
-        {description}
       </div>
     </div>
   );
@@ -575,7 +572,7 @@ function ActionButton({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`prism-library-action rounded-full px-3 py-1.5 text-xs transition-all disabled:cursor-not-allowed disabled:opacity-60 ${
+      className={`prism-library-action rounded-full px-2.5 py-1 text-[11px] transition-all disabled:cursor-not-allowed disabled:opacity-60 ${
         variant === "primary"
           ? "prism-library-action--primary border border-primary-button bg-primary-button text-white hover:opacity-90"
           : "prism-library-action--secondary border border-theme-sidebar-border text-theme-text-secondary hover:text-theme-text-primary"
@@ -592,7 +589,7 @@ function ActionLink({ label, href, variant = "secondary" }) {
       href={href}
       target="_blank"
       rel="noreferrer"
-      className={`prism-library-action inline-flex rounded-full px-3 py-1.5 text-xs transition-all ${
+      className={`prism-library-action inline-flex rounded-full px-2.5 py-1 text-[11px] transition-all ${
         variant === "primary"
           ? "prism-library-action--primary border border-primary-button bg-primary-button text-white hover:opacity-90"
           : "prism-library-action--secondary border border-theme-sidebar-border text-theme-text-secondary hover:text-theme-text-primary"
@@ -621,13 +618,13 @@ function SidebarSectionManager({
   }
 
   return (
-    <div className="rounded-[10px] border border-theme-sidebar-border px-3 py-3">
+    <div className="rounded-[8px] border border-theme-sidebar-border px-3 py-2">
       <div className="flex items-start justify-between gap-3">
         <div>
           <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-theme-primary-button">
             {eyebrow}
           </div>
-          <div className="mt-1 text-sm font-semibold text-theme-text-primary">
+          <div className="mt-1 text-xs font-semibold text-theme-text-primary">
             {title}
           </div>
         </div>
@@ -635,16 +632,8 @@ function SidebarSectionManager({
           {items.length} live
         </div>
       </div>
-      <div className="mt-1 text-xs leading-5 text-theme-text-secondary">
-        {description}
-      </div>
-      {items.length > 1 ? (
-        <div className="mt-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-theme-text-secondary">
-          Drag rows to reorder
-        </div>
-      ) : null}
       {items.length > 0 ? (
-        <div className="mt-4 flex flex-col gap-2">
+        <div className="mt-2 flex flex-col gap-2">
           {items.map((item, index) => (
             <div
               key={getItemKey(item, index)}
@@ -662,7 +651,7 @@ function SidebarSectionManager({
                 }
                 setDraggedItemKey(null);
               }}
-              className={`rounded-[8px] border px-3 py-2 transition-all ${
+              className={`rounded-[8px] border px-2 py-1.5 transition-all ${
                 draggedItemKey === getItemKey(item, index)
                   ? "border-primary-button bg-theme-sidebar-item-selected"
                   : "border-theme-sidebar-border bg-theme-bg-container hover:bg-theme-sidebar-subitem-hover"
@@ -672,16 +661,13 @@ function SidebarSectionManager({
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <div
-                      className="flex cursor-grab items-center justify-center rounded-full border border-theme-sidebar-border bg-theme-bg-sidebar px-2 py-1 text-theme-text-secondary"
+                      className="flex cursor-grab items-center justify-center rounded-full border border-theme-sidebar-border bg-theme-bg-sidebar px-1.5 py-0.5 text-theme-text-secondary"
                       title="Drag to reorder"
                     >
                       <DotsSixVertical className="h-3.5 w-3.5" />
                     </div>
-                    <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-theme-text-secondary">
-                      Slot {index + 1}
-                    </div>
                   </div>
-                  <div className="mt-2 text-xs font-semibold text-theme-text-primary">
+                  <div className="mt-0.5 text-xs font-semibold text-theme-text-primary">
                     {getItemTitle(item)}
                   </div>
                   <div className="mt-0.5 text-[10px] leading-4 text-theme-text-secondary">
@@ -702,7 +688,7 @@ function SidebarSectionManager({
           ))}
         </div>
       ) : (
-        <div className="mt-3 rounded-[8px] border border-dashed border-theme-sidebar-border bg-theme-bg-container px-3 py-3 text-xs leading-5 text-theme-text-secondary">
+        <div className="mt-2 rounded-[8px] border border-theme-sidebar-border/40 bg-theme-bg-container px-3 py-2 text-[11px] leading-4 text-theme-text-secondary">
           {emptyLabel}
         </div>
       )}
@@ -724,14 +710,14 @@ function ItemCard({
     <button
       type="button"
       onClick={onClick}
-      className={`w-full rounded-[10px] border px-3 py-3 text-left transition-all ${
+      className={`w-full rounded-[8px] border px-3 py-2 text-left transition-all ${
         active
           ? "border-primary-button bg-theme-sidebar-item-selected"
           : "border-theme-sidebar-border bg-theme-bg-container hover:bg-theme-sidebar-subitem-hover"
       }`}
     >
       <div className="flex items-start justify-between gap-3">
-        <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-theme-primary-button">
+        <div className="text-[10px] font-medium uppercase tracking-[0.14em] text-theme-primary-button">
           {meta}
         </div>
         {badge ? (
@@ -746,11 +732,11 @@ function ItemCard({
           </div>
         ) : null}
       </div>
-      <div className="mt-1.5 text-sm font-semibold text-theme-text-primary">
+      <div className="mt-0.5 text-sm font-semibold text-theme-text-primary">
         {title}
       </div>
       {snippet ? (
-        <div className="mt-1 line-clamp-2 text-xs leading-5 text-theme-text-secondary">
+        <div className="mt-1 line-clamp-1 text-xs leading-4 text-theme-text-secondary">
           {snippet}
         </div>
       ) : null}
@@ -823,25 +809,25 @@ function renderDetail(item, tab) {
           value={String(item.lensCount)}
         />
         <DetailMeta label="Phase" value={item.phase} />
-        <div className="rounded-[8px] border border-theme-sidebar-border bg-theme-bg-sidebar px-3 py-3">
-          <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-theme-text-secondary">
+        <div className="rounded-[8px] border border-theme-sidebar-border bg-theme-bg-sidebar px-3 py-2">
+          <div className="text-[10px] font-medium uppercase tracking-[0.14em] text-theme-text-secondary">
             Council Lenses
           </div>
-          <div className="mt-3 grid gap-2 md:grid-cols-2">
+          <div className="mt-2 grid gap-2 md:grid-cols-2">
             {(item.lenses || []).map((lens) => (
               <div
                 key={lens.id}
-                className="rounded-[8px] border border-theme-sidebar-border bg-theme-bg-container px-3 py-2"
+                className="rounded-[6px] border border-theme-sidebar-border bg-theme-bg-container px-2.5 py-1.5"
               >
-                <div className="text-sm font-semibold text-theme-text-primary">
+                <div className="text-xs font-semibold text-theme-text-primary">
                   {getLensDisplayTitle(lens)}
                 </div>
                 {lens.phase ? (
-                  <div className="mt-1 text-xs leading-6 text-theme-text-secondary">
+                  <div className="mt-1 text-xs leading-4 text-theme-text-secondary">
                     {lens.phase}
                   </div>
                 ) : null}
-                <div className="mt-1 text-[11px] uppercase tracking-[0.14em] text-theme-primary-button">
+                <div className="mt-0.5 text-[10px] uppercase tracking-[0.12em] text-theme-primary-button">
                   {lens.handle}
                 </div>
               </div>
@@ -1967,15 +1953,12 @@ export default function MetacanonAILibraryPage() {
             <div className="rounded-[10px] border border-theme-sidebar-border px-3 py-3">
               <div className="flex flex-col gap-4 md:items-start md:justify-between">
                 <div className="max-w-2xl">
-                  <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-primary-button">
-                    {draftModeMeta.title} Draft
-                  </div>
-                  <div className="mt-1 text-base font-semibold text-theme-text-primary">
+                  <div className="mt-1 text-sm font-semibold text-theme-text-primary">
                     {draftMode === "council"
-                      ? "Build a custom council from councils or individual lenses"
-                      : "Build a custom constellation from councils or individual lenses"}
+                      ? "Custom council draft"
+                      : "Custom constellation draft"}
                   </div>
-                  <div className="mt-3 flex flex-wrap gap-2">
+                  <div className="mt-2 flex flex-wrap gap-2">
                     <ActionButton
                       label="Draft a Constellation"
                       onClick={() => {
@@ -2006,14 +1989,6 @@ export default function MetacanonAILibraryPage() {
                 </div>
                 <div className="flex w-full max-w-xl flex-col gap-3">
                   <div className="prism-library-draft-board-header flex items-center justify-between gap-3">
-                    <div>
-                      <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-theme-primary-button">
-                        {draftModeMeta.nameLabel}
-                      </div>
-                      <div className="mt-1 text-xs text-theme-text-secondary">
-                        {draftModeMeta.nameHelper}
-                      </div>
-                    </div>
                     <div className="rounded-full border border-theme-sidebar-border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-theme-text-secondary">
                       {draftModeMeta.saveCopy}
                     </div>
@@ -2024,14 +1999,8 @@ export default function MetacanonAILibraryPage() {
                     className="metacanon-sidebar-search prism-library-input h-[38px] rounded-[10px] border-none px-3 text-sm text-theme-text-primary outline-none placeholder:text-theme-settings-input-placeholder"
                     placeholder={draftModeMeta.namePlaceholder}
                   />
-                  <div className="text-xs leading-5 text-theme-text-secondary">
-                    {draftMode === "council"
-                      ? "Tip: give the council a role-based name before saving so it is easy to recognize in Featured Councils."
-                      : "Tip: give the constellation a job-focused name before saving so it is easy to find later."}
-                  </div>
-
-                  <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-theme-text-secondary">
-                    Draft Lens Order
+                  <div className="text-[10px] font-medium uppercase tracking-[0.12em] text-theme-text-secondary">
+                    Lens Order
                   </div>
                   <div className="prism-library-draft-chip-row flex flex-wrap gap-2">
                     {draftLenses.length > 0 ? (
@@ -2092,34 +2061,26 @@ export default function MetacanonAILibraryPage() {
                       </div>
                     )}
                   </div>
-                  <div className="rounded-[8px] border border-theme-sidebar-border bg-theme-bg-container px-3 py-3 text-xs leading-5 text-theme-text-secondary">
-                    <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-theme-primary-button">
-                      Execution model
-                    </div>
-                    <div className="mt-2 font-medium text-theme-text-primary">
+                  <div className="mt-2 border-t border-theme-sidebar-border/40 pt-2 text-xs text-theme-text-secondary">
+                    <span className="font-medium text-theme-text-primary">
                       {draftConstellation.lensHandles.length}{" "}
                       {draftConstellation.lensHandles.length === 1
                         ? "Lens"
                         : "Lenses"}{" "}
                       selected
-                    </div>
-                    <div className="mt-1">
-                      {draftMode === "council"
-                        ? "Custom councils run as reusable council-pack orchestrations. The lead Lens frames the analysis, the rest contribute, then Prism synthesizes the final response."
-                        : "Custom constellations run as a council-pack orchestration. The lead Lens frames the analysis, the rest contribute, then Prism synthesizes the final response."}
-                    </div>
+                    </span>
                     {draftConstellation.leadTitle ? (
-                      <div className="mt-2 text-theme-text-primary">
-                        Lead Lens: {draftConstellation.leadTitle}
-                      </div>
+                      <span className="ml-2 text-theme-text-secondary">
+                        · Lead: {draftConstellation.leadTitle}
+                      </span>
                     ) : null}
                     {!draftValidation.valid ? (
-                      <div className="mt-2 text-theme-primary-button">
+                      <div className="mt-1 text-theme-primary-button">
                         {draftValidation.message}
                       </div>
                     ) : null}
                   </div>
-                  <div className="flex flex-wrap gap-1.5">
+                  <div className="flex flex-wrap gap-1">
                     <ActionButton
                       label={`Activate ${draftModeMeta.saveCopy}`}
                       onClick={activateDraftPack}
@@ -2173,23 +2134,20 @@ export default function MetacanonAILibraryPage() {
           ) : null}
 
           <div className="flex flex-col gap-4">
-            <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-2 lg:grid-cols-3">
               <ConstellationModeTile
                 eyebrow="Preset Constellations"
                 title="Canonical formations"
-                description="Fixed library patterns curated in advance. Best for fast, repeatable orchestration."
                 emphasis={tab === "constellations"}
               />
               <ConstellationModeTile
                 eyebrow="Custom Draft"
                 title="Compose something new"
-                description="Assemble live councils and lenses, choose the lead lens, and pressure-test the draft before saving."
                 emphasis={["councils", "lenses"].includes(tab)}
               />
               <ConstellationModeTile
                 eyebrow="Saved Constellations"
                 title="Keep what works"
-                description="Your reusable saved constellations, including saved presets and custom constellations you want to run again."
                 emphasis={tab === "packs"}
               />
             </div>
@@ -2204,27 +2162,8 @@ export default function MetacanonAILibraryPage() {
                 />
               ))}
             </div>
-            <div className="rounded-[10px] border border-theme-sidebar-border bg-theme-bg-sidebar px-3 py-3">
-              <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-theme-primary-button">
-                {constellationModeCopy.eyebrow}
-              </div>
-              <div className="mt-1 text-sm font-semibold text-theme-text-primary">
-                {constellationModeCopy.title}
-              </div>
-              <div className="mt-1 text-xs leading-5 text-theme-text-secondary">
-                {constellationModeCopy.description}
-              </div>
-            </div>
-            <div className="rounded-[10px] border border-theme-sidebar-border bg-theme-bg-sidebar px-3 py-3">
-              <div className="flex flex-col gap-1">
-                <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-primary-button">
-                  Manage Sidebar Sections
-                </div>
-                <div className="text-sm font-semibold text-theme-text-primary">
-                  Curate the left sidebar from one place
-                </div>
-              </div>
-              <div className="mt-4 grid grid-cols-1 gap-3 xl:grid-cols-3">
+            <div className="flex flex-col gap-2">
+              <div className="grid grid-cols-1 gap-2 xl:grid-cols-3">
                 <SidebarSectionManager
                   eyebrow="Featured Lenses"
                   title={`${featuredLenses.length} featured lens${featuredLenses.length === 1 ? "" : "es"}`}
@@ -2349,17 +2288,17 @@ export default function MetacanonAILibraryPage() {
             <div className="flex flex-col gap-3 rounded-[10px] border border-theme-sidebar-border bg-theme-bg-container/40 p-3">
               {selectedItem ? (
                 <>
-                  <div className="rounded-[10px] border border-theme-sidebar-border bg-theme-bg-sidebar px-3 py-3">
+                  <div className="rounded-[8px] border border-theme-sidebar-border bg-theme-bg-sidebar px-3 py-2">
                     <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                       <div>
-                        <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-primary-button">
+                        <div className="text-[10px] font-medium uppercase tracking-[0.14em] text-theme-primary-button">
                           {getDetailLabel(tab)}
                         </div>
-                        <h2 className="mt-1 text-base font-semibold text-theme-text-primary">
+                        <h2 className="mt-0.5 text-sm font-semibold text-theme-text-primary">
                           {getItemDisplayTitle(selectedItem, tab)}
                         </h2>
                       </div>
-                      <div className="flex flex-wrap gap-1.5">
+                      <div className="flex flex-wrap gap-1">
                         {tab === "councils" ? (
                           <>
                             <ActionButton
@@ -2585,15 +2524,15 @@ export default function MetacanonAILibraryPage() {
                   </div>
 
                   {isRunnableTab ? (
-                    <div className="rounded-[10px] border border-theme-sidebar-border bg-theme-bg-sidebar px-3 py-3">
-                      <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-theme-text-secondary">
+                    <div className="rounded-[8px] border border-theme-sidebar-border bg-theme-bg-sidebar px-3 py-2">
+                      <div className="text-[10px] font-medium uppercase tracking-[0.14em] text-theme-text-secondary">
                         Align Prism
                       </div>
                       <textarea
                         value={runPrompt}
                         onChange={(event) => setRunPrompt(event.target.value)}
-                        placeholder="What should Prism focus on while aligned with this Council, Lens, Preset, or Constellation?"
-                        className="mt-2 min-h-[90px] w-full rounded-[8px] border border-theme-sidebar-border bg-theme-bg-container px-3 py-2.5 text-sm leading-6 text-theme-text-primary outline-none placeholder:text-theme-settings-input-placeholder"
+                        placeholder="What should Prism focus on?"
+                        className="mt-1.5 min-h-[70px] w-full rounded-[8px] border border-theme-sidebar-border bg-theme-bg-container px-3 py-2 text-sm leading-5 text-theme-text-primary outline-none placeholder:text-theme-settings-input-placeholder"
                       />
                     </div>
                   ) : null}
