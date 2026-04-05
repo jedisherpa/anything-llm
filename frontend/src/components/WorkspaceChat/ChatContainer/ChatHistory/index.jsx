@@ -343,6 +343,7 @@ function buildMessages({
           artifactRefs={props.artifactRefs || []}
           requiresApproval={props.requiresApproval}
           pendingActionId={props.pendingActionId}
+          deliberationData={props.deliberationData || null}
         />
       );
     }

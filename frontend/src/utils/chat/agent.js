@@ -14,6 +14,7 @@ const handledEvents = [
   "awaitingFeedback",
   "wssFailure",
   "rechartVisualize",
+  "deliberationComplete",
   // Streaming events
   "reportStreamEvent",
 ];
@@ -69,6 +70,9 @@ export default function handleSocketResponse(socket, event, setChatHistory) {
   if (!data.hasOwnProperty("type") && !socket.supportsAgentStreaming) {
     finalizeAgentPresence();
     closeTerminalAgentSocket(socket);
+    // Consume any pending deliberation data that was emitted before this terminal message.
+    const deliberationData = socket._pendingDeliberationData || null;
+    socket._pendingDeliberationData = null;
     return setChatHistory((prev) => {
       return [
         ...prev.filter((msg) => !!msg.content),
@@ -81,6 +85,7 @@ export default function handleSocketResponse(socket, event, setChatHistory) {
           error: null,
           animate: false,
           pending: false,
+          deliberationData,
         },
       ];
     });
@@ -121,6 +126,8 @@ export default function handleSocketResponse(socket, event, setChatHistory) {
         if (data.content.type === "fullTextResponse") {
           finalizeAgentPresence();
           closeTerminalAgentSocket(socket);
+          const deliberationData = socket._pendingDeliberationData || null;
+          socket._pendingDeliberationData = null;
           return [
             ...prev.filter((msg) => !!msg.content),
             {
@@ -133,6 +140,7 @@ export default function handleSocketResponse(socket, event, setChatHistory) {
               error: null,
               animate: false,
               pending: false,
+              deliberationData,
             },
           ];
         }
@@ -226,6 +234,13 @@ export default function handleSocketResponse(socket, event, setChatHistory) {
         );
       }
     });
+  }
+
+  if (data.type === "deliberationComplete") {
+    // Store the deliberation payload on the socket so the next terminal message
+    // can pick it up and attach it as deliberationData on the chat message.
+    socket._pendingDeliberationData = data.content;
+    return;
   }
 
   if (data.type === "fileDownload") {

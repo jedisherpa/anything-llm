@@ -10,6 +10,7 @@ import DOMPurify from "@/utils/chat/purify";
 import { EditMessageForm, useEditMessage } from "./Actions/EditMessage";
 import { useWatchDeleteMessage } from "./Actions/DeleteMessage";
 import TTSMessage from "./Actions/TTSButton";
+import DeliberationActions from "./Actions/DeliberationActions";
 import {
   THOUGHT_REGEX_CLOSE,
   THOUGHT_REGEX_COMPLETE,
@@ -45,6 +46,7 @@ const HistoricalMessage = ({
   artifactRefs = [],
   requiresApproval = false,
   pendingActionId = null,
+  deliberationData = null,
 }) => {
   const { t } = useTranslation();
   const { isEditing } = useEditMessage({ chatId, role });
@@ -203,6 +205,12 @@ const HistoricalMessage = ({
           />
         </div>
         {role === "assistant" && <Citations sources={sources} />}
+        {role === "assistant" && deliberationData && (
+          <DeliberationActions
+            deliberationData={deliberationData}
+            workspaceSlug={workspace?.slug}
+          />
+        )}
       </div>
     </div>
   );

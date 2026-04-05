@@ -516,12 +516,12 @@ export default function PromptInput({
                   }}
                   value={promptInput}
                   spellCheck={Appearance.get("enableSpellCheck")}
-                  className={`border-none cursor-text max-h-[50vh] md:max-h-[350px] md:min-h-[40px] ${centered ? "pt-[26px]" : "pt-[20px]"} w-full leading-5 ${centered ? "text-theme-text-primary placeholder:text-theme-settings-input-placeholder" : "text-white light:text-slate-600 placeholder:text-white/60 light:placeholder:text-slate-400"} bg-transparent resize-none active:outline-none focus:outline-none flex-grow pwa:!text-[16px] ${textSizeClass}`}
+                  className={`border-none cursor-text max-h-[50vh] md:max-h-[350px] md:min-h-[40px] ${centered ? "pt-[26px]" : "pt-[14px]"} w-full leading-5 ${centered ? "text-theme-text-primary placeholder:text-theme-settings-input-placeholder" : "text-white light:text-slate-600 placeholder:text-white/60 light:placeholder:text-slate-400"} bg-transparent resize-none active:outline-none focus:outline-none flex-grow pwa:!text-[16px] ${textSizeClass}`}
                   placeholder={centeredPlaceholder}
                 />
               </div>
               <div
-                className={`flex justify-between items-center ${centered ? "pt-[18px] pb-[22px]" : "pt-3.5 pb-3"}`}
+                className={`flex justify-between items-center ${centered ? "pt-[18px] pb-[22px]" : "pt-2 pb-3"}`}
               >
                 <div className="flex items-center gap-x-0.25">
                   {typeof onChatModeChange === "function" ? (

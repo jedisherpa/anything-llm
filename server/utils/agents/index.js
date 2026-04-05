@@ -29,6 +29,46 @@ const { resolvePrismRouteConfig } = require("./prismProviderRouting");
 const { TokenManager } = require("../helpers/tiktoken");
 const { MODEL_MAP } = require("../AiProviders/modelMap");
 
+/**
+ * Builds a Markdown document from a deliberation data payload.
+ * @param {{ type: string, label: string, query: string, timestamp: string, lensOutputs: Array<{handle: string, label: string, content: string}>, synthesis: {handle: string, label: string, content: string} }} data
+ * @returns {string}
+ */
+function buildDeliberationMarkdown(data) {
+  const typeLabel =
+    data.type === "council-pack"
+      ? "Council Pack"
+      : data.type === "constellation"
+        ? "Constellation"
+        : "Lens Deliberation";
+  const lensNames = data.lensOutputs.map((l) => l.label).join(", ");
+  const lines = [
+    `# Deliberation: ${data.label || typeLabel}`,
+    `**Date:** ${data.timestamp}`,
+    `**Type:** ${typeLabel}`,
+    `**Lenses:** ${lensNames}`,
+    ``,
+    `---`,
+    ``,
+    `## User Query`,
+    ``,
+    data.query || "(no query)",
+    ``,
+  ];
+  for (const lens of data.lensOutputs) {
+    lines.push(`---`, ``, `## ${lens.label}`, ``, lens.content || "(no output)", ``);
+  }
+  lines.push(
+    `---`,
+    ``,
+    `## Synthesis (${data.synthesis?.label || "Prism"})`,
+    ``,
+    data.synthesis?.content || "(no synthesis)",
+    ``
+  );
+  return lines.join("\n");
+}
+
 class AgentHandler {
   #invocationUUID;
   #funcsToLoad = [];
@@ -821,6 +861,26 @@ class AgentHandler {
       executionPlan.executionRoutes?.[finalHandle] || []
     );
 
+    // Emit deliberation data before the terminal message so the frontend can attach it.
+    const constellationDeliberationData = {
+      type: "constellation",
+      label: constellation.name,
+      query: userQuery,
+      timestamp: new Date().toISOString(),
+      lensOutputs: memberOutputs.map((o) => ({
+        handle: o.handle,
+        label: `${o.role} | ${o.title}`,
+        content: o.content,
+      })),
+      synthesis: {
+        handle: finalHandle,
+        label: finalLabel,
+        content: finalResponse,
+      },
+    };
+    constellationDeliberationData.markdownContent = buildDeliberationMarkdown(constellationDeliberationData);
+    this.aibitat.socket?.send("deliberationComplete", constellationDeliberationData);
+
     this.aibitat.newMessage({
       from: finalHandle,
       to: USER_AGENT.name,
@@ -995,6 +1055,26 @@ class AgentHandler {
       }
     }
 
+    // Emit deliberation data before the terminal message so the frontend can attach it.
+    const councilDeliberationData = {
+      type: "council-pack",
+      label: packName,
+      query: userQuery || this.stripInvocationHandles(prompt),
+      timestamp: new Date().toISOString(),
+      lensOutputs: councilOutputs.map((o) => ({
+        handle: o.handle,
+        label: o.label,
+        content: o.content,
+      })),
+      synthesis: {
+        handle: "@prism",
+        label: "Prism",
+        content: finalResponse,
+      },
+    };
+    councilDeliberationData.markdownContent = buildDeliberationMarkdown(councilDeliberationData);
+    this.aibitat.socket?.send("deliberationComplete", councilDeliberationData);
+
     this.aibitat.newMessage({
       from: "@prism",
       to: USER_AGENT.name,
@@ -1045,6 +1125,27 @@ class AgentHandler {
       "@prism",
       `User query:\n${userQuery}\n\nIntegrated inputs:\n[Watcher]\n${watcher}\n\n[Auditor]\n${auditor}\n\n[Synthesizer]\n${synthesizer}\n\n[Torus]\n${torus}\n\nTask: Produce one clear final response in a unified voice. Keep it concise but thorough. Include: integrated view, options, blind spots, and end with human clarification questions.`
     );
+
+    // Emit deliberation data before the terminal message so the frontend can attach it.
+    const lensDeliberationData = {
+      type: "lens-deliberation",
+      label: "Lens Deliberation",
+      query: userQuery,
+      timestamp: new Date().toISOString(),
+      lensOutputs: [
+        { handle: "@watcher", label: "Watcher", content: watcher },
+        { handle: "@auditor", label: "Auditor", content: auditor },
+        { handle: "@synthesizer", label: "Synthesizer", content: synthesizer },
+        { handle: "@torus", label: "Torus", content: torus },
+      ],
+      synthesis: {
+        handle: "@prism",
+        label: "Prism",
+        content: prism,
+      },
+    };
+    lensDeliberationData.markdownContent = buildDeliberationMarkdown(lensDeliberationData);
+    this.aibitat.socket?.send("deliberationComplete", lensDeliberationData);
 
     this.aibitat.newMessage({
       from: "@prism",
