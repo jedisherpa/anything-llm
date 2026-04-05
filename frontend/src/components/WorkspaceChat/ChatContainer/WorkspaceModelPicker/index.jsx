@@ -48,6 +48,34 @@ function fetchModelName(slug, setModelName) {
   );
 }
 
+const DELIBERATION_LENSES = [
+  { letter: "W", name: "Watcher" },
+  { letter: "A", name: "Auditor" },
+  { letter: "S", name: "Synthesizer" },
+  { letter: "T", name: "Torus" },
+  { letter: "P", name: "Prism" },
+];
+
+function DeliberationPills({ modelDisplay }) {
+  if (!modelDisplay) return null;
+  return (
+    <div className="metacanon-deliberation-pills flex items-center gap-x-0.5">
+      {DELIBERATION_LENSES.map(({ letter, name }) => (
+        <span
+          key={letter}
+          title={`${name}: ${modelDisplay}`}
+          className="metacanon-deliberation-pill"
+        >
+          <span className="metacanon-deliberation-pill__letter">{letter}</span>
+          <span className="metacanon-deliberation-pill__model">
+            {modelDisplay}
+          </span>
+        </span>
+      ))}
+    </div>
+  );
+}
+
 export default function WorkspaceModelPicker({
   workspaceSlug = null,
   compact = false,
@@ -108,7 +136,7 @@ export default function WorkspaceModelPicker({
           onClick={() => setShowSelector(false)}
         />
       )}
-      <div className={`relative hidden md:block shrink-0 z-30 ${className}`}>
+      <div className={`relative hidden md:flex items-center gap-x-1.5 shrink-0 z-30 ${className}`}>
         <button
           type="button"
           onClick={() => setShowSelector(!showSelector)}
@@ -128,6 +156,8 @@ export default function WorkspaceModelPicker({
             <span aria-hidden="true">▾</span>
           </span>
         </button>
+
+        <DeliberationPills modelDisplay={displayName} />
 
         {showSelector && (
           <div className="metacanon-model-picker-panel absolute bottom-full left-0 mb-2 w-[620px] overflow-hidden rounded-[22px]">
