@@ -918,17 +918,18 @@ class AgentHandler {
     const finalHandle = projectManager?.handle || "@prism";
     const finalLabel = projectManager?.title || "Prism";
     this.aibitat.introspect?.(`Synthesizing via ${finalLabel}.`);
-    const finalResponse = await this.executeLensAgent(
-      finalHandle,
-      `Constellation: ${constellation.name}\nPurpose: ${constellation.purpose}\nUser query:\n${userQuery}\n\nProject manager brief:\n${orchestrationBrief || "No explicit orchestration brief provided."}\n\nMember outputs:\n${memberOutputs
-        .map(
-          (output) => `[${output.role} | ${output.title}]\n${output.content}`
-        )
-        .join(
-          "\n\n"
-        )}\n\nTask: Produce the final response for the user. Integrate the constellation's perspectives into one coherent answer with practical guidance, meaningful blind spots, and end with human clarification questions.`,
-      executionPlan.executionRoutes?.[finalHandle] || []
-    );
+    const { content: finalResponse, routeUsed: synthesisRoute } =
+      await this.executeLensAgentWithRoute(
+        finalHandle,
+        `Constellation: ${constellation.name}\nPurpose: ${constellation.purpose}\nUser query:\n${userQuery}\n\nProject manager brief:\n${orchestrationBrief || "No explicit orchestration brief provided."}\n\nMember outputs:\n${memberOutputs
+          .map(
+            (output) => `[${output.role} | ${output.title}]\n${output.content}`
+          )
+          .join(
+            "\n\n"
+          )}\n\nTask: Produce the final response for the user. Integrate the constellation's perspectives into one coherent answer with practical guidance, meaningful blind spots, and end with human clarification questions.`,
+        executionPlan.executionRoutes?.[finalHandle] || []
+      );
 
     // Emit deliberation data before the terminal message so the frontend can attach it.
     const constellationDeliberationData = {
@@ -946,9 +947,11 @@ class AgentHandler {
         handle: finalHandle,
         label: finalLabel,
         content: finalResponse,
+        routeUsed: synthesisRoute || { provider: null, model: null, slotLabel: null },
       },
     };
     constellationDeliberationData.markdownContent = buildDeliberationMarkdown(constellationDeliberationData);
+    this.aibitat.emitter.emit("deliberationComplete", constellationDeliberationData);
     this.aibitat.socket?.send("deliberationComplete", constellationDeliberationData);
 
     this.aibitat.newMessage({
@@ -1100,12 +1103,15 @@ class AgentHandler {
 
     // Fix C: Try/catch with two-stage fallback on synthesis failure.
     let finalResponse;
+    let synthRouteUsed = { provider: null, model: null, slotLabel: null };
     try {
-      finalResponse = await this.executeLensAgent(
+      const synthResult = await this.executeLensAgentWithRoute(
         "@prism",
         synthesisPrompt,
         executionRoutes?.["@prism"] || []
       );
+      finalResponse = synthResult.content;
+      synthRouteUsed = synthResult.routeUsed || synthRouteUsed;
     } catch (synthError) {
       this.aibitat.introspect?.(
         `Council synthesis failed (${synthError.message}). Attempting simplified fallback synthesis.`
@@ -1115,11 +1121,13 @@ class AgentHandler {
         const simplifiedPrompt = `User query:\n${userQuery || this.stripInvocationHandles(prompt)}\n\nCouncil summaries:\n${councilOutputs
           .map((o) => `[${o.label}]\n${o.content.slice(0, 500)}`)
           .join("\n\n")}\n\nTask: Provide a brief integrated response to the user query based on the council summaries above.`;
-        finalResponse = await this.executeLensAgent(
+        const fallbackResult = await this.executeLensAgentWithRoute(
           "@prism",
           simplifiedPrompt,
           executionRoutes?.["@prism"] || []
         );
+        finalResponse = fallbackResult.content;
+        synthRouteUsed = fallbackResult.routeUsed || synthRouteUsed;
       } catch (fallbackError) {
         // Stage 2 fallback: return raw concatenated outputs
         this.aibitat.introspect?.(
@@ -1147,9 +1155,11 @@ class AgentHandler {
         handle: "@prism",
         label: "Prism",
         content: finalResponse,
+        routeUsed: synthRouteUsed,
       },
     };
     councilDeliberationData.markdownContent = buildDeliberationMarkdown(councilDeliberationData);
+    this.aibitat.emitter.emit("deliberationComplete", councilDeliberationData);
     this.aibitat.socket?.send("deliberationComplete", councilDeliberationData);
 
     this.aibitat.newMessage({
@@ -1202,10 +1212,11 @@ class AgentHandler {
       );
 
     this.aibitat.introspect?.("Running Prism unification.");
-    const prism = await this.executeLensAgent(
-      "@prism",
-      `User query:\n${userQuery}\n\nIntegrated inputs:\n[Watcher]\n${watcher}\n\n[Auditor]\n${auditor}\n\n[Synthesizer]\n${synthesizer}\n\n[Torus]\n${torus}\n\nTask: Produce one clear final response in a unified voice. Keep it concise but thorough. Include: integrated view, options, blind spots, and end with human clarification questions.`
-    );
+    const { content: prism, routeUsed: prismRoute } =
+      await this.executeLensAgentWithRoute(
+        "@prism",
+        `User query:\n${userQuery}\n\nIntegrated inputs:\n[Watcher]\n${watcher}\n\n[Auditor]\n${auditor}\n\n[Synthesizer]\n${synthesizer}\n\n[Torus]\n${torus}\n\nTask: Produce one clear final response in a unified voice. Keep it concise but thorough. Include: integrated view, options, blind spots, and end with human clarification questions.`
+      );
 
     // Emit deliberation data before the terminal message so the frontend can attach it.
     const lensDeliberationData = {
@@ -1223,9 +1234,11 @@ class AgentHandler {
         handle: "@prism",
         label: "Prism",
         content: prism,
+        routeUsed: prismRoute || { provider: null, model: null, slotLabel: null },
       },
     };
     lensDeliberationData.markdownContent = buildDeliberationMarkdown(lensDeliberationData);
+    this.aibitat.emitter.emit("deliberationComplete", lensDeliberationData);
     this.aibitat.socket?.send("deliberationComplete", lensDeliberationData);
 
     this.aibitat.newMessage({

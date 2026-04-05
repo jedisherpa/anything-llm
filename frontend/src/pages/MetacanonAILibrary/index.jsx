@@ -249,9 +249,6 @@ function getDraftModeMeta(draftMode = "constellation") {
       activateCopy: "custom council",
       saveCopy: "Council",
       clearCopy: "Council",
-      nameLabel: "Council Name",
-      nameHelper:
-        "This is the name shown when the council is saved or featured in the sidebar.",
       namePlaceholder: "Name this custom council",
     };
   }
@@ -264,9 +261,6 @@ function getDraftModeMeta(draftMode = "constellation") {
     activateCopy: "custom constellation",
     saveCopy: "Constellation",
     clearCopy: "Constellation",
-    nameLabel: "Constellation Name",
-    nameHelper:
-      "This is the name shown when the constellation is saved for reuse.",
     namePlaceholder: "Name this custom constellation",
   };
 }
@@ -1862,7 +1856,6 @@ export default function MetacanonAILibraryPage() {
     selectedDetail && selectedDetail.id === selectedItem?.id
       ? selectedDetail
       : selectedItem;
-  const constellationModeCopy = getConstellationModeCopy(tab, draftMode);
   const searchPlaceholder =
     tab === "councils"
       ? "Search Councils, phases, or Lens names"

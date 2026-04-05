@@ -13,18 +13,12 @@ const chatHistory = {
       name: this.name,
       setup: function (aibitat) {
         // Capture any deliberationComplete event emitted before the terminal message.
-        // The websocket plugin writes to aibitat.socket; we intercept by monkey-patching
-        // the socket.send method to look for deliberationComplete payloads.
+        // AgentHandler emits this on aibitat.emitter so we listen via the standard
+        // aibitat event pattern rather than monkey-patching the socket.
         let _pendingDeliberationData = null;
-        const originalSocketSend = aibitat.socket?.send?.bind(aibitat.socket);
-        if (aibitat.socket && typeof originalSocketSend === "function") {
-          aibitat.socket.send = function (type, content) {
-            if (type === "deliberationComplete") {
-              _pendingDeliberationData = content;
-            }
-            return originalSocketSend(type, content);
-          };
-        }
+        aibitat.emitter.on("deliberationComplete", (data) => {
+          _pendingDeliberationData = data;
+        });
 
         aibitat.onMessage(async () => {
           try {
