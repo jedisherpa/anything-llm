@@ -28,6 +28,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import CustomLensCreatorPanel from "./CustomLensCreatorPanel";
 import LensFormatPreviewModal from "@/components/Metacanon/LensFormatPreviewModal";
+import LensWorkbenchModal from "@/components/Metacanon/LensWorkbenchModal";
 
 const CUSTOM_SUB_MODES = {
   COMPOSE: "compose",
@@ -447,7 +448,6 @@ function LensChooser({
       <div className="prism-composer-panel-header">
         <div>
           <div className="prism-composer-panel-eyebrow">{title}</div>
-          <div className="prism-composer-panel-title">Available Lenses</div>
         </div>
         <div className="prism-composer-panel-note">{description}</div>
       </div>
@@ -607,6 +607,7 @@ export default function MetacanonLensComposerPage() {
   const [selectedCouncilPresetId, setSelectedCouncilPresetId] = useState("");
   const [activeSlot, setActiveSlot] = useState(1);
   const [lensSearch, setLensSearch] = useState("");
+  const [inspectLensId, setInspectLensId] = useState(null);
   const [dataset, setDataset] = useState(null);
   const [loading, setLoading] = useState(true);
   const [customShape, setCustomShape] = useState(null);
@@ -1303,6 +1304,7 @@ export default function MetacanonLensComposerPage() {
                       (item) => item.handle === lens.handle
                     );
                     setActiveSlot(slot?.slot || 1);
+                    setInspectLensId(lens.id || null);
                     return;
                   }
 
@@ -1392,6 +1394,14 @@ export default function MetacanonLensComposerPage() {
               // Non-fatal — user can refresh manually.
             });
         }}
+      />
+
+      <LensWorkbenchModal
+        open={!!inspectLensId}
+        lenses={dataset?.allLenses || []}
+        initialLensId={inspectLensId}
+        onClose={() => setInspectLensId(null)}
+        onSaved={() => setInspectLensId(null)}
       />
     </div>
   );

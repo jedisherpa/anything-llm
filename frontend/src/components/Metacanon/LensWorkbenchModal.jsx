@@ -27,6 +27,7 @@ export default function LensWorkbenchModal({
   lenses = [],
   onClose,
   onSaved,
+  initialLensId = "",
 }) {
   const [search, setSearch] = useState("");
   const [selectedId, setSelectedId] = useState("");
@@ -95,6 +96,14 @@ export default function LensWorkbenchModal({
       setLoading(false);
     }
   };
+
+  // Pre-select a specific lens when the modal opens with an initialLensId.
+  useEffect(() => {
+    if (open && initialLensId) {
+      loadLens(initialLensId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, initialLensId]);
 
   const switchToCreate = () => {
     setMode("create");

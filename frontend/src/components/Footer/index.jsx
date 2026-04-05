@@ -46,7 +46,7 @@ export const ICON_COMPONENTS = {
   Eyeglasses: Eyeglasses,
 };
 
-function MetacanonBadgeIcon({ className = "h-5 w-5" }) {
+function MetacanonBadgeIcon({ className = "h-3.5 w-3.5" }) {
   const { isLightTheme, resolvedTheme } = useTheme();
   const src =
     resolvedTheme === "cathedral"
@@ -127,7 +127,7 @@ export default function Footer() {
         to={href}
         target={external ? "_blank" : undefined}
         rel={external ? "noreferrer" : undefined}
-        className="metacanon-footer-button flex h-[38px] w-[38px] items-center justify-center rounded-full p-[7px] transition-all duration-300"
+        className="metacanon-footer-button flex h-[26px] w-[26px] items-center justify-center rounded-full p-[4px] transition-all duration-300"
         aria-label={label}
         data-tooltip-id="footer-item"
         data-tooltip-content={tooltip}
@@ -156,7 +156,7 @@ export default function Footer() {
       icon: (
         <GithubLogo
           weight="fill"
-          className="h-5 w-5"
+          className="h-3.5 w-3.5"
           color="var(--theme-sidebar-footer-icon-fill)"
         />
       ),
@@ -169,7 +169,7 @@ export default function Footer() {
       icon: (
         <BookOpen
           weight="fill"
-          className="h-5 w-5"
+          className="h-3.5 w-3.5"
           color="var(--theme-sidebar-footer-icon-fill)"
         />
       ),
@@ -183,7 +183,7 @@ export default function Footer() {
       icon: (
         <Eyeglasses
           weight="fill"
-          className="h-5 w-5"
+          className="h-3.5 w-3.5"
           color="var(--theme-sidebar-footer-icon-fill)"
         />
       ),
@@ -196,7 +196,7 @@ export default function Footer() {
       icon: (
         <DiscordLogo
           weight="fill"
-          className="h-5 w-5"
+          className="h-3.5 w-3.5"
           color="var(--theme-sidebar-footer-icon-fill)"
         />
       ),
@@ -212,7 +212,7 @@ export default function Footer() {
       icon: (
         <BookOpen
           weight="fill"
-          className="h-5 w-5"
+          className="h-3.5 w-3.5"
           color="var(--theme-sidebar-footer-icon-fill)"
         />
       ),
@@ -229,7 +229,7 @@ export default function Footer() {
       icon: (
         <FileText
           weight="fill"
-          className="h-5 w-5"
+          className="h-3.5 w-3.5"
           color="var(--theme-sidebar-footer-icon-fill)"
         />
       ),
@@ -248,7 +248,7 @@ export default function Footer() {
             ICON_COMPONENTS?.[item.icon] ?? ICON_COMPONENTS.Info,
             {
               weight: "fill",
-              className: "h-5 w-5",
+              className: "h-3.5 w-3.5",
               color: "var(--theme-sidebar-footer-icon-fill)",
             }
           ),
@@ -267,7 +267,7 @@ export default function Footer() {
 
   return (
     <div className="flex w-full justify-center px-1.5 pt-0.5 pb-0">
-      <div className="metacanon-footer-dock relative flex w-fit max-w-full flex-nowrap items-center gap-2.5 rounded-[15px] px-1 py-0.5">
+      <div className="metacanon-footer-dock relative flex w-fit max-w-full flex-nowrap items-center gap-2 rounded-[15px] px-1 py-0.5">
         {renderFooterItem(metacanonItem)}
         <div
           ref={supportRef}
@@ -278,7 +278,7 @@ export default function Footer() {
           <PrismHoverTarget targetId="footer-bitcoin-support">
             <button
               type="button"
-              className="metacanon-footer-button flex h-[38px] w-[38px] items-center justify-center rounded-full p-[7px] transition-all duration-300"
+              className="metacanon-footer-button flex h-[26px] w-[26px] items-center justify-center rounded-full p-[4px] transition-all duration-300"
               aria-label={BITCOIN_SUPPORT_LABEL}
               data-tooltip-id="footer-item"
               data-tooltip-content={BITCOIN_SUPPORT_LABEL}
