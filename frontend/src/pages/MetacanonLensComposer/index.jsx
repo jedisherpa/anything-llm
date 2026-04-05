@@ -22,6 +22,13 @@ import showToast from "@/utils/toast";
 import { isMobile } from "react-device-detect";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import CustomLensCreatorPanel from "./CustomLensCreatorPanel";
+import LensFormatPreviewModal from "@/components/Metacanon/LensFormatPreviewModal";
+
+const CUSTOM_SUB_MODES = {
+  COMPOSE: "compose",
+  CREATE: "create",
+};
 
 function buildShapeSlots(mix = {}, template) {
   const slots = Array.from({ length: template.cardinality }, (_, index) => ({
@@ -554,6 +561,12 @@ export default function MetacanonLensComposerPage() {
   );
   const [savedShapes, setSavedShapes] = useState([]);
   const [savedCouncils, setSavedCouncils] = useState([]);
+  const [customSubMode, setCustomSubMode] = useState(CUSTOM_SUB_MODES.COMPOSE);
+  const [previewModal, setPreviewModal] = useState({
+    open: false,
+    formattedContent: "",
+    suggestedTitle: "",
+  });
 
   useEffect(() => {
     setSavedShapes(loadSavedShapes());
@@ -956,7 +969,12 @@ export default function MetacanonLensComposerPage() {
             <ComposerSegmentedControl
               label="Build Mode"
               value={buildMode}
-              onChange={setBuildMode}
+              onChange={(value) => {
+                setBuildMode(value);
+                if (value === COMPOSER_BUILD_MODES.PRESETS) {
+                  setCustomSubMode(CUSTOM_SUB_MODES.COMPOSE);
+                }
+              }}
               options={[
                 { value: COMPOSER_BUILD_MODES.PRESETS, label: "Presets" },
                 {
@@ -965,6 +983,17 @@ export default function MetacanonLensComposerPage() {
                 },
               ]}
             />
+            {buildMode === COMPOSER_BUILD_MODES.CUSTOM ? (
+              <ComposerSegmentedControl
+                label="Custom Mode"
+                value={customSubMode}
+                onChange={setCustomSubMode}
+                options={[
+                  { value: CUSTOM_SUB_MODES.COMPOSE, label: "Compose Mix" },
+                  { value: CUSTOM_SUB_MODES.CREATE, label: "Create New Lens" },
+                ]}
+              />
+            ) : null}
           </section>
 
           <section className="prism-composer-grid">
@@ -1031,7 +1060,8 @@ export default function MetacanonLensComposerPage() {
                 />
               ) : null}
 
-              {buildMode === COMPOSER_BUILD_MODES.CUSTOM ? (
+              {buildMode === COMPOSER_BUILD_MODES.CUSTOM &&
+              customSubMode === CUSTOM_SUB_MODES.COMPOSE ? (
                 <LensRoster
                   mix={activeMix}
                   template={activeTemplateForMix}
@@ -1055,7 +1085,8 @@ export default function MetacanonLensComposerPage() {
                 onSelectSlot={setActiveSlot}
               />
 
-              {buildMode === COMPOSER_BUILD_MODES.CUSTOM ? (
+              {buildMode === COMPOSER_BUILD_MODES.CUSTOM &&
+              customSubMode === CUSTOM_SUB_MODES.COMPOSE ? (
                 <SavedMixes
                   title={
                     family === COMPOSER_FAMILIES.SHAPES
@@ -1127,6 +1158,8 @@ export default function MetacanonLensComposerPage() {
             </div>
 
             <div className="prism-composer-column prism-composer-column--actions">
+              {!(buildMode === COMPOSER_BUILD_MODES.CUSTOM &&
+                customSubMode === CUSTOM_SUB_MODES.CREATE) ? (
               <LensChooser
                 title={
                   buildMode === COMPOSER_BUILD_MODES.PRESETS
@@ -1174,8 +1207,10 @@ export default function MetacanonLensComposerPage() {
                   }
                 }}
               />
+              ) : null}
 
-              {buildMode === COMPOSER_BUILD_MODES.CUSTOM ? (
+              {buildMode === COMPOSER_BUILD_MODES.CUSTOM &&
+              customSubMode === CUSTOM_SUB_MODES.COMPOSE ? (
                 <SaveMixPanel
                   mix={activeMix}
                   validation={validation}
@@ -1211,10 +1246,47 @@ export default function MetacanonLensComposerPage() {
                   canAutocomplete={family === COMPOSER_FAMILIES.SHAPES}
                 />
               ) : null}
+
+              {buildMode === COMPOSER_BUILD_MODES.CUSTOM &&
+              customSubMode === CUSTOM_SUB_MODES.CREATE ? (
+                <CustomLensCreatorPanel
+                  onRequestPreview={({ title, rawContent, formattedContent }) =>
+                    setPreviewModal({
+                      open: true,
+                      formattedContent,
+                      suggestedTitle: title,
+                    })
+                  }
+                />
+              ) : null}
             </div>
           </section>
         </div>
       </main>
+
+      <LensFormatPreviewModal
+        open={previewModal.open}
+        formattedContent={previewModal.formattedContent}
+        suggestedTitle={previewModal.suggestedTitle}
+        onClose={() =>
+          setPreviewModal((current) => ({ ...current, open: false }))
+        }
+        onLensCreated={() => {
+          setPreviewModal((current) => ({ ...current, open: false }));
+          // Refresh the dataset so the new lens appears immediately in LensChooser.
+          Promise.all([
+            fetchLibraryCollection("councils"),
+            fetchLibraryCollection("constellations"),
+            fetchLibraryCollection("lenses"),
+          ])
+            .then(([councils, constellations, lenses]) => {
+              setDataset(buildComposerDataset({ councils, constellations, lenses }));
+            })
+            .catch(() => {
+              // Non-fatal — user can refresh manually.
+            });
+        }}
+      />
     </div>
   );
 }

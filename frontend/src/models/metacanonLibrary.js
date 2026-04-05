@@ -425,6 +425,32 @@ export async function saveCustomLens(payload = {}) {
   return response.json();
 }
 
+export async function formatLensContent(payload = {}) {
+  const response = await fetch(
+    `${API_BASE}/metacanonai/library/format-lens`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    }
+  );
+
+  if (!response.ok) {
+    let message = "Failed to format lens content.";
+    try {
+      const errorPayload = await response.json();
+      message = errorPayload?.error || message;
+    } catch {
+      // ignore malformed error payloads
+    }
+    throw new Error(message);
+  }
+
+  return response.json();
+}
+
 export async function fetchMetacanonFeatures() {
   const response = await fetch(`${API_BASE}/metacanonai/features`);
   if (!response.ok) {

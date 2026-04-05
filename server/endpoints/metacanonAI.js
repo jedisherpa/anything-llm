@@ -21,6 +21,10 @@ const {
   clearMetacanonStoreCaches,
 } = require("../utils/agents/metacanon/store");
 const { saveCustomLens } = require("../utils/agents/metacanon/customLenses");
+const {
+  buildFormatLensMessageList,
+} = require("../utils/agents/metacanon/formatLensPrompt");
+const { getLLMProvider } = require("../utils/helpers");
 
 const PROTECTED_ROUTE = [
   validatedRequest,
@@ -263,6 +267,58 @@ function metacanonAIEndpoints(app) {
         response.status(200).json({ success: true, item });
       } catch (error) {
         response.status(400).json({ success: false, error: error.message });
+      }
+    }
+  );
+
+  app.post(
+    "/metacanonai/library/format-lens",
+    REPO_WRITE_ROUTE,
+    async (request, response) => {
+      try {
+        const { rawContent = "", title = "" } = reqBody(request);
+
+        if (!String(rawContent || "").trim()) {
+          response
+            .status(400)
+            .json({ success: false, error: "rawContent is required." });
+          return;
+        }
+
+        // Truncate very large inputs to avoid overwhelming the LLM context window.
+        const safeContent = String(rawContent).slice(0, 30000);
+
+        let LLMConnector;
+        try {
+          LLMConnector = getLLMProvider();
+        } catch (providerError) {
+          response.status(503).json({
+            success: false,
+            error:
+              "No LLM provider is configured on this server. Configure a provider in system settings before using Auto-Format.",
+          });
+          return;
+        }
+
+        const messages = buildFormatLensMessageList(safeContent, title);
+
+        const { textResponse } = await LLMConnector.getChatCompletion(
+          messages,
+          { temperature: 0.4 }
+        );
+
+        if (!textResponse) {
+          response.status(500).json({
+            success: false,
+            error: "LLM returned an empty response. Please try again.",
+          });
+          return;
+        }
+
+        response.status(200).json({ success: true, formatted: textResponse });
+      } catch (error) {
+        console.error("[format-lens] Error:", error.message);
+        response.status(500).json({ success: false, error: error.message });
       }
     }
   );
