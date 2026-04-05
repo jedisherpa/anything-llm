@@ -200,8 +200,8 @@
 
 .prism-library-page .prism-library-hero-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(340px, 0.9fr);
-  gap: 28px;
+  grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.9fr);
+  gap: 16px;
   align-items: start;
 }
 
@@ -233,22 +233,22 @@
 }
 
 .prism-library-page .prism-library-draft-shell {
-  padding: 24px 20px;
+  padding: 12px;
 }
 
 .prism-library-page .prism-library-draft-grid {
   display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(360px, 1.1fr);
+  grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.1fr);
 }
 
 .prism-library-page .prism-library-draft-intro {
-  padding-right: 22px;
+  padding-right: 14px;
 }
 
 .prism-library-page .prism-library-draft-board {
-  padding: 18px 18px 16px;
+  padding: 12px;
   border: 1px solid color-mix(in srgb, var(--sidebar-border) 28%, transparent);
-  border-radius: 22px;
+  border-radius: 10px;
   background:
     radial-gradient(circle at top left, color-mix(in srgb, var(--gold) 4%, transparent) 0%, transparent 24%),
     linear-gradient(
@@ -366,6 +366,16 @@
   box-shadow: none;
 }
 
+.prism-composer-page .prism-page-panel {
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.prism-composer-page .prism-page-card {
+  border-radius: 10px;
+  padding: 12px;
+}
+
 .prism-composer-page .prism-composer-hero {
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
@@ -392,23 +402,23 @@
 }
 
 .prism-composer-page .prism-composer-hero-title {
-  margin-top: 8px;
-  font-size: clamp(2.1rem, 4vw, 3.4rem);
-  line-height: 0.98;
-  letter-spacing: -0.035em;
+  margin-top: 6px;
+  font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
   color: var(--text-1);
 }
 
 .prism-composer-page .prism-composer-hero-description {
-  margin-top: 12px;
+  margin-top: 6px;
   max-width: 40rem;
   color: color-mix(in srgb, var(--text-2) 84%, var(--text-1) 16%);
-  font-size: 1rem;
-  line-height: 1.8;
+  font-size: 0.82rem;
+  line-height: 1.5;
 }
 
 .prism-composer-page .prism-composer-hero-links {
-  margin-top: 18px;
+  margin-top: 10px;
 }
 
 .prism-composer-page .prism-composer-text-link {
@@ -453,16 +463,16 @@
 .prism-composer-page .prism-composer-topbar {
   display: flex;
   flex-wrap: wrap;
-  gap: 18px;
+  gap: 12px;
   align-items: flex-start;
-  padding: 16px 18px;
+  padding: 10px 12px;
 }
 
 .prism-composer-page .prism-composer-mode-dial {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  min-width: 240px;
+  gap: 6px;
+  min-width: 200px;
 }
 
 .prism-composer-page .prism-composer-mode-track {
@@ -482,6 +492,8 @@
   border-radius: 999px;
   background: transparent;
   color: color-mix(in srgb, var(--text-2) 78%, var(--text-1) 22%);
+  font-size: 0.72rem;
+  padding: 4px 10px;
   transition:
     border-color 160ms ease,
     color 160ms ease,
@@ -489,9 +501,9 @@
 }
 
 .prism-composer-page .prism-composer-mode-pill {
-  min-height: 40px;
-  padding: 0 16px;
-  font-size: 0.95rem;
+  min-height: 26px;
+  padding: 0 10px;
+  font-size: 0.72rem;
   font-weight: 600;
 }
 
@@ -507,14 +519,14 @@
 .prism-composer-page .prism-composer-grid {
   display: grid;
   grid-template-columns: 290px minmax(0, 1fr) 360px;
-  gap: 18px;
+  gap: 12px;
   align-items: start;
 }
 
 .prism-composer-page .prism-composer-column {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 10px;
   min-width: 0;
 }
 
@@ -547,9 +559,9 @@
 .prism-composer-page .prism-composer-panel-title,
 .prism-composer-page .prism-composer-viewer-title {
   color: var(--text-1);
-  font-size: 1.35rem;
-  font-weight: 650;
-  line-height: 1.15;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.2;
 }
 
 .prism-composer-page .prism-composer-panel-note,
@@ -560,8 +572,8 @@
 .prism-composer-page .prism-composer-saved-meta,
 .prism-composer-page .prism-composer-status-meta {
   color: color-mix(in srgb, var(--text-2) 86%, var(--text-1) 14%);
-  font-size: 0.94rem;
-  line-height: 1.65;
+  font-size: 0.8rem;
+  line-height: 1.5;
 }
 
 .prism-composer-page .prism-composer-rail-list,
@@ -570,8 +582,8 @@
 .prism-composer-page .prism-composer-saved-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-top: 14px;
+  gap: 6px;
+  margin-top: 10px;
 }
 
 .prism-composer-page .prism-composer-rail-item,
@@ -581,12 +593,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
   border: 1px solid color-mix(in srgb, var(--sidebar-border) 22%, transparent);
-  border-radius: 18px;
+  border-radius: 8px;
   background: color-mix(in srgb, var(--sidebar-bg) 52%, transparent);
-  padding: 12px 14px;
+  padding: 8px 10px;
   text-align: left;
   transition:
     border-color 160ms ease,
@@ -638,14 +650,14 @@
 }
 
 .prism-composer-page .prism-composer-viewer-shell {
-  padding: 18px;
+  padding: 12px;
 }
 
 .prism-composer-page .prism-composer-viewer-canvas {
-  margin-top: 14px;
-  height: 460px;
+  margin-top: 10px;
+  height: 420px;
   border: 1px solid color-mix(in srgb, var(--sidebar-border) 20%, transparent);
-  border-radius: 24px;
+  border-radius: 10px;
   background:
     radial-gradient(circle at center, color-mix(in srgb, var(--gold) 6%, transparent) 0%, transparent 48%),
     color-mix(in srgb, var(--sidebar-bg) 54%, transparent);
@@ -968,7 +980,7 @@
 }
 
 .prism-settings-content {
-  padding: 24px;
+  padding: 16px;
 }
 
 .prism-settings-content--wide {
@@ -978,25 +990,25 @@
 .prism-settings-page-header {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 6px 0 22px;
-  margin-bottom: 10px;
+  gap: 6px;
+  padding: 4px 0 14px;
+  margin-bottom: 8px;
   border-bottom: 1px solid color-mix(in srgb, var(--theme-sidebar-border) 72%, transparent);
 }
 
 .prism-settings-page-title {
-  font-size: 1.72rem;
-  line-height: 1.06;
-  font-weight: 700;
+  font-size: 1.05rem;
+  line-height: 1.3;
+  font-weight: 600;
   color: var(--theme-text-primary);
-  letter-spacing: -0.025em;
+  letter-spacing: -0.01em;
 }
 
 .prism-settings-page-description {
   max-width: 540px;
   color: color-mix(in srgb, var(--theme-text-secondary) 92%, transparent);
-  font-size: 0.95rem;
-  line-height: 1.6;
+  font-size: 0.82rem;
+  line-height: 1.5;
 }
 
 .prism-settings-page-stack {
@@ -1220,11 +1232,13 @@
 }
 
 .prism-settings-block-title {
-  margin: 22px 0 14px;
+  margin: 14px 0 10px;
   color: var(--theme-text-primary);
-  font-size: 1.05rem;
+  font-size: 0.82rem;
   line-height: 1.3;
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .prism-settings-field {
@@ -1350,10 +1364,10 @@
   z-index: 20;
   width: 100%;
   max-width: 760px;
-  min-height: 72px;
-  max-height: 360px;
+  min-height: 56px;
+  max-height: 320px;
   overflow: hidden;
-  border-radius: 22px;
+  border-radius: 10px;
   border: 1px solid color-mix(in srgb, var(--theme-sidebar-border) 72%, transparent);
   background:
     linear-gradient(
@@ -1361,7 +1375,7 @@
       color-mix(in srgb, var(--theme-settings-input-bg) 98%, transparent) 0%,
       color-mix(in srgb, var(--theme-bg-container) 96%, transparent) 100%
     );
-  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.18);
+  box-shadow: none;
 }
 
 .prism-settings-provider-search {
@@ -1417,12 +1431,12 @@
   display: flex;
   width: 100%;
   max-width: 760px;
-  min-height: 72px;
+  min-height: 52px;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
-  padding: 14px 16px;
-  border-radius: 22px;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
   border: 1px solid color-mix(in srgb, var(--theme-sidebar-border) 66%, transparent);
   background:
     linear-gradient(
@@ -1486,7 +1500,7 @@
 
 .prism-settings-panel-flat {
   border: 1px solid color-mix(in srgb, var(--theme-sidebar-border) 46%, transparent);
-  border-radius: 22px;
+  border-radius: 10px;
   background:
     linear-gradient(
       180deg,

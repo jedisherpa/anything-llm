@@ -248,23 +248,17 @@ export default function GeneralLLMPreference() {
                   {t("llm.description")}
                 </p>
               </div>
-              <div className="metacanon-setup-note mt-6 rounded-[20px] px-5 py-5">
+              <div className="metacanon-setup-note mt-4 rounded-[10px] px-3 py-3">
                 <div className="metacanon-setup-note__eyebrow text-[11px] font-semibold uppercase tracking-[0.2em]">
                   Connect And Test
                 </div>
-                <div className="metacanon-setup-note__title mt-2 text-lg font-semibold">
+                <div className="metacanon-setup-note__title mt-1 text-sm font-semibold">
                   Fast path to your first live prompt
                 </div>
-                <p className="metacanon-setup-note__body mt-2 max-w-3xl text-sm leading-7">
-                  Pick a provider, add the key or base URL it needs, save your
-                  changes, then return to the home screen and send a prompt. The
-                  new home action also links back here if you need to switch
-                  providers quickly.
-                </p>
-                <div className="mt-4 flex flex-wrap gap-3">
+                <div className="mt-2 flex flex-wrap gap-2">
                   <Link
                     to={paths.home()}
-                    className="metacanon-setup-note__link rounded-full px-4 py-2 text-sm font-medium transition-all duration-200"
+                    className="metacanon-setup-note__link rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-200"
                   >
                     Return Home To Test
                   </Link>

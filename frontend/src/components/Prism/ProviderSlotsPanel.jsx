@@ -88,26 +88,24 @@ export default function ProviderSlotsPanel({
   };
 
   return (
-    <div className="mt-10 rounded-[24px] border border-theme-sidebar-border bg-theme-bg-primary p-5">
-      <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+    <div className="mt-6 rounded-[10px] border border-theme-sidebar-border bg-theme-bg-primary px-3 py-3">
+      <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div>
           <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-theme-primary-button">
             Prism Provider Lanes
           </div>
-          <h3 className="mt-2 text-xl font-semibold text-theme-text-primary">
+          <h3 className="mt-1 text-base font-semibold text-theme-text-primary">
             Five live model seats
           </h3>
-          <p className="mt-2 max-w-3xl text-sm leading-7 text-theme-text-secondary">
-            Keep up to five provider lanes ready at once. Prism can use these
-            saved seats for workspace routing, future deliberation wiring, and
-            provider switching without making you re-enter credentials.
+          <p className="mt-1 max-w-3xl text-xs leading-5 text-theme-text-secondary">
+            Keep up to five provider lanes ready at once for workspace routing and provider switching.
           </p>
         </div>
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-2">
           <button
             type="button"
             onClick={onOpenToolKeys}
-            className="rounded-full border border-theme-primary-button px-4 py-2 text-sm font-medium text-theme-primary-button transition-all duration-200 hover:bg-theme-primary-button hover:text-black"
+            className="rounded-full border border-theme-primary-button px-3 py-1.5 text-xs font-medium text-theme-primary-button transition-all duration-200 hover:bg-theme-primary-button hover:text-black"
           >
             Tool API Keys
           </button>
@@ -115,22 +113,22 @@ export default function ProviderSlotsPanel({
             type="button"
             onClick={onSave}
             disabled={saving}
-            className="rounded-full bg-theme-primary-button px-4 py-2 text-sm font-semibold text-black transition-all duration-200 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+            className="rounded-full bg-theme-primary-button px-3 py-1.5 text-xs font-semibold text-black transition-all duration-200 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {saving ? "Saving Provider Lanes..." : "Save Provider Lanes"}
           </button>
         </div>
       </div>
 
-      <div className="mt-6 grid gap-4 xl:grid-cols-2">
+      <div className="mt-4 grid gap-3 xl:grid-cols-2">
         {slots.map((slot, index) => {
           const models = slotModels[slot.id] || [];
           return (
             <section
               key={slot.id}
-              className="rounded-[22px] border border-theme-sidebar-border bg-theme-bg-secondary px-4 py-4"
+              className="rounded-[10px] border border-theme-sidebar-border bg-theme-bg-secondary px-3 py-3"
             >
-              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                 <div>
                   <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-theme-primary-button">
                     Seat {index + 1}
@@ -141,7 +139,7 @@ export default function ProviderSlotsPanel({
                       updateSlot(slot.id, { label: event.target.value })
                     }
                     placeholder={`Provider Slot ${index + 1}`}
-                    className="mt-2 w-full bg-transparent text-lg font-semibold text-theme-text-primary outline-none"
+                    className="mt-1 w-full bg-transparent text-sm font-semibold text-theme-text-primary outline-none"
                   />
                 </div>
                 <label className="flex items-center gap-2 text-sm text-theme-text-secondary">
@@ -156,7 +154,7 @@ export default function ProviderSlotsPanel({
                 </label>
               </div>
 
-              <div className="mt-4 grid gap-3 md:grid-cols-2">
+              <div className="mt-3 grid gap-2 md:grid-cols-2">
                 <label className="flex flex-col gap-2 text-sm text-theme-text-secondary">
                   Provider
                   <select
@@ -167,7 +165,7 @@ export default function ProviderSlotsPanel({
                         model: "",
                       })
                     }
-                    className="rounded-xl border border-theme-sidebar-border bg-theme-bg-primary px-3 py-3 text-sm text-theme-text-primary outline-none"
+                    className="rounded-[8px] border border-theme-sidebar-border bg-theme-bg-primary px-3 py-2 text-sm text-theme-text-primary outline-none"
                   >
                     <option value="">Select a provider</option>
                     {providerOptions.map((option) => (
@@ -186,7 +184,7 @@ export default function ProviderSlotsPanel({
                       updateSlot(slot.id, { basePath: event.target.value })
                     }
                     placeholder="Optional custom base URL"
-                    className="rounded-xl border border-theme-sidebar-border bg-theme-bg-primary px-3 py-3 text-sm text-theme-text-primary outline-none"
+                    className="rounded-[8px] border border-theme-sidebar-border bg-theme-bg-primary px-3 py-2 text-sm text-theme-text-primary outline-none"
                   />
                 </label>
 
@@ -199,7 +197,7 @@ export default function ProviderSlotsPanel({
                       updateSlot(slot.id, { apiKey: event.target.value })
                     }
                     placeholder="Paste provider key"
-                    className="rounded-xl border border-theme-sidebar-border bg-theme-bg-primary px-3 py-3 text-sm text-theme-text-primary outline-none"
+                    className="rounded-[8px] border border-theme-sidebar-border bg-theme-bg-primary px-3 py-2 text-sm text-theme-text-primary outline-none"
                   />
                 </label>
 
@@ -211,7 +209,7 @@ export default function ProviderSlotsPanel({
                       onChange={(event) =>
                         updateSlot(slot.id, { model: event.target.value })
                       }
-                      className="rounded-xl border border-theme-sidebar-border bg-theme-bg-primary px-3 py-3 text-sm text-theme-text-primary outline-none"
+                      className="rounded-[8px] border border-theme-sidebar-border bg-theme-bg-primary px-3 py-2 text-sm text-theme-text-primary outline-none"
                     >
                       <option value="">Select a model</option>
                       {models.map((model) => (
@@ -227,7 +225,7 @@ export default function ProviderSlotsPanel({
                         updateSlot(slot.id, { model: event.target.value })
                       }
                       placeholder="Model id"
-                      className="rounded-xl border border-theme-sidebar-border bg-theme-bg-primary px-3 py-3 text-sm text-theme-text-primary outline-none"
+                      className="rounded-[8px] border border-theme-sidebar-border bg-theme-bg-primary px-3 py-2 text-sm text-theme-text-primary outline-none"
                     />
                   )}
                 </label>
@@ -240,17 +238,17 @@ export default function ProviderSlotsPanel({
                       updateSlot(slot.id, { tokenLimit: event.target.value })
                     }
                     placeholder="Optional context window"
-                    className="rounded-xl border border-theme-sidebar-border bg-theme-bg-primary px-3 py-3 text-sm text-theme-text-primary outline-none"
+                    className="rounded-[8px] border border-theme-sidebar-border bg-theme-bg-primary px-3 py-2 text-sm text-theme-text-primary outline-none"
                   />
                 </label>
               </div>
 
-              <div className="mt-4 flex flex-wrap gap-3">
+              <div className="mt-3 flex flex-wrap gap-2">
                 <button
                   type="button"
                   onClick={() => refreshModels(slot)}
                   disabled={refreshingSlotId === slot.id}
-                  className="rounded-full border border-theme-sidebar-border px-4 py-2 text-sm font-medium text-theme-text-primary transition-all duration-200 hover:border-theme-primary-button hover:text-theme-primary-button disabled:cursor-not-allowed disabled:opacity-60"
+                  className="rounded-full border border-theme-sidebar-border px-3 py-1.5 text-xs font-medium text-theme-text-primary transition-all duration-200 hover:border-theme-primary-button hover:text-theme-primary-button disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {refreshingSlotId === slot.id
                     ? "Refreshing Models..."

@@ -489,19 +489,19 @@ function ConstellationModeTile({
 }) {
   return (
     <div
-      className={`prism-page-card prism-library-mode-tile prism-library-mode-card ${
+      className={`rounded-[10px] border px-3 py-3 ${
         emphasis
           ? "border-theme-button-primary bg-theme-sidebar-item-selected"
-          : ""
+          : "border-theme-sidebar-border"
       }`}
     >
       <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-theme-primary-button">
         {eyebrow}
       </div>
-      <div className="mt-2 text-base font-semibold text-theme-text-primary">
+      <div className="mt-1 text-sm font-semibold text-theme-text-primary">
         {title}
       </div>
-      <div className="mt-2 text-sm leading-6 text-theme-text-secondary">
+      <div className="mt-1 text-xs leading-5 text-theme-text-secondary">
         {description}
       </div>
     </div>
@@ -528,7 +528,7 @@ function SearchInput({ value, onChange, placeholder }) {
   return (
     <label className="relative block w-full">
       <MagnifyingGlass
-        className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-theme-text-secondary"
+        className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-theme-text-secondary"
         weight="bold"
       />
 
@@ -537,7 +537,7 @@ function SearchInput({ value, onChange, placeholder }) {
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
-        className="metacanon-sidebar-search prism-library-input h-[46px] w-full rounded-[16px] border-none pl-11 pr-4 text-sm text-theme-text-primary outline-none placeholder:text-theme-settings-input-placeholder"
+        className="metacanon-sidebar-search prism-library-input h-[38px] w-full rounded-[10px] border-none pl-10 pr-3 text-sm text-theme-text-primary outline-none placeholder:text-theme-settings-input-placeholder"
       />
     </label>
   );
@@ -552,7 +552,7 @@ function FilterSelect({ label, options, value, onChange }) {
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="metacanon-sidebar-search prism-library-input h-[46px] rounded-[16px] border-none px-4 text-sm text-theme-text-primary outline-none"
+        className="metacanon-sidebar-search prism-library-input h-[38px] rounded-[10px] border-none px-3 text-sm text-theme-text-primary outline-none"
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>
@@ -575,10 +575,10 @@ function ActionButton({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`prism-library-action rounded-full border px-4 py-2 text-sm transition-all disabled:cursor-not-allowed disabled:opacity-60 ${
+      className={`prism-library-action rounded-full px-3 py-1.5 text-xs transition-all disabled:cursor-not-allowed disabled:opacity-60 ${
         variant === "primary"
-          ? "prism-library-action--primary border-theme-button-primary bg-theme-button-primary text-theme-button-primary-text hover:opacity-90"
-          : "prism-library-action--secondary border-theme-sidebar-border bg-theme-bg-sidebar text-theme-text-primary hover:bg-theme-sidebar-subitem-hover"
+          ? "prism-library-action--primary border border-theme-button-primary bg-theme-button-primary text-theme-button-primary-text hover:opacity-90"
+          : "prism-library-action--secondary text-theme-text-secondary hover:text-theme-text-primary"
       }`}
     >
       {label}
@@ -592,10 +592,10 @@ function ActionLink({ label, href, variant = "secondary" }) {
       href={href}
       target="_blank"
       rel="noreferrer"
-      className={`prism-library-action inline-flex rounded-full border px-4 py-2 text-sm transition-all ${
+      className={`prism-library-action inline-flex rounded-full px-3 py-1.5 text-xs transition-all ${
         variant === "primary"
-          ? "prism-library-action--primary border-theme-button-primary bg-theme-button-primary text-theme-button-primary-text hover:opacity-90"
-          : "prism-library-action--secondary border-theme-sidebar-border bg-theme-bg-sidebar text-theme-text-primary hover:bg-theme-sidebar-subitem-hover"
+          ? "prism-library-action--primary border border-theme-button-primary bg-theme-button-primary text-theme-button-primary-text hover:opacity-90"
+          : "prism-library-action--secondary text-theme-text-secondary hover:text-theme-text-primary"
       }`}
     >
       {label}
@@ -621,21 +621,21 @@ function SidebarSectionManager({
   }
 
   return (
-    <div className="prism-page-card prism-library-panel-card">
+    <div className="rounded-[10px] border border-theme-sidebar-border px-3 py-3">
       <div className="flex items-start justify-between gap-3">
         <div>
           <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-theme-primary-button">
             {eyebrow}
           </div>
-          <div className="mt-2 text-base font-semibold text-theme-text-primary">
+          <div className="mt-1 text-sm font-semibold text-theme-text-primary">
             {title}
           </div>
         </div>
-        <div className="rounded-full border border-theme-sidebar-border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-theme-text-secondary">
+        <div className="rounded-full border border-theme-sidebar-border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-theme-text-secondary">
           {items.length} live
         </div>
       </div>
-      <div className="mt-2 text-sm leading-6 text-theme-text-secondary">
+      <div className="mt-1 text-xs leading-5 text-theme-text-secondary">
         {description}
       </div>
       {items.length > 1 ? (
@@ -662,9 +662,9 @@ function SidebarSectionManager({
                 }
                 setDraggedItemKey(null);
               }}
-              className={`rounded-[16px] border px-4 py-3 transition-all ${
+              className={`rounded-[8px] border px-3 py-2 transition-all ${
                 draggedItemKey === getItemKey(item, index)
-                  ? "border-theme-button-primary bg-theme-sidebar-item-selected shadow-[0_10px_24px_rgba(15,10,4,0.10)]"
+                  ? "border-theme-button-primary bg-theme-sidebar-item-selected"
                   : "border-theme-sidebar-border bg-theme-bg-container hover:bg-theme-sidebar-subitem-hover"
               }`}
             >
@@ -681,10 +681,10 @@ function SidebarSectionManager({
                       Slot {index + 1}
                     </div>
                   </div>
-                  <div className="mt-3 text-sm font-semibold text-theme-text-primary">
+                  <div className="mt-2 text-xs font-semibold text-theme-text-primary">
                     {getItemTitle(item)}
                   </div>
-                  <div className="mt-1 text-[11px] leading-5 text-theme-text-secondary">
+                  <div className="mt-0.5 text-[10px] leading-4 text-theme-text-secondary">
                     {getItemMeta(item)}
                   </div>
                 </div>
@@ -692,7 +692,7 @@ function SidebarSectionManager({
                   <button
                     type="button"
                     onClick={() => onRemove(item)}
-                    className="rounded-full border border-theme-sidebar-border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-theme-text-secondary transition-colors hover:text-theme-text-primary"
+                    className="rounded-full px-2 py-0.5 text-[10px] font-semibold text-theme-text-secondary transition-colors hover:text-theme-text-primary"
                   >
                     Remove
                   </button>
@@ -702,7 +702,7 @@ function SidebarSectionManager({
           ))}
         </div>
       ) : (
-        <div className="mt-4 rounded-[16px] border border-dashed border-theme-sidebar-border bg-theme-bg-container px-4 py-4 text-sm leading-6 text-theme-text-secondary">
+        <div className="mt-3 rounded-[8px] border border-dashed border-theme-sidebar-border bg-theme-bg-container px-3 py-3 text-xs leading-5 text-theme-text-secondary">
           {emptyLabel}
         </div>
       )}
@@ -724,10 +724,10 @@ function ItemCard({
     <button
       type="button"
       onClick={onClick}
-      className={`prism-page-card prism-library-panel-card w-full text-left ${
+      className={`w-full rounded-[10px] border px-3 py-3 text-left transition-all ${
         active
-          ? "border-theme-button-primary bg-theme-sidebar-item-selected shadow-[0_14px_30px_rgba(0,0,0,0.12)]"
-          : "prism-page-card--interactive hover:bg-theme-sidebar-subitem-hover"
+          ? "border-theme-button-primary bg-theme-sidebar-item-selected"
+          : "border-theme-sidebar-border bg-theme-bg-container hover:bg-theme-sidebar-subitem-hover"
       }`}
     >
       <div className="flex items-start justify-between gap-3">
@@ -736,7 +736,7 @@ function ItemCard({
         </div>
         {badge ? (
           <div
-            className="shrink-0 rounded-full border px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.14em]"
+            className="shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em]"
             style={{
               borderColor: accent || "var(--theme-sidebar-border)",
               color: accent || "var(--theme-text-secondary)",
@@ -746,11 +746,11 @@ function ItemCard({
           </div>
         ) : null}
       </div>
-      <div className="mt-2 text-base font-semibold text-theme-text-primary">
+      <div className="mt-1.5 text-sm font-semibold text-theme-text-primary">
         {title}
       </div>
       {snippet ? (
-        <div className="mt-2 line-clamp-3 text-sm leading-6 text-theme-text-secondary">
+        <div className="mt-1 line-clamp-2 text-xs leading-5 text-theme-text-secondary">
           {snippet}
         </div>
       ) : null}
@@ -767,17 +767,17 @@ function ItemCard({
 function DetailMeta({ label, value, monospace = false }) {
   if (!value) return null;
   return (
-    <div className="prism-page-stat rounded-[14px] px-4 py-3">
-      <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-theme-text-secondary">
+    <div className="flex flex-wrap items-baseline gap-2 py-1 border-b border-theme-sidebar-border/40 last:border-0">
+      <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-theme-text-secondary shrink-0 min-w-[80px]">
         {label}
-      </div>
-      <div
-        className={`mt-1 break-words leading-6 text-theme-text-primary ${
-          monospace ? "font-mono text-xs" : "text-sm"
+      </span>
+      <span
+        className={`break-words leading-5 text-theme-text-primary flex-1 ${
+          monospace ? "font-mono text-xs" : "text-xs"
         }`}
       >
         {value}
-      </div>
+      </span>
     </div>
   );
 }
@@ -823,15 +823,15 @@ function renderDetail(item, tab) {
           value={String(item.lensCount)}
         />
         <DetailMeta label="Phase" value={item.phase} />
-        <div className="rounded-[18px] border border-theme-sidebar-border bg-theme-bg-sidebar px-5 py-5">
+        <div className="rounded-[8px] border border-theme-sidebar-border bg-theme-bg-sidebar px-3 py-3">
           <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-theme-text-secondary">
             Council Lenses
           </div>
-          <div className="mt-4 grid gap-3 md:grid-cols-2">
+          <div className="mt-3 grid gap-2 md:grid-cols-2">
             {(item.lenses || []).map((lens) => (
               <div
                 key={lens.id}
-                className="rounded-[14px] border border-theme-sidebar-border bg-theme-bg-container px-4 py-3"
+                className="rounded-[8px] border border-theme-sidebar-border bg-theme-bg-container px-3 py-2"
               >
                 <div className="text-sm font-semibold text-theme-text-primary">
                   {getLensDisplayTitle(lens)}
@@ -865,15 +865,15 @@ function renderDetail(item, tab) {
           )}
         />
 
-        <div className="rounded-[18px] border border-theme-sidebar-border bg-theme-bg-sidebar px-5 py-5">
+        <div className="rounded-[8px] border border-theme-sidebar-border bg-theme-bg-sidebar px-3 py-3">
           <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-theme-text-secondary">
             Lenses
           </div>
-          <div className="mt-4 flex flex-col gap-3">
+          <div className="mt-3 flex flex-col gap-2">
             {(item.members || []).map((member) => (
               <div
                 key={`${item.id}-${member.role}-${member.relativePath}`}
-                className="rounded-[14px] border border-theme-sidebar-border bg-theme-bg-container px-4 py-3"
+                className="rounded-[8px] border border-theme-sidebar-border bg-theme-bg-container px-3 py-2"
               >
                 <div className="text-sm font-semibold text-theme-text-primary">
                   {getConstellationRoleUiTitle(member)}
@@ -1900,23 +1900,16 @@ export default function MetacanonAILibraryPage() {
         <div className="prism-route-content prism-library-page w-full px-1 py-20 md:px-6 md:py-6">
           <div className="prism-page-hero prism-library-hero-shell">
             <div className="prism-library-hero-grid">
-              <div className="prism-library-hero-copy flex max-w-3xl flex-col gap-3">
+              <div className="prism-library-hero-copy flex max-w-3xl flex-col gap-2">
                 <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-theme-primary-button">
                   Transformation Agency
                 </div>
-                <h1 className="text-2xl font-semibold text-theme-text-primary md:text-[32px]">
-                  Metacanon
-                  <br />
-                  Lens Library
+                <h1 className="text-lg font-semibold text-theme-text-primary">
+                  Metacanon Lens Library
                 </h1>
-                <p className="text-sm leading-7 text-theme-text-secondary md:text-base">
-                  Browse councils, lenses, presets, skills, saved
-                  constellations, and governance documents directly in the app.
+                <p className="text-sm leading-6 text-theme-text-secondary">
+                  Browse councils, lenses, presets, skills, and constellations.
                 </p>
-                <div className="prism-library-hero-note">
-                  Canonical structures on one side, your mutable draft studio on
-                  the other.
-                </div>
                 <div className="pt-1">
                   <div className="flex flex-wrap items-center gap-4">
                     <Link
@@ -1934,7 +1927,7 @@ export default function MetacanonAILibraryPage() {
                     <button
                       type="button"
                       onClick={openLensWorkbench}
-                      className="rounded-full border border-theme-primary-button px-4 py-2 text-sm font-medium text-theme-primary-button transition-all duration-200 hover:bg-theme-primary-button hover:text-black"
+                      className="rounded-full border border-theme-primary-button px-3 py-1.5 text-xs font-medium text-theme-primary-button transition-all duration-200 hover:bg-theme-primary-button hover:text-black"
                     >
                       Edit / Create Lens
                     </button>
@@ -1971,23 +1964,18 @@ export default function MetacanonAILibraryPage() {
           </div>
 
           {["councils", "lenses"].includes(tab) ? (
-            <div className="prism-page-panel prism-library-draft-shell">
-              <div className="prism-library-draft-grid flex flex-col gap-5 md:items-start md:justify-between">
-                <div className="prism-library-draft-intro max-w-2xl">
+            <div className="rounded-[10px] border border-theme-sidebar-border px-3 py-3">
+              <div className="flex flex-col gap-4 md:items-start md:justify-between">
+                <div className="max-w-2xl">
                   <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-primary-button">
                     {draftModeMeta.title} Draft
                   </div>
-                  <div className="mt-2 text-[26px] font-semibold leading-[1.15] text-theme-text-primary">
+                  <div className="mt-1 text-base font-semibold text-theme-text-primary">
                     {draftMode === "council"
                       ? "Build a custom council from councils or individual lenses"
                       : "Build a custom constellation from councils or individual lenses"}
                   </div>
-                  <div className="mt-2 text-sm leading-6 text-theme-text-secondary">
-                    This is the only mutable mode. Presets stay canonical, saved
-                    builds stay reusable, and this draft is where you compose
-                    something new.
-                  </div>
-                  <div className="prism-library-draft-switches mt-4 flex flex-wrap gap-2">
+                  <div className="mt-3 flex flex-wrap gap-2">
                     <ActionButton
                       label="Draft a Constellation"
                       onClick={() => {
@@ -2016,13 +2004,13 @@ export default function MetacanonAILibraryPage() {
                     />
                   </div>
                 </div>
-                <div className="prism-library-draft-board flex w-full max-w-xl flex-col gap-4">
+                <div className="flex w-full max-w-xl flex-col gap-3">
                   <div className="prism-library-draft-board-header flex items-center justify-between gap-3">
                     <div>
                       <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-theme-primary-button">
                         {draftModeMeta.nameLabel}
                       </div>
-                      <div className="mt-1 text-sm text-theme-text-secondary">
+                      <div className="mt-1 text-xs text-theme-text-secondary">
                         {draftModeMeta.nameHelper}
                       </div>
                     </div>
@@ -2033,7 +2021,7 @@ export default function MetacanonAILibraryPage() {
                   <input
                     value={draftName}
                     onChange={(event) => setDraftName(event.target.value)}
-                    className="metacanon-sidebar-search prism-library-input prism-library-draft-name h-[46px] rounded-[16px] border-none px-4 text-sm text-theme-text-primary outline-none placeholder:text-theme-settings-input-placeholder"
+                    className="metacanon-sidebar-search prism-library-input h-[38px] rounded-[10px] border-none px-3 text-sm text-theme-text-primary outline-none placeholder:text-theme-settings-input-placeholder"
                     placeholder={draftModeMeta.namePlaceholder}
                   />
                   <div className="text-xs leading-5 text-theme-text-secondary">
@@ -2104,7 +2092,7 @@ export default function MetacanonAILibraryPage() {
                       </div>
                     )}
                   </div>
-                  <div className="prism-library-summary prism-library-draft-summary rounded-[18px] border border-theme-sidebar-border bg-theme-bg-container px-4 py-4 text-sm leading-6 text-theme-text-secondary">
+                  <div className="rounded-[8px] border border-theme-sidebar-border bg-theme-bg-container px-3 py-3 text-xs leading-5 text-theme-text-secondary">
                     <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-theme-primary-button">
                       Execution model
                     </div>
@@ -2131,7 +2119,7 @@ export default function MetacanonAILibraryPage() {
                       </div>
                     ) : null}
                   </div>
-                  <div className="prism-library-draft-actions flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1.5">
                     <ActionButton
                       label={`Activate ${draftModeMeta.saveCopy}`}
                       onClick={activateDraftPack}
@@ -2216,32 +2204,27 @@ export default function MetacanonAILibraryPage() {
                 />
               ))}
             </div>
-            <div className="prism-library-mode-intro rounded-[18px] border border-theme-sidebar-border bg-theme-bg-sidebar px-5 py-4">
+            <div className="rounded-[10px] border border-theme-sidebar-border bg-theme-bg-sidebar px-3 py-3">
               <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-theme-primary-button">
                 {constellationModeCopy.eyebrow}
               </div>
-              <div className="mt-2 text-lg font-semibold text-theme-text-primary">
+              <div className="mt-1 text-sm font-semibold text-theme-text-primary">
                 {constellationModeCopy.title}
               </div>
-              <div className="mt-2 text-sm leading-6 text-theme-text-secondary">
+              <div className="mt-1 text-xs leading-5 text-theme-text-secondary">
                 {constellationModeCopy.description}
               </div>
             </div>
-            <div className="prism-library-sidebar-manager rounded-[24px] border border-theme-sidebar-border bg-theme-bg-sidebar px-5 py-5">
-              <div className="flex flex-col gap-2">
+            <div className="rounded-[10px] border border-theme-sidebar-border bg-theme-bg-sidebar px-3 py-3">
+              <div className="flex flex-col gap-1">
                 <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-primary-button">
                   Manage Sidebar Sections
                 </div>
-                <div className="text-xl font-semibold text-theme-text-primary">
+                <div className="text-sm font-semibold text-theme-text-primary">
                   Curate the left sidebar from one place
                 </div>
-                <div className="text-sm leading-7 text-theme-text-secondary">
-                  Keep the daily-use lenses, councils, and constellations in one
-                  place. Reorder them here and remove anything that no longer
-                  belongs in the sidebar.
-                </div>
               </div>
-              <div className="mt-5 grid grid-cols-1 gap-4 xl:grid-cols-3">
+              <div className="mt-4 grid grid-cols-1 gap-3 xl:grid-cols-3">
                 <SidebarSectionManager
                   eyebrow="Featured Lenses"
                   title={`${featuredLenses.length} featured lens${featuredLenses.length === 1 ? "" : "es"}`}
@@ -2310,10 +2293,10 @@ export default function MetacanonAILibraryPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-5 xl:grid-cols-[420px_minmax(0,1fr)]">
-            <div className="flex min-h-[640px] flex-col gap-3 rounded-[24px] border border-theme-sidebar-border bg-theme-bg-container/40 p-3">
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-[380px_minmax(0,1fr)]">
+            <div className="flex flex-col gap-2 rounded-[10px] border border-theme-sidebar-border bg-theme-bg-container/40 p-2">
               {filteredItems.length === 0 ? (
-                <div className="rounded-[18px] border border-theme-sidebar-border bg-theme-bg-sidebar px-5 py-5 text-sm leading-7 text-theme-text-secondary">
+                <div className="rounded-[8px] border border-theme-sidebar-border bg-theme-bg-sidebar px-3 py-3 text-sm leading-6 text-theme-text-secondary">
                   {loadingManifest || loadingCollection
                     ? "Loading Metacanon library..."
                     : "No items matched this filter."}
@@ -2363,20 +2346,20 @@ export default function MetacanonAILibraryPage() {
               )}
             </div>
 
-            <div className="flex min-h-[640px] flex-col gap-4 rounded-[24px] border border-theme-sidebar-border bg-theme-bg-container/40 p-4">
+            <div className="flex flex-col gap-3 rounded-[10px] border border-theme-sidebar-border bg-theme-bg-container/40 p-3">
               {selectedItem ? (
                 <>
-                  <div className="rounded-[20px] border border-theme-sidebar-border bg-theme-bg-sidebar px-5 py-5">
-                    <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                  <div className="rounded-[10px] border border-theme-sidebar-border bg-theme-bg-sidebar px-3 py-3">
+                    <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                       <div>
                         <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-primary-button">
                           {getDetailLabel(tab)}
                         </div>
-                        <h2 className="mt-2 text-2xl font-semibold text-theme-text-primary">
+                        <h2 className="mt-1 text-base font-semibold text-theme-text-primary">
                           {getItemDisplayTitle(selectedItem, tab)}
                         </h2>
                       </div>
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-1.5">
                         {tab === "councils" ? (
                           <>
                             <ActionButton
@@ -2602,7 +2585,7 @@ export default function MetacanonAILibraryPage() {
                   </div>
 
                   {isRunnableTab ? (
-                    <div className="rounded-[18px] border border-theme-sidebar-border bg-theme-bg-sidebar px-5 py-5">
+                    <div className="rounded-[10px] border border-theme-sidebar-border bg-theme-bg-sidebar px-3 py-3">
                       <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-theme-text-secondary">
                         Align Prism
                       </div>
@@ -2610,19 +2593,13 @@ export default function MetacanonAILibraryPage() {
                         value={runPrompt}
                         onChange={(event) => setRunPrompt(event.target.value)}
                         placeholder="What should Prism focus on while aligned with this Council, Lens, Preset, or Constellation?"
-                        className="mt-3 min-h-[120px] w-full rounded-[16px] border border-theme-sidebar-border bg-theme-bg-container px-4 py-4 text-sm leading-7 text-theme-text-primary outline-none placeholder:text-theme-settings-input-placeholder"
+                        className="mt-2 min-h-[90px] w-full rounded-[8px] border border-theme-sidebar-border bg-theme-bg-container px-3 py-2.5 text-sm leading-6 text-theme-text-primary outline-none placeholder:text-theme-settings-input-placeholder"
                       />
-
-                      <div className="mt-3 text-xs leading-6 text-theme-text-secondary">
-                        Alignments are staged in the current workspace chat
-                        using the real invocation handles, so you can inspect
-                        the full exchange afterward.
-                      </div>
                     </div>
                   ) : null}
 
                   {loadingDetail ? (
-                    <div className="rounded-[18px] border border-theme-sidebar-border bg-theme-bg-sidebar px-5 py-5 text-sm leading-7 text-theme-text-secondary">
+                    <div className="rounded-[8px] border border-theme-sidebar-border bg-theme-bg-sidebar px-3 py-3 text-sm leading-6 text-theme-text-secondary">
                       Loading selected item...
                     </div>
                   ) : (
@@ -2630,7 +2607,7 @@ export default function MetacanonAILibraryPage() {
                   )}
                 </>
               ) : (
-                <div className="rounded-[18px] border border-theme-sidebar-border bg-theme-bg-sidebar px-5 py-5 text-sm leading-7 text-theme-text-secondary">
+                <div className="rounded-[8px] border border-theme-sidebar-border bg-theme-bg-sidebar px-3 py-3 text-sm leading-6 text-theme-text-secondary">
                   Select a Council, Lens, Preset, Skill, or Governance Document
                   to inspect it.
                 </div>
