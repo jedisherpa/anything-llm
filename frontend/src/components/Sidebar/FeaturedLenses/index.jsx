@@ -11,6 +11,7 @@ import {
   setActiveMetacanonAlignment,
 } from "@/utils/metacanonAlignment";
 import {
+  cleanPillName,
   getLensUiCollectionLabel,
   getLensUiTitle,
 } from "@/utils/metacanonTerminology";
@@ -20,13 +21,6 @@ import { Link } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 
 const featuredLenses = metacanonLibrarySummary.featuredLenses || [];
-
-function cleanPillName(name = "") {
-  return name
-    .replace(/^The\s+/i, "")
-    .replace(/-/g, " ")
-    .trim();
-}
 
 function FeaturedLensPill({ lens, active, onToggle }) {
   const title = cleanPillName(getLensUiTitle(lens));

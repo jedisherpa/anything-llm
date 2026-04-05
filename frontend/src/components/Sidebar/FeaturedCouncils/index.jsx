@@ -12,6 +12,7 @@ import {
   setActiveMetacanonAlignment,
 } from "@/utils/metacanonAlignment";
 import {
+  cleanPillName,
   getCouncilUiTitle,
   METACANON_TERMS,
 } from "@/utils/metacanonTerminology";
@@ -20,13 +21,6 @@ import paths from "@/utils/paths";
 import showToast from "@/utils/toast";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
-
-function cleanPillName(name = "") {
-  return name
-    .replace(/^The\s+/i, "")
-    .replace(/-/g, " ")
-    .trim();
-}
 
 function buildCouncilAlignment(council = {}) {
   return {

@@ -11,20 +11,13 @@ import {
   setActiveMetacanonAlignment,
 } from "@/utils/metacanonAlignment";
 import { openMetacanonChat } from "@/utils/metacanonLaunch";
-import { METACANON_TERMS } from "@/utils/metacanonTerminology";
+import { cleanPillName, METACANON_TERMS } from "@/utils/metacanonTerminology";
 import paths from "@/utils/paths";
 import showToast from "@/utils/toast";
 import { DotsSixVertical } from "@phosphor-icons/react/dist/csr/DotsSixVertical";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-
-function cleanPillName(name = "") {
-  return name
-    .replace(/^The\s+/i, "")
-    .replace(/-/g, " ")
-    .trim();
-}
 
 function getAlignmentKey(alignment = {}) {
   return (
@@ -82,6 +75,7 @@ function PinnedConstellationPill({
           <div
             ref={provided.innerRef}
             {...provided.draggableProps}
+            {...provided.dragHandleProps}
             role="listitem"
             data-active={active ? "true" : "false"}
             className={`prism-sidebar-pill group ${snapshot.isDragging ? "opacity-70" : ""}`}
@@ -96,7 +90,6 @@ function PinnedConstellationPill({
               className="prism-sidebar-pill__label"
             >
               <span
-                {...provided.dragHandleProps}
                 className="prism-sidebar-pill__drag"
                 aria-label={`Reorder ${title}`}
                 title="Drag to reorder"

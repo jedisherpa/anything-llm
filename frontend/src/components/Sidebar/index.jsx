@@ -64,7 +64,6 @@ export default function Sidebar() {
                     <div className="flex flex-col gap-y-[14px] pt-4">
                       <div className="px-1">
                         <MetacanonThemeSwitcher
-                          showLabel={false}
                           className="metacanon-theme-switcher--sidebar w-full justify-center"
                         />
                       </div>

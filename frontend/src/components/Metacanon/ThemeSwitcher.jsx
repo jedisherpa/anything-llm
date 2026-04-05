@@ -8,7 +8,6 @@ const THEME_LABELS = {
 
 export default function MetacanonThemeSwitcher({
   className = "",
-  showLabel = true,
 }) {
   const { theme, setTheme, availableThemes } = useTheme();
   const themes = Object.keys(availableThemes);

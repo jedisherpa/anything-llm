@@ -491,7 +491,8 @@ export default function PromptInput({
                   <button
                     type="button"
                     onClick={clearActiveMetacanonAlignment}
-                    className="shrink-0 text-[9px] font-semibold uppercase tracking-[0.1em] text-theme-text-secondary opacity-50 transition-opacity hover:opacity-100"
+                    aria-label="Clear alignment"
+                    className="min-w-[28px] min-h-[28px] flex items-center justify-center shrink-0 text-[9px] font-semibold uppercase tracking-[0.1em] text-theme-text-secondary opacity-50 transition-opacity hover:opacity-100"
                   >
                     ✕
                   </button>

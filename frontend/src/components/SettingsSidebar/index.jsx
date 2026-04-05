@@ -129,7 +129,6 @@ export default function SettingsSidebar() {
                   <div className="flex flex-col gap-y-4 pb-[60px] overflow-y-auto prism-sidebar-scroll-region">
                     <div className="px-3">
                       <MetacanonThemeSwitcher
-                        showLabel={true}
                         className="mx-auto w-auto max-w-full"
                       />
                     </div>
@@ -179,7 +178,6 @@ export default function SettingsSidebar() {
           <div className="prism-settings-sidebar-divider" />
           <div className="px-2">
             <MetacanonThemeSwitcher
-              showLabel={true}
               className="w-full justify-between"
             />
           </div>

@@ -1628,51 +1628,6 @@ does not extend the close button beyond the viewport. */
   color: var(--text-1);
 }
 
-.metacanon-lens-card {
-  border: 1px solid transparent;
-  border-left: 3px solid var(--lens-color);
-  background: transparent;
-  color: var(--text-2);
-}
-
-.metacanon-lens-card:hover {
-  background: color-mix(in srgb, var(--lens-color) 8%, transparent);
-  border-color: var(--comp-border);
-  border-left-width: 5px;
-  color: var(--text-1);
-}
-
-.metacanon-lens-card[data-active="true"] {
-  background: color-mix(in srgb, var(--lens-color) 15%, transparent);
-  border-color: var(--active-border);
-  color: var(--text-1);
-  box-shadow: 0 0 12px color-mix(in srgb, var(--lens-color) 10%, transparent);
-}
-
-[data-theme="light"] .metacanon-lens-card:hover {
-  background: color-mix(in srgb, var(--lens-color) 5%, transparent);
-}
-
-[data-theme="light"] .metacanon-lens-card[data-active="true"] {
-  background: color-mix(in srgb, var(--lens-color) 10%, transparent);
-}
-
-.metacanon-lens-card__title {
-  color: var(--text-1);
-  font-family: var(--display-font);
-  font-weight: var(--display-weight);
-}
-
-.metacanon-lens-card__meta {
-  color: color-mix(in srgb, var(--lens-color) 82%, var(--text-2) 18%);
-}
-
-.metacanon-lens-card__badge {
-  background: color-mix(in srgb, var(--lens-color) 14%, transparent);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--lens-color) 28%, transparent);
-  color: var(--text-1);
-}
-
 .metacanon-thread-rail {
   border-color: color-mix(in srgb, var(--text-2) 42%, transparent);
 }
@@ -2140,64 +2095,6 @@ does not extend the close button beyond the viewport. */
   color: currentColor;
 }
 
-.metacanon-theme-switcher__button {
-  min-width: 44px;
-  justify-content: center;
-}
-
-.metacanon-theme-switcher__button--active {
-  background: color-mix(in srgb, white 80%, var(--gold) 20%) !important;
-  border-color: color-mix(in srgb, var(--gold-border) 22%, transparent) !important;
-  box-shadow: inset 0 1px 0 color-mix(in srgb, white 24%, transparent) !important;
-}
-
-[data-theme="dark"] .metacanon-theme-switcher__button--active {
-  color: #2b2213 !important;
-  background:
-    linear-gradient(
-      180deg,
-      rgba(249, 241, 219, 0.98) 0%,
-      rgba(235, 219, 179, 0.96) 100%
-    ) !important;
-  border-color: rgba(227, 189, 99, 0.38) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.34),
-    0 6px 16px rgba(0, 0, 0, 0.18) !important;
-}
-
-[data-theme="cathedral"] .metacanon-theme-switcher__button {
-  color: rgba(246, 241, 222, 0.72) !important;
-  background: rgba(197, 165, 90, 0.06) !important;
-  border-color: rgba(197, 165, 90, 0.18) !important;
-}
-
-[data-theme="cathedral"] .metacanon-theme-switcher__button:hover {
-  color: rgba(246, 241, 222, 0.92) !important;
-  background: rgba(197, 165, 90, 0.12) !important;
-  border-color: rgba(218, 165, 32, 0.28) !important;
-}
-
-[data-theme="cathedral"] .metacanon-theme-switcher__button--active {
-  color: #2b2213 !important;
-  background:
-    linear-gradient(
-      180deg,
-      rgba(247, 237, 206, 0.98) 0%,
-      rgba(233, 214, 166, 0.96) 100%
-    ) !important;
-  border-color: rgba(227, 189, 99, 0.42) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.4),
-    0 6px 16px rgba(0, 0, 0, 0.18) !important;
-}
-
-[data-theme="light"] .metacanon-theme-switcher__button--active,
-[data-theme="sanctuary"] .metacanon-theme-switcher__button--active {
-  background: color-mix(in srgb, white 92%, var(--gold) 8%) !important;
-  border-color: color-mix(in srgb, var(--gold-border) 18%, transparent) !important;
-  box-shadow: inset 0 1px 0 color-mix(in srgb, white 54%, transparent) !important;
-}
-
 .metacanon-action-chip {
   background: transparent;
   border: 1px solid var(--chip-border);
@@ -2576,10 +2473,6 @@ does not extend the close button beyond the viewport. */
 
 .prism-settings-sidebar-label {
   color: color-mix(in srgb, var(--theme-text-secondary) 88%, transparent);
-}
-
-.metacanon-theme-switcher {
-  align-items: stretch;
 }
 
 .prism-settings-mobile-brand-copy {
