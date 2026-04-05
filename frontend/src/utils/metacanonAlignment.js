@@ -1,4 +1,5 @@
 import { safeJsonParse } from "@/utils/request";
+import { metacanonLibrarySummary } from "@/data/metacanon/summary.generated";
 
 export const ACTIVE_METACANON_ALIGNMENT =
   "anythingllm_active_metacanon_alignment";
@@ -335,23 +336,16 @@ export function buildExplicitMetacanonInvocation(handle = "") {
  * and title-casing the remainder.
  */
 function _humanizeHandle(rawHandle = "") {
-  // Lazy-load summary to avoid a circular-dependency at module init time.
-  try {
-    // Dynamic require is intentional here — this module is frontend-only.
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const { metacanonLibrarySummary } = require("@/data/metacanon/summary.generated");
-    if (metacanonLibrarySummary?.featuredLenses) {
-      const match = metacanonLibrarySummary.featuredLenses.find(
-        (l) => l.handle === rawHandle
-      );
-      if (match?.displayTitle || match?.title) {
-        const title = match.displayTitle || match.title;
-        // Strip leading "The " for brevity in the bubble label.
-        return title.replace(/^The\s+/i, "");
-      }
+  // Use the statically imported summary to look up the real display title.
+  if (metacanonLibrarySummary?.featuredLenses) {
+    const match = metacanonLibrarySummary.featuredLenses.find(
+      (l) => l.handle === rawHandle
+    );
+    if (match?.displayTitle || match?.title) {
+      const title = match.displayTitle || match.title;
+      // Strip leading "The " for brevity in the bubble label.
+      return title.replace(/^The\s+/i, "");
     }
-  } catch (_) {
-    // summary import not available — fall through to generic humanization.
   }
 
   // Generic fallback: strip "@mc-" or "@constellation-" prefix, replace hyphens, title-case.
