@@ -20,6 +20,7 @@ import paths from "@/utils/paths";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { chatQueryRefusalResponse } from "@/utils/chat";
+import { formatPromptForDisplay } from "@/utils/metacanonAlignment";
 
 const HistoricalMessage = ({
   uuid = v4(),
@@ -103,11 +104,11 @@ const HistoricalMessage = ({
         className={`${isDeleted ? "animate-remove" : ""} flex justify-end w-full group`}
       >
         <div className="py-3 px-4 flex flex-col items-end">
-          <div className="metacanon-user-bubble max-w-[600px] rounded-[22px] rounded-br-none px-4 py-3.5 [&_p]:m-0">
+          <div className="metacanon-user-bubble max-w-[600px] px-4 py-3.5 [&_p]:m-0">
             <TruncatableContent>
               <RenderChatContent
                 role={role}
-                message={message}
+                message={formatPromptForDisplay(message)}
                 messageId={uuid}
               />
 
