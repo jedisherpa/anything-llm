@@ -61,7 +61,7 @@ export default function LensFormatPreviewModal({
     setSaving(false);
   }, [open, formattedContent, suggestedTitle]);
 
-  // Auto-update handle when title changes (unless user has manually edited it).
+  // Auto-update handle whenever title changes.
   function handleTitleChange(value) {
     setTitle(value);
     setHandle(slugifyHandle(value));

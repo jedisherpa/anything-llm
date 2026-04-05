@@ -1920,53 +1920,6 @@ does not extend the close button beyond the viewport. */
   color: var(--text-1);
 }
 
-.metacanon-chat-mode-shell {
-  background: color-mix(in srgb, var(--bg) 94%, var(--sidebar-bg) 6%);
-  border: 1px solid color-mix(in srgb, var(--comp-border) 48%, transparent);
-  box-shadow: none;
-}
-
-.metacanon-chat-mode-shell--centered {
-  background: transparent;
-  border-color: transparent;
-}
-
-.metacanon-chat-mode-shell--workspace {
-  background: transparent;
-  border-color: transparent;
-}
-
-.metacanon-chat-mode-toggle {
-  border: 1px solid color-mix(in srgb, var(--comp-border) 70%, transparent);
-  background: color-mix(in srgb, var(--theme-sidebar-item-default) 62%, transparent);
-}
-
-.metacanon-chat-mode-copy {
-  letter-spacing: 0.02em;
-}
-
-.metacanon-chat-mode-toggle__button {
-  border: 1px solid transparent;
-  color: var(--text-2);
-  transition:
-    background 180ms ease,
-    border-color 180ms ease,
-    color 180ms ease,
-    transform 180ms ease;
-}
-
-.metacanon-chat-mode-toggle__button[data-active="true"] {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.12);
-  color: var(--text-1);
-  box-shadow: none;
-}
-
-.metacanon-chat-mode-toggle__button:not([data-active="true"]):hover:not(:disabled) {
-  color: var(--text-1);
-  background: rgba(255, 255, 255, 0.05);
-}
-
 /* Inline mode pills — rendered inside the toolbar row */
 .metacanon-mode-pill {
   border: 1px solid transparent;
@@ -2439,16 +2392,6 @@ does not extend the close button beyond the viewport. */
   border-color: transparent;
 }
 
-[data-theme="dark"] .metacanon-chat-mode-shell {
-  background: rgba(19, 21, 31, 0.66);
-  border-color: rgba(218, 165, 32, 0.14);
-}
-
-[data-theme="dark"] .metacanon-chat-mode-shell--workspace {
-  background: transparent;
-  border-color: transparent;
-}
-
 [data-theme="cathedral"] .metacanon-composer-shell {
   background: linear-gradient(
     180deg,
@@ -2462,22 +2405,6 @@ does not extend the close button beyond the viewport. */
 [data-theme="cathedral"] .metacanon-composer-input-shell--workspace {
   background: transparent;
   border-color: transparent;
-}
-
-[data-theme="cathedral"] .metacanon-chat-mode-shell {
-  background: rgba(31, 26, 24, 0.68);
-  border-color: rgba(218, 165, 32, 0.18);
-}
-
-[data-theme="cathedral"] .metacanon-chat-mode-shell--workspace {
-  background: transparent;
-  border-color: transparent;
-}
-
-
-[data-theme="light"] .metacanon-chat-mode-shell {
-  background: color-mix(in srgb, white 82%, var(--sidebar-bg) 18%);
-  border-color: color-mix(in srgb, var(--comp-border) 44%, transparent);
 }
 
 [data-theme="dark"] .workspace-prism-chat-rail__toggle {
@@ -2515,27 +2442,8 @@ does not extend the close button beyond the viewport. */
 }
 
 [data-theme="light"] .metacanon-composer-toolbar-button {
-  background: color-mix(in srgb, white 72%, var(--sidebar-bg) 28%);
-  border-color: color-mix(in srgb, var(--comp-border) 28%, transparent);
-}
-
-[data-theme="light"] .metacanon-composer-toolbar-button:hover,
-[data-theme="light"] .metacanon-composer-toolbar-button[data-open="true"] {
-  background: rgba(0, 0, 0, 0.05);
-  border-color: rgba(0, 0, 0, 0.10);
-}
-
-[data-theme="light"] .metacanon-composer-shell--workspace {
-  background: color-mix(in srgb, white 94%, var(--sidebar-bg) 6%);
-  box-shadow: none;
-}
-
-[data-theme="light"] .metacanon-composer-footer {
-  border-top-color: color-mix(in srgb, var(--comp-border) 44%, transparent);
-}
-
-[data-theme="light"] .metacanon-composer-toolbar-button {
   background: transparent;
+  border-color: color-mix(in srgb, var(--comp-border) 28%, transparent);
   color: color-mix(in srgb, var(--text-2) 88%, var(--text-1) 12%);
 }
 
@@ -2545,6 +2453,15 @@ does not extend the close button beyond the viewport. */
   border-color: rgba(0, 0, 0, 0.10);
   color: var(--text-1);
   transform: none;
+}
+
+[data-theme="light"] .metacanon-composer-shell--workspace {
+  background: color-mix(in srgb, white 94%, var(--sidebar-bg) 6%);
+  box-shadow: none;
+}
+
+[data-theme="light"] .metacanon-composer-footer {
+  border-top-color: color-mix(in srgb, var(--comp-border) 44%, transparent);
 }
 
 [data-theme="light"] .metacanon-action-chip {

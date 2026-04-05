@@ -597,6 +597,7 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
     if (agentTurnLoadingRef.current) {
       if (!loadingResponse && !socketId && !websocket) {
         agentTurnLoadingRef.current = false;
+        // Double-fire with chat-history effect is known and benign — signalPrismResponse is idempotent.
         signalPrismResponse({ source: "agent-turn-settled" });
       }
       previousLoadingResponse.current = loadingResponse;
@@ -613,6 +614,7 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
     }
 
     if (!loadingResponse && previousLoadingResponse.current) {
+      // Double-fire with chat-history effect is known and benign — signalPrismResponse is idempotent.
       signalPrismResponse({ source: "chat-stream" });
     }
 
@@ -642,6 +644,7 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
     if (lastSettledAssistantRef.current === responseKey) return;
     lastSettledAssistantRef.current = responseKey;
 
+    // Double-fire with chat-stream / agent-turn-settled effects is known and benign — signalPrismResponse is idempotent.
     signalPrismResponse({ source: "chat-history" });
     agentTurnLoadingRef.current = false;
 
@@ -725,6 +728,7 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
           }
           setAgentSessionActive(false);
           window.dispatchEvent(new CustomEvent(AGENT_SESSION_END));
+          // Double-fire with chat-history effect is known and benign — signalPrismResponse is idempotent.
           signalPrismResponse({ source: "agent-socket-close" });
           if (
             socket?.agentSessionReady &&

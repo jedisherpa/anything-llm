@@ -273,7 +273,7 @@ function metacanonAIEndpoints(app) {
 
   app.post(
     "/metacanonai/library/format-lens",
-    REPO_WRITE_ROUTE,
+    READ_ROUTE,
     async (request, response) => {
       try {
         const { rawContent = "", title = "" } = reqBody(request);
@@ -302,10 +302,10 @@ function metacanonAIEndpoints(app) {
 
         const messages = buildFormatLensMessageList(safeContent, title);
 
-        const { textResponse } = await LLMConnector.getChatCompletion(
-          messages,
-          { temperature: 0.4 }
-        );
+        const result = await LLMConnector.getChatCompletion(messages, {
+          temperature: 0.4,
+        });
+        const textResponse = result?.textResponse ?? null;
 
         if (!textResponse) {
           response.status(500).json({
