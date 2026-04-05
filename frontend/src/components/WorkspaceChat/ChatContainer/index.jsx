@@ -597,6 +597,7 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
     if (agentTurnLoadingRef.current) {
       if (!loadingResponse && !socketId && !websocket) {
         agentTurnLoadingRef.current = false;
+        signalPrismResponse({ source: "agent-turn-settled" });
       }
       previousLoadingResponse.current = loadingResponse;
       return;
@@ -724,6 +725,7 @@ export default function ChatContainer({ workspace, knownHistory = [] }) {
           }
           setAgentSessionActive(false);
           window.dispatchEvent(new CustomEvent(AGENT_SESSION_END));
+          signalPrismResponse({ source: "agent-socket-close" });
           if (
             socket?.agentSessionReady &&
             !socket?.agentSessionFailed &&
