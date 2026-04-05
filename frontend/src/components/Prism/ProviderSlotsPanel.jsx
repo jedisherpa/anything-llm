@@ -4,10 +4,18 @@ import showToast from "@/utils/toast";
 import { AVAILABLE_LLM_PROVIDERS } from "@/constants/llmProviders";
 
 function normalizeModels(models = []) {
+  const extractId = (model) => {
+    if (typeof model === "string") return model.trim();
+    if (model && typeof model === "object") {
+      // Model objects have an `id` field (OpenAI-style) or `name` field
+      return String(model.id || model.name || model.model || "").trim();
+    }
+    return "";
+  };
   return Array.from(
     new Set(
       (Array.isArray(models) ? models : [])
-        .map((model) => String(model || "").trim())
+        .map(extractId)
         .filter(Boolean)
     )
   ).sort((left, right) => left.localeCompare(right));
