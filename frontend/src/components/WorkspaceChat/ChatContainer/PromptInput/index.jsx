@@ -477,30 +477,23 @@ export default function PromptInput({
               ) : null}
               {hasActiveAlignment ? (
                 <div
-                  className="metacanon-alignment-chip mt-4 flex items-center justify-between gap-3 rounded-[16px] px-4 py-3"
+                  className="metacanon-alignment-chip flex items-center justify-between gap-2 rounded-t-[16px] border-b border-white/[0.06] px-4 py-1.5"
                   style={{ "--lens-color": activeAlignment.colorHex }}
                 >
-                  <div className="min-w-0">
-                    <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-theme-text-secondary">
-                      {activeAlignment.collectionLabel || "Alignment"}
-                    </div>
-                    <div className="truncate text-[14px] text-theme-text-primary">
+                  <div className="flex min-w-0 items-center gap-2">
+                    <span className="shrink-0 text-[9px] font-bold uppercase tracking-[0.14em] text-theme-text-secondary opacity-60">
+                      {activeAlignment.collectionLabel || "Aligned"}
+                    </span>
+                    <span className="truncate text-[11px] text-theme-text-primary">
                       {activeAlignment.title}
-                    </div>
-                    <div className="truncate text-[11px] leading-5 text-theme-text-secondary">
-                      {activeAlignment.kind === "pack"
-                        ? `${activeAlignment.lensHandles?.length || 0} lenses routed through council orchestration`
-                        : activeAlignment.kind === "constellation"
-                          ? "Preset constellation orchestration active"
-                          : activeAlignment.handle || "Lens alignment active"}
-                    </div>
+                    </span>
                   </div>
                   <button
                     type="button"
                     onClick={clearActiveMetacanonAlignment}
-                    className="metacanon-alignment-chip__clear shrink-0 rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em]"
+                    className="shrink-0 text-[9px] font-semibold uppercase tracking-[0.1em] text-theme-text-secondary opacity-50 transition-opacity hover:opacity-100"
                   >
-                    Clear
+                    ✕
                   </button>
                 </div>
               ) : null}
