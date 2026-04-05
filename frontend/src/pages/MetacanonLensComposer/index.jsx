@@ -16,7 +16,10 @@ import {
   validateShapeMix,
   describeCouncilMix,
 } from "@/models/metacanonComposer";
-import { fetchLibraryCollection } from "@/models/metacanonLibrary";
+import {
+  fetchLibraryCollection,
+  saveCustomConstellation as saveCustomConstellationToServer,
+} from "@/models/metacanonLibrary";
 import paths from "@/utils/paths";
 import showToast from "@/utils/toast";
 import { isMobile } from "react-device-detect";
@@ -861,19 +864,33 @@ export default function MetacanonLensComposerPage() {
     }));
   }
 
-  function saveCurrentMix() {
+  async function saveCurrentMix() {
     if (!activeMix) return;
 
     if (activeMix.mode === "shape") {
       const next = saveShapeMix(activeMix);
       setSavedShapes(loadSavedShapes());
-      showToast(`${next?.name || "Shape"} saved locally.`, "success");
+      showToast(`${next?.name || "Shape"} saved.`, "success");
+      // Persist server-side; failures are non-blocking.
+      saveCustomConstellationToServer({
+        ...next,
+        kind: "custom-shape",
+      }).catch((err) =>
+        console.warn("[LensComposer] Server-side constellation save failed:", err.message)
+      );
       return;
     }
 
     const next = saveCouncilMix(activeMix);
     setSavedCouncils(loadSavedCouncils());
-    showToast(`${next?.name || "Council"} saved locally.`, "success");
+    showToast(`${next?.name || "Council"} saved.`, "success");
+    // Persist server-side; failures are non-blocking.
+    saveCustomConstellationToServer({
+      ...next,
+      kind: "custom-council",
+    }).catch((err) =>
+      console.warn("[LensComposer] Server-side constellation save failed:", err.message)
+    );
   }
 
   function clonePresetIntoCustom() {

@@ -22,6 +22,10 @@ const {
 } = require("../utils/agents/metacanon/store");
 const { saveCustomLens } = require("../utils/agents/metacanon/customLenses");
 const {
+  saveCustomConstellation,
+  deleteCustomConstellation,
+} = require("../utils/agents/metacanon/customConstellations");
+const {
   buildFormatLensMessageList,
 } = require("../utils/agents/metacanon/formatLensPrompt");
 const { getLLMProvider } = require("../utils/helpers");
@@ -265,6 +269,48 @@ function metacanonAIEndpoints(app) {
 
         clearMetacanonStoreCaches();
         response.status(200).json({ success: true, item });
+      } catch (error) {
+        response.status(400).json({ success: false, error: error.message });
+      }
+    }
+  );
+
+  app.post(
+    "/metacanonai/library/custom-constellation",
+    REPO_WRITE_ROUTE,
+    async (request, response) => {
+      try {
+        const payload = reqBody(request);
+        const item = saveCustomConstellation(payload);
+        clearMetacanonStoreCaches();
+        response.status(200).json({ success: true, item });
+      } catch (error) {
+        response.status(400).json({ success: false, error: error.message });
+      }
+    }
+  );
+
+  app.delete(
+    "/metacanonai/library/custom-constellation/:id",
+    REPO_WRITE_ROUTE,
+    async (request, response) => {
+      try {
+        const id = String(request.params.id || "").trim();
+        if (!id) {
+          response
+            .status(400)
+            .json({ success: false, error: "Missing constellation id." });
+          return;
+        }
+        const deleted = deleteCustomConstellation(id);
+        if (!deleted) {
+          response
+            .status(404)
+            .json({ success: false, error: "Custom constellation not found." });
+          return;
+        }
+        clearMetacanonStoreCaches();
+        response.status(200).json({ success: true });
       } catch (error) {
         response.status(400).json({ success: false, error: error.message });
       }

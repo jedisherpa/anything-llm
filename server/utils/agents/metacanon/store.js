@@ -5,6 +5,11 @@ const {
   getCustomLensById,
   clearCustomLensCache,
 } = require("./customLenses");
+const {
+  listCustomConstellations,
+  getCustomConstellationById,
+  clearCustomConstellationCache,
+} = require("./customConstellations");
 
 const INDEX_PATH = path.resolve(__dirname, "library.generated.json");
 const ALIAS_PATH = path.resolve(__dirname, "library.aliases.generated.json");
@@ -71,13 +76,45 @@ function buildMergedIndex(baseIndex = {}) {
     String(left.title || "").localeCompare(String(right.title || ""))
   );
 
+  // Merge custom constellations over the base constellation list.
+  const baseConstellations = Array.isArray(mergedIndex.lookup?.constellations)
+    ? mergedIndex.lookup.constellations
+    : [];
+  const constellationsById = new Map(
+    baseConstellations.map((constellation) => [
+      String(constellation.id || ""),
+      constellation,
+    ])
+  );
+
+  listCustomConstellations().forEach((constellation) => {
+    constellationsById.set(String(constellation.id || ""), {
+      ...constellation,
+      name: constellation.name || "Custom Constellation",
+      handle: constellation.handle,
+      detailPath:
+        constellation.detailPath ||
+        `custom-constellations/${constellation.id}.json`,
+    });
+  });
+
+  const mergedConstellations = Array.from(
+    constellationsById.values()
+  ).sort((left, right) =>
+    String(left.name || left.title || "").localeCompare(
+      String(right.name || right.title || "")
+    )
+  );
+
   mergedIndex.lookup = {
     ...(mergedIndex.lookup || {}),
     lenses: mergedLenses,
+    constellations: mergedConstellations,
   };
   mergedIndex.counts = {
     ...(mergedIndex.counts || {}),
     lenses: mergedLenses.length,
+    constellations: mergedConstellations.length,
   };
   return mergedIndex;
 }
@@ -210,6 +247,19 @@ function getLibraryCollection(tab = "") {
       String(left.title || "").localeCompare(String(right.title || ""))
     );
   }
+  if (safeTab === "constellations") {
+    const itemsById = new Map(
+      items.map((item) => [String(item.id || ""), item])
+    );
+    listCustomConstellations().forEach((constellation) => {
+      itemsById.set(String(constellation.id || ""), constellation);
+    });
+    items = Array.from(itemsById.values()).sort((left, right) =>
+      String(left.name || left.title || "").localeCompare(
+        String(right.name || right.title || "")
+      )
+    );
+  }
   collectionCache.set(safeTab, items);
   return items;
 }
@@ -242,6 +292,14 @@ function getLibraryItem(tab = "", id = "") {
     if (customLens) {
       itemCache.set(cacheKey, customLens);
       return customLens;
+    }
+  }
+
+  if (tab === "constellations") {
+    const customConstellation = getCustomConstellationById(resolvedId);
+    if (customConstellation) {
+      itemCache.set(cacheKey, customConstellation);
+      return customConstellation;
     }
   }
 
@@ -319,6 +377,7 @@ function clearMetacanonStoreCaches() {
   constellationHandleAliases.clear();
   Object.values(itemIdAliases).forEach((map) => map.clear());
   clearCustomLensCache();
+  clearCustomConstellationCache();
 }
 
 module.exports = {

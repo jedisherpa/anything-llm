@@ -497,10 +497,8 @@ background can blend into control fills.
   -webkit-backdrop-filter: blur(14px);
 }
 
-[data-theme="cathedral"] .bg-zinc-800.light\:bg-slate-100 {
-  background: rgba(20, 28, 48, 0.92);
-  border: 1px solid rgba(197, 165, 90, 0.35);
-  box-shadow: 0 0 22px rgba(197, 165, 90, 0.12);
+[data-theme="cathedral"] .metacanon-status-thought {
+  border-left-color: rgba(197, 165, 90, 0.4);
 }
 
 [data-theme="sanctuary"] body {
@@ -520,10 +518,8 @@ background can blend into control fills.
   box-shadow: 0 8px 32px rgba(31, 38, 135, 0.08);
 }
 
-[data-theme="sanctuary"] .bg-zinc-800.light\:bg-slate-100 {
-  background: rgba(255, 255, 255, 0.75);
-  border: 1px dashed rgba(79, 209, 197, 0.5);
-  box-shadow: 0 8px 22px rgba(79, 209, 197, 0.12);
+[data-theme="sanctuary"] .metacanon-status-thought {
+  border-left-color: rgba(79, 209, 197, 0.45);
 }
 
 html,
@@ -2792,17 +2788,50 @@ does not extend the close button beyond the viewport. */
 }
 
 .metacanon-status-thought {
-  border: 1px solid color-mix(in srgb, var(--sidebar-border) 80%, transparent);
-  background:
-    radial-gradient(circle at top left, color-mix(in srgb, var(--gold) 6%, transparent) 0%, transparent 24%),
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--theme-sidebar-item-default) 88%, transparent) 0%,
-      color-mix(in srgb, var(--bg) 94%, transparent) 100%
-    );
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, white 5%, transparent),
-    0 10px 24px rgba(0, 0, 0, 0.14);
+  background: transparent;
+  border: none;
+  border-left: 2px solid var(--gold-border, rgba(218, 165, 32, 0.3));
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.metacanon-agent-pill {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-2, rgba(255, 255, 255, 0.55));
+  transition: all 160ms ease;
+}
+
+.metacanon-agent-pill--done {
+  background: rgba(218, 165, 32, 0.06);
+  border-color: rgba(218, 165, 32, 0.12);
+  color: var(--text-1, rgba(255, 255, 255, 0.82));
+}
+
+.metacanon-agent-pill--running {
+  animation: pill-shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes pill-shimmer {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Light theme variants */
+[data-theme="light"] .metacanon-status-thought {
+  border-left-color: rgba(184, 134, 11, 0.35);
+}
+
+[data-theme="light"] .metacanon-agent-pill {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="light"] .metacanon-agent-pill--done {
+  background: rgba(184, 134, 11, 0.07);
+  border-color: rgba(184, 134, 11, 0.18);
+  color: rgba(0, 0, 0, 0.75);
 }
 
 .metacanon-send-button--disabled {

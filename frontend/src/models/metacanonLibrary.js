@@ -431,6 +431,57 @@ export async function saveCustomLens(payload = {}) {
   return response.json();
 }
 
+export async function saveCustomConstellation(payload = {}) {
+  const response = await fetch(
+    `${API_BASE}/metacanonai/library/custom-constellation`,
+    {
+      method: "POST",
+      headers: {
+        ...baseHeaders(),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    }
+  );
+
+  if (!response.ok) {
+    let message = "Failed to save custom constellation.";
+    try {
+      const errorPayload = await response.json();
+      message = errorPayload?.error || message;
+    } catch {
+      // ignore malformed error payloads
+    }
+    throw new Error(message);
+  }
+
+  return response.json();
+}
+
+export async function deleteCustomConstellation(id = "") {
+  const safeId = String(id || "").trim();
+  const response = await fetch(
+    `${API_BASE}/metacanonai/library/custom-constellation/${encodeURIComponent(safeId)}`,
+    {
+      method: "DELETE",
+      headers: baseHeaders(),
+    }
+  );
+
+  if (!response.ok) {
+    let message = "Failed to delete custom constellation.";
+    try {
+      const errorPayload = await response.json();
+      message = errorPayload?.error || message;
+    } catch {
+      // ignore malformed error payloads
+    }
+    throw new Error(message);
+  }
+
+  return response.json();
+}
+
 export async function formatLensContent(payload = {}) {
   const response = await fetch(
     `${API_BASE}/metacanonai/library/format-lens`,

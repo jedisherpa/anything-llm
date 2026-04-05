@@ -4,6 +4,66 @@ import { CaretDown } from "@phosphor-icons/react/dist/csr/CaretDown";
 import AgentAnimation from "@/media/animations/agent-animation.webm";
 import AgentStatic from "@/media/animations/agent-static.png";
 
+const RUNNING_AGENT_RE = /^Running (.+)\.$/;
+
+/**
+ * Extract a clean agent name from a "Running {name}." message.
+ * Strips a leading "The " prefix per the Human Sovereign decision.
+ * Returns null if the message does not match the pattern.
+ */
+function parseAgentName(content = "") {
+  const match = String(content || "").match(RUNNING_AGENT_RE);
+  if (!match) return null;
+  return match[1].replace(/^The /, "");
+}
+
+/**
+ * A single agent pill. Two visual states: "running" (shimmer) and "done" (muted gold).
+ * Not clickable in Phase 1 — cursor is default.
+ */
+function AgentPill({ name, state }) {
+  const stateClass =
+    state === "running"
+      ? "metacanon-agent-pill metacanon-agent-pill--running"
+      : "metacanon-agent-pill metacanon-agent-pill--done";
+  return (
+    <span
+      className={`inline-flex items-center text-[10px] px-2.5 py-1 rounded-full ${stateClass}`}
+      style={{ cursor: "default" }}
+    >
+      {name}
+    </span>
+  );
+}
+
+/**
+ * Partition a message list into plain-text messages and agent pill descriptors.
+ * Agent pill messages are those matching "Running {name}.".
+ * The last pill is "running" when isThinking is true; all others are "done".
+ */
+function partitionMessages(messages = [], isThinking = false) {
+  const textMessages = [];
+  const pills = [];
+
+  messages.forEach((msg) => {
+    const agentName = parseAgentName(msg.content);
+    if (agentName) {
+      pills.push({ name: agentName, uuid: msg.uuid });
+    } else {
+      textMessages.push(msg);
+    }
+  });
+
+  return {
+    textMessages,
+    pills: pills.map((pill, index) => ({
+      ...pill,
+      state:
+        isThinking && index === pills.length - 1 ? "running" : "done",
+    })),
+  };
+}
+
 export default function StatusResponse({
   messages = [],
   isThinking = false,
@@ -17,6 +77,15 @@ export default function StatusResponse({
     Boolean(currentThought?.requiresApproval) &&
     Boolean(currentThought?.pendingActionId) &&
     typeof onExecuteSessionAction === "function";
+
+  // Partition ALL messages (previous + current) for the expanded view.
+  const { textMessages: allTextMessages, pills: allPills } = partitionMessages(
+    messages,
+    isThinking
+  );
+
+  // For the collapsed single-line view, use only the current thought.
+  const currentAgentName = parseAgentName(currentThought?.content);
 
   function handleExpandClick() {
     if (!previousThoughts.length > 0) return;
@@ -57,7 +126,6 @@ export default function StatusResponse({
             onClick={handleExpandClick}
             style={{
               transition: "all 0.1s ease-in-out",
-              borderRadius: "16px",
             }}
             className="metacanon-status-thought relative p-4"
           >
@@ -107,25 +175,45 @@ export default function StatusResponse({
             <div
               className={`ml-[28px] mr-[26px] transition-[max-height] duration-300 ease-in-out origin-top ${isExpanded ? "" : "overflow-hidden max-h-[18px]"}`}
             >
-              <div className="text-zinc-200 light:text-slate-800 font-mono text-sm leading-[18px]">
-                {!isExpanded ? (
-                  <span className="block w-full truncate">
-                    {currentThought.content}
-                  </span>
-                ) : (
-                  <>
-                    {previousThoughts.map((thought, index) => (
-                      <div
-                        key={`cot-${thought.uuid || index}`}
-                        className="mb-2"
-                      >
-                        {thought.content}
-                      </div>
-                    ))}
-                    <div>{currentThought.content}</div>
-                  </>
-                )}
-              </div>
+              {!isExpanded ? (
+                /* Collapsed: single-line preview */
+                <div className="text-zinc-200 light:text-slate-800 font-mono text-sm leading-[18px]">
+                  {currentAgentName ? (
+                    <AgentPill
+                      name={currentAgentName}
+                      state={isThinking ? "running" : "done"}
+                    />
+                  ) : (
+                    <span className="block w-full truncate">
+                      {currentThought?.content}
+                    </span>
+                  )}
+                </div>
+              ) : (
+                /* Expanded: text messages above, pill row below */
+                <div className="space-y-1">
+                  {allTextMessages.length > 0 && (
+                    <div className="text-zinc-200 light:text-slate-800 font-mono text-sm leading-[18px] space-y-1">
+                      {allTextMessages.map((msg, index) => (
+                        <div key={`text-${msg.uuid || index}`}>
+                          {msg.content}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {allPills.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {allPills.map((pill, index) => (
+                        <AgentPill
+                          key={`pill-${pill.uuid || index}`}
+                          name={pill.name}
+                          state={pill.state}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
               {canResolveApproval ? (
                 <div className="mt-3 flex gap-2">
                   <button
