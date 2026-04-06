@@ -11,6 +11,13 @@ if (!fs.existsSync(addonPath)) {
 
 const native = require(addonPath);
 
+// Re-export the Sphere Thread Coordinator so callers can do:
+//   require('./metacanon-runtime').getSphereThreadCoordinator()
+const {
+  SphereThreadCoordinator,
+  getSphereThreadCoordinator,
+} = require("./sphere-thread");
+
 module.exports = {
   ...native,
   // Compatibility aliases so JS callers can use the Rust-style snake_case names.
@@ -41,4 +48,7 @@ module.exports = {
   send_agent_message: native.sendAgentMessage,
   send_sub_sphere_prism_message: native.sendSubSpherePrismMessage,
   get_communication_status: native.getCommunicationStatus,
+  // Sphere Thread Coordinator (singleton accessor)
+  SphereThreadCoordinator,
+  getSphereThreadCoordinator,
 };

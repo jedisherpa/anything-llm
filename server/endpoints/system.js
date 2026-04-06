@@ -177,7 +177,10 @@ function systemEndpoints(app) {
         } = reqBody(request);
 
         let normalizedConnectionString = connectionString.trim();
-        if (normalizedConnectionString && !normalizedConnectionString.includes("://")) {
+        if (
+          normalizedConnectionString &&
+          !normalizedConnectionString.includes("://")
+        ) {
           normalizedConnectionString = `postgresql://${normalizedConnectionString}`;
         }
 
@@ -1957,6 +1960,91 @@ function systemEndpoints(app) {
         response.status(500).json({
           success: false,
           error: `Unable to connect to ${engine}. Please verify your connection details.`,
+        });
+      }
+    }
+  );
+
+  /**
+   * GET /api/system/metacanon-status
+   * Diagnostic endpoint — returns the initialization state of all Phase 0
+   * MetaCanon components. Admin-only.
+   */
+  app.get(
+    "/system/metacanon-status",
+    [validatedRequest, flexUserRoleValid([ROLES.admin])],
+    async (_request, response) => {
+      try {
+        const pathModule = require("path");
+        const {
+          isRuntimeAvailable,
+        } = require("../utils/metacanon-runtime/bridge");
+        const {
+          verifyGovernanceDocuments,
+        } = require("../utils/metacanon-runtime/governance-check");
+        const {
+          getSphereThreadCoordinator,
+        } = require("../utils/metacanon-runtime/sphere-thread");
+        const {
+          getMetaCanonToolNames,
+        } = require("../utils/MCP/metacanon-tools-loader");
+
+        const addonPath = pathModule.resolve(
+          __dirname,
+          "../utils/metacanon-runtime/metacanon_ai.node"
+        );
+        const governanceDir = pathModule.resolve(
+          __dirname,
+          "../data/metacanon/governance-documents/Governance_Documents"
+        );
+
+        const runtimeAvailable = isRuntimeAvailable();
+
+        // Governance documents
+        const govResult = verifyGovernanceDocuments(governanceDir);
+
+        // Sphere coordinator
+        const coordinator = getSphereThreadCoordinator();
+        const coordinatorInitialized = coordinator !== null;
+        const coordinatorRuntimeAvailable = coordinatorInitialized
+          ? coordinator.isRuntimeAvailable()
+          : false;
+
+        // MetaCanon tools
+        const toolNames = getMetaCanonToolNames();
+
+        response.status(200).json({
+          native_addon: {
+            available: runtimeAvailable,
+            path: addonPath,
+          },
+          governance_documents: {
+            verified: govResult.valid,
+            total_found: govResult.found,
+            missing: govResult.missing,
+            empty: govResult.empty,
+          },
+          auto_genesis: {
+            // genesis state is managed inside the Rust runtime; we surface
+            // availability only — detailed hash tracking is a Phase 1+ concern.
+            completed: runtimeAvailable,
+            genesis_hash: null,
+          },
+          sphere_coordinator: {
+            initialized: coordinatorInitialized,
+            runtime_available: coordinatorRuntimeAvailable,
+          },
+          metacanon_tools: {
+            available: toolNames.length > 0,
+            tool_count: toolNames.length,
+            tool_names: toolNames,
+          },
+        });
+      } catch (error) {
+        console.error("Error fetching MetaCanon status:", error);
+        response.status(500).json({
+          success: false,
+          error: `Failed to fetch MetaCanon status: ${error.message}`,
         });
       }
     }
