@@ -6,7 +6,10 @@
  * sub-sphere management, human-in-the-loop approvals, and compute provider selection.
  */
 
-const { getMetaCanonClient, isRuntimeAvailable } = require("../metacanon-runtime/bridge");
+const {
+  getMetaCanonClient,
+  isRuntimeAvailable,
+} = require("../metacanon-runtime/bridge");
 
 /**
  * Tool: metacanon_genesis
@@ -35,8 +38,7 @@ const metacanon_genesis = {
           },
           hitlThreshold: {
             type: "number",
-            description:
-              "Human-in-the-loop approval threshold (0.0-1.0)",
+            description: "Human-in-the-loop approval threshold (0.0-1.0)",
           },
         },
         required: ["constitution"],
@@ -141,12 +143,14 @@ const metacanon_validate = {
         properties: {
           type: {
             type: "string",
-            description: "Action type (e.g., 'read', 'write', 'delete', 'execute', 'query')",
+            description:
+              "Action type (e.g., 'read', 'write', 'delete', 'execute', 'query')",
           },
           target: {
             type: "string",
             enum: ["llm_call", "tool_invocation", "external_message"],
-            description: "Target category: llm_call (advisory/read), tool_invocation (tool execution), external_message (affects external systems)",
+            description:
+              "Target category: llm_call (advisory/read), tool_invocation (tool execution), external_message (affects external systems)",
           },
           content: {
             type: "string",
@@ -200,12 +204,18 @@ const metacanon_validate = {
         directives: args.willVector.directives || [],
         intent: args.willVector.intent || null,
         scope: args.willVector.scope || null,
-        confidence: args.willVector.confidence != null ? args.willVector.confidence : null,
+        confidence:
+          args.willVector.confidence != null
+            ? args.willVector.confidence
+            : null,
       };
 
       // Try the enhanced constitutional validator (uses cached genesis state)
       if (typeof client.validateActionConstitutional === "function") {
-        const report = client.validateActionConstitutional(args.action, willVector);
+        const report = client.validateActionConstitutional(
+          args.action,
+          willVector
+        );
         return {
           success: true,
           valid: report.valid,
@@ -318,8 +328,7 @@ const metacanon_create_subsphere = {
       },
       objective: {
         type: "string",
-        description:
-          "The primary objective or mandate of the sub-sphere",
+        description: "The primary objective or mandate of the sub-sphere",
       },
       hitlRequired: {
         type: "boolean",
@@ -428,10 +437,7 @@ const metacanon_approve_hitl = {
 
     try {
       const client = getMetaCanonClient();
-      const result = client.approveHitlAction(
-        args.subSphereId,
-        args.actionId
-      );
+      const result = client.approveHitlAction(args.subSphereId, args.actionId);
       return {
         success: true,
         data: result,
@@ -466,8 +472,7 @@ const metacanon_reject_hitl = {
       },
       reason: {
         type: "string",
-        description:
-          "The reason for rejecting the action",
+        description: "The reason for rejecting the action",
         default: "Rejected in Prism execute mode.",
       },
     },

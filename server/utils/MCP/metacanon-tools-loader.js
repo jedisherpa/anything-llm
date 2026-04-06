@@ -19,7 +19,7 @@ function getMetaCanonToolNames() {
     const tools = require("./metacanon-tools");
     if (!Array.isArray(tools) || tools.length === 0) return [];
     return tools.map((t) => `${METACANON_PREFIX}${t.name}`);
-  } catch (_e) {
+  } catch {
     return [];
   }
 }
@@ -77,7 +77,7 @@ function loadMetaCanonPlugin(toolName, _aibitat = null) {
         };
       },
     };
-  } catch (_e) {
+  } catch {
     return null;
   }
 }
