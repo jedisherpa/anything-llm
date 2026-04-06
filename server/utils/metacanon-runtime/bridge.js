@@ -23,6 +23,7 @@ function getMetaCanonClient() {
 }
 
 function isRuntimeAvailable() {
+  if (process.env.NODE_ENV === "test") return false;
   try {
     getMetaCanonClient();
     return true;
