@@ -164,7 +164,7 @@ if (!process.env.ENABLE_HTTPS) bootHTTP(app, process.env.SERVER_PORT || 3001);
   const {
     verifyGovernanceDocuments,
   } = require("./utils/metacanon-runtime/governance-check");
-  const path = require("path");
+  // Note: path is already required at module scope above — no shadowed re-require needed.
   const GOVERNANCE_DOCS_DIR = path.resolve(
     __dirname,
     "data/metacanon/governance-documents/Governance_Documents"
@@ -215,11 +215,17 @@ if (!process.env.ENABLE_HTTPS) bootHTTP(app, process.env.SERVER_PORT || 3001);
   );
 
   // [Tools] — log registered MetaCanon tool count
-  const {
-    getMetaCanonToolNames,
-  } = require("./utils/MCP/metacanon-tools-loader");
-  const toolNames = getMetaCanonToolNames();
-  console.log(`[Tools] Registered ${toolNames.length} MetaCanon tools`);
+  // Wrapped in try/catch so a loader failure still produces a visible warning
+  // rather than silently swallowing the error.
+  try {
+    const {
+      getMetaCanonToolNames,
+    } = require("./utils/MCP/metacanon-tools-loader");
+    const toolNames = getMetaCanonToolNames();
+    console.log(`[Tools] Registered ${toolNames.length} MetaCanon tools`);
+  } catch (err) {
+    console.warn(`[Tools] Failed to load MetaCanon tool names: ${err.message}`);
+  }
 })().catch((err) =>
   console.error("[MetaCanon] Startup sequence error:", err.message)
 );

@@ -185,6 +185,11 @@ describe("Degradation path (CI — runtime unavailable)", () => {
   });
 
   // Test 9: metacanon-status endpoint returns valid JSON structure
+  // LIMITATION: This test reconstructs the handler logic inline rather than
+  // exercising the actual Express route. A proper handler test would use
+  // supertest (or mock req/res objects passed to the real handler function)
+  // to ensure routing, middleware, and response serialization are all tested.
+  // Tracked as a Phase 1 test quality improvement.
   it("metacanon-status endpoint handler returns valid JSON with native_addon.available=false", async () => {
     // Mock all dependencies used by the endpoint handler
     jest.doMock("../utils/metacanon-runtime/bridge", () => ({
@@ -342,7 +347,9 @@ describe("Happy path (local only — skipped in CI)", () => {
       const {
         autoGenesis,
       } = require("../utils/metacanon-runtime/auto-genesis");
-      await expect(autoGenesis()).resolves.not.toThrow();
+      // autoGenesis() returns void (undefined) on success — use toBeUndefined()
+      // rather than .not.toThrow() which is not a valid matcher on a Promise.
+      await expect(autoGenesis()).resolves.toBeUndefined();
     });
 
     // Test 12: Coordinator initializes with a live client

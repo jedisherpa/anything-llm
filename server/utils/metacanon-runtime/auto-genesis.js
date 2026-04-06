@@ -98,6 +98,20 @@ function buildGenesisConfig(constitutionText) {
   };
 }
 
+// Tracks whether genesis_rite has completed successfully in this process lifetime.
+// Exported via isGenesisCompleted() so external callers (e.g. the status endpoint)
+// can distinguish "runtime available" from "genesis actually ran and succeeded".
+let _genesisCompleted = false;
+
+/**
+ * Returns true if autoGenesis() has completed a successful genesis_rite call
+ * during this server process lifetime.
+ * @returns {boolean}
+ */
+function isGenesisCompleted() {
+  return _genesisCompleted;
+}
+
 /**
  * Run genesis_rite using governance documents and Prism constitutional values.
  * Handles missing runtime gracefully — logs a warning but does not crash.
@@ -130,6 +144,7 @@ async function autoGenesis() {
   try {
     const client = getMetaCanonClient();
     const result = client.genesisRite(config);
+    _genesisCompleted = true;
     console.log(
       "[AutoGenesis] Genesis complete. Hash:",
       result && result.genesis_hash ? result.genesis_hash : "(no hash returned)"
@@ -139,4 +154,4 @@ async function autoGenesis() {
   }
 }
 
-module.exports = { autoGenesis };
+module.exports = { autoGenesis, isGenesisCompleted };

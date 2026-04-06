@@ -80,6 +80,11 @@ const { PGVector } = require("../utils/vectorDbProviders/pgvector");
 
 const PRISM_SETUP_DRAFT_LABEL = "prism_setup_assistant_draft";
 
+// Cache for the governance verification result on the metacanon-status endpoint.
+// Computed once on the first request and reused thereafter to avoid synchronous
+// filesystem I/O on every status poll.
+let _cachedGovernanceResult = null;
+
 function systemEndpoints(app) {
   if (!app) return;
   const directUploadsRoot =
@@ -1975,7 +1980,6 @@ function systemEndpoints(app) {
     [validatedRequest, flexUserRoleValid([ROLES.admin])],
     async (_request, response) => {
       try {
-        const pathModule = require("path");
         const {
           isRuntimeAvailable,
         } = require("../utils/metacanon-runtime/bridge");
@@ -1988,20 +1992,27 @@ function systemEndpoints(app) {
         const {
           getMetaCanonToolNames,
         } = require("../utils/MCP/metacanon-tools-loader");
+        const {
+          isGenesisCompleted,
+        } = require("../utils/metacanon-runtime/auto-genesis");
 
-        const addonPath = pathModule.resolve(
+        const addonPath = path.resolve(
           __dirname,
           "../utils/metacanon-runtime/metacanon_ai.node"
         );
-        const governanceDir = pathModule.resolve(
+        const governanceDir = path.resolve(
           __dirname,
           "../data/metacanon/governance-documents/Governance_Documents"
         );
 
         const runtimeAvailable = isRuntimeAvailable();
 
-        // Governance documents
-        const govResult = verifyGovernanceDocuments(governanceDir);
+        // Governance documents — cached at module level to avoid sync FS I/O
+        // on every request. Computed once on the first call.
+        if (!_cachedGovernanceResult) {
+          _cachedGovernanceResult = verifyGovernanceDocuments(governanceDir);
+        }
+        const govResult = _cachedGovernanceResult;
 
         // Sphere coordinator
         const coordinator = getSphereThreadCoordinator();
@@ -2025,9 +2036,9 @@ function systemEndpoints(app) {
             empty: govResult.empty,
           },
           auto_genesis: {
-            // genesis state is managed inside the Rust runtime; we surface
-            // availability only — detailed hash tracking is a Phase 1+ concern.
-            completed: runtimeAvailable,
+            // Reflects whether genesis_rite actually completed successfully
+            // in this process lifetime (set by auto-genesis.js on success).
+            completed: isGenesisCompleted(),
             genesis_hash: null,
           },
           sphere_coordinator: {
