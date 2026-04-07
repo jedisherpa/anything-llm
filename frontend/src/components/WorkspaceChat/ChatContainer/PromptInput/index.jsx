@@ -399,7 +399,7 @@ export default function PromptInput({
       className={
         centered
           ? "w-full relative flex justify-center items-center"
-          : "w-full fixed md:absolute bottom-0 left-0 z-10 flex justify-center items-center pwa:pb-5"
+          : "w-full shrink-0 flex justify-center items-center pwa:pb-5"
       }
     >
       <form
@@ -431,19 +431,9 @@ export default function PromptInput({
             />
 
             <div
-              className={`${centered ? "metacanon-composer-shell" : "bg-zinc-800 light:bg-white light:border light:border-slate-300"} flex flex-col overflow-hidden rounded-[24px] px-6 pwa:rounded-3xl`}
+              className={`${centered ? "metacanon-composer-shell" : "metacanon-composer-shell metacanon-composer-shell--workspace"} flex flex-col overflow-y-auto max-h-[70vh] rounded-[16px] px-4 pwa:rounded-2xl`}
             >
               <AttachmentManager attachments={attachments} />
-              {typeof onChatModeChange === "function" ? (
-                <div className="pt-4">
-                  <ChatModeToggle
-                    chatMode={chatMode}
-                    onChange={onChatModeChange}
-                    executionMode={executionMode}
-                    onExecutionModeChange={onExecutionModeChange}
-                  />
-                </div>
-              ) : null}
               {executionMode === "execute" ? (
                 <ExecutionTargetPanel
                   executionWorktreeRoot={executionWorktreeRoot}
@@ -487,30 +477,24 @@ export default function PromptInput({
               ) : null}
               {hasActiveAlignment ? (
                 <div
-                  className="metacanon-alignment-chip mt-4 flex items-center justify-between gap-3 rounded-[16px] px-4 py-3"
+                  className="metacanon-alignment-chip flex items-center justify-between gap-2 px-0 py-1"
                   style={{ "--lens-color": activeAlignment.colorHex }}
                 >
-                  <div className="min-w-0">
-                    <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-theme-text-secondary">
-                      {activeAlignment.collectionLabel || "Alignment"}
-                    </div>
-                    <div className="truncate text-[14px] text-theme-text-primary">
+                  <div className="flex min-w-0 items-center gap-2">
+                    <span className="shrink-0 text-[9px] font-bold uppercase tracking-[0.14em] text-theme-text-secondary opacity-60">
+                      {activeAlignment.collectionLabel || "Aligned"}
+                    </span>
+                    <span className="truncate text-[11px] text-theme-text-primary">
                       {activeAlignment.title}
-                    </div>
-                    <div className="truncate text-[11px] leading-5 text-theme-text-secondary">
-                      {activeAlignment.kind === "pack"
-                        ? `${activeAlignment.lensHandles?.length || 0} lenses routed through council orchestration`
-                        : activeAlignment.kind === "constellation"
-                          ? "Preset constellation orchestration active"
-                          : activeAlignment.handle || "Lens alignment active"}
-                    </div>
+                    </span>
                   </div>
                   <button
                     type="button"
                     onClick={clearActiveMetacanonAlignment}
-                    className="metacanon-alignment-chip__clear shrink-0 rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em]"
+                    aria-label="Clear alignment"
+                    className="min-w-[28px] min-h-[28px] flex items-center justify-center shrink-0 text-[9px] font-semibold uppercase tracking-[0.1em] text-theme-text-secondary opacity-50 transition-opacity hover:opacity-100"
                   >
-                    Clear
+                    ✕
                   </button>
                 </div>
               ) : null}
@@ -532,14 +516,22 @@ export default function PromptInput({
                   }}
                   value={promptInput}
                   spellCheck={Appearance.get("enableSpellCheck")}
-                  className={`border-none cursor-text max-h-[50vh] md:max-h-[350px] md:min-h-[40px] ${centered ? "pt-[26px]" : "pt-[20px]"} w-full leading-5 ${centered ? "text-theme-text-primary placeholder:text-theme-settings-input-placeholder" : "text-white light:text-slate-600 placeholder:text-white/60 light:placeholder:text-slate-400"} bg-transparent resize-none active:outline-none focus:outline-none flex-grow pwa:!text-[16px] ${textSizeClass}`}
+                  className={`border-none cursor-text max-h-[50vh] md:max-h-[350px] md:min-h-[40px] ${centered ? "pt-[26px]" : "pt-[14px]"} w-full leading-5 ${centered ? "text-theme-text-primary placeholder:text-theme-settings-input-placeholder" : "text-white light:text-slate-600 placeholder:text-white/60 light:placeholder:text-slate-400"} bg-transparent resize-none active:outline-none focus:outline-none flex-grow pwa:!text-[16px] ${textSizeClass}`}
                   placeholder={centeredPlaceholder}
                 />
               </div>
               <div
-                className={`flex justify-between items-center ${centered ? "pt-[18px] pb-[22px]" : "pt-3.5 pb-3"}`}
+                className={`flex justify-between items-center ${centered ? "pt-[18px] pb-[22px]" : "pt-2 pb-3"}`}
               >
                 <div className="flex items-center gap-x-0.25">
+                  {typeof onChatModeChange === "function" ? (
+                    <ChatModePills
+                      chatMode={chatMode}
+                      onChange={onChatModeChange}
+                      executionMode={executionMode}
+                      onExecutionModeChange={onExecutionModeChange}
+                    />
+                  ) : null}
                   <div className="flex items-center gap-x-1">
                     <AttachItem
                       workspaceSlug={workspaceSlug}
@@ -589,69 +581,53 @@ export default function PromptInput({
   );
 }
 
-function ChatModeToggle({
+function ChatModePills({
   chatMode = "chat",
   onChange,
   executionMode = "chat",
   onExecutionModeChange,
 }) {
   const { t } = useTranslation();
-  const description =
-    executionMode === "execute"
-      ? "Governed local execution inside one selected repo or worktree with trusted-session state."
-      : chatMode === "chat"
-        ? "Conversational synthesis with model knowledge and retrieved context."
-        : "Direct retrieval from your documents with stricter vector grounding.";
   const activeMode = executionMode === "execute" ? "execute" : chatMode;
 
   return (
-    <div className="metacanon-chat-mode-shell rounded-[16px] px-3 py-3">
-      <div className="flex items-center justify-between gap-3">
-        <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-theme-text-secondary">
-          Chat, Query, Execute
-        </div>
-        <div className="metacanon-chat-mode-toggle flex items-center rounded-full p-1">
-          <button
-            type="button"
-            disabled={activeMode === "chat"}
-            onClick={() => {
-              onExecutionModeChange?.("chat");
-              onChange?.("chat");
-            }}
-            data-testid="chat-mode-chat-button"
-            className="metacanon-chat-mode-toggle__button rounded-full px-3 py-1.5 text-[12px] font-semibold uppercase tracking-[0.12em]"
-            data-active={activeMode === "chat" ? "true" : "false"}
-          >
-            {t("chat.mode.chat.title")}
-          </button>
-          <button
-            type="button"
-            disabled={activeMode === "query"}
-            onClick={() => {
-              onExecutionModeChange?.("chat");
-              onChange?.("query");
-            }}
-            data-testid="chat-mode-query-button"
-            className="metacanon-chat-mode-toggle__button rounded-full px-3 py-1.5 text-[12px] font-semibold uppercase tracking-[0.12em]"
-            data-active={activeMode === "query" ? "true" : "false"}
-          >
-            {t("chat.mode.query.title")}
-          </button>
-          <button
-            type="button"
-            disabled={activeMode === "execute"}
-            onClick={() => onExecutionModeChange?.("execute")}
-            data-testid="chat-mode-execute-button"
-            className="metacanon-chat-mode-toggle__button rounded-full px-3 py-1.5 text-[12px] font-semibold uppercase tracking-[0.12em]"
-            data-active={activeMode === "execute" ? "true" : "false"}
-          >
-            Execute
-          </button>
-        </div>
-      </div>
-      <div className="mt-2 text-[12px] leading-5 text-theme-text-secondary">
-        {description}
-      </div>
+    <div className="flex items-center gap-x-0.5 mr-1">
+      <button
+        type="button"
+        disabled={activeMode === "chat"}
+        onClick={() => {
+          onExecutionModeChange?.("chat");
+          onChange?.("chat");
+        }}
+        data-testid="chat-mode-chat-button"
+        className="metacanon-mode-pill rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.10em]"
+        data-active={activeMode === "chat" ? "true" : "false"}
+      >
+        {t("chat.mode.chat.title")}
+      </button>
+      <button
+        type="button"
+        disabled={activeMode === "query"}
+        onClick={() => {
+          onExecutionModeChange?.("chat");
+          onChange?.("query");
+        }}
+        data-testid="chat-mode-query-button"
+        className="metacanon-mode-pill rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.10em]"
+        data-active={activeMode === "query" ? "true" : "false"}
+      >
+        {t("chat.mode.query.title")}
+      </button>
+      <button
+        type="button"
+        disabled={activeMode === "execute"}
+        onClick={() => onExecutionModeChange?.("execute")}
+        data-testid="chat-mode-execute-button"
+        className="metacanon-mode-pill rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.10em]"
+        data-active={activeMode === "execute" ? "true" : "false"}
+      >
+        Execute
+      </button>
     </div>
   );
 }
@@ -1195,14 +1171,10 @@ function SendPromptButton({
         ref={formRef}
         type="submit"
         disabled={isDisabled || !promptInput.trim().length}
-        className={`border-none flex justify-center items-center rounded-full w-10 h-10 transition-all ${
+        className={`border-none flex justify-center items-center rounded-full w-10 h-10 transition-all metacanon-send-button ${
           promptInput.trim().length && !isDisabled
-            ? centered
-              ? "metacanon-send-button cursor-pointer"
-              : "cursor-pointer bg-white hover:bg-zinc-200 light:bg-slate-800 light:hover:bg-slate-600"
-            : centered
-              ? "metacanon-send-button metacanon-send-button--disabled cursor-not-allowed"
-              : "cursor-not-allowed bg-zinc-600 light:bg-slate-400"
+            ? "cursor-pointer"
+            : "metacanon-send-button--disabled cursor-not-allowed"
         }`}
         data-tooltip-id="send-prompt"
         data-tooltip-content={
@@ -1213,9 +1185,7 @@ function SendPromptButton({
         aria-label={t("chat_window.send")}
       >
         <ArrowUp
-          className={`metacanon-send-button-icon w-[18px] h-[18px] pointer-events-none ${
-            centered ? "" : "text-zinc-800 light:text-white"
-          }`}
+          className="metacanon-send-button-icon w-[18px] h-[18px] pointer-events-none"
           weight="bold"
         />
 

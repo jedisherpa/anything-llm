@@ -1,3 +1,7 @@
+export function cleanPillName(name) {
+  return (name || "").replace(/^The\s+/i, "").replace(/-/g, " ");
+}
+
 export const METACANON_TERMS = {
   prism: "Prism",
   lens: "Lens",

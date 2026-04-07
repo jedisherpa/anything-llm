@@ -42,25 +42,16 @@ export default function EmbedConfigsView() {
 
   return (
     <div className="flex flex-col w-full p-4">
-      <div className="w-full flex flex-col gap-y-1 pb-6">
-        <div className="items-center flex gap-x-4">
-          <p className="text-lg leading-6 font-bold text-theme-text-primary">
-            {t("embeddable.title")}
-          </p>
+      <div className="prism-settings-page-header">
+        <div className="prism-page-section-label">Configuration</div>
+        <div className="flex items-center justify-between gap-x-4">
+          <p className="prism-settings-page-title">{t("embeddable.title")}</p>
+          <CTAButton onClick={openModal} className="text-theme-bg-chat shrink-0">
+            <CodeBlock className="h-4 w-4" weight="bold" />{" "}
+            {t("embeddable.create")}
+          </CTAButton>
         </div>
-
-        <div className="flex gap-x-10 mr-8">
-          <p className="text-xs leading-[18px] font-base text-theme-text-secondary mt-2">
-            {t("embeddable.description")}
-          </p>
-
-          <div>
-            <CTAButton onClick={openModal} className="text-theme-bg-chat">
-              <CodeBlock className="h-4 w-4" weight="bold" />{" "}
-              {t("embeddable.create")}
-            </CTAButton>
-          </div>
-        </div>
+        <p className="prism-settings-page-description">{t("embeddable.description")}</p>
       </div>
       <div className="overflow-x-auto">
         <table className="prism-data-table w-full text-xs text-left rounded-lg min-w-[640px] border-spacing-0">

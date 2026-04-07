@@ -19,13 +19,13 @@ export default function SettingsButton() {
         <PrismHoverTarget targetId="settings-button-home">
           <Link
             to={paths.home()}
-            className="metacanon-footer-button transition-all duration-300 p-[7px] rounded-full"
+            className="metacanon-footer-button transition-all duration-300 p-[4px] rounded-full"
             aria-label="Home"
             data-tooltip-id="footer-item"
             data-tooltip-content="Back to workspaces"
           >
             <ArrowUUpLeft
-              className="h-5 w-5"
+              className="h-3.5 w-3.5"
               color="var(--theme-sidebar-footer-icon-fill)"
               weight="fill"
             />
@@ -39,13 +39,13 @@ export default function SettingsButton() {
       <PrismHoverTarget targetId="settings-button-open">
         <Link
           to={paths.settings.interface()}
-          className="metacanon-footer-button transition-all duration-300 p-[7px] rounded-full"
+          className="metacanon-footer-button transition-all duration-300 p-[4px] rounded-full"
           aria-label="Settings"
           data-tooltip-id="footer-item"
           data-tooltip-content="Open settings"
         >
           <Wrench
-            className="h-5 w-5"
+            className="h-3.5 w-3.5"
             color="var(--theme-sidebar-footer-icon-fill)"
             weight="fill"
           />

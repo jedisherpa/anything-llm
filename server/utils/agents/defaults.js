@@ -5,6 +5,8 @@ const Provider = require("./aibitat/providers/ai-provider");
 const ImportedPlugin = require("./imported");
 const { AgentFlows } = require("../agentFlows");
 const MCPCompatibilityLayer = require("../MCP");
+const { getMetaCanonToolNames } = require("../MCP/metacanon-tools-loader");
+const { getPrismAIPluginTools } = require("../plugins/registry");
 const {
   getLensAgentDefinitions,
   LENS_AGENT_HANDLES,
@@ -48,6 +50,8 @@ const WORKSPACE_AGENT = {
         ...ImportedPlugin.activeImportedPlugins(),
         ...AgentFlows.activeFlowPlugins(),
         ...(await new MCPCompatibilityLayer().activeMCPServers()),
+        ...getMetaCanonToolNames(),
+        ...getPrismAIPluginTools(),
       ],
     };
   },

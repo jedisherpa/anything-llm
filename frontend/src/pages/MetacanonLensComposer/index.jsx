@@ -16,12 +16,24 @@ import {
   validateShapeMix,
   describeCouncilMix,
 } from "@/models/metacanonComposer";
-import { fetchLibraryCollection } from "@/models/metacanonLibrary";
+import {
+  fetchLibraryCollection,
+  saveCustomConstellation as saveCustomConstellationToServer,
+} from "@/models/metacanonLibrary";
+import System from "@/models/system";
 import paths from "@/utils/paths";
 import showToast from "@/utils/toast";
 import { isMobile } from "react-device-detect";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import CustomLensCreatorPanel from "./CustomLensCreatorPanel";
+import LensFormatPreviewModal from "@/components/Metacanon/LensFormatPreviewModal";
+import LensWorkbenchModal from "@/components/Metacanon/LensWorkbenchModal";
+
+const CUSTOM_SUB_MODES = {
+  COMPOSE: "compose",
+  CREATE: "create",
+};
 
 function buildShapeSlots(mix = {}, template) {
   const slots = Array.from({ length: template.cardinality }, (_, index) => ({
@@ -277,7 +289,11 @@ function LensRoster({
   onSelectSlot,
   onRemoveLens,
   onMoveLens,
+  providerSlots = [],
+  executionRoutes = {},
+  onRouteChange,
 }) {
+  const [advancedOpen, setAdvancedOpen] = useState(false);
   const slots =
     mix.mode === "shape"
       ? buildShapeSlots(mix, template)
@@ -286,6 +302,10 @@ function LensRoster({
           lens,
           locked: false,
         }));
+
+  const enabledSlots = providerSlots.filter(
+    (slot) => slot.enabled && slot.provider
+  );
 
   return (
     <div className="prism-composer-roster prism-page-panel">
@@ -299,75 +319,117 @@ function LensRoster({
       </div>
       <div className="prism-composer-roster-list">
         {slots.map((slot, index) => (
-          <button
-            type="button"
-            key={`slot-${slot.index}`}
-            className={`prism-composer-roster-item ${
-              activeSlot === slot.index ? "is-active" : ""
-            }`}
-            onClick={() => onSelectSlot(slot.index)}
-          >
-            <div className="prism-composer-roster-slot">
-              <span className="prism-composer-roster-index">
-                {mix.mode === "shape" ? `S${slot.index}` : `L${slot.index}`}
-              </span>
-              {slot.locked ? (
-                <span className="prism-composer-roster-badge">PM</span>
-              ) : null}
-            </div>
-            <div className="prism-composer-roster-copy">
-              <div className="prism-composer-roster-title">
-                {slot.lens?.title || `Empty slot ${slot.index}`}
-              </div>
-              <div className="prism-composer-roster-meta">
-                {slot.lens?.collectionLabel ||
-                  (slot.locked ? "Project Manager Lens" : "Choose a lens")}
-              </div>
-            </div>
-            {slot.lens && !slot.locked ? (
-              <div className="prism-composer-roster-actions">
-                {mix.mode === "council" ? (
-                  <>
-                    <button
-                      type="button"
-                      className="prism-composer-inline-action"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        onMoveLens(index, Math.max(0, index - 1));
-                      }}
-                    >
-                      Up
-                    </button>
-                    <button
-                      type="button"
-                      className="prism-composer-inline-action"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        onMoveLens(
-                          index,
-                          Math.min(slots.length - 1, index + 1)
-                        );
-                      }}
-                    >
-                      Down
-                    </button>
-                  </>
+          <div key={`slot-${slot.index}`} className="flex flex-col">
+            <button
+              type="button"
+              className={`prism-composer-roster-item ${
+                activeSlot === slot.index ? "is-active" : ""
+              }`}
+              onClick={() => onSelectSlot(slot.index)}
+            >
+              <div className="prism-composer-roster-slot">
+                <span className="prism-composer-roster-index">
+                  {mix.mode === "shape" ? `S${slot.index}` : `L${slot.index}`}
+                </span>
+                {slot.locked ? (
+                  <span className="prism-composer-roster-badge">PM</span>
                 ) : null}
-                <button
-                  type="button"
-                  className="prism-composer-inline-action"
-                  onClick={(event) => {
+              </div>
+              <div className="prism-composer-roster-copy">
+                <div className="prism-composer-roster-title">
+                  {slot.lens?.title || `Empty slot ${slot.index}`}
+                </div>
+                <div className="prism-composer-roster-meta">
+                  {slot.lens?.collectionLabel ||
+                    (slot.locked ? "Project Manager Lens" : "Choose a lens")}
+                </div>
+              </div>
+              {slot.lens && !slot.locked ? (
+                <div className="prism-composer-roster-actions">
+                  {mix.mode === "council" ? (
+                    <>
+                      <button
+                        type="button"
+                        className="prism-composer-inline-action"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          onMoveLens(index, Math.max(0, index - 1));
+                        }}
+                      >
+                        Up
+                      </button>
+                      <button
+                        type="button"
+                        className="prism-composer-inline-action"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          onMoveLens(
+                            index,
+                            Math.min(slots.length - 1, index + 1)
+                          );
+                        }}
+                      >
+                        Down
+                      </button>
+                    </>
+                  ) : null}
+                  <button
+                    type="button"
+                    className="prism-composer-inline-action"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      onRemoveLens(slot.index);
+                    }}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ) : null}
+            </button>
+            {advancedOpen && slot.lens && enabledSlots.length > 0 ? (
+              <div className="flex items-center gap-2 px-3 pb-1.5 -mt-1">
+                <span className="text-[10px] text-theme-text-secondary opacity-60 shrink-0">
+                  Route
+                </span>
+                <select
+                  className="text-[10px] bg-transparent border border-white/10 rounded px-1.5 py-0.5 text-theme-text-secondary min-w-0 flex-1"
+                  value={
+                    slot.lens?.handle &&
+                    // Only single-element route arrays are supported in the current UI;
+                    // index [0] is the sole active route for this lens slot.
+                    executionRoutes[slot.lens.handle]?.[0]
+                      ? executionRoutes[slot.lens.handle][0]
+                      : ""
+                  }
+                  onClick={(event) => event.stopPropagation()}
+                  onChange={(event) => {
                     event.stopPropagation();
-                    onRemoveLens(slot.index);
+                    if (slot.lens?.handle && onRouteChange) {
+                      onRouteChange(slot.lens.handle, event.target.value || null);
+                    }
                   }}
                 >
-                  Remove
-                </button>
+                  <option value="">Default</option>
+                  {enabledSlots.map((ps) => (
+                    <option key={ps.id} value={ps.id}>
+                      {ps.label}
+                    </option>
+                  ))}
+                </select>
               </div>
             ) : null}
-          </button>
+          </div>
         ))}
       </div>
+      {enabledSlots.length > 0 ? (
+        <button
+          type="button"
+          className="mt-2 w-full text-left text-[10px] text-theme-text-secondary opacity-60 hover:opacity-100 px-3 py-1.5 transition-opacity"
+          onClick={() => setAdvancedOpen((prev) => !prev)}
+        >
+          {advancedOpen ? "Hide" : "Advanced"}: Provider Routing
+        </button>
+      ) : null}
     </div>
   );
 }
@@ -380,13 +442,13 @@ function LensChooser({
   items,
   onApplyLens,
   actionLabel = "Assign",
+  isInspect = false,
 }) {
   return (
     <div className="prism-composer-library prism-page-panel">
       <div className="prism-composer-panel-header">
         <div>
           <div className="prism-composer-panel-eyebrow">{title}</div>
-          <div className="prism-composer-panel-title">Available Lenses</div>
         </div>
         <div className="prism-composer-panel-note">{description}</div>
       </div>
@@ -413,7 +475,11 @@ function LensChooser({
             </div>
             <button
               type="button"
-              className="prism-composer-add-button"
+              className={
+                isInspect
+                  ? "text-[10px] text-theme-text-secondary hover:text-theme-text-primary transition-colors underline-offset-2 hover:underline shrink-0"
+                  : "prism-composer-add-button"
+              }
               onClick={() => onApplyLens(lens)}
             >
               {actionLabel}
@@ -546,6 +612,7 @@ export default function MetacanonLensComposerPage() {
   const [selectedCouncilPresetId, setSelectedCouncilPresetId] = useState("");
   const [activeSlot, setActiveSlot] = useState(1);
   const [lensSearch, setLensSearch] = useState("");
+  const [inspectLensId, setInspectLensId] = useState(null);
   const [dataset, setDataset] = useState(null);
   const [loading, setLoading] = useState(true);
   const [customShape, setCustomShape] = useState(null);
@@ -554,10 +621,24 @@ export default function MetacanonLensComposerPage() {
   );
   const [savedShapes, setSavedShapes] = useState([]);
   const [savedCouncils, setSavedCouncils] = useState([]);
+  const [customSubMode, setCustomSubMode] = useState(CUSTOM_SUB_MODES.COMPOSE);
+  const [previewModal, setPreviewModal] = useState({
+    open: false,
+    formattedContent: "",
+    suggestedTitle: "",
+  });
+  const [providerSlots, setProviderSlots] = useState([]);
+  const [shapeDialOpen, setShapeDialOpen] = useState(true);
 
   useEffect(() => {
     setSavedShapes(loadSavedShapes());
     setSavedCouncils(loadSavedCouncils());
+  }, []);
+
+  useEffect(() => {
+    System.prismProviderSlots()
+      .then(({ slots = [] }) => setProviderSlots(slots))
+      .catch((e) => console.warn("[LensComposer] Failed to load provider slots:", e.message));
   }, []);
 
   useEffect(() => {
@@ -814,6 +895,31 @@ export default function MetacanonLensComposerPage() {
     });
   }
 
+  function setShapeExecutionRoute(lensHandle, slotId) {
+    setCustomShape((current) => {
+      if (!current) return current;
+      const next = { ...(current.executionRoutes || {}) };
+      if (slotId) {
+        next[lensHandle] = [slotId];
+      } else {
+        delete next[lensHandle];
+      }
+      return { ...current, executionRoutes: next };
+    });
+  }
+
+  function setCouncilExecutionRoute(lensHandle, slotId) {
+    setCustomCouncil((current) => {
+      const next = { ...(current.executionRoutes || {}) };
+      if (slotId) {
+        next[lensHandle] = [slotId];
+      } else {
+        delete next[lensHandle];
+      }
+      return { ...current, executionRoutes: next };
+    });
+  }
+
   function autocompleteShape() {
     if (!customShape) return;
     const slots = buildShapeSlots(customShape, activeTemplate);
@@ -848,19 +954,41 @@ export default function MetacanonLensComposerPage() {
     }));
   }
 
-  function saveCurrentMix() {
+  async function saveCurrentMix() {
     if (!activeMix) return;
+
+    // Capture executionRoutes from the live mix before normalizing.
+    const liveExecutionRoutes =
+      activeMix.executionRoutes && typeof activeMix.executionRoutes === "object"
+        ? activeMix.executionRoutes
+        : {};
 
     if (activeMix.mode === "shape") {
       const next = saveShapeMix(activeMix);
       setSavedShapes(loadSavedShapes());
-      showToast(`${next?.name || "Shape"} saved locally.`, "success");
+      showToast(`${next?.name || "Shape"} saved.`, "success");
+      // Persist server-side; failures are non-blocking.
+      saveCustomConstellationToServer({
+        ...next,
+        kind: "custom-shape",
+        executionRoutes: liveExecutionRoutes,
+      }).catch((err) =>
+        console.warn("[LensComposer] Server-side constellation save failed:", err.message)
+      );
       return;
     }
 
     const next = saveCouncilMix(activeMix);
     setSavedCouncils(loadSavedCouncils());
-    showToast(`${next?.name || "Council"} saved locally.`, "success");
+    showToast(`${next?.name || "Council"} saved.`, "success");
+    // Persist server-side; failures are non-blocking.
+    saveCustomConstellationToServer({
+      ...next,
+      kind: "custom-council",
+      executionRoutes: liveExecutionRoutes,
+    }).catch((err) =>
+      console.warn("[LensComposer] Server-side constellation save failed:", err.message)
+    );
   }
 
   function clonePresetIntoCustom() {
@@ -918,24 +1046,15 @@ export default function MetacanonLensComposerPage() {
                 </Link>
               </div>
             </div>
-            <div className="prism-composer-hero-stats">
-              <div className="prism-composer-stat-card">
-                <div className="prism-composer-stat-eyebrow">Shapes</div>
-                <div className="prism-composer-stat-value">
-                  {shapeTemplates.length}
-                </div>
-                <div className="prism-composer-stat-copy">
-                  Fixed-size productivity formations with locked PM lenses.
-                </div>
+            <div className="prism-composer-hero-stats flex flex-wrap items-center gap-x-4 gap-y-1">
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-lg font-bold text-theme-text-primary">{shapeTemplates.length}</span>
+                <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-text-secondary">Shapes</span>
               </div>
-              <div className="prism-composer-stat-card">
-                <div className="prism-composer-stat-eyebrow">Councils</div>
-                <div className="prism-composer-stat-value">
-                  {dataset.councilPresets.length}
-                </div>
-                <div className="prism-composer-stat-copy">
-                  Reflective multi-lens councils you can inspect instantly.
-                </div>
+              <span className="text-theme-text-secondary opacity-40">|</span>
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-lg font-bold text-theme-text-primary">{dataset.councilPresets.length}</span>
+                <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-text-secondary">Councils</span>
               </div>
             </div>
           </section>
@@ -956,7 +1075,12 @@ export default function MetacanonLensComposerPage() {
             <ComposerSegmentedControl
               label="Build Mode"
               value={buildMode}
-              onChange={setBuildMode}
+              onChange={(value) => {
+                setBuildMode(value);
+                if (value === COMPOSER_BUILD_MODES.PRESETS) {
+                  setCustomSubMode(CUSTOM_SUB_MODES.COMPOSE);
+                }
+              }}
               options={[
                 { value: COMPOSER_BUILD_MODES.PRESETS, label: "Presets" },
                 {
@@ -965,47 +1089,86 @@ export default function MetacanonLensComposerPage() {
                 },
               ]}
             />
+            {buildMode === COMPOSER_BUILD_MODES.CUSTOM ? (
+              <ComposerSegmentedControl
+                label="Custom Mode"
+                value={customSubMode}
+                onChange={setCustomSubMode}
+                options={[
+                  { value: CUSTOM_SUB_MODES.COMPOSE, label: "Compose Mix" },
+                  { value: CUSTOM_SUB_MODES.CREATE, label: "Create New Lens" },
+                ]}
+              />
+            ) : null}
           </section>
 
           <section className="prism-composer-grid">
             <div className="prism-composer-column prism-composer-column--selectors">
-              <SelectorRail
-                title={
-                  family === COMPOSER_FAMILIES.SHAPES
-                    ? "Shape Dial"
-                    : "Council Dial"
-                }
-                subtitle={
-                  family === COMPOSER_FAMILIES.SHAPES
-                    ? "Pick the formation size first."
-                    : "Jump between preset councils without backing out."
-                }
-                items={selectorItems}
-                activeValue={
-                  family === COMPOSER_FAMILIES.SHAPES
-                    ? shapeId
-                    : selectedCouncilPresetId
-                }
-                onSelect={(value) => {
-                  if (family === COMPOSER_FAMILIES.SHAPES) {
-                    setShapeId(value);
-                    setActiveSlot(1);
-                  } else {
-                    setSelectedCouncilPresetId(value);
-                    setActiveSlot(1);
-                  }
-                }}
-                renderLabel={(item) => (
-                  <div className="prism-composer-rail-copy">
-                    <div className="prism-composer-rail-title">
-                      {item.label}
+              <div className="prism-composer-rail">
+                <button
+                  type="button"
+                  className="prism-composer-rail-header w-full text-left flex items-center justify-between"
+                  onClick={() => family === COMPOSER_FAMILIES.SHAPES && setShapeDialOpen((prev) => !prev)}
+                  aria-expanded={family !== COMPOSER_FAMILIES.SHAPES || shapeDialOpen}
+                >
+                  <div>
+                    <div className="prism-composer-rail-eyebrow">
+                      {family === COMPOSER_FAMILIES.SHAPES ? "Shape Dial" : "Council Dial"}
                     </div>
-                    <div className="prism-composer-rail-meta">
-                      {item.caption}
+                    <div className="prism-composer-rail-subtitle">
+                      {family === COMPOSER_FAMILIES.SHAPES
+                        ? "Pick the formation size first."
+                        : "Jump between preset councils without backing out."}
                     </div>
                   </div>
-                )}
-              />
+                  {family === COMPOSER_FAMILIES.SHAPES ? (
+                    <span className="ml-2 text-[10px] text-theme-text-secondary opacity-60 shrink-0">
+                      {shapeDialOpen ? "▲" : "▼"}
+                    </span>
+                  ) : null}
+                </button>
+                {(family !== COMPOSER_FAMILIES.SHAPES || shapeDialOpen) ? (
+                  <div className="prism-composer-rail-list">
+                    {selectorItems.map((item) => {
+                      const activeVal = family === COMPOSER_FAMILIES.SHAPES ? shapeId : selectedCouncilPresetId;
+                      const isSelected = activeVal === item.value;
+                      return (
+                        <button
+                          type="button"
+                          key={item.value}
+                          className={`prism-composer-rail-item ${isSelected ? "is-active" : ""}`}
+                          onClick={() => {
+                            if (family === COMPOSER_FAMILIES.SHAPES) {
+                              setShapeId(item.value);
+                              setActiveSlot(1);
+                            } else {
+                              setSelectedCouncilPresetId(item.value);
+                              setActiveSlot(1);
+                            }
+                          }}
+                        >
+                          <div className="prism-composer-rail-copy w-full">
+                            <div className="prism-composer-rail-title">{item.label}</div>
+                            <div className="prism-composer-rail-meta">{item.caption}</div>
+                            {isSelected && family === COMPOSER_FAMILIES.COUNCILS && buildMode === COMPOSER_BUILD_MODES.PRESETS ? (
+                              <button
+                                type="button"
+                                className="mt-1.5 text-[10px] text-theme-text-secondary hover:text-theme-text-primary transition-colors underline-offset-2 hover:underline"
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  clonePresetIntoCustom();
+                                }}
+                              >
+                                Use as starting point
+                              </button>
+                            ) : null}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                ) : null}
+              </div>
 
               {family === COMPOSER_FAMILIES.SHAPES &&
               buildMode === COMPOSER_BUILD_MODES.PRESETS ? (
@@ -1019,19 +1182,32 @@ export default function MetacanonLensComposerPage() {
                     setActiveSlot(1);
                   }}
                   renderLabel={(item) => (
-                    <div className="prism-composer-rail-copy">
+                    <div className="prism-composer-rail-copy w-full">
                       <div className="prism-composer-rail-title">
                         {item.label}
                       </div>
-                      <div className="prism-composer-rail-meta">
+                      <div className="prism-composer-rail-meta line-clamp-1 text-[11px]">
                         {item.caption}
                       </div>
+                      {item.value === selectedShapePresetId ? (
+                        <button
+                          type="button"
+                          className="mt-1.5 text-[10px] text-theme-text-secondary hover:text-theme-text-primary transition-colors underline-offset-2 hover:underline"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            clonePresetIntoCustom();
+                          }}
+                        >
+                          Use as starting point
+                        </button>
+                      ) : null}
                     </div>
                   )}
                 />
               ) : null}
 
-              {buildMode === COMPOSER_BUILD_MODES.CUSTOM ? (
+              {buildMode === COMPOSER_BUILD_MODES.CUSTOM &&
+              customSubMode === CUSTOM_SUB_MODES.COMPOSE ? (
                 <LensRoster
                   mix={activeMix}
                   template={activeTemplateForMix}
@@ -1043,6 +1219,13 @@ export default function MetacanonLensComposerPage() {
                       : removeCouncilLens
                   }
                   onMoveLens={moveCouncilLens}
+                  providerSlots={providerSlots}
+                  executionRoutes={activeMix?.executionRoutes || {}}
+                  onRouteChange={
+                    family === COMPOSER_FAMILIES.SHAPES
+                      ? setShapeExecutionRoute
+                      : setCouncilExecutionRoute
+                  }
                 />
               ) : null}
             </div>
@@ -1055,7 +1238,8 @@ export default function MetacanonLensComposerPage() {
                 onSelectSlot={setActiveSlot}
               />
 
-              {buildMode === COMPOSER_BUILD_MODES.CUSTOM ? (
+              {buildMode === COMPOSER_BUILD_MODES.CUSTOM &&
+              customSubMode === CUSTOM_SUB_MODES.COMPOSE ? (
                 <SavedMixes
                   title={
                     family === COMPOSER_FAMILIES.SHAPES
@@ -1097,36 +1281,12 @@ export default function MetacanonLensComposerPage() {
                       : "Save a council mix to keep it here."
                   }
                 />
-              ) : (
-                <div className="prism-composer-preset-summary prism-page-panel">
-                  <div className="prism-composer-panel-header">
-                    <div>
-                      <div className="prism-composer-panel-eyebrow">
-                        Preset View
-                      </div>
-                      <div className="prism-composer-panel-title">
-                        {activeMix.name}
-                      </div>
-                    </div>
-                    <div className="prism-composer-panel-note">
-                      {activeMix.statusLabel}
-                    </div>
-                  </div>
-                  <div className="prism-composer-preset-copy">
-                    {activeMix.description}
-                  </div>
-                  <button
-                    type="button"
-                    className="prism-composer-action"
-                    onClick={clonePresetIntoCustom}
-                  >
-                    Use as starting point
-                  </button>
-                </div>
-              )}
+              ) : null}
             </div>
 
             <div className="prism-composer-column prism-composer-column--actions">
+              {!(buildMode === COMPOSER_BUILD_MODES.CUSTOM &&
+                customSubMode === CUSTOM_SUB_MODES.CREATE) ? (
               <LensChooser
                 title={
                   buildMode === COMPOSER_BUILD_MODES.PRESETS
@@ -1158,12 +1318,14 @@ export default function MetacanonLensComposerPage() {
                       ? "Assign"
                       : "Add"
                 }
+                isInspect={buildMode === COMPOSER_BUILD_MODES.PRESETS}
                 onApplyLens={(lens) => {
                   if (buildMode === COMPOSER_BUILD_MODES.PRESETS) {
                     const slot = (activeMix.lenses || []).find(
                       (item) => item.handle === lens.handle
                     );
                     setActiveSlot(slot?.slot || 1);
+                    setInspectLensId(lens.id || null);
                     return;
                   }
 
@@ -1174,8 +1336,10 @@ export default function MetacanonLensComposerPage() {
                   }
                 }}
               />
+              ) : null}
 
-              {buildMode === COMPOSER_BUILD_MODES.CUSTOM ? (
+              {buildMode === COMPOSER_BUILD_MODES.CUSTOM &&
+              customSubMode === CUSTOM_SUB_MODES.COMPOSE ? (
                 <SaveMixPanel
                   mix={activeMix}
                   validation={validation}
@@ -1211,10 +1375,55 @@ export default function MetacanonLensComposerPage() {
                   canAutocomplete={family === COMPOSER_FAMILIES.SHAPES}
                 />
               ) : null}
+
+              {buildMode === COMPOSER_BUILD_MODES.CUSTOM &&
+              customSubMode === CUSTOM_SUB_MODES.CREATE ? (
+                <CustomLensCreatorPanel
+                  onRequestPreview={({ title, rawContent, formattedContent }) =>
+                    setPreviewModal({
+                      open: true,
+                      formattedContent,
+                      suggestedTitle: title,
+                    })
+                  }
+                />
+              ) : null}
             </div>
           </section>
         </div>
       </main>
+
+      <LensFormatPreviewModal
+        open={previewModal.open}
+        formattedContent={previewModal.formattedContent}
+        suggestedTitle={previewModal.suggestedTitle}
+        onClose={() =>
+          setPreviewModal((current) => ({ ...current, open: false }))
+        }
+        onLensCreated={() => {
+          setPreviewModal((current) => ({ ...current, open: false }));
+          // Refresh the dataset so the new lens appears immediately in LensChooser.
+          Promise.all([
+            fetchLibraryCollection("councils"),
+            fetchLibraryCollection("constellations"),
+            fetchLibraryCollection("lenses"),
+          ])
+            .then(([councils, constellations, lenses]) => {
+              setDataset(buildComposerDataset({ councils, constellations, lenses }));
+            })
+            .catch(() => {
+              // Non-fatal — user can refresh manually.
+            });
+        }}
+      />
+
+      <LensWorkbenchModal
+        open={!!inspectLensId}
+        lenses={dataset?.allLenses || []}
+        initialLensId={inspectLensId}
+        onClose={() => setInspectLensId(null)}
+        onSaved={() => setInspectLensId(null)}
+      />
     </div>
   );
 }

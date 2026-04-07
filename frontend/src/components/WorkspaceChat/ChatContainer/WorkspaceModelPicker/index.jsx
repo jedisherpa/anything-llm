@@ -48,6 +48,50 @@ function fetchModelName(slug, setModelName) {
   );
 }
 
+const DELIBERATION_LENSES = [
+  { letter: "W", name: "Watcher", routingKey: "watcher" },
+  { letter: "A", name: "Auditor", routingKey: "auditor" },
+  { letter: "S", name: "Synthesizer", routingKey: "synthesizer" },
+  { letter: "T", name: "Torus", routingKey: "torus" },
+  { letter: "P", name: "Prism", routingKey: "prism" },
+];
+
+/**
+ * Resolve the display model string for a single lens given:
+ * - lensRouting: map of routingKey → slotId | null
+ * - providerSlots: array of slot objects
+ * - workspaceModel: fallback model string
+ */
+function resolveLensModel(routingKey, lensRouting, providerSlots, workspaceModel) {
+  const slotId = lensRouting?.[routingKey];
+  if (!slotId) return workspaceModel;
+  const slot = providerSlots.find((s) => s.id === slotId && s.enabled);
+  if (!slot) return workspaceModel;
+  return slot.model || slot.provider || workspaceModel;
+}
+
+function DeliberationPills({ assignments = {}, fallbackModel = "" }) {
+  return (
+    <div className="metacanon-deliberation-pills flex items-center gap-x-0.5">
+      {DELIBERATION_LENSES.map(({ letter, name, routingKey }) => {
+        const model = humanizeModelName(assignments[routingKey] || fallbackModel);
+        return (
+          <span
+            key={letter}
+            title={`${name}: ${model || "—"}`}
+            className="metacanon-deliberation-pill"
+          >
+            <span className="metacanon-deliberation-pill__letter">{letter}</span>
+            <span className="metacanon-deliberation-pill__model">
+              {model}
+            </span>
+          </span>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function WorkspaceModelPicker({
   workspaceSlug = null,
   compact = false,
@@ -66,9 +110,30 @@ export default function WorkspaceModelPicker({
   } = useModal();
   const [config, setConfig] = useState({ settings: {}, provider: null });
   const [refreshKey, setRefreshKey] = useState(0);
+  const [lensRouting, setLensRouting] = useState({});
+  const [providerSlots, setProviderSlots] = useState([]);
   const displayName = humanizeModelName(modelName);
+
   // Fetch current model name for display
   useEffect(() => fetchModelName(slug, setModelName), [slug]);
+
+  // Fetch lens routing and provider slots on mount
+  useEffect(() => {
+    Promise.all([System.prismLensRouting(), System.prismProviderSlots()])
+      .then(([routingPayload, slotsPayload]) => {
+        setLensRouting(routingPayload?.routing || {});
+        setProviderSlots(slotsPayload?.slots || []);
+      })
+      .catch(() => {});
+  }, []);
+
+  // Build per-lens model assignments
+  const lensAssignments = Object.fromEntries(
+    DELIBERATION_LENSES.map(({ routingKey }) => [
+      routingKey,
+      resolveLensModel(routingKey, lensRouting, providerSlots, modelName),
+    ])
+  );
 
   // Close selector and refresh model name when model is saved
   useEffect(() => {
@@ -76,11 +141,20 @@ export default function WorkspaceModelPicker({
       setShowSelector(false);
       fetchModelName(slug, setModelName);
     }
+    function handlePreferenceSaved() {
+      fetchModelName(slug, setModelName);
+      Promise.all([System.prismLensRouting(), System.prismProviderSlots()])
+        .then(([routingPayload, slotsPayload]) => {
+          setLensRouting(routingPayload?.routing || {});
+          setProviderSlots(slotsPayload?.slots || []);
+        })
+        .catch(() => {});
+    }
     window.addEventListener(SAVE_LLM_SELECTOR_EVENT, handleSave);
-    window.addEventListener(LLM_PREFERENCE_SAVED_EVENT, handleSave);
+    window.addEventListener(LLM_PREFERENCE_SAVED_EVENT, handlePreferenceSaved);
     return () => {
       window.removeEventListener(SAVE_LLM_SELECTOR_EVENT, handleSave);
-      window.removeEventListener(LLM_PREFERENCE_SAVED_EVENT, handleSave);
+      window.removeEventListener(LLM_PREFERENCE_SAVED_EVENT, handlePreferenceSaved);
     };
   }, [slug]);
 
@@ -108,7 +182,7 @@ export default function WorkspaceModelPicker({
           onClick={() => setShowSelector(false)}
         />
       )}
-      <div className={`relative hidden md:block shrink-0 z-30 ${className}`}>
+      <div className={`relative hidden md:flex items-center gap-x-1.5 shrink-0 z-30 ${className}`}>
         <button
           type="button"
           onClick={() => setShowSelector(!showSelector)}
@@ -128,6 +202,11 @@ export default function WorkspaceModelPicker({
             <span aria-hidden="true">▾</span>
           </span>
         </button>
+
+        <DeliberationPills
+          assignments={lensAssignments}
+          fallbackModel={modelName}
+        />
 
         {showSelector && (
           <div className="metacanon-model-picker-panel absolute bottom-full left-0 mb-2 w-[620px] overflow-hidden rounded-[22px]">

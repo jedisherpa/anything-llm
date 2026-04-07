@@ -11,7 +11,7 @@ import {
   setActiveMetacanonAlignment,
 } from "@/utils/metacanonAlignment";
 import { openMetacanonChat } from "@/utils/metacanonLaunch";
-import { METACANON_TERMS } from "@/utils/metacanonTerminology";
+import { cleanPillName, METACANON_TERMS } from "@/utils/metacanonTerminology";
 import paths from "@/utils/paths";
 import showToast from "@/utils/toast";
 import { DotsSixVertical } from "@phosphor-icons/react/dist/csr/DotsSixVertical";
@@ -57,7 +57,7 @@ function buildPinnedAlignment(item = {}) {
   };
 }
 
-function PinnedConstellationRow({
+function PinnedConstellationPill({
   item,
   index = 0,
   active = false,
@@ -66,16 +66,7 @@ function PinnedConstellationRow({
   onRemove = () => {},
 }) {
   const alignment = buildPinnedAlignment(item);
-  const meta =
-    item.kind === "constellation"
-      ? "Preset Constellation"
-      : "Custom Constellation";
-  const description =
-    item.description?.trim() ||
-    alignment.description?.trim() ||
-    (item.kind === "constellation"
-      ? "Reusable preset constellation."
-      : `${item.lensHandles?.length || 0} lenses routed through custom constellation orchestration.`);
+  const title = cleanPillName(alignment.title);
 
   return (
     <Draggable draggableId={item.pinId} index={index}>
@@ -84,11 +75,10 @@ function PinnedConstellationRow({
           <div
             ref={provided.innerRef}
             {...provided.draggableProps}
+            {...provided.dragHandleProps}
             role="listitem"
             data-active={active ? "true" : "false"}
-            className={`metacanon-lens-card metacanon-constellation-card px-[12px] py-[8px] text-left transition-all duration-200 ${
-              snapshot.isDragging ? "opacity-70" : ""
-            }`}
+            className={`prism-sidebar-pill group ${snapshot.isDragging ? "opacity-70" : ""}`}
             style={{
               ...provided.draggableProps.style,
               "--lens-color": item.colorHex || "#d4a63e",
@@ -97,39 +87,21 @@ function PinnedConstellationRow({
             <button
               type="button"
               onClick={() => onToggle(alignment, active)}
-              className="w-full text-left"
+              className="prism-sidebar-pill__label"
             >
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <div className="metacanon-lens-card__meta text-[10px] font-semibold uppercase tracking-[0.16em]">
-                    {meta}
-                  </div>
-                  <div className="metacanon-lens-card__title mt-1 truncate text-[15px] leading-tight">
-                    {alignment.title}
-                  </div>
-                  <div className="metacanon-constellation-card__body mt-0.5 line-clamp-1 text-[11px] leading-5 text-theme-text-secondary">
-                    {description}
-                  </div>
-                </div>
-                {active ? (
-                  <div className="metacanon-lens-card__badge shrink-0 rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.14em]">
-                    Aligned
-                  </div>
-                ) : null}
-              </div>
+              <span
+                className="prism-sidebar-pill__drag"
+                aria-label={`Reorder ${title}`}
+                title="Drag to reorder"
+              >
+                <DotsSixVertical className="h-3 w-3" />
+              </span>
+              {title}
+              {active && (
+                <span className="prism-sidebar-pill__badge">Aligned</span>
+              )}
             </button>
-            <div className="prism-sidebar-card__actions mt-1.5">
-              <div className="prism-sidebar-card__action-group">
-                <div
-                  {...provided.dragHandleProps}
-                  aria-label={`Reorder ${alignment.title}`}
-                  title="Drag to reorder"
-                  className="prism-sidebar-chip cursor-grab select-none gap-1"
-                >
-                  <DotsSixVertical className="h-3.5 w-3.5" />
-                  Reorder
-                </div>
-              </div>
+            <div className="prism-sidebar-pill__actions">
               <button
                 type="button"
                 onClick={() => onOpenChat(alignment)}
@@ -249,14 +221,14 @@ export default function SidebarPinnedConstellations() {
       <div className="prism-sidebar-module__header">
         <div className="prism-sidebar-module__heading">
           <div className="metacanon-sidebar-section-label text-[11px] font-semibold uppercase">
-            Sidebar {METACANON_TERMS.constellations}
+            Shapes (Teams)
           </div>
           {visibleConstellations.length > 1 ? (
             <div className="prism-sidebar-module__hint">Drag to reorder</div>
           ) : null}
         </div>
         <Link
-          to={paths.metacanonAILibrary()}
+          to={paths.metacanonAIComposer()}
           className="prism-sidebar-module__link"
         >
           Manage
@@ -280,7 +252,7 @@ export default function SidebarPinnedConstellations() {
                     getAlignmentKey(alignment);
 
                   return (
-                    <PinnedConstellationRow
+                    <PinnedConstellationPill
                       key={item.pinId}
                       item={item}
                       index={index}
@@ -296,12 +268,7 @@ export default function SidebarPinnedConstellations() {
             )}
           </Droppable>
         </DragDropContext>
-      ) : (
-        <div className="prism-sidebar-empty">
-          Pin preset or custom constellations from the library to keep them
-          visible here.
-        </div>
-      )}
+      ) : null}
     </div>
   );
 }

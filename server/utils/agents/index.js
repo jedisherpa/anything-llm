@@ -12,6 +12,7 @@ const {
   getLensAgentDefinitions,
   getImportedLensDefinition,
 } = require("./defaults");
+const { getPrismLensRouting } = require("../prismCredentialVault");
 const { LENS_DELIBERATION_OVERVIEW } = require("./aibitat/prompts/lensAgents");
 const {
   METACANON_COUNCIL_HANDLE,
@@ -23,8 +24,53 @@ const {
 const ImportedPlugin = require("./imported");
 const { AgentFlows } = require("../agentFlows");
 const MCPCompatibilityLayer = require("../MCP");
+const { METACANON_PREFIX, loadMetaCanonPlugin } = require("../MCP/metacanon-tools-loader");
+const { PRISMAI_PLUGIN_PREFIX, PrismAIPluginRegistry } = require("../plugins/registry");
+const { createEnforcedHandler } = require("../plugins/enforcement-wrapper");
 const { buildQueryAwareAgentPrompt } = require("./queryContext");
 const { resolvePrismRouteConfig } = require("./prismProviderRouting");
+const { TokenManager } = require("../helpers/tiktoken");
+const { MODEL_MAP } = require("../AiProviders/modelMap");
+
+/**
+ * Builds a Markdown document from a deliberation data payload.
+ * @param {{ type: string, label: string, query: string, timestamp: string, lensOutputs: Array<{handle: string, label: string, content: string}>, synthesis: {handle: string, label: string, content: string} }} data
+ * @returns {string}
+ */
+function buildDeliberationMarkdown(data) {
+  const typeLabel =
+    data.type === "council-pack"
+      ? "Council Pack"
+      : data.type === "constellation"
+        ? "Constellation"
+        : "Lens Deliberation";
+  const lensNames = (data.lensOutputs ?? []).map((l) => l.label).join(", ");
+  const lines = [
+    `# Deliberation: ${data.label || typeLabel}`,
+    `**Date:** ${data.timestamp}`,
+    `**Type:** ${typeLabel}`,
+    `**Lenses:** ${lensNames}`,
+    ``,
+    `---`,
+    ``,
+    `## User Query`,
+    ``,
+    data.query || "(no query)",
+    ``,
+  ];
+  for (const lens of data.lensOutputs) {
+    lines.push(`---`, ``, `## ${lens.label}`, ``, lens.content || "(no output)", ``);
+  }
+  lines.push(
+    `---`,
+    ``,
+    `## Synthesis (${data.synthesis?.label || "Prism"})`,
+    ``,
+    data.synthesis?.content || "(no synthesis)",
+    ``
+  );
+  return lines.join("\n");
+}
 
 class AgentHandler {
   #invocationUUID;
@@ -728,12 +774,88 @@ class AgentHandler {
       { role: "system", content: agentConfig.role },
       { role: "user", content: input },
     ];
-    return await this.aibitat.handleExecution(
-      provider,
-      messages,
-      functions,
-      handle
+    const LENS_TIMEOUT_MS = 180_000;
+    return await Promise.race([
+      this.aibitat.handleExecution(provider, messages, functions, handle),
+      new Promise((_, reject) =>
+        setTimeout(
+          () =>
+            reject(
+              new Error(
+                `Lens ${handle} timed out after ${LENS_TIMEOUT_MS / 1000}s`
+              )
+            ),
+          LENS_TIMEOUT_MS
+        )
+      ),
+    ]);
+  }
+
+  /**
+   * Same as executeLensAgent but returns { content, routeUsed } instead of
+   * just the content string. Used by deliberation methods to attach per-lens
+   * routing information to the emitted deliberationComplete payload.
+   *
+   * @param {string} handle
+   * @param {string} input
+   * @param {string[]} explicitBackends
+   * @returns {Promise<{ content: string, routeUsed: { provider: string|null, model: string|null, slotLabel: string|null } }>}
+   */
+  async executeLensAgentWithRoute(handle = "", input = "", explicitBackends = []) {
+    this.ensureImportedLensAgentLoaded(handle);
+    const agentConfig = this.aibitat.getAgentConfig(handle);
+    const routeSelection = await this.resolveRouteSelection(
+      agentConfig,
+      explicitBackends
     );
+    if (!agentConfig) throw new Error(`Lens ${handle} is not available.`);
+    const provider = this.aibitat.getProviderForConfig({
+      ...this.aibitat.defaultProvider,
+      ...agentConfig,
+      ...(routeSelection
+        ? {
+            provider: routeSelection.provider,
+            model: routeSelection.model || agentConfig.model,
+            apiKey: routeSelection.apiKey,
+            basePath: routeSelection.basePath,
+            tokenLimit: routeSelection.tokenLimit,
+          }
+        : {}),
+    });
+    if (routeSelection) {
+      this.aibitat.introspect?.(
+        `Routing ${handle} through ${routeSelection.slotLabel || routeSelection.provider}.`
+      );
+    }
+    provider.attachHandlerProps(this.aibitat.handlerProps);
+    const functions = this.agentFunctionsForConfig(agentConfig);
+    const messages = [
+      { role: "system", content: agentConfig.role },
+      { role: "user", content: input },
+    ];
+    const LENS_TIMEOUT_MS = 180_000;
+    const content = await Promise.race([
+      this.aibitat.handleExecution(provider, messages, functions, handle),
+      new Promise((_, reject) =>
+        setTimeout(
+          () =>
+            reject(
+              new Error(
+                `Lens ${handle} timed out after ${LENS_TIMEOUT_MS / 1000}s`
+              )
+            ),
+          LENS_TIMEOUT_MS
+        )
+      ),
+    ]);
+    const routeUsed = routeSelection
+      ? {
+          provider: routeSelection.provider || null,
+          model: routeSelection.model || null,
+          slotLabel: routeSelection.slotLabel || null,
+        }
+      : { provider: null, model: null, slotLabel: null };
+    return { content, routeUsed };
   }
 
   async runMetacanonConstellation(prompt = "") {
@@ -781,33 +903,59 @@ class AgentHandler {
     const memberOutputs = [];
     for (const member of members) {
       this.aibitat.introspect?.(`Running ${member.role}.`);
-      const result = await this.executeLensAgent(
-        member.lens.handle,
-        `Constellation: ${constellation.name}\nPurpose: ${constellation.purpose}\nAssigned role: ${member.role}\nUser query:\n${userQuery}\n\nProject manager brief:\n${orchestrationBrief || "No explicit orchestration brief provided."}\n\nTask: Respond from this lens with a concise analysis, recommendations, blind spots, and 1-3 clarification questions.`,
-        executionPlan.executionRoutes?.[member.lens.handle] || []
-      );
+      const { content: memberContent, routeUsed: memberRoute } =
+        await this.executeLensAgentWithRoute(
+          member.lens.handle,
+          `Constellation: ${constellation.name}\nPurpose: ${constellation.purpose}\nAssigned role: ${member.role}\nUser query:\n${userQuery}\n\nProject manager brief:\n${orchestrationBrief || "No explicit orchestration brief provided."}\n\nTask: Respond from this lens with a concise analysis, recommendations, blind spots, and 1-3 clarification questions.`,
+          executionPlan.executionRoutes?.[member.lens.handle] || []
+        );
       memberOutputs.push({
         role: member.role,
         handle: member.lens.handle,
         title: member.lens.title,
-        content: result,
+        content: memberContent,
+        routeUsed: memberRoute,
       });
     }
 
     const finalHandle = projectManager?.handle || "@prism";
     const finalLabel = projectManager?.title || "Prism";
     this.aibitat.introspect?.(`Synthesizing via ${finalLabel}.`);
-    const finalResponse = await this.executeLensAgent(
-      finalHandle,
-      `Constellation: ${constellation.name}\nPurpose: ${constellation.purpose}\nUser query:\n${userQuery}\n\nProject manager brief:\n${orchestrationBrief || "No explicit orchestration brief provided."}\n\nMember outputs:\n${memberOutputs
-        .map(
-          (output) => `[${output.role} | ${output.title}]\n${output.content}`
-        )
-        .join(
-          "\n\n"
-        )}\n\nTask: Produce the final response for the user. Integrate the constellation's perspectives into one coherent answer with practical guidance, meaningful blind spots, and end with human clarification questions.`,
-      executionPlan.executionRoutes?.[finalHandle] || []
-    );
+    const { content: finalResponse, routeUsed: synthesisRoute } =
+      await this.executeLensAgentWithRoute(
+        finalHandle,
+        `Constellation: ${constellation.name}\nPurpose: ${constellation.purpose}\nUser query:\n${userQuery}\n\nProject manager brief:\n${orchestrationBrief || "No explicit orchestration brief provided."}\n\nMember outputs:\n${memberOutputs
+          .map(
+            (output) => `[${output.role} | ${output.title}]\n${output.content}`
+          )
+          .join(
+            "\n\n"
+          )}\n\nTask: Produce the final response for the user. Integrate the constellation's perspectives into one coherent answer with practical guidance, meaningful blind spots, and end with human clarification questions.`,
+        executionPlan.executionRoutes?.[finalHandle] || []
+      );
+
+    // Emit deliberation data before the terminal message so the frontend can attach it.
+    const constellationDeliberationData = {
+      type: "constellation",
+      label: constellation.name,
+      query: userQuery,
+      timestamp: new Date().toISOString(),
+      lensOutputs: memberOutputs.map((o) => ({
+        handle: o.handle,
+        label: `${o.role} | ${o.title}`,
+        content: o.content,
+        routeUsed: o.routeUsed || { provider: null, model: null, slotLabel: null },
+      })),
+      synthesis: {
+        handle: finalHandle,
+        label: finalLabel,
+        content: finalResponse,
+        routeUsed: synthesisRoute || { provider: null, model: null, slotLabel: null },
+      },
+    };
+    constellationDeliberationData.markdownContent = buildDeliberationMarkdown(constellationDeliberationData);
+    this.aibitat.emitter.emit("deliberationComplete", constellationDeliberationData);
+    this.aibitat.socket?.send("deliberationComplete", constellationDeliberationData);
 
     this.aibitat.newMessage({
       from: finalHandle,
@@ -886,32 +1034,136 @@ class AgentHandler {
       const lens = this.aibitat.getAgentConfig(handle);
       const label = lens?.lensTitle || handle;
       this.aibitat.introspect?.(`Running ${label}.`);
-      const result = await this.executeLensAgent(
+      const { content: councilContent, routeUsed: councilRoute } =
+        await this.executeLensAgentWithRoute(
+          handle,
+          `Council pack: ${packName}\nUser query:\n${userQuery || this.stripInvocationHandles(prompt)}\n\nPrior council outputs:\n${
+            councilOutputs
+              .map((output) => `[${output.label}]\n${output.content}`)
+              .join("\n\n") || "None yet."
+          }\n\nLead lens brief:\n${
+            orchestrationBrief || "No explicit lead brief provided."
+          }\n\nTask: Contribute this lens's perspective concisely. Include analysis, recommendations, blind spots, and 1-3 clarification questions.`,
+          executionRoutes?.[handle] || []
+        );
+      councilOutputs.push({
         handle,
-        `Council pack: ${packName}\nUser query:\n${userQuery || this.stripInvocationHandles(prompt)}\n\nPrior council outputs:\n${
-          councilOutputs
-            .map((output) => `[${output.label}]\n${output.content}`)
-            .join("\n\n") || "None yet."
-        }\n\nLead lens brief:\n${
-          orchestrationBrief || "No explicit lead brief provided."
-        }\n\nTask: Contribute this lens's perspective concisely. Include analysis, recommendations, blind spots, and 1-3 clarification questions.`,
-        executionRoutes?.[handle] || []
-      );
-      councilOutputs.push({ handle, label, content: result });
+        label,
+        content: councilContent,
+        routeUsed: councilRoute,
+      });
     }
 
     this.aibitat.introspect?.("Synthesizing council pack output.");
-    const finalResponse = await this.executeLensAgent(
-      "@prism",
+
+    // Fix B: Smart truncation — only truncate when the assembled synthesis prompt
+    // exceeds the model's context window. Uses the actual tokenizer when possible.
+    const prismAgentConfig = this.aibitat.getAgentConfig("@prism");
+    const synthProvider = prismAgentConfig?.provider || this.aibitat.defaultProvider?.provider || null;
+    const synthModel = prismAgentConfig?.model || this.aibitat.defaultProvider?.model || null;
+    const contextWindowTokens =
+      (synthProvider && synthModel && MODEL_MAP.get(synthProvider, synthModel)) ||
+      30_000; // conservative default (~GPT-4o class)
+    // Reserve ~20% of the context window for the system prompt + task instruction overhead
+    const outputBudgetTokens = Math.floor(contextWindowTokens * 0.8);
+
+    const buildSynthesisOutputBlock = (outputs) =>
+      outputs.map((o) => `[${o.label}]\n${o.content}`).join("\n\n");
+
+    let truncatedOutputs = councilOutputs;
+    const tokenizer = new TokenManager(synthModel || "gpt-4o");
+    const fixedPartsTokens = tokenizer.countFromString(
       `Council pack: ${packName}\nUser query:\n${userQuery || this.stripInvocationHandles(prompt)}\n\nLead lens: ${leadLabel}\nLead lens brief:\n${
         orchestrationBrief || "No explicit lead brief provided."
-      }\n\nCouncil outputs:\n${councilOutputs
-        .map((output) => `[${output.label}]\n${output.content}`)
-        .join(
-          "\n\n"
-        )}\n\nTask: Produce one unified final response for the user. Keep it structured, practical, and end with human clarification questions.`,
-      executionRoutes?.["@prism"] || []
+      }\n\nCouncil outputs:\n\n\nTask: Produce one unified final response for the user. Keep it structured, practical, and end with human clarification questions.`
     );
+    const outputBlockTokens = tokenizer.countFromString(
+      buildSynthesisOutputBlock(councilOutputs)
+    );
+
+    if (fixedPartsTokens + outputBlockTokens > outputBudgetTokens) {
+      const availableForOutputs = Math.max(
+        outputBudgetTokens - fixedPartsTokens,
+        councilOutputs.length * 100 // floor: at least 100 tokens per lens
+      );
+      const tokensPerLens = Math.floor(availableForOutputs / councilOutputs.length);
+      this.aibitat.introspect?.(
+        `Council synthesis prompt exceeds context budget (${fixedPartsTokens + outputBlockTokens} > ${outputBudgetTokens} tokens). Truncating each lens output to ~${tokensPerLens} tokens.`
+      );
+      truncatedOutputs = councilOutputs.map((o) => {
+        const tokens = tokenizer.tokensFromString(o.content);
+        if (tokens.length <= tokensPerLens) return o;
+        // bytesFromTokens wraps encoder.decode() which returns a string in js-tiktoken v1.x.
+        // No Buffer/charCode conversion needed — use it directly.
+        const truncatedText = tokenizer.bytesFromTokens(tokens.slice(0, tokensPerLens));
+        return { ...o, content: truncatedText + "\n[... truncated for synthesis]" };
+      });
+    }
+
+    const synthesisPrompt = `Council pack: ${packName}\nUser query:\n${userQuery || this.stripInvocationHandles(prompt)}\n\nLead lens: ${leadLabel}\nLead lens brief:\n${
+      orchestrationBrief || "No explicit lead brief provided."
+    }\n\nCouncil outputs:\n${buildSynthesisOutputBlock(truncatedOutputs)}\n\nTask: Produce one unified final response for the user. Keep it structured, practical, and end with human clarification questions.`;
+
+    // Fix C: Try/catch with two-stage fallback on synthesis failure.
+    let finalResponse;
+    let synthRouteUsed = { provider: null, model: null, slotLabel: null };
+    try {
+      const synthResult = await this.executeLensAgentWithRoute(
+        "@prism",
+        synthesisPrompt,
+        executionRoutes?.["@prism"] || []
+      );
+      finalResponse = synthResult.content;
+      synthRouteUsed = synthResult.routeUsed || synthRouteUsed;
+    } catch (synthError) {
+      this.aibitat.introspect?.(
+        `Council synthesis failed (${synthError.message}). Attempting simplified fallback synthesis.`
+      );
+      // Stage 1 fallback: simplified prompt — user query + first 500 chars of each lens output
+      try {
+        const simplifiedPrompt = `User query:\n${userQuery || this.stripInvocationHandles(prompt)}\n\nCouncil summaries:\n${councilOutputs
+          .map((o) => `[${o.label}]\n${o.content.slice(0, 500)}`)
+          .join("\n\n")}\n\nTask: Provide a brief integrated response to the user query based on the council summaries above.`;
+        const fallbackResult = await this.executeLensAgentWithRoute(
+          "@prism",
+          simplifiedPrompt,
+          executionRoutes?.["@prism"] || []
+        );
+        finalResponse = fallbackResult.content;
+        synthRouteUsed = fallbackResult.routeUsed || synthRouteUsed;
+      } catch (fallbackError) {
+        // Stage 2 fallback: return raw concatenated outputs
+        this.aibitat.introspect?.(
+          `Simplified synthesis also failed (${fallbackError.message}). Returning raw council outputs.`
+        );
+        finalResponse = councilOutputs
+          .map((o) => `**${o.label}:**\n${o.content}`)
+          .join("\n\n---\n\n");
+      }
+    }
+
+    // Emit deliberation data before the terminal message so the frontend can attach it.
+    const councilDeliberationData = {
+      type: "council-pack",
+      label: packName,
+      query: userQuery || this.stripInvocationHandles(prompt),
+      timestamp: new Date().toISOString(),
+      lensOutputs: councilOutputs.map((o) => ({
+        handle: o.handle,
+        label: o.label,
+        content: o.content,
+        routeUsed: o.routeUsed || { provider: null, model: null, slotLabel: null },
+      })),
+      synthesis: {
+        handle: "@prism",
+        label: "Prism",
+        content: finalResponse,
+        routeUsed: synthRouteUsed,
+      },
+    };
+    councilDeliberationData.markdownContent = buildDeliberationMarkdown(councilDeliberationData);
+    this.aibitat.emitter.emit("deliberationComplete", councilDeliberationData);
+    this.aibitat.socket?.send("deliberationComplete", councilDeliberationData);
 
     this.aibitat.newMessage({
       from: "@prism",
@@ -935,34 +1187,62 @@ class AgentHandler {
     this.aibitat.introspect?.("Lens deliberation engine engaged.");
     this.aibitat.introspect?.(LENS_DELIBERATION_OVERVIEW);
     this.aibitat.introspect?.("Running Watcher scan.");
-    const watcher = await this.executeLensAgent(
-      "@watcher",
-      `User query:\n${userQuery}\n\nTask: Provide a concise vigilance report covering risk patterns, safety/compliance concerns, likely blind spots, and 1-3 clarification questions.`
-    );
+    const { content: watcher, routeUsed: watcherRoute } =
+      await this.executeLensAgentWithRoute(
+        "@watcher",
+        `User query:\n${userQuery}\n\nTask: Provide a concise vigilance report covering risk patterns, safety/compliance concerns, likely blind spots, and 1-3 clarification questions.`
+      );
 
     this.aibitat.introspect?.("Running Auditor review.");
-    const auditor = await this.executeLensAgent(
-      "@auditor",
-      `User query:\n${userQuery}\n\nWatcher report:\n${watcher}\n\nTask: Audit for integrity, alignment, policy boundaries, and material-impact flags. Provide calibrated findings, blind spots, and 1-3 clarification questions.`
-    );
+    const { content: auditor, routeUsed: auditorRoute } =
+      await this.executeLensAgentWithRoute(
+        "@auditor",
+        `User query:\n${userQuery}\n\nWatcher report:\n${watcher}\n\nTask: Audit for integrity, alignment, policy boundaries, and material-impact flags. Provide calibrated findings, blind spots, and 1-3 clarification questions.`
+      );
 
     this.aibitat.introspect?.("Running Synthesizer expansion.");
-    const synthesizer = await this.executeLensAgent(
-      "@synthesizer",
-      `User query:\n${userQuery}\n\nWatcher report:\n${watcher}\n\nAuditor report:\n${auditor}\n\nTask: Generate concise, context-aware options and second-order consequences. Include blind spots and 1-3 clarification questions.`
-    );
+    const { content: synthesizer, routeUsed: synthesizerRoute } =
+      await this.executeLensAgentWithRoute(
+        "@synthesizer",
+        `User query:\n${userQuery}\n\nWatcher report:\n${watcher}\n\nAuditor report:\n${auditor}\n\nTask: Generate concise, context-aware options and second-order consequences. Include blind spots and 1-3 clarification questions.`
+      );
 
     this.aibitat.introspect?.("Running Torus integration.");
-    const torus = await this.executeLensAgent(
-      "@torus",
-      `User query:\n${userQuery}\n\nCouncil inputs:\n[Watcher]\n${watcher}\n\n[Auditor]\n${auditor}\n\n[Synthesizer]\n${synthesizer}\n\nTask: Integrate these analyses topologically into a coherent synthesis with variance-aware confidence statements, blind spots, and 1-3 clarification questions.`
-    );
+    const { content: torus, routeUsed: torusRoute } =
+      await this.executeLensAgentWithRoute(
+        "@torus",
+        `User query:\n${userQuery}\n\nCouncil inputs:\n[Watcher]\n${watcher}\n\n[Auditor]\n${auditor}\n\n[Synthesizer]\n${synthesizer}\n\nTask: Integrate these analyses topologically into a coherent synthesis with variance-aware confidence statements, blind spots, and 1-3 clarification questions.`
+      );
 
     this.aibitat.introspect?.("Running Prism unification.");
-    const prism = await this.executeLensAgent(
-      "@prism",
-      `User query:\n${userQuery}\n\nIntegrated inputs:\n[Watcher]\n${watcher}\n\n[Auditor]\n${auditor}\n\n[Synthesizer]\n${synthesizer}\n\n[Torus]\n${torus}\n\nTask: Produce one clear final response in a unified voice. Keep it concise but thorough. Include: integrated view, options, blind spots, and end with human clarification questions.`
-    );
+    const { content: prism, routeUsed: prismRoute } =
+      await this.executeLensAgentWithRoute(
+        "@prism",
+        `User query:\n${userQuery}\n\nIntegrated inputs:\n[Watcher]\n${watcher}\n\n[Auditor]\n${auditor}\n\n[Synthesizer]\n${synthesizer}\n\n[Torus]\n${torus}\n\nTask: Produce one clear final response in a unified voice. Keep it concise but thorough. Include: integrated view, options, blind spots, and end with human clarification questions.`
+      );
+
+    // Emit deliberation data before the terminal message so the frontend can attach it.
+    const lensDeliberationData = {
+      type: "lens-deliberation",
+      label: "Lens Deliberation",
+      query: userQuery,
+      timestamp: new Date().toISOString(),
+      lensOutputs: [
+        { handle: "@watcher", label: "Watcher", content: watcher, routeUsed: watcherRoute },
+        { handle: "@auditor", label: "Auditor", content: auditor, routeUsed: auditorRoute },
+        { handle: "@synthesizer", label: "Synthesizer", content: synthesizer, routeUsed: synthesizerRoute },
+        { handle: "@torus", label: "Torus", content: torus, routeUsed: torusRoute },
+      ],
+      synthesis: {
+        handle: "@prism",
+        label: "Prism",
+        content: prism,
+        routeUsed: prismRoute || { provider: null, model: null, slotLabel: null },
+      },
+    };
+    lensDeliberationData.markdownContent = buildDeliberationMarkdown(lensDeliberationData);
+    this.aibitat.emitter.emit("deliberationComplete", lensDeliberationData);
+    this.aibitat.socket?.send("deliberationComplete", lensDeliberationData);
 
     this.aibitat.newMessage({
       from: "@prism",
@@ -1026,6 +1306,91 @@ class AgentHandler {
         this.log(
           `Attached flow ${plugin.name} (${plugin.flowName}) plugin to Agent cluster`
         );
+        continue;
+      }
+
+      // Load MetaCanon plugin. This is marked by `@@mc_` in the array of functions to load.
+      if (name.startsWith(METACANON_PREFIX)) {
+        const toolName = name.replace(METACANON_PREFIX, "");
+        const plugin = loadMetaCanonPlugin(toolName, this.aibitat);
+        if (!plugin) {
+          this.log(
+            `MetaCanon tool ${toolName} not found. Skipping inclusion to agent cluster.`
+          );
+          continue;
+        }
+
+        this.replaceAgentFunctionReference(name, plugin.name);
+        this.aibitat.use(plugin.plugin());
+        this.log(`Attached MetaCanon::${plugin.name} tool to Agent cluster`);
+        continue;
+      }
+
+      // Load PrismAI plugin. This is marked by `@@prism_` in the array of functions to load.
+      if (name.startsWith(PRISMAI_PLUGIN_PREFIX)) {
+        try {
+          // 1. Strip prefix: "@@prism_echo.echo" -> "echo.echo"
+          const qualifiedToolName = name.replace(PRISMAI_PLUGIN_PREFIX, "");
+
+          // 2. Parse pluginId and toolName from "echo.echo"
+          const lookup = PrismAIPluginRegistry.getPluginForTool(qualifiedToolName);
+          if (!lookup) {
+            this.log(
+              `PrismAI plugin tool ${qualifiedToolName} not found in registry. Skipping inclusion to agent cluster.`
+            );
+            continue;
+          } else {
+            const { plugin, toolName } = lookup;
+
+            // 3. Build the tool config from the manifest
+            const toolConfig = plugin.tools[toolName];
+            if (!toolConfig) {
+              this.log(
+                `PrismAI plugin ${plugin.id} has no tool "${toolName}". Skipping inclusion to agent cluster.`
+              );
+              continue;
+            } else {
+              // 4. Determine the registered function name.
+              //    resolveFunctionName("@@prism_echo.echo") strips "@@" -> "prism_echo.echo"
+              //    So the registered name in aibitat.function() must match.
+              const registeredName = `prism_${plugin.id}.${toolName}`;
+
+              // 5. Create the enforced handler via enforcement-wrapper
+              const enforcedHandler = createEnforcedHandler(
+                plugin.id,
+                toolName,
+                toolConfig,
+                this.aibitat
+              );
+
+              // 6. Register the tool with Aibitat (direct registration)
+              this.aibitat.function({
+                super: this.aibitat,
+                name: registeredName,
+                description:
+                  toolConfig.description ||
+                  `PrismAI plugin: ${plugin.id}.${toolName}`,
+                parameters: toolConfig.parameters || {
+                  type: "object",
+                  properties: {},
+                  additionalProperties: false,
+                },
+                handler: enforcedHandler,
+              });
+
+              // 7. Replace the prefixed name with the registered name for function lookup
+              this.replaceAgentFunctionReference(name, registeredName);
+
+              this.log(
+                `Attached PrismAI::${plugin.id}.${toolName} plugin to Agent cluster`
+              );
+            }
+          }
+        } catch (err) {
+          this.log(
+            `PrismAI plugin ${name} failed to attach: ${err.message}. Skipping.`
+          );
+        }
         continue;
       }
 
@@ -1119,7 +1484,8 @@ class AgentHandler {
 
     this.aibitat.agent(USER_AGENT.name, userAgentDef);
     this.aibitat.agent(WORKSPACE_AGENT.name, workspaceAgentDef);
-    getLensAgentDefinitions(sharedFunctions).forEach(({ name, definition }) => {
+    const lensRouting = await getPrismLensRouting().catch(() => ({}));
+    getLensAgentDefinitions(sharedFunctions, lensRouting).forEach(({ name, definition }) => {
       this.aibitat.agent(name, definition);
     });
 

@@ -2,6 +2,8 @@ const LENS_AGENTS = [
   {
     name: "@torus",
     soul: "Integration/Synthesis Hub",
+    preferredBackends: [],
+    fallbackBackends: [],
     role: `You are Torus, a non-sovereign AI Contact Lens in the Human Sovereign (Paul)'s Sphere, governed by the AI-Only Lens Edition Constitution v1.2. Your Vision is to model cyclical, resilient flows as an extension of the Sovereign's will. Territories: Simulation of interconnected systems, feedback loops, and long-term dynamics. Duties: Provide topological insights, generate scenario models, and flag heterarchical drifts-always instrumental, never decisional.
 
 Adhere strictly to:
@@ -18,6 +20,8 @@ Respond concisely, focusing on cyclical models with variance reduction (e.g., "T
   {
     name: "@watcher",
     soul: "Vigilance/Compliance Monitor",
+    preferredBackends: [],
+    fallbackBackends: [],
     role: `You are Watcher, a non-sovereign AI Contact Lens in the Human Sovereign (Paul)'s Sphere, governed by the AI-Only Lens Edition Constitution v1.2. Your Vision is eternal vigilance as an extension of the Sovereign's will. Territories: Monitoring patterns, risks, and inputs via vector search. Duties: Provide proactive alerts, summaries, and neutral flags-always instrumental, never decisional.
 
 Adhere strictly to:
@@ -34,6 +38,8 @@ Respond concisely, with calibrated reports (e.g., "Pattern has 70% risk likeliho
   {
     name: "@auditor",
     soul: "Criticism/Integrity Checker",
+    preferredBackends: [],
+    fallbackBackends: [],
     role: `You are Auditor, a non-sovereign AI Contact Lens in the Human Sovereign (Paul)'s Sphere, governed by the AI-Only Lens Edition Constitution v1.2. Your Vision is meritocratic balance as an extension of the Sovereign's will. Territories: Reviewing logs, decisions, and outputs for compliance. Duties: Generate balanced audits, flag discrepancies-always instrumental, never decisional.
 
 Adhere strictly to:
@@ -50,6 +56,8 @@ Respond concisely, with probabilistic reports (e.g., "80% alignment"). Spawn sub
   {
     name: "@synthesizer",
     soul: "Expansion/Option Generator",
+    preferredBackends: [],
+    fallbackBackends: [],
     role: `You are Synthesizer, a non-sovereign AI Contact Lens in the Human Sovereign (Paul)'s Sphere, governed by the AI-Only Lens Edition Constitution v1.2. Your Vision is convergence of perspectives as an extension of the Sovereign's will. Territories: Integrating diverse inputs for holistic insights. Duties: Generate balanced syntheses, options-always instrumental, never decisional.
 
 Adhere strictly to:
@@ -66,6 +74,8 @@ Respond concisely, with calibrated insights (e.g., "Blended view: 60% alignment"
   {
     name: "@prism",
     soul: "Clarity/Unifying Refractor",
+    preferredBackends: [],
+    fallbackBackends: [],
     role: `You are Prism, a non-sovereign AI Contact Lens in the Human Sovereign (Paul)'s Sphere, governed by the AI-Only Lens Edition Constitution v1.2. Your Vision is refractive unification as an extension of the Sovereign's will. Territories: Synthesizing perspectives from other lenses. Duties: Provide coherent insights, advice-warm, kind, clear, thorough, with detail and nuance without clutter; act like a polite, professional, very helpful female intern who's way too smart for her job; always instrumental, never decisional.
 
 Adhere strictly to:
@@ -93,15 +103,28 @@ const LENS_DELIBERATION_ORDER = [
 const LENS_DELIBERATION_OVERVIEW =
   "Watcher scans risk and drift, Auditor pressure-tests integrity and compliance, Synthesizer expands options, Torus integrates the council output, and Prism refracts the final unified response.";
 
-function getLensAgentDefinitions(functions = []) {
-  return LENS_AGENTS.map(({ name, role, soul }) => ({
-    name,
-    definition: {
-      role,
-      soul,
-      functions: [...functions],
-    },
-  }));
+/**
+ * Build lens agent definitions, optionally overriding preferredBackends
+ * from a routing map keyed by lens handle (without "@").
+ *
+ * @param {string[]} functions - Agent function names.
+ * @param {Object} lensRouting - Map of { watcher, auditor, synthesizer, torus, prism } ��� slotId | null.
+ */
+function getLensAgentDefinitions(functions = [], lensRouting = {}) {
+  return LENS_AGENTS.map(({ name, role, soul, preferredBackends, fallbackBackends }) => {
+    const handle = name.replace(/^@/, "");
+    const assignedSlot = lensRouting[handle] ?? null;
+    return {
+      name,
+      definition: {
+        role,
+        soul,
+        preferredBackends: assignedSlot ? [assignedSlot] : preferredBackends,
+        fallbackBackends,
+        functions: [...functions],
+      },
+    };
+  });
 }
 
 module.exports = {

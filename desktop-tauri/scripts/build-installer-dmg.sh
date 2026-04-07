@@ -13,9 +13,15 @@ PRODUCT_NAME="$4"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 LOGO_PATH="$ROOT_DIR/desktop-tauri/app/prism-dodeca.png"
-BACKGROUND_TMP="$(mktemp /tmp/prismai-installer-background.XXXXXX.png)"
+# macOS BSD mktemp only replaces XXXXXX when it's at the end of the template,
+# so we generate bare tempfiles and append the desired extensions manually.
+BACKGROUND_TMP_BASE="$(mktemp /tmp/prismai-installer-background.XXXXXX)"
+BACKGROUND_TMP="${BACKGROUND_TMP_BASE}.png"
+mv "$BACKGROUND_TMP_BASE" "$BACKGROUND_TMP"
 STAGE_DIR="$(mktemp -d /tmp/prismai-dmg-stage.XXXXXX)"
-RW_DMG="$(mktemp /tmp/prismai-installer.XXXXXX.dmg)"
+RW_DMG_BASE="$(mktemp /tmp/prismai-installer.XXXXXX)"
+RW_DMG="${RW_DMG_BASE}.dmg"
+rm -f "$RW_DMG_BASE"
 CONVERT_BASE="$(mktemp /tmp/prismai-installer-final.XXXXXX)"
 DEVICE=""
 MOUNT_POINT=""
@@ -62,19 +68,31 @@ OSA
 
 persist_finder_layout() {
   local attempt=1
-  while [[ $attempt -le 3 ]]; do
-    apply_finder_layout
-    sync
+  local DS_STORE_TEMPLATE="$ROOT_DIR/desktop-tauri/packaging/installer-template.DS_Store"
 
-    if [[ -f "$MOUNT_POINT/.DS_Store" ]]; then
-      return 0
+  while [[ $attempt -le 3 ]]; do
+    if apply_finder_layout 2>/dev/null; then
+      sync
+      if [[ -f "$MOUNT_POINT/.DS_Store" ]]; then
+        return 0
+      fi
+    else
+      echo "Finder AppleScript failed on attempt $attempt (timeout or no GUI)." >&2
     fi
 
     sleep 2
     attempt=$((attempt + 1))
   done
 
-  echo "Finder did not persist the DMG layout metadata (.DS_Store missing)." >&2
+  # Fallback: use pre-built .DS_Store template if Finder is unavailable
+  if [[ -f "$DS_STORE_TEMPLATE" ]]; then
+    echo "Using pre-built .DS_Store template as fallback." >&2
+    cp "$DS_STORE_TEMPLATE" "$MOUNT_POINT/.DS_Store"
+    sync
+    return 0
+  fi
+
+  echo "Finder did not persist the DMG layout metadata and no template available." >&2
   exit 1
 }
 
@@ -87,7 +105,8 @@ cp "$BACKGROUND_TMP" "$STAGE_DIR/.background/installer-background.png"
 COPYFILE_DISABLE=1 tar -C "$(dirname "$APP_PATH")" -cf - "$(basename "$APP_PATH")" | (
   cd "$STAGE_DIR" && COPYFILE_DISABLE=1 tar -xf -
 )
-xattr -cr "$STAGE_DIR/$PRODUCT_NAME.app"
+# NOTE: do NOT run `xattr -cr` here — it strips the notarization ticket from
+# stapled app bundles and also causes hdiutil to fail with "Operation not permitted".
 ln -s /Applications "$STAGE_DIR/Applications"
 
 hdiutil create \

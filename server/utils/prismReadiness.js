@@ -340,7 +340,11 @@ async function getPrismReadiness({ workspaceSlug = null } = {}) {
 }
 
 function resolveEmbeddingDimensions(engine = "native", model = "") {
-  return EMBEDDING_DIMENSIONS?.[engine]?.[model] || null;
+  const dims = EMBEDDING_DIMENSIONS?.[engine]?.[model];
+  if (dims) return dims;
+  // Native embedders default to 384 dimensions if model is unrecognized
+  if (engine === "native") return 384;
+  return null;
 }
 
 module.exports = {

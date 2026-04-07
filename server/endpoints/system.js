@@ -73,10 +73,17 @@ const {
   savePrismProviderSlots,
   getPrismToolCredentials,
   savePrismToolCredentials,
+  getPrismLensRouting,
+  savePrismLensRouting,
 } = require("../utils/prismCredentialVault");
 const { PGVector } = require("../utils/vectorDbProviders/pgvector");
 
 const PRISM_SETUP_DRAFT_LABEL = "prism_setup_assistant_draft";
+
+// Cache for the governance verification result on the metacanon-status endpoint.
+// Computed once on the first request and reused thereafter to avoid synchronous
+// filesystem I/O on every status poll.
+let _cachedGovernanceResult = null;
 
 function systemEndpoints(app) {
   if (!app) return;
@@ -174,7 +181,15 @@ function systemEndpoints(app) {
           embeddingModel = "",
         } = reqBody(request);
 
-        if (!connectionString.trim()) {
+        let normalizedConnectionString = connectionString.trim();
+        if (
+          normalizedConnectionString &&
+          !normalizedConnectionString.includes("://")
+        ) {
+          normalizedConnectionString = `postgresql://${normalizedConnectionString}`;
+        }
+
+        if (!normalizedConnectionString) {
           response.status(400).json({
             success: false,
             error: "A PostgreSQL connection string is required.",
@@ -204,7 +219,7 @@ function systemEndpoints(app) {
         }
 
         const result = await PGVector.bootstrapConnection({
-          connectionString: connectionString.trim(),
+          connectionString: normalizedConnectionString,
           tableName: tableName.trim(),
           dimensions,
         });
@@ -375,6 +390,46 @@ function systemEndpoints(app) {
           success: false,
           credentials: [],
           error: error.message || "Failed to save Prism tool credentials.",
+        });
+      }
+    }
+  );
+
+  app.get(
+    "/system/prism/lens-routing",
+    [validatedRequest],
+    async (_, response) => {
+      try {
+        const routing = await getPrismLensRouting();
+        response.status(200).json({ routing });
+      } catch (error) {
+        console.error("Failed to fetch Prism lens routing.", error);
+        response.status(500).json({
+          routing: {},
+          error: error.message || "Failed to fetch Prism lens routing.",
+        });
+      }
+    }
+  );
+
+  app.post(
+    "/system/prism/lens-routing",
+    [validatedRequest],
+    async (request, response) => {
+      try {
+        const { routing = {} } = reqBody(request);
+        const result = await savePrismLensRouting(routing);
+        if (!result.success) {
+          response.status(400).json(result);
+          return;
+        }
+        response.status(200).json(result);
+      } catch (error) {
+        console.error("Failed to save Prism lens routing.", error);
+        response.status(500).json({
+          success: false,
+          routing: {},
+          error: error.message || "Failed to save Prism lens routing.",
         });
       }
     }
@@ -1910,6 +1965,97 @@ function systemEndpoints(app) {
         response.status(500).json({
           success: false,
           error: `Unable to connect to ${engine}. Please verify your connection details.`,
+        });
+      }
+    }
+  );
+
+  /**
+   * GET /api/system/metacanon-status
+   * Diagnostic endpoint — returns the initialization state of all Phase 0
+   * MetaCanon components. Admin-only.
+   */
+  app.get(
+    "/system/metacanon-status",
+    [validatedRequest, flexUserRoleValid([ROLES.admin])],
+    async (_request, response) => {
+      try {
+        const {
+          isRuntimeAvailable,
+        } = require("../utils/metacanon-runtime/bridge");
+        const {
+          verifyGovernanceDocuments,
+        } = require("../utils/metacanon-runtime/governance-check");
+        const {
+          getSphereThreadCoordinator,
+        } = require("../utils/metacanon-runtime/sphere-thread");
+        const {
+          getMetaCanonToolNames,
+        } = require("../utils/MCP/metacanon-tools-loader");
+        const {
+          isGenesisCompleted,
+        } = require("../utils/metacanon-runtime/auto-genesis");
+
+        const addonPath = path.resolve(
+          __dirname,
+          "../utils/metacanon-runtime/metacanon_ai.node"
+        );
+        const governanceDir = path.resolve(
+          __dirname,
+          "../data/metacanon/governance-documents/Governance_Documents"
+        );
+
+        const runtimeAvailable = isRuntimeAvailable();
+
+        // Governance documents — cached at module level to avoid sync FS I/O
+        // on every request. Computed once on the first call.
+        if (!_cachedGovernanceResult) {
+          _cachedGovernanceResult = verifyGovernanceDocuments(governanceDir);
+        }
+        const govResult = _cachedGovernanceResult;
+
+        // Sphere coordinator
+        const coordinator = getSphereThreadCoordinator();
+        const coordinatorInitialized = coordinator !== null;
+        const coordinatorRuntimeAvailable = coordinatorInitialized
+          ? coordinator.isRuntimeAvailable()
+          : false;
+
+        // MetaCanon tools
+        const toolNames = getMetaCanonToolNames();
+
+        response.status(200).json({
+          native_addon: {
+            available: runtimeAvailable,
+            path: addonPath,
+          },
+          governance_documents: {
+            verified: govResult.valid,
+            total_found: govResult.found,
+            missing: govResult.missing,
+            empty: govResult.empty,
+          },
+          auto_genesis: {
+            // Reflects whether genesis_rite actually completed successfully
+            // in this process lifetime (set by auto-genesis.js on success).
+            completed: isGenesisCompleted(),
+            genesis_hash: null,
+          },
+          sphere_coordinator: {
+            initialized: coordinatorInitialized,
+            runtime_available: coordinatorRuntimeAvailable,
+          },
+          metacanon_tools: {
+            available: toolNames.length > 0,
+            tool_count: toolNames.length,
+            tool_names: toolNames,
+          },
+        });
+      } catch (error) {
+        console.error("Error fetching MetaCanon status:", error);
+        response.status(500).json({
+          success: false,
+          error: `Failed to fetch MetaCanon status: ${error.message}`,
         });
       }
     }

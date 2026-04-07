@@ -12,6 +12,7 @@ import {
   setActiveMetacanonAlignment,
 } from "@/utils/metacanonAlignment";
 import {
+  cleanPillName,
   getCouncilUiTitle,
   METACANON_TERMS,
 } from "@/utils/metacanonTerminology";
@@ -47,7 +48,7 @@ function getCouncilChipLabel(council = {}) {
   return council.collectionLabel || METACANON_TERMS.councils;
 }
 
-function FeaturedCouncilRow({
+function FeaturedCouncilPill({
   council,
   active = false,
   onToggle = () => {},
@@ -55,24 +56,25 @@ function FeaturedCouncilRow({
   onRemove = () => {},
   onRename = async () => false,
 }) {
-  const title = council.title || getCouncilUiTitle(council);
+  const rawTitle = council.title || getCouncilUiTitle(council);
+  const title = cleanPillName(rawTitle);
   const [showRenameModal, setShowRenameModal] = useState(false);
-  const [nextName, setNextName] = useState(title);
+  const [nextName, setNextName] = useState(rawTitle);
   const [renaming, setRenaming] = useState(false);
   const isCustomCouncil =
     council.kind !== "council" && !!(council.sourceId || council.id);
 
   useEffect(() => {
     if (showRenameModal) {
-      setNextName(title);
+      setNextName(rawTitle);
     }
-  }, [showRenameModal, title]);
+  }, [showRenameModal, rawTitle]);
 
   async function handleRename(event) {
     event?.preventDefault?.();
     const name = nextName.trim();
     if (!name) return;
-    if (name === title) {
+    if (name === rawTitle) {
       setShowRenameModal(false);
       return;
     }
@@ -88,40 +90,21 @@ function FeaturedCouncilRow({
   return (
     <>
       <PrismHoverTarget targetId={`sidebar-council-${council.featureId}`}>
-        <div className="prism-sidebar-card px-[12px] py-[10px] text-left transition-all duration-200">
+        <div
+          className="prism-sidebar-pill group"
+          data-active={active ? "true" : "false"}
+        >
           <button
             type="button"
             onClick={() => onToggle(council, active)}
-            className="w-full text-left"
+            className="prism-sidebar-pill__label"
           >
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <div className="prism-sidebar-card__eyebrow">
-                  {council.kind === "council"
-                    ? "Canonical Council"
-                    : "Custom Council"}
-                </div>
-                <div className="prism-sidebar-card__title mt-1 truncate">
-                  {title}
-                </div>
-                <div className="prism-sidebar-card__body mt-1">
-                  {council.description ||
-                    `${council.lensHandles?.length || 0} lenses routed through council-pack orchestration.`}
-                </div>
-              </div>
-              {active ? (
-                <div className="prism-sidebar-chip prism-sidebar-chip--active shrink-0">
-                  Aligned
-                </div>
-              ) : null}
-            </div>
+            {title}
+            {active && (
+              <span className="prism-sidebar-pill__badge">Aligned</span>
+            )}
           </button>
-          <div className="prism-sidebar-card__actions">
-            <div className="prism-sidebar-card__action-group">
-              <div className="prism-sidebar-chip prism-sidebar-chip--ghost">
-                {getCouncilChipLabel(council)}
-              </div>
-            </div>
+          <div className="prism-sidebar-pill__actions">
             {isCustomCouncil ? (
               <button
                 type="button"
@@ -156,7 +139,7 @@ function FeaturedCouncilRow({
               Rename Custom Council
             </div>
             <div className="mt-2 text-lg font-semibold text-theme-text-primary">
-              Update the council name shown in Featured Councils
+              Update the council name shown in Councils
             </div>
             <div className="mt-2 text-sm leading-6 text-theme-text-secondary">
               Choose the name people will recognize in the sidebar and library.
@@ -304,7 +287,7 @@ export default function SidebarFeaturedCouncils() {
       <div className="prism-sidebar-module__header">
         <div className="prism-sidebar-module__heading">
           <div className="metacanon-sidebar-section-label text-[11px] font-semibold uppercase">
-            Featured {METACANON_TERMS.councils}
+            Councils
           </div>
         </div>
         <Link
@@ -322,7 +305,7 @@ export default function SidebarFeaturedCouncils() {
               activeAlignment?.id === alignment.id &&
               activeAlignment?.collectionLabel === alignment.collectionLabel;
             return (
-              <FeaturedCouncilRow
+              <FeaturedCouncilPill
                 key={council.featureId}
                 council={council}
                 active={active}
@@ -334,11 +317,7 @@ export default function SidebarFeaturedCouncils() {
             );
           })}
         </div>
-      ) : (
-        <div className="prism-sidebar-empty">
-          Add canonical or custom councils from the library to keep them here.
-        </div>
-      )}
+      ) : null}
     </div>
   );
 }

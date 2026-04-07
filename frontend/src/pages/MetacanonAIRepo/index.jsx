@@ -207,15 +207,15 @@ function buildDiffRows(previousText = "", nextText = "") {
 
 function ShellPanel({ title, eyebrow = null, actions = null, children }) {
   return (
-    <section className="rounded-[22px] border border-theme-sidebar-border bg-theme-bg-sidebar px-5 py-5 shadow-[0_12px_36px_rgba(0,0,0,0.18)]">
-      <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+    <section className="rounded-[10px] border border-theme-sidebar-border bg-theme-bg-sidebar px-3 py-3">
+      <div className="mb-3 flex flex-col gap-2 lg:flex-row lg:items-start lg:justify-between">
         <div className="flex flex-col gap-1">
           {eyebrow ? (
             <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-theme-primary-button">
               {eyebrow}
             </div>
           ) : null}
-          <h2 className="text-lg font-semibold text-theme-text-primary">
+          <h2 className="text-sm font-semibold text-theme-text-primary">
             {title}
           </h2>
         </div>
@@ -239,7 +239,7 @@ function RepoEntryRow({
       <button
         type="button"
         onClick={onClick}
-        className={`flex w-full items-center gap-3 rounded-[16px] border px-3 py-3 text-left transition-all duration-150 ${
+        className={`flex w-full items-center gap-3 rounded-[10px] border px-3 py-2 text-left transition-all duration-150 ${
           active
             ? "border-theme-primary-button bg-theme-sidebar-footer-icon"
             : "border-theme-sidebar-border bg-theme-bg-container hover:border-theme-primary-button/50"
@@ -348,12 +348,12 @@ function DiffPanel({ originalContent, draftContent }) {
       }
     >
       {!changed ? (
-        <div className="rounded-[18px] border border-theme-sidebar-border bg-theme-bg-container px-4 py-5 text-sm leading-7 text-theme-text-secondary">
+        <div className="rounded-[10px] border border-theme-sidebar-border bg-theme-bg-container px-3 py-3 text-xs leading-5 text-theme-text-secondary">
           No unsaved changes yet. Once you edit the buffer, this panel will show
           the exact before/after line changes.
         </div>
       ) : (
-        <div className="max-h-[420px] overflow-auto rounded-[18px] border border-theme-sidebar-border bg-[#0F0F0F]">
+        <div className="max-h-[420px] overflow-auto rounded-[10px] border border-theme-sidebar-border bg-[#0F0F0F]">
           <div className="grid grid-cols-[42px_56px_56px_minmax(0,1fr)] border-b border-white/5 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/40">
             <span>op</span>
             <span>old</span>
@@ -549,48 +549,45 @@ export default function MetacanonAIRepoPage() {
         style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
         className="relative h-full w-full overflow-y-scroll bg-theme-bg-secondary p-4 md:my-[16px] md:mx-[16px] md:rounded-[16px] md:p-0"
       >
-        <div className="flex w-full flex-col gap-6 px-1 py-20 md:px-6 md:py-6">
-          <section className="rounded-[24px] border border-theme-sidebar-border bg-theme-bg-sidebar px-6 py-6 shadow-[0_16px_48px_rgba(0,0,0,0.18)]">
-            <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
-              <div className="flex items-start gap-4">
-                <MetacanonMark />
-                <div className="flex flex-col gap-2">
+        <div className="flex w-full flex-col gap-4 px-1 py-6 md:px-6 md:py-6">
+          <section className="rounded-[10px] border border-theme-sidebar-border bg-theme-bg-sidebar px-4 py-3">
+            <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+              <div className="flex items-start gap-3">
+                <MetacanonMark className="h-8 w-8" />
+                <div className="flex flex-col gap-1">
                   <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-theme-primary-button">
                     PrismAI
                   </div>
-                  <h1 className="text-2xl font-semibold text-theme-text-primary md:text-[32px]">
+                  <h1 className="text-base font-semibold text-theme-text-primary">
                     Repo Lab
                   </h1>
-                  <p className="max-w-3xl text-sm leading-7 text-theme-text-secondary md:text-base">
-                    Browse the fork, inspect exact file contents, edit them by
-                    hand, and review a line-by-line diff before saving. This is
-                    the local collaboration surface for surgical UI and code
-                    changes.
+                  <p className="max-w-3xl text-xs leading-5 text-theme-text-secondary">
+                    Browse the fork, inspect files, edit by hand, and review a line-by-line diff before saving.
                   </p>
                 </div>
               </div>
-              <div className="grid gap-3 md:min-w-[420px] md:grid-cols-3">
-                <div className="rounded-[18px] border border-theme-sidebar-border bg-theme-bg-container px-4 py-4">
+              <div className="grid gap-2 md:min-w-[360px] md:grid-cols-3">
+                <div className="rounded-[10px] border border-theme-sidebar-border bg-theme-bg-container px-3 py-2">
                   <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-text-secondary">
                     Repo Root
                   </div>
-                  <div className="mt-2 text-sm font-semibold text-theme-text-primary break-all">
+                  <div className="mt-1 text-xs font-semibold text-theme-text-primary break-all">
                     {repoInfo?.root || "Loading..."}
                   </div>
                 </div>
-                <div className="rounded-[18px] border border-theme-sidebar-border bg-theme-bg-container px-4 py-4">
+                <div className="rounded-[10px] border border-theme-sidebar-border bg-theme-bg-container px-3 py-2">
                   <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-text-secondary">
                     Indexed Files
                   </div>
-                  <div className="mt-2 text-2xl font-semibold text-theme-text-primary">
+                  <div className="mt-1 text-base font-semibold text-theme-text-primary">
                     {fileIndex.length}
                   </div>
                 </div>
-                <div className="rounded-[18px] border border-theme-sidebar-border bg-theme-bg-container px-4 py-4">
+                <div className="rounded-[10px] border border-theme-sidebar-border bg-theme-bg-container px-3 py-2">
                   <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-theme-text-secondary">
                     Current File
                   </div>
-                  <div className="mt-2 text-sm font-semibold text-theme-text-primary">
+                  <div className="mt-1 text-xs font-semibold text-theme-text-primary">
                     {selectedPath ? basename(selectedPath) : "None selected"}
                   </div>
                 </div>
@@ -598,8 +595,8 @@ export default function MetacanonAIRepoPage() {
             </div>
           </section>
 
-          <div className="grid gap-6 xl:grid-cols-[340px_minmax(0,1fr)]">
-            <div className="flex flex-col gap-6">
+          <div className="grid gap-4 xl:grid-cols-[340px_minmax(0,1fr)]">
+            <div className="flex flex-col gap-4">
               <ShellPanel
                 eyebrow="Browse"
                 title="Navigator"
@@ -620,7 +617,7 @@ export default function MetacanonAIRepoPage() {
                     value={searchQuery}
                     onChange={(event) => setSearchQuery(event.target.value)}
                     placeholder="frontend/src/pages/..."
-                    className="w-full rounded-[14px] border border-theme-sidebar-border bg-theme-bg-container px-4 py-3 text-sm text-theme-text-primary outline-none transition-all focus:border-theme-primary-button"
+                    className="w-full rounded-[10px] border border-theme-sidebar-border bg-theme-bg-container px-3 py-2 text-sm text-theme-text-primary outline-none transition-all focus:border-theme-primary-button"
                   />
                   <label className="pt-2 text-xs font-semibold uppercase tracking-[0.18em] text-theme-text-secondary">
                     Open exact path
@@ -633,12 +630,12 @@ export default function MetacanonAIRepoPage() {
                         if (event.key === "Enter") jumpToPath();
                       }}
                       placeholder="frontend/src/main.jsx"
-                      className="w-full rounded-[14px] border border-theme-sidebar-border bg-theme-bg-container px-4 py-3 text-sm text-theme-text-primary outline-none transition-all focus:border-theme-primary-button"
+                      className="w-full rounded-[10px] border border-theme-sidebar-border bg-theme-bg-container px-3 py-2 text-sm text-theme-text-primary outline-none transition-all focus:border-theme-primary-button"
                     />
                     <button
                       type="button"
                       onClick={jumpToPath}
-                      className="rounded-[14px] border border-theme-primary-button bg-theme-sidebar-footer-icon px-4 py-3 text-xs font-semibold uppercase tracking-[0.16em] text-theme-text-primary"
+                      className="rounded-[10px] border border-theme-primary-button bg-theme-sidebar-footer-icon px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-theme-text-primary"
                     >
                       Open
                     </button>
@@ -669,12 +666,12 @@ export default function MetacanonAIRepoPage() {
                         />
                       ))
                     ) : (
-                      <div className="rounded-[18px] border border-theme-sidebar-border bg-theme-bg-container px-4 py-5 text-sm leading-7 text-theme-text-secondary">
+                      <div className="rounded-[10px] border border-theme-sidebar-border bg-theme-bg-container px-3 py-3 text-xs leading-5 text-theme-text-secondary">
                         No files matched that search.
                       </div>
                     )
                   ) : loading.directory ? (
-                    <div className="rounded-[18px] border border-theme-sidebar-border bg-theme-bg-container px-4 py-5 text-sm leading-7 text-theme-text-secondary">
+                    <div className="rounded-[10px] border border-theme-sidebar-border bg-theme-bg-container px-3 py-3 text-xs leading-5 text-theme-text-secondary">
                       Loading directory...
                     </div>
                   ) : (
@@ -710,7 +707,7 @@ export default function MetacanonAIRepoPage() {
               </ShellPanel>
             </div>
 
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-4">
               <ShellPanel
                 eyebrow="Inspect and edit"
                 title={selectedPath || "Select a file to begin"}
@@ -725,7 +722,7 @@ export default function MetacanonAIRepoPage() {
                           );
                           showToast("Absolute path copied.", "success");
                         }}
-                        className="rounded-full border border-theme-sidebar-border px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-theme-text-secondary hover:border-theme-primary-button hover:text-theme-text-primary"
+                        className="rounded-full border border-theme-sidebar-border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-theme-text-secondary hover:border-theme-primary-button hover:text-theme-text-primary"
                       >
                         Copy path
                       </button>
@@ -734,7 +731,7 @@ export default function MetacanonAIRepoPage() {
                       <button
                         type="button"
                         onClick={() => openFile(selectedPath, { force: true })}
-                        className="rounded-full border border-theme-sidebar-border px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-theme-text-secondary hover:border-theme-primary-button hover:text-theme-text-primary"
+                        className="rounded-full border border-theme-sidebar-border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-theme-text-secondary hover:border-theme-primary-button hover:text-theme-text-primary"
                       >
                         Reload
                       </button>
@@ -743,7 +740,7 @@ export default function MetacanonAIRepoPage() {
                       type="button"
                       disabled={!dirty}
                       onClick={() => setDraftContent(originalContent)}
-                      className="rounded-full border border-theme-sidebar-border px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-theme-text-secondary disabled:cursor-not-allowed disabled:opacity-40 hover:border-theme-primary-button hover:text-theme-text-primary"
+                      className="rounded-full border border-theme-sidebar-border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-theme-text-secondary disabled:cursor-not-allowed disabled:opacity-40 hover:border-theme-primary-button hover:text-theme-text-primary"
                     >
                       Revert
                     </button>
@@ -751,7 +748,7 @@ export default function MetacanonAIRepoPage() {
                       type="button"
                       disabled={!dirty || !selectedPath || loading.save}
                       onClick={saveFile}
-                      className="rounded-full border border-theme-primary-button bg-theme-sidebar-footer-icon px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-theme-text-primary disabled:cursor-not-allowed disabled:opacity-40"
+                      className="rounded-full border border-theme-primary-button bg-theme-sidebar-footer-icon px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-theme-text-primary disabled:cursor-not-allowed disabled:opacity-40"
                     >
                       {loading.save ? "Saving..." : "Save file"}
                     </button>
@@ -759,18 +756,18 @@ export default function MetacanonAIRepoPage() {
                 }
               >
                 {!selectedFile ? (
-                  <div className="rounded-[18px] border border-theme-sidebar-border bg-theme-bg-container px-4 py-5 text-sm leading-7 text-theme-text-secondary">
+                  <div className="rounded-[10px] border border-theme-sidebar-border bg-theme-bg-container px-3 py-3 text-xs leading-5 text-theme-text-secondary">
                     Pick a file from the navigator to inspect it. The editor
                     always shows the exact text from disk, and the diff panel
                     below will show each unsaved change line by line.
                   </div>
                 ) : selectedFile.isBinary ? (
-                  <div className="rounded-[18px] border border-theme-sidebar-border bg-theme-bg-container px-4 py-5 text-sm leading-7 text-theme-text-secondary">
+                  <div className="rounded-[10px] border border-theme-sidebar-border bg-theme-bg-container px-3 py-3 text-xs leading-5 text-theme-text-secondary">
                     This file looks binary, so Repo Lab will not open it in the
                     editor.
                   </div>
                 ) : selectedFile.tooLarge ? (
-                  <div className="rounded-[18px] border border-theme-sidebar-border bg-theme-bg-container px-4 py-5 text-sm leading-7 text-theme-text-secondary">
+                  <div className="rounded-[10px] border border-theme-sidebar-border bg-theme-bg-container px-3 py-3 text-xs leading-5 text-theme-text-secondary">
                     This file is {formatBytes(selectedFile.size)}, which is over
                     the Repo Lab text limit of{" "}
                     {formatBytes(selectedFile.maxTextFileBytes)}.

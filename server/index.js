@@ -156,3 +156,93 @@ app.all("*", function (_, response) {
 // In non-https mode we need to boot at the end since the server has not yet
 // started and is `.listen`ing.
 if (!process.env.ENABLE_HTTPS) bootHTTP(app, process.env.SERVER_PORT || 3001);
+
+// Phase 0: MetaCanon startup sequence — runs concurrently with server boot.
+// Order: governance check → auto-genesis → sphere coordinator → tools log.
+(async () => {
+  const { isRuntimeAvailable } = require("./utils/metacanon-runtime/bridge");
+  const {
+    verifyGovernanceDocuments,
+  } = require("./utils/metacanon-runtime/governance-check");
+  // Note: path is already required at module scope above — no shadowed re-require needed.
+  const GOVERNANCE_DOCS_DIR = path.resolve(
+    __dirname,
+    "data/metacanon/governance-documents/Governance_Documents"
+  );
+
+  // [MetaCanon] — native addon status
+  if (isRuntimeAvailable()) {
+    console.log("[MetaCanon] Native addon loaded successfully.");
+  } else {
+    console.warn(
+      "[MetaCanon] Native addon unavailable — MetaCanon features disabled. " +
+        "Run 'npm run build:native' in ffi-node to enable."
+    );
+  }
+
+  // [Governance] — verify documents before attempting genesis
+  const govResult = verifyGovernanceDocuments(GOVERNANCE_DOCS_DIR);
+  if (govResult.valid) {
+    console.log(
+      `[Governance] Verification passed: ${govResult.found}/${govResult.total} documents found and valid`
+    );
+  } else {
+    console.warn(
+      `[Governance] Verification failed: ${govResult.found}/${govResult.total} documents valid. ` +
+        `Missing: [${govResult.missing.join(", ")}] Empty: [${govResult.empty.join(", ")}]`
+    );
+  }
+
+  // [AutoGenesis] — only run if governance verified
+  const { autoGenesis } = require("./utils/metacanon-runtime/auto-genesis");
+  if (govResult.valid) {
+    await autoGenesis().catch((err) =>
+      console.error("[AutoGenesis]", err.message)
+    );
+  } else {
+    console.warn(
+      "[AutoGenesis] Skipped — governance verification did not pass."
+    );
+  }
+
+  // [Sphere] — initialize coordinator singleton
+  const {
+    getSphereThreadCoordinator,
+  } = require("./utils/metacanon-runtime/sphere-thread");
+  const coordinator = getSphereThreadCoordinator();
+  console.log(
+    `[Sphere] Coordinator initialized. Runtime available: ${coordinator.isRuntimeAvailable()}`
+  );
+
+  // [Tools] — log registered MetaCanon tool count
+  // Wrapped in try/catch so a loader failure still produces a visible warning
+  // rather than silently swallowing the error.
+  try {
+    const {
+      getMetaCanonToolNames,
+    } = require("./utils/MCP/metacanon-tools-loader");
+    const toolNames = getMetaCanonToolNames();
+    console.log(`[Tools] Registered ${toolNames.length} MetaCanon tools`);
+  } catch (err) {
+    console.warn(`[Tools] Failed to load MetaCanon tool names: ${err.message}`);
+  }
+
+  // [Plugins] — discover and validate PrismAI plugins
+  try {
+    const {
+      PrismAIPluginRegistry,
+    } = require("./utils/plugins/registry");
+    // Note: plugins may not be available for the first few hundred ms after startup (async discovery).
+    const results = await PrismAIPluginRegistry.discoverAndValidate();
+    const enabled = results.filter(
+      (r) => r.state === "VALID" || r.state === "HEALTHY"
+    ).length;
+    console.log(
+      `[Plugins] Discovered ${results.length} PrismAI plugin(s) (${enabled} enabled)`
+    );
+  } catch (err) {
+    console.warn(`[Plugins] Plugin discovery failed: ${err.message}`);
+  }
+})().catch((err) =>
+  console.error("[MetaCanon] Startup sequence error:", err.message)
+);

@@ -3,14 +3,129 @@ import { CaretDown } from "@phosphor-icons/react/dist/csr/CaretDown";
 
 import AgentAnimation from "@/media/animations/agent-animation.webm";
 import AgentStatic from "@/media/animations/agent-static.png";
+import DeliberationViewerModal from "@/components/Metacanon/DeliberationViewerModal";
+
+const RUNNING_AGENT_RE = /^Running (.+)\.$/;
+
+/**
+ * Extract a clean agent name from a "Running {name}." message.
+ * Strips a leading "The " prefix per the Human Sovereign decision.
+ * Returns null if the message does not match the pattern.
+ */
+function parseAgentName(content = "") {
+  const match = String(content || "").match(RUNNING_AGENT_RE);
+  if (!match) return null;
+  return match[1].replace(/^The /, "");
+}
+
+/**
+ * A single agent pill. Two visual states: "running" (shimmer) and "done" (muted gold).
+ * When an onClick handler is provided the pill becomes interactive.
+ * Optionally renders a small slot-label badge and a tooltip.
+ *
+ * @param {{ name: string, state: string, onClick?: Function, badge?: string|null, tooltip?: string|null }} props
+ */
+function AgentPill({ name, state, onClick, badge, tooltip }) {
+  const stateClass =
+    state === "running"
+      ? "metacanon-agent-pill metacanon-agent-pill--running"
+      : "metacanon-agent-pill metacanon-agent-pill--done";
+  const isClickable = typeof onClick === "function";
+  return (
+    <span
+      className={`inline-flex items-center gap-x-1 text-[10px] px-2.5 py-1 rounded-full ${stateClass} ${isClickable ? "hover:opacity-80 transition-opacity" : ""}`}
+      style={{ cursor: isClickable ? "pointer" : "default" }}
+      title={tooltip || undefined}
+      onClick={isClickable ? onClick : undefined}
+      role={isClickable ? "button" : undefined}
+      tabIndex={isClickable ? 0 : undefined}
+      onKeyDown={
+        isClickable
+          ? (e) => { if (e.key === "Enter" || e.key === " ") onClick(e); }
+          : undefined
+      }
+    >
+      {name}
+      {badge && (
+        <span className="inline-flex items-center rounded-full bg-white/10 light:bg-slate-200 px-1.5 py-0 text-[8px] font-semibold uppercase tracking-wide opacity-80">
+          {badge}
+        </span>
+      )}
+    </span>
+  );
+}
+
+/**
+ * Look up the routeUsed for a pill name in deliberationData.lensOutputs.
+ * Returns { slotLabel, provider, model } or null if not found / no routeUsed.
+ */
+function findRouteUsedForPill(pillName = "", deliberationData = null) {
+  if (!deliberationData?.lensOutputs?.length) return null;
+  const normalized = pillName.toLowerCase();
+  for (const lens of deliberationData.lensOutputs) {
+    const label = (lens.label || "").toLowerCase();
+    if (label.includes(normalized) || normalized.includes(label)) {
+      return lens.routeUsed || null;
+    }
+  }
+  return null;
+}
+
+/**
+ * Partition a message list into plain-text messages and agent pill descriptors.
+ * Agent pill messages are those matching "Running {name}.".
+ * The last pill is "running" when isThinking is true; all others are "done".
+ */
+function partitionMessages(messages = [], isThinking = false) {
+  const textMessages = [];
+  const pills = [];
+
+  messages.forEach((msg) => {
+    const agentName = parseAgentName(msg.content);
+    if (agentName) {
+      pills.push({ name: agentName, uuid: msg.uuid });
+    } else {
+      textMessages.push(msg);
+    }
+  });
+
+  return {
+    textMessages,
+    pills: pills.map((pill, index) => ({
+      ...pill,
+      state:
+        isThinking && index === pills.length - 1 ? "running" : "done",
+    })),
+  };
+}
+
+/**
+ * Match a pill name to a lens in deliberationData.lensOutputs using
+ * case-insensitive substring matching.
+ */
+function findLensKeyForPill(pillName = "", deliberationData = null) {
+  if (!deliberationData?.lensOutputs?.length) return null;
+  const normalized = pillName.toLowerCase();
+  const lenses = deliberationData.lensOutputs;
+  for (let i = 0; i < lenses.length; i++) {
+    const label = (lenses[i].label || "").toLowerCase();
+    if (label.includes(normalized) || normalized.includes(label)) {
+      return `lens-${i}`;
+    }
+  }
+  return null;
+}
 
 export default function StatusResponse({
   messages = [],
   isThinking = false,
   onExecuteSessionAction = null,
+  deliberationData = null,
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [pendingAction, setPendingAction] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalInitialKey, setModalInitialKey] = useState(null);
   const currentThought = messages[messages.length - 1];
   const previousThoughts = messages.slice(0, -1);
   const canResolveApproval =
@@ -18,9 +133,25 @@ export default function StatusResponse({
     Boolean(currentThought?.pendingActionId) &&
     typeof onExecuteSessionAction === "function";
 
+  // Partition ALL messages (previous + current) for the expanded view.
+  const { textMessages: allTextMessages, pills: allPills } = partitionMessages(
+    messages,
+    isThinking
+  );
+
+  // For the collapsed single-line view, use only the current thought.
+  const currentAgentName = parseAgentName(currentThought?.content);
+
   function handleExpandClick() {
     if (!previousThoughts.length > 0) return;
     setIsExpanded(!isExpanded);
+  }
+
+  function handlePillClick(pillName) {
+    if (!deliberationData) return;
+    const key = findLensKeyForPill(pillName, deliberationData);
+    setModalInitialKey(key || (deliberationData?.lensOutputs?.length > 0 ? "lens-0" : null));
+    setModalOpen(true);
   }
 
   async function handleApprovalAction(action) {
@@ -47,6 +178,7 @@ export default function StatusResponse({
   }
 
   return (
+    <>
     <div
       className="flex justify-center w-full pr-4"
       data-testid="status-response"
@@ -57,7 +189,6 @@ export default function StatusResponse({
             onClick={handleExpandClick}
             style={{
               transition: "all 0.1s ease-in-out",
-              borderRadius: "16px",
             }}
             className="metacanon-status-thought relative p-4"
           >
@@ -107,25 +238,65 @@ export default function StatusResponse({
             <div
               className={`ml-[28px] mr-[26px] transition-[max-height] duration-300 ease-in-out origin-top ${isExpanded ? "" : "overflow-hidden max-h-[18px]"}`}
             >
-              <div className="text-zinc-200 light:text-slate-800 font-mono text-sm leading-[18px]">
-                {!isExpanded ? (
-                  <span className="block w-full truncate">
-                    {currentThought.content}
-                  </span>
-                ) : (
-                  <>
-                    {previousThoughts.map((thought, index) => (
-                      <div
-                        key={`cot-${thought.uuid || index}`}
-                        className="mb-2"
-                      >
-                        {thought.content}
-                      </div>
-                    ))}
-                    <div>{currentThought.content}</div>
-                  </>
-                )}
-              </div>
+              {!isExpanded ? (
+                /* Collapsed: single-line preview */
+                <div className="text-zinc-200 light:text-slate-800 font-mono text-sm leading-[18px]">
+                  {currentAgentName ? (() => {
+                    const route = findRouteUsedForPill(currentAgentName, deliberationData);
+                    const badge = route?.slotLabel || null;
+                    const tooltip = badge
+                      ? `${route.model || route.provider || "model"} via ${badge}`
+                      : null;
+                    return (
+                      <AgentPill
+                        name={currentAgentName}
+                        state={isThinking ? "running" : "done"}
+                        onClick={deliberationData ? () => handlePillClick(currentAgentName) : undefined}
+                        badge={badge}
+                        tooltip={tooltip}
+                      />
+                    );
+                  })() : (
+                    <span className="block w-full truncate">
+                      {currentThought?.content}
+                    </span>
+                  )}
+                </div>
+              ) : (
+                /* Expanded: text messages above, pill row below */
+                <div className="space-y-1">
+                  {allTextMessages.length > 0 && (
+                    <div className="text-zinc-200 light:text-slate-800 font-mono text-sm leading-[18px] space-y-1">
+                      {allTextMessages.map((msg, index) => (
+                        <div key={`text-${msg.uuid || index}`}>
+                          {msg.content}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {allPills.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {allPills.map((pill, index) => {
+                        const route = findRouteUsedForPill(pill.name, deliberationData);
+                        const badge = route?.slotLabel || null;
+                        const tooltip = badge
+                          ? `${route.model || route.provider || "model"} via ${badge}`
+                          : null;
+                        return (
+                          <AgentPill
+                            key={`pill-${pill.uuid || index}`}
+                            name={pill.name}
+                            state={pill.state}
+                            onClick={deliberationData ? () => handlePillClick(pill.name) : undefined}
+                            badge={badge}
+                            tooltip={tooltip}
+                          />
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              )}
               {canResolveApproval ? (
                 <div className="mt-3 flex gap-2">
                   <button
@@ -159,5 +330,13 @@ export default function StatusResponse({
         </div>
       </div>
     </div>
+    {modalOpen && deliberationData && (
+      <DeliberationViewerModal
+        deliberationData={deliberationData}
+        initialSelectedKey={modalInitialKey}
+        onClose={() => setModalOpen(false)}
+      />
+    )}
+    </>
   );
 }

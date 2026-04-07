@@ -164,7 +164,7 @@ export default function ThreadContainer({
           activeIdx={activeThreadIdx}
           isActive={true}
           workspace={workspace}
-          thread={{ slug: null, name: "*New Thread", virtual: true }}
+          thread={{ slug: null, name: "+ new", virtual: true }}
           hasNext={false}
         />
       )}
@@ -198,32 +198,32 @@ function NewThreadButton({ workspace }) {
   return (
     <button
       onClick={onClick}
-      className="metacanon-thread-new relative mt-2 flex h-[38px] w-full items-center rounded-[12px] border-none"
+      className="metacanon-thread-new relative mt-2 flex h-[28px] w-full items-center rounded-[10px] border-none"
     >
       <div className="flex w-full gap-x-2 items-center pl-4">
-        <div className="bg-transparent p-2 rounded-lg h-[24px] w-[24px] flex items-center justify-center">
+        <div className="bg-transparent p-1 rounded-lg h-[20px] w-[20px] flex items-center justify-center">
           {loading ? (
             <CircleNotch
               weight="bold"
-              size={14}
+              size={11}
               className="shrink-0 animate-spin text-[var(--gold)]"
             />
           ) : (
             <Plus
               weight="bold"
-              size={14}
+              size={11}
               className="shrink-0 text-theme-text-secondary"
             />
           )}
         </div>
 
         {loading ? (
-          <p className="text-left text-theme-text-primary text-sm">
+          <p className="text-left text-theme-text-primary text-[11px]">
             Starting Thread...
           </p>
         ) : (
-          <p className="text-left text-theme-text-secondary text-sm font-medium">
-            New Thread
+          <p className="text-left text-theme-text-secondary text-[11px] font-medium">
+            + new
           </p>
         )}
       </div>

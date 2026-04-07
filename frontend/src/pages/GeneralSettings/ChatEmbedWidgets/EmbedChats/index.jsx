@@ -135,11 +135,10 @@ export default function EmbedChatsView() {
 
   return (
     <div className="flex flex-col w-full p-4 overflow-none">
-      <div className="w-full flex flex-col gap-y-1">
+      <div className="prism-settings-page-header">
+        <div className="prism-page-section-label">Configuration</div>
         <div className="flex flex-wrap gap-4 items-center">
-          <p className="text-lg leading-6 font-bold text-theme-text-primary">
-            {t("embed-chats.title")}
-          </p>
+          <p className="prism-settings-page-title">{t("embed-chats.title")}</p>
           <div className="relative">
             <button
               ref={openMenuButton}
@@ -173,9 +172,7 @@ export default function EmbedChatsView() {
             </div>
           </div>
         </div>
-        <p className="text-xs leading-[18px] font-base text-theme-text-secondary mt-2">
-          {t("embed-chats.description")}
-        </p>
+        <p className="prism-settings-page-description">{t("embed-chats.description")}</p>
       </div>
       <div className="overflow-x-auto mt-6">
         <table className="prism-data-table w-full text-xs text-left rounded-lg min-w-[640px] border-spacing-0">

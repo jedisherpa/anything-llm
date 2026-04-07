@@ -116,7 +116,10 @@ const System = {
         embeddingModel,
       }),
     })
-      .then(safeJsonParse)
+      .then((res) => {
+        if (!res.ok) return res.json().then((data) => ({ success: false, ...data }));
+        return res.json();
+      })
       .catch((error) => ({
         success: false,
         error: error.message || "Failed to bootstrap pgvector.",
@@ -760,6 +763,43 @@ const System = {
       .catch((e) => {
         console.error(e);
         return { success: false, credentials: [], error: e.message };
+      });
+  },
+  prismLensRouting: async function () {
+    return fetch(`${API_BASE}/system/prism/lens-routing`, {
+      method: "GET",
+      headers: baseHeaders(),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(
+            res.statusText || "Error fetching Prism lens routing."
+          );
+        }
+        return res.json();
+      })
+      .catch((e) => {
+        console.error(e);
+        return { routing: {}, error: e.message };
+      });
+  },
+  updatePrismLensRouting: async function (routing = {}) {
+    return fetch(`${API_BASE}/system/prism/lens-routing`, {
+      method: "POST",
+      headers: baseHeaders(),
+      body: JSON.stringify({ routing }),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(
+            res.statusText || "Error saving Prism lens routing."
+          );
+        }
+        return res.json();
+      })
+      .catch((e) => {
+        console.error(e);
+        return { success: false, routing: {}, error: e.message };
       });
   },
   customModels: async function (

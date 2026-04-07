@@ -1,4 +1,5 @@
 import { safeJsonParse } from "@/utils/request";
+import { metacanonLibrarySummary } from "@/data/metacanon/summary.generated";
 
 export const ACTIVE_METACANON_ALIGNMENT =
   "anythingllm_active_metacanon_alignment";
@@ -321,4 +322,130 @@ export function buildExplicitMetacanonInvocation(handle = "") {
     return `/constellation ${normalizedHandle}`;
   }
   return `/lens ${normalizedHandle}`;
+}
+
+// ---------------------------------------------------------------------------
+// Display-time cleanup — does NOT mutate stored data.
+// Applied only when rendering user messages in the chat history.
+// ---------------------------------------------------------------------------
+
+/**
+ * Humanize a raw mc handle like "@mc-direct-response-board-direct-response-master"
+ * into "Direct Response Master".  We try the summary library first so the
+ * real display title is used; otherwise we fall back to stripping the prefix
+ * and title-casing the remainder.
+ */
+function _humanizeHandle(rawHandle = "") {
+  // Use the statically imported summary to look up the real display title.
+  if (metacanonLibrarySummary?.featuredLenses) {
+    const match = metacanonLibrarySummary.featuredLenses.find(
+      (l) => l.handle === rawHandle
+    );
+    if (match?.displayTitle || match?.title) {
+      const title = match.displayTitle || match.title;
+      // Strip leading "The " for brevity in the bubble label.
+      return title.replace(/^The\s+/i, "");
+    }
+  }
+
+  // Generic fallback: strip "@mc-" or "@constellation-" prefix, replace hyphens, title-case.
+  const stripped = rawHandle
+    .replace(/^@mc-/, "")
+    .replace(/^@constellation-/, "")
+    .replace(/-/g, " ");
+
+  return stripped
+    .split(" ")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
+
+const ANCHORING_BOILERPLATE =
+  /Continue the existing thread using this alignment\.\s*\nStay anchored to the ongoing conversation instead of describing the alignment on its own\./;
+
+/**
+ * Extract only the user's actual follow-up text from an anchored prompt block.
+ * Returns null if no follow-up block is found.
+ */
+function _extractFollowUp(text = "") {
+  const marker = "Current user follow-up:";
+  const idx = text.indexOf(marker);
+  if (idx === -1) return null;
+  return text.slice(idx + marker.length).trim();
+}
+
+/**
+ * formatPromptForDisplay(rawPrompt) → human-readable display string.
+ *
+ * Converts internal alignment invocation strings into clean labels.
+ * The raw prompt is NEVER modified — this is display-only.
+ *
+ * Handled patterns:
+ *   /lens @mc-<handle> <rest>          → "Aligned with <Title>: <rest>"
+ *   /constellation @constellation-<x>  → "Constellation <Title>: <rest>"
+ *   /agent <rest>                       → "Agent: <rest>"
+ *   @council\nPack: <name>\n...\nUser query:\n<q>  → "Council (<name>): <q>"
+ *
+ * For anchored follow-ups the function extracts only the "Current user follow-up:" block.
+ * Unrecognized prompts are returned unchanged.
+ */
+export function formatPromptForDisplay(rawPrompt = "") {
+  const text = String(rawPrompt || "").trim();
+  if (!text) return text;
+
+  // --- /lens pattern -------------------------------------------------------
+  const lensMatch = text.match(/^\/lens\s+(@mc-[\w-]+)\s*([\s\S]*)$/);
+  if (lensMatch) {
+    const handle = lensMatch[1];
+    let rest = lensMatch[2].trim();
+    // Strip anchoring boilerplate if present.
+    rest = rest.replace(ANCHORING_BOILERPLATE, "").trim();
+    // If the rest contains a follow-up block, use only that.
+    const followUp = _extractFollowUp(rest);
+    const userText = followUp !== null ? followUp : rest;
+    const title = _humanizeHandle(handle);
+    return userText
+      ? `Aligned with ${title}: ${userText}`
+      : `Aligned with ${title}`;
+  }
+
+  // --- /constellation pattern ----------------------------------------------
+  const constellationMatch = text.match(
+    /^\/constellation\s+(@constellation-[\w-]+)\s*([\s\S]*)$/
+  );
+  if (constellationMatch) {
+    const handle = constellationMatch[1];
+    let rest = constellationMatch[2].trim();
+    rest = rest.replace(ANCHORING_BOILERPLATE, "").trim();
+    const followUp = _extractFollowUp(rest);
+    const userText = followUp !== null ? followUp : rest;
+    const title = _humanizeHandle(handle);
+    return userText
+      ? `Constellation ${title}: ${userText}`
+      : `Constellation ${title}`;
+  }
+
+  // --- /agent pattern ------------------------------------------------------
+  const agentMatch = text.match(/^\/agent\s+([\s\S]+)$/);
+  if (agentMatch) {
+    return `Agent: ${agentMatch[1].trim()}`;
+  }
+
+  // --- @council block -------------------------------------------------------
+  if (text.startsWith("@council")) {
+    const packMatch = text.match(/^@council\s*\nPack:\s*(.+)/m);
+    const packName = packMatch ? packMatch[1].trim() : "Council";
+    const userQueryMarker = "User query:";
+    const queryIdx = text.indexOf(userQueryMarker);
+    const userQuery =
+      queryIdx !== -1
+        ? text.slice(queryIdx + userQueryMarker.length).trim()
+        : "";
+    return userQuery
+      ? `Council (${packName}): ${userQuery}`
+      : `Council (${packName})`;
+  }
+
+  // Unrecognized — return as-is.
+  return text;
 }

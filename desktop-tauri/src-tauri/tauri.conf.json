@@ -9,7 +9,7 @@
   },
   "package": {
     "productName": "PrismAI",
-    "version": "0.1.0"
+    "version": "0.3.1"
   },
   "tauri": {
     "allowlist": {
@@ -21,7 +21,7 @@
       "active": true,
       "category": "Productivity",
       "copyright": "MIT",
-      "identifier": "com.sovereign.anythingllm.desktop",
+      "identifier": "com.sovereign.prismai.desktop",
       "targets": "all",
       "resources": [
         "../runtime"

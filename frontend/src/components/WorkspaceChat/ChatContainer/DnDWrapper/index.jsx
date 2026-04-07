@@ -430,7 +430,7 @@ export function DnDFileUploaderProvider({
 
 export default function DnDFileUploaderWrapper({ children }) {
   const { onDrop, dragging, setDragging } = useContext(DndUploaderContext);
-  const { getRootProps, getInputProps, open, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps, open } = useDropzone({
     onDrop: (acceptedFiles, rejections, event) => {
       setDragging(false);
       onDrop(acceptedFiles, rejections, event);
@@ -438,14 +438,9 @@ export default function DnDFileUploaderWrapper({ children }) {
     noClick: true,
     noKeyboard: true,
     onDragEnter: () => setDragging(true),
-    onDragLeave: () => setDragging(false),
     onDropAccepted: () => setDragging(false),
     onDropRejected: () => setDragging(false),
   });
-
-  useEffect(() => {
-    setDragging(isDragActive);
-  }, [isDragActive, setDragging]);
 
   useEffect(() => {
     function handleOpenAttachmentPicker() {
@@ -464,17 +459,36 @@ export default function DnDFileUploaderWrapper({ children }) {
   }, [open]);
 
   useEffect(() => {
+    // Watchdog: while a file is dragged over the window, `dragover` fires
+    // continuously (~60fps). If it stops firing the cursor has left the window.
+    // A 150ms timeout auto-dismisses the overlay in that case.
+    // This approach is reliable in both Chrome and Tauri/WKWebView because it
+    // does not depend on `dragleave`, which WKWebView handles inconsistently.
+    let dragOverTimeout = null;
+
+    function handleDragOver() {
+      if (dragOverTimeout) clearTimeout(dragOverTimeout);
+      dragOverTimeout = setTimeout(() => {
+        setDragging(false);
+      }, 150);
+    }
+
     function handleWindowDrop() {
+      if (dragOverTimeout) clearTimeout(dragOverTimeout);
       setDragging(false);
     }
 
     function handleWindowDragEnd() {
+      if (dragOverTimeout) clearTimeout(dragOverTimeout);
       setDragging(false);
     }
 
+    document.addEventListener("dragover", handleDragOver);
     window.addEventListener("drop", handleWindowDrop);
     window.addEventListener("dragend", handleWindowDragEnd);
     return () => {
+      if (dragOverTimeout) clearTimeout(dragOverTimeout);
+      document.removeEventListener("dragover", handleDragOver);
       window.removeEventListener("drop", handleWindowDrop);
       window.removeEventListener("dragend", handleWindowDragEnd);
     };

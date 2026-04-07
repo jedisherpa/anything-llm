@@ -152,7 +152,7 @@ function GuidanceCard({ title, body, status = null, actions = [] }) {
               className={[
                 "rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] transition",
                 action.variant === "primary"
-                  ? "bg-theme-primary-button text-black hover:opacity-90"
+                  ? "bg-theme-primary-button text-white hover:opacity-90"
                   : "border border-theme-sidebar-border text-theme-text-primary hover:border-theme-primary-button hover:text-theme-primary-button",
               ].join(" ")}
             >
@@ -207,13 +207,17 @@ function buildInitialState(settings = {}) {
     pgConnectionString: settings?.PGVectorConnectionString || "",
     pgTableName: settings?.PGVectorTableName || DEFAULT_PGVECTOR_TABLE,
     embedder: settings?.EmbeddingEngine || "native",
-    embeddingModel: settings?.EmbeddingModelPref || OPENAI_EMBEDDING_MODELS[1],
+    embeddingModel:
+      (settings?.EmbeddingEngine || "native") === "native"
+        ? (settings?.EmbeddingModelPref || "Xenova/all-MiniLM-L6-v2")
+        : (settings?.EmbeddingModelPref || OPENAI_EMBEDDING_MODELS[1]),
     openAiKey: settings?.OpenAiKey || "",
     dockerBasePath:
       settings?.DockerModelRunnerBasePath || DOCKER_DEFAULT_BASE_PATH,
     dockerModel: settings?.DockerModelRunnerModelPref || "",
     dockerTokenLimit:
       settings?.DockerModelRunnerModelTokenLimit?.toString?.() || "8192",
+    skipLocalModel: false,
   });
 }
 
@@ -234,16 +238,23 @@ function normalizeFormState(state = {}) {
     return fallback;
   };
 
+  const resolvedEmbedder =
+    state?.embedder === "openai" ? "openai" : "native";
+  const embeddingModelFallback =
+    resolvedEmbedder === "openai"
+      ? OPENAI_EMBEDDING_MODELS[1]
+      : "Xenova/all-MiniLM-L6-v2";
   return {
     vectorBackend: state?.vectorBackend === "pgvector" ? "pgvector" : "lancedb",
     pgConnectionString: asText(state?.pgConnectionString),
     pgTableName: asText(state?.pgTableName, DEFAULT_PGVECTOR_TABLE),
-    embedder: state?.embedder === "openai" ? "openai" : "native",
-    embeddingModel: asText(state?.embeddingModel, OPENAI_EMBEDDING_MODELS[1]),
+    embedder: resolvedEmbedder,
+    embeddingModel: asText(state?.embeddingModel, embeddingModelFallback),
     openAiKey: asText(state?.openAiKey),
     dockerBasePath: asText(state?.dockerBasePath, DOCKER_DEFAULT_BASE_PATH),
     dockerModel: asText(state?.dockerModel),
     dockerTokenLimit: asText(state?.dockerTokenLimit, "8192"),
+    skipLocalModel: !!state?.skipLocalModel,
   };
 }
 
@@ -438,6 +449,10 @@ export default function PrismSetupAssistantFlow({
     }
 
     if (step === 2) {
+      if (formState.skipLocalModel) {
+        // User opted to skip Docker/local model -- no Docker fields required.
+        return null;
+      }
       if (!selectedDockerModelInstalled) {
         return "Install or choose a local Docker model before continuing.";
       }
@@ -497,6 +512,11 @@ export default function PrismSetupAssistantFlow({
       showToast("Add the PostgreSQL connection string first.", "warning");
       return;
     }
+    if (!formState.pgConnectionString.includes("://")) {
+      // Auto-fix: prepend postgresql:// — the server will do this too, but
+      // updating the form state gives the user immediate feedback.
+      updateField("pgConnectionString", `postgresql://${formState.pgConnectionString.trim()}`);
+    }
     if (!formState.pgTableName.trim()) {
       showToast("Add the pgvector table name first.", "warning");
       return;
@@ -512,7 +532,7 @@ export default function PrismSetupAssistantFlow({
 
     if (!result?.success) {
       showToast(
-        `Failed to bootstrap pgvector: ${result?.error || "Unknown error"}`,
+        `Failed to bootstrap pgvector for model "${formState.embeddingModel}": ${result?.error || "Unknown error"}`,
         "error"
       );
       setBootstrappingPgvector(false);
@@ -529,12 +549,15 @@ export default function PrismSetupAssistantFlow({
       VectorDB: formState.vectorBackend,
       EmbeddingEngine: formState.embedder,
       EmbeddingModelPref: formState.embeddingModel,
-      LLMProvider: "docker-model-runner",
-      DockerModelRunnerBasePath:
-        formState.dockerBasePath || DOCKER_DEFAULT_BASE_PATH,
-      DockerModelRunnerModelPref: formState.dockerModel,
-      DockerModelRunnerModelTokenLimit: formState.dockerTokenLimit,
     };
+
+    if (!formState.skipLocalModel) {
+      payload.LLMProvider = "docker-model-runner";
+      payload.DockerModelRunnerBasePath =
+        formState.dockerBasePath || DOCKER_DEFAULT_BASE_PATH;
+      payload.DockerModelRunnerModelPref = formState.dockerModel;
+      payload.DockerModelRunnerModelTokenLimit = formState.dockerTokenLimit;
+    }
 
     if (formState.vectorBackend === "pgvector") {
       payload.PGVectorConnectionString = formState.pgConnectionString;
@@ -555,23 +578,36 @@ export default function PrismSetupAssistantFlow({
     }
 
     await persistDraft(null);
-    savePrismSetupCompleted({
+    const completionRecord = {
       completedAt: new Date().toISOString(),
       vectorBackend: formState.vectorBackend,
       embedder: formState.embedder,
       embeddingModel: formState.embeddingModel,
-      dockerModel: formState.dockerModel,
-    });
+      skippedLocalModel: !!formState.skipLocalModel,
+    };
+    if (!formState.skipLocalModel) {
+      completionRecord.dockerModel = formState.dockerModel;
+    }
+    savePrismSetupCompleted(completionRecord);
     showToast("Prism setup saved successfully.", "success");
+    if (formState.skipLocalModel) {
+      setTimeout(() => {
+        showToast(
+          "Next step: open Settings \u2192 LLM Preference to connect a chat model.",
+          "info",
+          { autoClose: 8000 }
+        );
+      }, 1200);
+    }
     setSaving(false);
     onApplied(formState);
   };
 
   const shellClassName = isModal
-    ? "metacanon-modal-panel relative my-4 flex max-h-[calc(100vh-5rem)] w-[min(92vw,980px)] self-start flex-col overflow-hidden rounded-[28px] px-6 pb-7 pt-6 md:max-h-[calc(100vh-6rem)] md:px-8 md:pb-8 md:pt-7"
+    ? "metacanon-modal-panel relative my-4 flex max-h-[calc(100vh-2rem)] w-[min(92vw,980px)] self-start flex-col rounded-[28px] px-6 pb-0 pt-6 md:max-h-[calc(100vh-3rem)] md:px-8 md:pb-0 md:pt-7"
     : "relative flex w-full max-w-[920px] flex-col px-2 pb-6";
   const bodyClassName = isModal
-    ? "mt-6 min-h-0 flex-1 overflow-y-auto pr-1"
+    ? "mt-6 min-h-0 flex-1 overflow-y-auto pr-1 pb-4"
     : "mt-6";
 
   return (
@@ -809,7 +845,7 @@ export default function PrismSetupAssistantFlow({
                           type="button"
                           onClick={bootstrapPgvector}
                           disabled={bootstrappingPgvector}
-                          className="rounded-full bg-theme-primary-button px-4 py-2 text-sm font-semibold text-black transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                          className="rounded-full bg-theme-primary-button px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
                         >
                           {bootstrappingPgvector
                             ? "Bootstrapping..."
@@ -1079,7 +1115,7 @@ export default function PrismSetupAssistantFlow({
                       disabled={
                         installingDockerModel || !formState.dockerModel.trim()
                       }
-                      className="rounded-full bg-theme-primary-button px-4 py-2 text-sm font-semibold text-black transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                      className="rounded-full bg-theme-primary-button px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       {installingDockerModel
                         ? `Installing... ${installProgress}%`
@@ -1108,6 +1144,34 @@ export default function PrismSetupAssistantFlow({
                   installation flow so the local model you install here is the
                   same one Prism AI will use after onboarding completes.
                 </div>
+
+                {!formState.skipLocalModel ? (
+                  <button
+                    type="button"
+                    onClick={() => updateField("skipLocalModel", true)}
+                    className="mt-2 text-sm font-medium text-theme-text-secondary underline decoration-theme-text-secondary/40 underline-offset-2 transition hover:text-theme-primary-button hover:decoration-theme-primary-button/60"
+                  >
+                    Skip -- I will configure a cloud provider in Settings
+                  </button>
+                ) : (
+                  <div className="rounded-[18px] border border-amber-400/35 bg-amber-400/10 px-4 py-4 text-sm leading-6 text-theme-text-primary">
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <span className="font-semibold">Local model skipped.</span>{" "}
+                        You can configure an LLM provider (OpenAI, Anthropic, etc.) in{" "}
+                        <span className="font-semibold">Settings &rarr; LLM Preference</span>{" "}
+                        after setup completes.
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => updateField("skipLocalModel", false)}
+                        className="shrink-0 rounded-full border border-theme-sidebar-border px-3 py-1.5 text-xs font-semibold text-theme-text-primary transition hover:border-theme-primary-button hover:text-theme-primary-button"
+                      >
+                        Undo skip
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : null}
 
@@ -1145,15 +1209,28 @@ export default function PrismSetupAssistantFlow({
                   </div>
                   <div className="rounded-[20px] border border-theme-sidebar-border bg-theme-sidebar-item-default px-4 py-4">
                     <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-theme-home-text-secondary">
-                      Local chat model
+                      Chat model
                     </div>
-                    <div className="mt-2 text-lg font-semibold text-theme-text-primary">
-                      {formState.dockerModel || "unset"}
-                    </div>
-                    <div className="mt-2 text-sm leading-6 text-theme-text-secondary">
-                      Docker Model Runner /{" "}
-                      {formState.dockerTokenLimit || "8192"} tokens
-                    </div>
+                    {formState.skipLocalModel ? (
+                      <>
+                        <div className="mt-2 text-lg font-semibold text-amber-300">
+                          Cloud provider
+                        </div>
+                        <div className="mt-2 text-sm leading-6 text-theme-text-secondary">
+                          Not configured yet. Go to Settings &rarr; LLM Preference after setup.
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="mt-2 text-lg font-semibold text-theme-text-primary">
+                          {formState.dockerModel || "unset"}
+                        </div>
+                        <div className="mt-2 text-sm leading-6 text-theme-text-secondary">
+                          Docker Model Runner /{" "}
+                          {formState.dockerTokenLimit || "8192"} tokens
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
 
@@ -1176,7 +1253,7 @@ export default function PrismSetupAssistantFlow({
             ) : null}
           </div>
 
-          <div className="mt-4 flex shrink-0 items-center justify-between gap-4 border-t border-theme-sidebar-border pt-5">
+          <div className="mt-4 flex shrink-0 items-center justify-between gap-4 border-t border-theme-sidebar-border px-6 pb-7 pt-5 md:px-8 md:pb-8">
             <div className="text-sm text-rose-300">{validationError || ""}</div>
             <div className="flex flex-wrap items-center gap-3">
               {step > 0 || onBack ? (
@@ -1212,7 +1289,7 @@ export default function PrismSetupAssistantFlow({
                     }
                   }}
                   disabled={!!validationError}
-                  className="inline-flex items-center gap-2 rounded-full bg-theme-primary-button px-4 py-2 text-sm font-semibold text-black transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex items-center gap-2 rounded-full bg-theme-primary-button px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Next
                   <ArrowRight size={16} weight="bold" />
@@ -1222,7 +1299,7 @@ export default function PrismSetupAssistantFlow({
                   type="button"
                   onClick={applySetup}
                   disabled={saving}
-                  className="rounded-full bg-theme-primary-button px-4 py-2 text-sm font-semibold text-black transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="rounded-full bg-theme-primary-button px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   {saving ? "Applying setup..." : "Apply setup"}
                 </button>

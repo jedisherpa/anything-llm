@@ -120,17 +120,12 @@ export default function CommunityHubAuthentication() {
         style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
         className="metacanon-page-frame relative md:mx-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
       >
-        <div className="flex flex-col w-full px-1 md:pl-6 md:pr-[86px] md:py-6 py-16">
-          <div className="w-full flex flex-col gap-y-1 pb-6 border-white light:border-theme-sidebar-border border-b-2 border-opacity-10">
-            <div className="items-center">
-              <p className="text-lg leading-6 font-bold text-theme-text-primary">
-                Your AnythingLLM Community Hub Account
-              </p>
-            </div>
-            <p className="text-xs leading-[18px] font-base text-theme-text-secondary">
-              Connecting your AnythingLLM Community Hub account allows you to
-              access your <b>private</b> AnythingLLM Community Hub items as well
-              as upload your own items to the AnythingLLM Community Hub.
+        <div className="prism-settings-content flex flex-col w-full px-1 md:pl-6 md:pr-[86px] md:py-6 py-16">
+          <div className="prism-settings-page-header">
+            <div className="prism-page-section-label">Community</div>
+            <p className="prism-settings-page-title">Your Community Hub Account</p>
+            <p className="prism-settings-page-description">
+              Connect your account to access private items and upload your own content to the Community Hub.
             </p>
           </div>
 

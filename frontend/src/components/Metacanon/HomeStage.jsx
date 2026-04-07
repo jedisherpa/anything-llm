@@ -189,7 +189,7 @@ export default function MetacanonHomeStage({
                   <button
                     type="button"
                     onClick={onOpenSetup}
-                    className="rounded-full bg-theme-primary-button px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-black transition hover:opacity-90"
+                    className="rounded-full bg-theme-primary-button px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-white transition hover:opacity-90"
                   >
                     Run guided setup
                   </button>

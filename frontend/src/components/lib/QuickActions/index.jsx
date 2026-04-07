@@ -70,7 +70,7 @@ function QuickActionButton({ label, onClick, show = true }) {
       <button
         type="button"
         onClick={onClick}
-        className="metacanon-composer-toolbar-button metacanon-home-quick-action rounded-full px-6 py-2.5 text-[15px] font-medium leading-5"
+        className="metacanon-home-quick-action rounded px-3 py-1 text-[12px] font-normal leading-5 transition-colors"
       >
         {label}
       </button>

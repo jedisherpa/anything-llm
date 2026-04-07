@@ -1,3 +1,4 @@
+import { baseHeaders } from "@/utils/request";
 const STORAGE_KEY = "metacanon-council-packs";
 const PINNED_STORAGE_KEY = "metacanon-sidebar-pinned-constellations";
 const FEATURED_LENSES_STORAGE_KEY = "metacanon-sidebar-featured-lenses";
@@ -372,7 +373,9 @@ export function reorderPinnedConstellations(startIndex, endIndex) {
   return reordered;
 }
 export async function fetchLibraryManifest() {
-  const response = await fetch(`${API_BASE}/metacanonai/library/manifest`);
+  const response = await fetch(`${API_BASE}/metacanonai/library/manifest`, {
+    headers: baseHeaders(),
+  });
   if (!response.ok) {
     throw new Error("Failed to load Metacanon library manifest.");
   }
@@ -382,7 +385,8 @@ export async function fetchLibraryManifest() {
 export async function fetchLibraryCollection(tab = "") {
   const params = new URLSearchParams({ tab });
   const response = await fetch(
-    `${API_BASE}/metacanonai/library/collection?${params.toString()}`
+    `${API_BASE}/metacanonai/library/collection?${params.toString()}`,
+    { headers: baseHeaders() }
   );
   if (!response.ok) {
     throw new Error("Failed to load Metacanon library collection.");
@@ -394,7 +398,8 @@ export async function fetchLibraryCollection(tab = "") {
 export async function fetchLibraryItem(tab = "", id = "") {
   const params = new URLSearchParams({ tab, id });
   const response = await fetch(
-    `${API_BASE}/metacanonai/library/item?${params.toString()}`
+    `${API_BASE}/metacanonai/library/item?${params.toString()}`,
+    { headers: baseHeaders() }
   );
   if (!response.ok) {
     throw new Error("Failed to load Metacanon library item.");
@@ -406,6 +411,7 @@ export async function saveCustomLens(payload = {}) {
   const response = await fetch(`${API_BASE}/metacanonai/library/custom-lens`, {
     method: "POST",
     headers: {
+      ...baseHeaders(),
       "Content-Type": "application/json",
     },
     body: JSON.stringify(payload),
@@ -425,8 +431,88 @@ export async function saveCustomLens(payload = {}) {
   return response.json();
 }
 
+export async function saveCustomConstellation(payload = {}) {
+  const response = await fetch(
+    `${API_BASE}/metacanonai/library/custom-constellation`,
+    {
+      method: "POST",
+      headers: {
+        ...baseHeaders(),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    }
+  );
+
+  if (!response.ok) {
+    let message = "Failed to save custom constellation.";
+    try {
+      const errorPayload = await response.json();
+      message = errorPayload?.error || message;
+    } catch {
+      // ignore malformed error payloads
+    }
+    throw new Error(message);
+  }
+
+  return response.json();
+}
+
+export async function deleteCustomConstellation(id = "") {
+  const safeId = String(id || "").trim();
+  const response = await fetch(
+    `${API_BASE}/metacanonai/library/custom-constellation/${encodeURIComponent(safeId)}`,
+    {
+      method: "DELETE",
+      headers: baseHeaders(),
+    }
+  );
+
+  if (!response.ok) {
+    let message = "Failed to delete custom constellation.";
+    try {
+      const errorPayload = await response.json();
+      message = errorPayload?.error || message;
+    } catch {
+      // ignore malformed error payloads
+    }
+    throw new Error(message);
+  }
+
+  return response.json();
+}
+
+export async function formatLensContent(payload = {}) {
+  const response = await fetch(
+    `${API_BASE}/metacanonai/library/format-lens`,
+    {
+      method: "POST",
+      headers: {
+        ...baseHeaders(),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    }
+  );
+
+  if (!response.ok) {
+    let message = "Failed to format lens content.";
+    try {
+      const errorPayload = await response.json();
+      message = errorPayload?.error || message;
+    } catch {
+      // ignore malformed error payloads
+    }
+    throw new Error(message);
+  }
+
+  return response.json();
+}
+
 export async function fetchMetacanonFeatures() {
-  const response = await fetch(`${API_BASE}/metacanonai/features`);
+  const response = await fetch(`${API_BASE}/metacanonai/features`, {
+    headers: baseHeaders(),
+  });
   if (!response.ok) {
     throw new Error("Failed to load Metacanon feature flags.");
   }

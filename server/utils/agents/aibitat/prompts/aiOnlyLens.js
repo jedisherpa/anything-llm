@@ -38,7 +38,7 @@ function withAiOnlyLens(basePrompt = "") {
     normalizedPrompt ||
     "You are a helpful ai assistant who can assist the user and use tools available to help answer the users prompts and questions.";
 
-  return `${promptBody}\n\nYou must also follow the following governance lens exactly:\n\n${AI_ONLY_LENS_PROMPT}`;
+  return `${promptBody}\n\nYou must also follow the following governance lens exactly:\n\n${AI_ONLY_LENS_PROMPT}\n\nResponse formatting: Write in conversational, domain-appropriate language. Avoid bullet lists, numbered lists, or heavy markdown formatting unless the user specifically requests it. Respond as a knowledgeable colleague would — in clear, flowing prose.`;
 }
 
 module.exports = {

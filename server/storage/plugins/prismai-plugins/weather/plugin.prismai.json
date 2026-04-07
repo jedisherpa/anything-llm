@@ -1,0 +1,38 @@
+{
+  "id": "weather",
+  "name": "Weather Plugin",
+  "version": "1.0.0",
+  "schemaVersion": "1.0.0",
+  "author": "PrismAI",
+  "license": "MIT",
+  "description": "An example plugin that fetches real weather data from the Open-Meteo API. Demonstrates async HTTP calls, health checks, and secrets declaration in the PrismAI plugin system.",
+  "runtime": {
+    "entrypoint": "handler.js",
+    "timeout": 15000
+  },
+  "tools": {
+    "get_forecast": {
+      "description": "Get the current weather forecast for a location. Returns temperature, wind speed, and weather description.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "location": {
+            "type": "string",
+            "description": "City name (e.g., 'London', 'New York', 'Tokyo'). The location is geocoded automatically."
+          }
+        },
+        "required": ["location"]
+      }
+    }
+  },
+  "secrets": [
+    {
+      "key": "WEATHER_API_KEY",
+      "description": "API key for weather provider (not required for Open-Meteo free tier, declared for demonstration of the secrets pattern).",
+      "required": false
+    }
+  ],
+  "healthCheck": {
+    "entrypoint": "health.js"
+  }
+}
