@@ -27,6 +27,25 @@ const path = require("path");
 let _bridge = null;
 let _bridgeChecked = false;
 
+// ── Lazy HITL bridge loading ───────────────────────────────────────────────
+// hitl-bridge.js depends on the MetaCanon runtime (SphereThreadCoordinator).
+// Lazy-load here to avoid circular dependency issues and to allow the
+// enforcement-wrapper to function in test environments without the HITL bridge.
+
+let _hitlBridge = null;
+let _hitlBridgeChecked = false;
+
+function _loadHitlBridge() {
+  if (_hitlBridgeChecked) return _hitlBridge;
+  _hitlBridgeChecked = true;
+  try {
+    _hitlBridge = require("./hitl-bridge");
+  } catch {
+    _hitlBridge = null;
+  }
+  return _hitlBridge;
+}
+
 function _loadBridge() {
   if (_bridgeChecked) return _bridge;
   _bridgeChecked = true;
@@ -359,6 +378,49 @@ function createEnforcedHandler(pluginId, toolName, toolConfig, _aibitat) {
         introspect(
           `PrismAI plugin ${pluginId}.${toolName}: Enforcement flags: ${enforcement.flags.join(", ")}`
         );
+      }
+
+      // Step 1.5: HITL gate (fail-CLOSED if required)
+      // Triggered when the tool manifest declares hitl:true, or when the FFI
+      // runtime flags this specific invocation as requiring human approval.
+      // Unlike FFI validation (which fails open), HITL is fail-CLOSED: if the
+      // gate cannot be satisfied, execution does not proceed.
+      const needsHitl =
+        (toolConfig && toolConfig.hitl === true) ||
+        (enforcement.flags &&
+          enforcement.flags.includes("requires_human_approval"));
+
+      if (needsHitl) {
+        const hitlBridge = _loadHitlBridge();
+        if (!hitlBridge) {
+          return "HITL gate required but hitl-bridge module unavailable. Cannot proceed.";
+        }
+        try {
+          const hitlResult = await hitlBridge.requestApproval(
+            pluginId,
+            toolName,
+            args,
+            {
+              alignment_score: enforcement.alignment_score,
+              flags: enforcement.flags,
+            }
+          );
+          if (!hitlResult.approved) {
+            introspect(
+              `PrismAI plugin ${pluginId}.${toolName}: Action rejected by human (${hitlResult.reason || "no reason given"})`
+            );
+            return `Action rejected by human: ${hitlResult.reason || "No reason provided"}`;
+          }
+          introspect(
+            `PrismAI plugin ${pluginId}.${toolName}: HITL approval received`
+          );
+        } catch (hitlErr) {
+          // HITL is fail-CLOSED: errors block execution, not pass-through
+          introspect(
+            `PrismAI plugin ${pluginId}.${toolName}: HITL gate error: ${hitlErr.message}`
+          );
+          return `HITL gate error: ${hitlErr.message}`;
+        }
       }
 
       // Step 2: Input validation (ajv-based)

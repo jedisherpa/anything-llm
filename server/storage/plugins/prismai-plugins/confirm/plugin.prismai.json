@@ -1,0 +1,29 @@
+{
+  "id": "confirm",
+  "name": "HITL Confirm Test Plugin",
+  "version": "1.0.0",
+  "schemaVersion": "1.0.0",
+  "author": "PrismAI",
+  "license": "MIT",
+  "description": "A test plugin with a single tool that requires human-in-the-loop approval. Used to validate the HITL bridge integration.",
+  "runtime": {
+    "entrypoint": "handler.js",
+    "timeout": 10000
+  },
+  "tools": {
+    "confirm_action": {
+      "description": "A test tool that requires human approval before executing. Always returns a success message after approval.",
+      "hitl": true,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "A message describing what action is being confirmed."
+          }
+        },
+        "required": ["message"]
+      }
+    }
+  }
+}
