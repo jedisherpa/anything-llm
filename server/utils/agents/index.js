@@ -1338,6 +1338,7 @@ class AgentHandler {
             this.log(
               `PrismAI plugin tool ${qualifiedToolName} not found in registry. Skipping inclusion to agent cluster.`
             );
+            continue;
           } else {
             const { plugin, toolName } = lookup;
 
@@ -1347,6 +1348,7 @@ class AgentHandler {
               this.log(
                 `PrismAI plugin ${plugin.id} has no tool "${toolName}". Skipping inclusion to agent cluster.`
               );
+              continue;
             } else {
               // 4. Determine the registered function name.
               //    resolveFunctionName("@@prism_echo.echo") strips "@@" -> "prism_echo.echo"

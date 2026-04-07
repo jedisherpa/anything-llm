@@ -232,6 +232,7 @@ if (!process.env.ENABLE_HTTPS) bootHTTP(app, process.env.SERVER_PORT || 3001);
     const {
       PrismAIPluginRegistry,
     } = require("./utils/plugins/registry");
+    // Note: plugins may not be available for the first few hundred ms after startup (async discovery).
     const results = await PrismAIPluginRegistry.discoverAndValidate();
     const enabled = results.filter(
       (r) => r.state === "VALID" || r.state === "HEALTHY"
