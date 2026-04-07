@@ -226,6 +226,22 @@ if (!process.env.ENABLE_HTTPS) bootHTTP(app, process.env.SERVER_PORT || 3001);
   } catch (err) {
     console.warn(`[Tools] Failed to load MetaCanon tool names: ${err.message}`);
   }
+
+  // [Plugins] — discover and validate PrismAI plugins
+  try {
+    const {
+      PrismAIPluginRegistry,
+    } = require("./utils/plugins/registry");
+    const results = await PrismAIPluginRegistry.discoverAndValidate();
+    const enabled = results.filter(
+      (r) => r.state === "VALID" || r.state === "HEALTHY"
+    ).length;
+    console.log(
+      `[Plugins] Discovered ${results.length} PrismAI plugin(s) (${enabled} enabled)`
+    );
+  } catch (err) {
+    console.warn(`[Plugins] Plugin discovery failed: ${err.message}`);
+  }
 })().catch((err) =>
   console.error("[MetaCanon] Startup sequence error:", err.message)
 );

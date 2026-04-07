@@ -1,0 +1,28 @@
+{
+  "id": "echo",
+  "name": "Echo Test Plugin",
+  "version": "1.0.0",
+  "schemaVersion": "1.0.0",
+  "author": "PrismAI",
+  "license": "MIT",
+  "description": "A minimal test plugin that echoes back its input. Used for integration testing of the PrismAI plugin system.",
+  "runtime": {
+    "entrypoint": "handler.js",
+    "timeout": 5000
+  },
+  "tools": {
+    "echo": {
+      "description": "Echoes the provided message back to the caller. Use this tool to verify the PrismAI plugin system is working correctly.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "The message to echo back."
+          }
+        },
+        "required": ["message"]
+      }
+    }
+  }
+}

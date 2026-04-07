@@ -25,6 +25,8 @@ const ImportedPlugin = require("./imported");
 const { AgentFlows } = require("../agentFlows");
 const MCPCompatibilityLayer = require("../MCP");
 const { METACANON_PREFIX, loadMetaCanonPlugin } = require("../MCP/metacanon-tools-loader");
+const { PRISMAI_PLUGIN_PREFIX, PrismAIPluginRegistry } = require("../plugins/registry");
+const { createEnforcedHandler } = require("../plugins/enforcement-wrapper");
 const { buildQueryAwareAgentPrompt } = require("./queryContext");
 const { resolvePrismRouteConfig } = require("./prismProviderRouting");
 const { TokenManager } = require("../helpers/tiktoken");
@@ -1321,6 +1323,72 @@ class AgentHandler {
         this.replaceAgentFunctionReference(name, plugin.name);
         this.aibitat.use(plugin.plugin());
         this.log(`Attached MetaCanon::${plugin.name} tool to Agent cluster`);
+        continue;
+      }
+
+      // Load PrismAI plugin. This is marked by `@@prism_` in the array of functions to load.
+      if (name.startsWith(PRISMAI_PLUGIN_PREFIX)) {
+        try {
+          // 1. Strip prefix: "@@prism_echo.echo" -> "echo.echo"
+          const qualifiedToolName = name.replace(PRISMAI_PLUGIN_PREFIX, "");
+
+          // 2. Parse pluginId and toolName from "echo.echo"
+          const lookup = PrismAIPluginRegistry.getPluginForTool(qualifiedToolName);
+          if (!lookup) {
+            this.log(
+              `PrismAI plugin tool ${qualifiedToolName} not found in registry. Skipping inclusion to agent cluster.`
+            );
+          } else {
+            const { plugin, toolName } = lookup;
+
+            // 3. Build the tool config from the manifest
+            const toolConfig = plugin.tools[toolName];
+            if (!toolConfig) {
+              this.log(
+                `PrismAI plugin ${plugin.id} has no tool "${toolName}". Skipping inclusion to agent cluster.`
+              );
+            } else {
+              // 4. Determine the registered function name.
+              //    resolveFunctionName("@@prism_echo.echo") strips "@@" -> "prism_echo.echo"
+              //    So the registered name in aibitat.function() must match.
+              const registeredName = `prism_${plugin.id}.${toolName}`;
+
+              // 5. Create the enforced handler via enforcement-wrapper
+              const enforcedHandler = createEnforcedHandler(
+                plugin.id,
+                toolName,
+                toolConfig,
+                this.aibitat
+              );
+
+              // 6. Register the tool with Aibitat (direct registration)
+              this.aibitat.function({
+                super: this.aibitat,
+                name: registeredName,
+                description:
+                  toolConfig.description ||
+                  `PrismAI plugin: ${plugin.id}.${toolName}`,
+                parameters: toolConfig.parameters || {
+                  type: "object",
+                  properties: {},
+                  additionalProperties: false,
+                },
+                handler: enforcedHandler,
+              });
+
+              // 7. Replace the prefixed name with the registered name for function lookup
+              this.replaceAgentFunctionReference(name, registeredName);
+
+              this.log(
+                `Attached PrismAI::${plugin.id}.${toolName} plugin to Agent cluster`
+              );
+            }
+          }
+        } catch (err) {
+          this.log(
+            `PrismAI plugin ${name} failed to attach: ${err.message}. Skipping.`
+          );
+        }
         continue;
       }
 
