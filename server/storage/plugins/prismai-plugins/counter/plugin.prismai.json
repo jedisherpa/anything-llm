@@ -1,0 +1,37 @@
+{
+  "id": "counter",
+  "name": "Counter Plugin",
+  "version": "1.0.0",
+  "schemaVersion": "1.0.0",
+  "author": "PrismAI",
+  "license": "MIT",
+  "description": "A stateful example plugin that maintains a persistent counter within its Worker Thread. Demonstrates module-scoped state that persists across tool calls within the same Worker lifecycle.",
+  "runtime": {
+    "entrypoint": "handler.js",
+    "timeout": 5000
+  },
+  "tools": {
+    "increment": {
+      "description": "Increment the counter by a specified amount. Returns the new count.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "integer",
+            "description": "The amount to increment by. Defaults to 1 if omitted.",
+            "default": 1
+          }
+        },
+        "required": []
+      }
+    },
+    "get_count": {
+      "description": "Returns the current value of the counter without modifying it.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    }
+  }
+}
